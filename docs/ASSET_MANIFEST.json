@@ -1,0 +1,328 @@
+{
+  "schema": 2,
+  "generated_at": "2026-09-12",
+  "assets": [
+    {
+      "path": "client/Assets/Game/Art/Goblin.png",
+      "sha256": "efc1d0a9c8c2bb6998886eeb42ef777622c8e0727e1b1acb479214b3c2f4a062",
+      "width": 1254,
+      "height": 1254,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/HudControls.png",
+      "sha256": "312094f82bfb534e702b1d3430f0869a84f97f18e28e1022acf4ecedf477e3e1",
+      "width": 1774,
+      "height": 887,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/MageIdle.png",
+      "sha256": "fda1fa53e9e1a58c6bd401f6ed8784168087cabecebc065c04dcaa3c09defcb0",
+      "width": 925,
+      "height": 1254,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/MagePortrait.png",
+      "sha256": "27b90c9ac84f9f9d324136a16a443d087c374ecc2d30d721f439f8b2c9b7ba9c",
+      "width": 1254,
+      "height": 1254,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/MagePose02.png",
+      "sha256": "6a2798c2be210caf63ca1a93a00900d6855cbf2dd42c8417d1b9d955f57673b0",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/MagePose06.png",
+      "sha256": "ac868808febcaa5a4b9eec53511360d45614f61805a86efcc524c1acf76efb17",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/MagePose09.png",
+      "sha256": "6f8d37dbb15e670a7a53be9a03563a45510cbeb54d9e2645ffc98ab58bf15ea8",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/MagePose14.png",
+      "sha256": "77e54bf71ab65859122d5b7144db5f9f8984e63a5f3f22312b4c1d2cd1ae90ab",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/MageSkills.png",
+      "sha256": "650a905fdf2f25dc856d4770d075e98cbd06d16865a41454bbf70e709b0a3d48",
+      "width": 1774,
+      "height": 887,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "client/Assets/Game/Art/MainMenuIcons.png",
+      "sha256": "04f157657aad6d5a13a36926169f158c4cfcf9aaa6cdfb85a50835652cfbe64d",
+      "width": 1774,
+      "height": 887,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "client/Assets/Game/Art/MenuPanel.png",
+      "sha256": "2ff29855515d3016519e56ff4c903c86231e3be15c5b77a98c7a9a795f6e74ec",
+      "width": 1536,
+      "height": 1024,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/MoonCourtyard.png",
+      "sha256": "3845bfe4c40f14c3514a6e65d9902edfbeb88f04d2eb1e45d3829c7a6ad8cb3e",
+      "width": 1672,
+      "height": 941,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "client/Assets/Game/Art/SapphirePlatformMap.png",
+      "sha256": "81f47ec19503533d1eb14f6055a2b5f6861853092846485874afd17aebcf6271",
+      "width": 1672,
+      "height": 941,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "client/Assets/Game/Art/SapphireTown.png",
+      "sha256": "b052e7b70b588140d6b0237f765a1002c6b5af7632caba15a2fb84ad65faa52b",
+      "width": 1672,
+      "height": 941,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "client/Assets/Game/Art/UiChrome.png",
+      "sha256": "f32db7034aefd946f6e2913ee717372e829ec66561418fc36caaeed999cd2eb8",
+      "width": 1774,
+      "height": 887,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "client/Assets/Game/Art/WideButton.png",
+      "sha256": "c41151e80dc69dbe0686ecadc45cee41f3919f593aec7be34103e668f05d8a71",
+      "width": 2149,
+      "height": 732,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_01.png",
+      "sha256": "65d09ee8c16853cde1c13c1a574e75c14c0d2063cb78ac1a9b923422564647ae",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_02.png",
+      "sha256": "6a2798c2be210caf63ca1a93a00900d6855cbf2dd42c8417d1b9d955f57673b0",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_03.png",
+      "sha256": "ff0bc0b1167b5bda98feced8b34a591831fd57488e14d1fd3f072f523541f63b",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_04.png",
+      "sha256": "33d06330b7016d90013f795f4a39b01d519451352a2b476ea52af3bfd677850f",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_05.png",
+      "sha256": "d49b3da63697f41361c42ba01fc3aa7b54443abba54c6acc7a91d7499c2f42d2",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_06.png",
+      "sha256": "ac868808febcaa5a4b9eec53511360d45614f61805a86efcc524c1acf76efb17",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_07.png",
+      "sha256": "374db9cb48546f778285fe04865f25553175630bc046a1a6cc088fa6cb9db796",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_08.png",
+      "sha256": "7b6a0ef602f98e60b151b239fb1d1bbc1c1fe7250f1a35fe5eee5aaf8096d17f",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_09.png",
+      "sha256": "6f8d37dbb15e670a7a53be9a03563a45510cbeb54d9e2645ffc98ab58bf15ea8",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_10.png",
+      "sha256": "a26efb1f4cf57bd02a7398b060259f4c4def6c350fa124c3a9fe775208b7ac61",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_11.png",
+      "sha256": "a3a2c2099fdc54a35837233abd458abd2b1507f0581c7e02e8dafc7ddd4e6ae3",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_12.png",
+      "sha256": "7802054b832a5766015b8a0e66054cdb6485bab8ee7d7d4cc3df5d860eaae0fa",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_13.png",
+      "sha256": "b390cbde80e9791650352f963d69e1fba5d208cf5e422c05e7982b79858670f7",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_14.png",
+      "sha256": "77e54bf71ab65859122d5b7144db5f9f8984e63a5f3f22312b4c1d2cd1ae90ab",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_15.png",
+      "sha256": "a93035fd983aa11a60d527bd8c489e2990887d36928db984aa4a88c1626527a9",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/_inspect/chr_mage_attack01_frame_16.png",
+      "sha256": "8b54b52c6b6e1051a3037f4974ac1fbb56fbc166eef19632d3045b5392c79bea",
+      "width": 363,
+      "height": 360,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/chr_mage_idle_ref_rightfacing.png",
+      "sha256": "fda1fa53e9e1a58c6bd401f6ed8784168087cabecebc065c04dcaa3c09defcb0",
+      "width": 925,
+      "height": 1254,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/characters/mage/source/MagePortraitRaw.png",
+      "sha256": "cd087faf4c9d24f0da3dc310730ce37330c0049cf407a5354a1e215bc3020c83",
+      "width": 1254,
+      "height": 1254,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "generated-images/source-reference/mage_original_concept.png",
+      "sha256": "ae726e68468f497cb106d125771f91a4949fbccf165dcc442e7910ab9f92caf0",
+      "width": 493,
+      "height": 635,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/ui/chrome/UiChrome-v2-flat.png",
+      "sha256": "f32db7034aefd946f6e2913ee717372e829ec66561418fc36caaeed999cd2eb8",
+      "width": 1774,
+      "height": 887,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/ui/chrome/UiChrome.png",
+      "sha256": "fc149ddc0841bc9f28bc5d9050a15da487a0b1743b020e61e6dfd245f990e70f",
+      "width": 1774,
+      "height": 887,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/ui/chrome/WideButton-v2-flat.png",
+      "sha256": "c41151e80dc69dbe0686ecadc45cee41f3919f593aec7be34103e668f05d8a71",
+      "width": 2149,
+      "height": 732,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/ui/chrome/WideButton.png",
+      "sha256": "d0d2ebeacf6ea14e75beabfdc77f3b45bb45825f5aa81ed09516acdbc453576a",
+      "width": 2146,
+      "height": 733,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/ui/controls/HudControlGlyphs.png",
+      "sha256": "312094f82bfb534e702b1d3430f0869a84f97f18e28e1022acf4ecedf477e3e1",
+      "width": 1774,
+      "height": 887,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/ui/controls/HudControls.png",
+      "sha256": "dfce621e2e101bf1d7c1220e3a5dc38508952647a2b5cb96d0b93af1ee0c2483",
+      "width": 1774,
+      "height": 887,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/ui/processed/MenuPanelExtracted.png",
+      "sha256": "2ff29855515d3016519e56ff4c903c86231e3be15c5b77a98c7a9a795f6e74ec",
+      "width": 1536,
+      "height": 1024,
+      "pixel_format": "RGBA"
+    },
+    {
+      "path": "generated-images/ui/reference/hud-redesign-v2.png",
+      "sha256": "d27bea9bed680f665d5dc2254f5ea8202df5440a32a876df7ed8d659058f3bfa",
+      "width": 1672,
+      "height": 941,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "generated-images/ui/reference/initial_hud_direction.png",
+      "sha256": "4a99ddcc753b392a893c8fc53538e126e3d5122fca2512ec7ddc38ab10accce3",
+      "width": 1672,
+      "height": 941,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "generated-images/world/platform-map/SapphirePlatformMap.png",
+      "sha256": "81f47ec19503533d1eb14f6055a2b5f6861853092846485874afd17aebcf6271",
+      "width": 1672,
+      "height": 941,
+      "pixel_format": "RGB"
+    },
+    {
+      "path": "generated-images/world/town/SapphireTown.png",
+      "sha256": "b052e7b70b588140d6b0237f765a1002c6b5af7632caba15a2fb84ad65faa52b",
+      "width": 1672,
+      "height": 941,
+      "pixel_format": "RGB"
+    }
+  ]
+}

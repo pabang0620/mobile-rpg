@@ -1,0 +1,23 @@
+# Unity generated
+client/Library/
+client/Temp/
+client/Obj/
+client/Logs/
+client/UserSettings/
+client/MemoryCaptures/
+
+# Local outputs
+builds/
+captures/
+logs/
+*.log
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+*.csproj
+*.sln
+*.user
