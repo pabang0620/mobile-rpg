@@ -1,26 +1,28 @@
-# 에셋 배선 상태
+# SapphireRPG Asset Status
 
-## 캐릭터 불변 조건
-은회색 장발, 청회색 눈, 큰 남색 후드, 해진 다층 로브, 고금 자수, 사파이어 보석, 검정/금 부츠, 푸른 결정 지팡이를 유지한다. 원본은 `generated-images/source-reference/mage_original_concept.png`다.
+Authoritative project copies: `../client/Assets/Sapphire/Art/*.png`. Generated prompts are documented in `../planning/04_ASSETS.md`; generated source paths for new town/dungeon art are not project-stable, so the project copies listed here are authoritative.
 
-## 현재 연결됨
-- `SapphireTown.png`: 로그인 배경과 실제 마을 허브.
-- `SapphirePlatformMap.png`: 달빛 회랑 횡스크롤 전장. 지면 y=214, 발판 y=414/473/395.
-- `MageIdle.png`, `MagePortrait.png`, `MagePose02/06/09/14.png`: 법사 표시와 공격 핵심 포즈.
-- `Goblin.png`: 첫 전투 적.
-- `MageSkills.png`, `MainMenuIcons.png`, `HudControls.png`: 스킬, 메뉴, 조작 글리프.
-- `UiChrome.png`: 평면형 반투명 원형/사각/바/배지 프레임.
-- `WideButton.png`: 로그인·서버·캐릭터·출정 공통 와이드 버튼.
-- `NotoSansCJKkr-Regular.otf`: 모든 한글 UI 폰트. OFL 라이선스 동봉.
-- `hud-redesign-v2.png`: 최신 전투 HUD 승인 기준 시안.
+| File | Dimensions | Pixel format | SHA256 | Status |
+|---|---:|---|---|---|
+| Goblin.png | 1254 x 1254 | RGBA | `efc1d0a9c8c2bb6998886eeb42ef777622c8e0727e1b1acb479214b3c2f4a062` | RUNTIME_REFERENCE |
+| HudControls.png | 1774 x 887 | RGBA | `312094f82bfb534e702b1d3430f0869a84f97f18e28e1022acf4ecedf477e3e1` | RUNTIME_REFERENCE |
+| MageDirectional.png | 1254 x 1254 | RGB | `576062d289cf7345091f3d3d5cb0d92d3700ceacef7f84aa813cf99f69638a71` | REJECTED_CHECKERBOARD_NO_ALPHA |
+| MageIdle.png | 925 x 1254 | RGBA | `fda1fa53e9e1a58c6bd401f6ed8784168087cabecebc065c04dcaa3c09defcb0` | RUNTIME_REFERENCE |
+| MagePortrait.png | 1254 x 1254 | RGBA | `27b90c9ac84f9f9d324136a16a443d087c374ecc2d30d721f439f8b2c9b7ba9c` | RUNTIME_REFERENCE |
+| MagePose02.png | 363 x 360 | RGBA | `6a2798c2be210caf63ca1a93a00900d6855cbf2dd42c8417d1b9d955f57673b0` | RUNTIME_REFERENCE |
+| MagePose06.png | 363 x 360 | RGBA | `ac868808febcaa5a4b9eec53511360d45614f61805a86efcc524c1acf76efb17` | RUNTIME_REFERENCE |
+| MagePose09.png | 363 x 360 | RGBA | `6f8d37dbb15e670a7a53be9a03563a45510cbeb54d9e2645ffc98ab58bf15ea8` | RUNTIME_REFERENCE |
+| MagePose14.png | 363 x 360 | RGBA | `77e54bf71ab65859122d5b7144db5f9f8984e63a5f3f22312b4c1d2cd1ae90ab` | RUNTIME_REFERENCE |
+| MageSkills.png | 1774 x 887 | RGB | `650a905fdf2f25dc856d4770d075e98cbd06d16865a41454bbf70e709b0a3d48` | REFERENCE_PENDING |
+| MainMenuIcons.png | 1774 x 887 | RGB | `04f157657aad6d5a13a36926169f158c4cfcf9aaa6cdfb85a50835652cfbe64d` | REFERENCE_PENDING |
+| MenuPanel.png | 1536 x 1024 | RGBA | `2ff29855515d3016519e56ff4c903c86231e3be15c5b77a98c7a9a795f6e74ec` | RUNTIME_REFERENCE |
+| MoonCourtyard.png | 1672 x 941 | RGB | `3845bfe4c40f14c3514a6e65d9902edfbeb88f04d2eb1e45d3829c7a6ad8cb3e` | REFERENCE_PENDING |
+| MoonshardField.png | 1672 x 941 | RGB | `2e1c1ed12b6596c5dca5da42fdf0569b2a994db4b6e89a89323890ebd97c0c3f` | PASS_BACKGROUND |
+| SapphirePlatformMap.png | 1672 x 941 | RGB | `81f47ec19503533d1eb14f6055a2b5f6861853092846485874afd17aebcf6271` | REFERENCE_PENDING |
+| SapphireTown.png | 1672 x 941 | RGB | `b052e7b70b588140d6b0237f765a1002c6b5af7632caba15a2fb84ad65faa52b` | REFERENCE_PENDING |
+| TopdownDungeon.png | 1691 x 930 | RGB | `4694627038f38c0621a66d596ad81c441991db3cea5f069b9c769561901b899e` | PASS_BACKGROUND |
+| TopdownTown.png | 1690 x 931 | RGB | `83838ff6c9fab01abe80ef921f61b7557295c08b8322073fea0573b2072034f9` | PASS_BACKGROUND |
+| UiChrome.png | 1774 x 887 | RGBA | `f32db7034aefd946f6e2913ee717372e829ec66561418fc36caaeed999cd2eb8` | RUNTIME_REFERENCE |
+| WideButton.png | 2149 x 732 | RGBA | `c41151e80dc69dbe0686ecadc45cee41f3919f593aec7be34103e668f05d8a71` | RUNTIME_REFERENCE |
 
-`MoonCourtyard.png`와 `MenuPanel.png`는 과거 시안 호환용 보관 에셋이며 현재 핵심 화면 외형에 사용하지 않는다. 크기, 형식, SHA-256은 `ASSET_MANIFEST.json` schema 2가 기준이다. 빌더는 16개 이미지를 임포트하고 실제 투명 에셋 11개를 검사한다.
-
-## 생성 또는 보수 필요
-1. 법사 idle/run/attack/hit/down/get-up/death 전체 프레임을 동일 발 기준선으로 완성한다.
-2. 스킬 VFX를 캐릭터와 분리한 RGBA 시트로 제작한다.
-3. 고블린 전체 행동과 추가 일반 적 2종을 만든다.
-4. 마을 NPC, 상호작용 표식, 상점/강화/퀘스트 화면용 글리프와 카드 에셋을 만든다.
-5. 배경을 전경, 전투 바닥, 중경, 원경 시차 레이어로 분해한다.
-
-모든 결과는 외부 절대경로를 런타임에서 참조하지 않고 `client/Assets/Game` 안으로 복제한 뒤 `tools/update_asset_manifest.py`로 매니페스트를 갱신한다.
+Pixel format is normalized to RGB for 24bpp images and RGBA for 32bpp ARGB images.

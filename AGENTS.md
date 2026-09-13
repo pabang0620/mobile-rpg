@@ -1,16 +1,7 @@
-# Lighthaven 2D 작업 지침
+# Sapphire RPG development
 
-이 프로젝트는 사파이어 메이지를 주인공으로 하는 2D 횡스크롤 액션 RPG다. 콘텐츠 기획과 수학 수치는 `docs` 및 `../DOCUMENTATION`에서 참고하되 과거 프로젝트의 코드, 엔진 구조, 3D 기술 스택은 이식하지 않는다.
+User authorized parallel development on 2026-09-13. Read docs/planning/01_PRODUCT.md and docs/planning/02_SYSTEM_CONTRACTS.md. Implement top-down XY action RPG, never sideways gravity/platform movement. Original project is reference only. New implementation lives in this directory. Use apply_patch for source edits.
 
-## 확정 제품 방향
-- 시작 흐름: 로컬 로그인 → 서버 선택 → 캐릭터 선택 → 사파이어 광장 → 사냥터/던전.
-- 이동: 좌우 이동, 점프, 중력, 단방향 발판. 자유로운 상하 보행은 사용하지 않는다.
-- 전투: 기본공격, 스킬 4개, 점프, 구르기, HP/MP 물약, 자동사냥.
-- UI: 평면형 반투명 차콜 표면, 얇은 회색 선, 활성 상태에만 청색 강조. 금색 장식 프레임은 사용하지 않는다.
-- 메뉴: 우측 상단 햄버거 하나로 열리는 우측 반투명 패널.
-- 캐릭터 원형: `generated-images/source-reference/mage_original_concept.png`의 얼굴, 머리, 로브, 지팡이, 색 관계를 바꾸지 않는다.
+Ownership: combat agent Domain/Combat and its tests; campaign agent Domain/Campaign, Infrastructure and its tests; presentation agent Presentation and Editor build pipeline; root Application facade, shared integration, assets and documents. Do not modify another owner's files without coordinating. Namespace Sapphire. Domain cannot depend on UnityEngine. Root controls Unity build execution to avoid simultaneous project locks.
 
-## 구현 규칙
-한 번에 한 모듈만 `명세 → 구현 → 규칙 검사 → 실제 배선 → 캡처 → 인계 갱신` 순서로 닫는다. 화면은 도메인 상태를 읽고 command만 보낸다. 전투 판정, 보상, 자원 수치를 UI 코드가 직접 소유하지 않는다.
-
-버튼은 `Frame Sprite > Icon Sprite > Label/State`로 조립한다. 완성 버튼에 글자나 기능 아이콘을 굽지 않는다. `UiChrome.png`, `WideButton.png`, `HudControls.png`를 재사용한다. 모든 한글은 `NotoSansCJKkr-Regular.otf`를 사용한다. 새 에셋은 프로젝트 내부로 복제하고 RGBA, 셀 경계, 잘림, 기준선, 라이선스를 검사한다. `Library`, 빌드, 캡처, 로그는 커밋하지 않는다.
+Baseline public contracts are docs/PARALLEL_CONTRACT.md. Each agent writes a handoff with tests and limitations. Assets copied from original are reusable references, not automatically approved final art. No unverified completion claims.

@@ -1,28 +1,24 @@
-# Lighthaven 2D
+# Sapphire: 달빛의 균열
 
-사파이어 메이지를 주인공으로 하는 Unity 2D 횡스크롤 액션 RPG 프로토타입이다. 로그인, 서버 선택, 캐릭터 선택, 마을, 자동사냥 전투 흐름이 실제로 연결돼 있다.
+Unity 6000.5.9f1용 탑다운 2D 액션 RPG 세로 슬라이스다. 원본 Lighthaven 기획의 사파이어 메이지와 UI 방향을 계승하고, 이동과 월드를 초기 휴대용 액션 RPG 감각의 XY 자유 이동으로 새로 설계했다.
 
-## 실행
+## 현재 구현
 
-Unity 6000.5.9f1로 `client`를 열거나 `Run-Lighthaven2D.cmd`를 실행한다. Windows 빌드는 저장소에 포함하지 않으며 `Lighthaven2D.Editor.BuildGame.BuildAndTest`로 생성한다.
+- 타이틀, 새 게임/이어하기, 마을 허브, 필드 2개, 3방 던전과 2페이즈 보스
+- 8방향 이동, 3연계 마법탄, 스킬 4개, 회피, HP/MP 물약, 필드 AUTO
+- 근접/원거리/돌진 적, 정예, 보스, 고정 60Hz 규칙과 A* 우회
+- 퀘스트 6개, 레벨 1~5, 장비 9종/3슬롯, 구매·강화·판매
+- 체크섬 JSON 저장, 백업 복구, revision/idempotency 거래, 던전 임시 원장
+- PC 키보드와 모바일 가상 입력이 동일한 GameApp 명령 사용
 
-## 현재 조작
+## 열기와 빌드
 
-- A/D 또는 방향키: 좌우 이동
-- Space: 점프
-- Shift: 구르기
-- J: 기본공격
-- 1~4: 스킬
-- T: 자동사냥
-- R: 사망 후 재도전
+Unity Hub에서 `client` 폴더를 Unity 6000.5.9f1로 연다. 에디터 라이선스를 활성화한 다음 메뉴 또는 batchmode에서 `Sapphire.Editor.BuildGame.BuildAndTest`를 실행한다. 결과는 `client/builds/Windows/SapphireRPG.exe`다. 이 컴퓨터는 작성 시 Unity 라이선스가 활성화되지 않아 실제 Player 빌드는 아직 생성되지 않았다.
 
-## 문서 진입점
+조작: WASD/방향키 이동, J 공격, 1~4 스킬, Shift 회피, Q/F 물약, T AUTO, E 상호작용, Esc 메뉴. 화면 버튼도 같은 명령을 호출한다.
 
-- `AGENTS.md`: 모든 구현자가 지켜야 할 현재 방향
-- `docs/HANDOFF.md`: 구현 및 검증 상태
-- `docs/MODULE_ROADMAP.md`: 모듈 순서
-- `docs/UI_LAYOUT_SPEC.md`: HUD 좌표와 레이어
-- `docs/UI_TYPOGRAPHY_SPEC.md`: 폰트와 패딩
-- `docs/modules/`: 모듈별 기술 설계
+## 검증
 
-생성 에셋은 `client/Assets/Game/Art`에 실제 런타임 사본을 두고 `generated-images`에 제작 결과와 기준 시안을 보관한다.
+순수 규칙 검사는 `client/Assets/Sapphire/Tests`에 있다. 전투와 캠페인 검사는 Mono 실행으로 통과했다. `verification/unity-test-escalated.log`는 코드 실패가 아니라 `No valid Unity Editor license found`로 중단된 기록이다. `docs/HANDOFF.md`에서 완료/미검증 범위를 확인한다.
+
+기획과 후속 모델 계약은 상위 `../PLANNING_START_HERE.md`와 `../planning/`에 있다.

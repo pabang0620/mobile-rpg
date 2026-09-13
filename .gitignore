@@ -1,4 +1,4 @@
-# Unity generated
+# Unity generated state
 client/Library/
 client/Temp/
 client/Obj/
@@ -6,18 +6,18 @@ client/Logs/
 client/UserSettings/
 client/MemoryCaptures/
 
-# Local outputs
-builds/
-captures/
-logs/
-*.log
+# Local builds and generated test fixtures
+client/builds/
+client/verification/
+verification/
 
-# IDE / OS
+# IDE and OS files
 .vs/
 .vscode/
 .idea/
-Thumbs.db
-.DS_Store
 *.csproj
 *.sln
 *.user
+*.tmp
+Thumbs.db
+.DS_Store
