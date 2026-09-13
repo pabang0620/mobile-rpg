@@ -36,7 +36,11 @@ namespace Lighthaven2D.Editor
             var files = new[]
             {
                 "MoonCourtyard.png", "SapphireTown.png", "SapphirePlatformMap.png", "MageSkills.png", "MainMenuIcons.png", "HudControls.png", "UiChrome.png", "WideButton.png", "MenuPanel.png", "MagePortrait.png", "Goblin.png", "MageIdle.png",
-                "MagePose02.png", "MagePose06.png", "MagePose09.png", "MagePose14.png"
+                "MagePose02.png", "MagePose06.png", "MagePose09.png", "MagePose14.png",
+                "Backgrounds/WinterTreesFar.png", "Backgrounds/WinterTreesMid.png", "Backgrounds/WinterTreesNear.png", "Backgrounds/CaveCrystalRidgeA.png", "Backgrounds/CaveCrystalRidgeB.png",
+                "VFX/MagicMissile.png",
+                "Enemies/GoblinPixelArtIdle.png", "Enemies/GoblinPixelArtRun.png", "Enemies/GoblinPixelArtAttack.png", "Enemies/GoblinPixelArtDeath.png", "Enemies/GoblinMonsterSpritesheet32.png", "Enemies/GoblinMonsterFrame.png",
+                "UI/InventoryShopIcons.png", "UI/FantasyPanelBorder.png"
             };
             foreach (var file in files)
             {
@@ -64,7 +68,17 @@ namespace Lighthaven2D.Editor
             Require(HasUsableAlpha(Root + "/Art/HudControls.png"), "HudControls must contain real transparent glyph exteriors.");
             Require(HasUsableAlpha(Root + "/Art/UiChrome.png"), "UiChrome must contain transparent reusable frames.");
             Require(HasUsableAlpha(Root + "/Art/WideButton.png"), "WideButton must contain transparent exterior.");
-            Debug.Log("LIGHTHAVEN_2D_ASSET_CHECKS PASS 11 alpha assets, 16 imports");
+
+            var newAlphaAssets = new[]
+            {
+                "Backgrounds/WinterTreesFar.png", "Backgrounds/WinterTreesMid.png", "Backgrounds/WinterTreesNear.png", "Backgrounds/CaveCrystalRidgeA.png", "Backgrounds/CaveCrystalRidgeB.png",
+                "VFX/MagicMissile.png",
+                "Enemies/GoblinPixelArtIdle.png", "Enemies/GoblinPixelArtRun.png", "Enemies/GoblinPixelArtAttack.png", "Enemies/GoblinPixelArtDeath.png", "Enemies/GoblinMonsterSpritesheet32.png", "Enemies/GoblinMonsterFrame.png",
+                "UI/InventoryShopIcons.png", "UI/FantasyPanelBorder.png"
+            };
+            foreach (var file in newAlphaAssets)
+                Require(HasUsableAlpha(Root + "/Art/" + file), file + " must contain visible and transparent pixels (real alpha, not an RGB checkerboard).");
+            Debug.Log("LIGHTHAVEN_2D_ASSET_CHECKS PASS 11+14 alpha assets, 16+14 imports");
         }
 
         static bool HasUsableAlpha(string path)
@@ -172,7 +186,111 @@ namespace Lighthaven2D.Editor
             Require(closed.Closed && Vector2.Distance(closedPosition, closed.Hero) < .01f && !closed.Attacking, "Closed session continued simulation.");
             passed.Add("session-close");
 
+            RunAutoHuntChecks(passed);
+
             Debug.Log("LIGHTHAVEN_2D_CHECKS PASS " + passed.Count + " " + string.Join(",", passed));
+        }
+
+        // M2b AUTOHUNT_DECISION_TECH_SPEC boundary checks: target priority, engage overriding
+        // Return/Reposition, the self-lock regression, the 0.2s decision cache, and low-HP auto potion.
+        static void RunAutoHuntChecks(List<string> passed)
+        {
+            var lowestHp = new BattleSession { Hero = new Vector2(650, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            lowestHp.Enemies[0].Position = new Vector2(700, BattleSession.GroundTop + 70); lowestHp.Enemies[0].Hp = 40;
+            lowestHp.Enemies[1].Position = new Vector2(660, BattleSession.GroundTop + 70); lowestHp.Enemies[1].Hp = 80;
+            lowestHp.Enemies[2].Position = new Vector2(3000, BattleSession.GroundTop + 70);
+            Step(lowestHp, 1f / 60f);
+            Require(lowestHp.AutoDebug.TargetId == lowestHp.Enemies[0].Id, "Lowest-HP in-range enemy was not prioritized over a nearer, healthier one.");
+            passed.Add("auto-target-lowest-hp-priority");
+
+            var tieBreak = new BattleSession { Hero = new Vector2(650, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            tieBreak.Enemies[0].Position = new Vector2(750, BattleSession.GroundTop + 70); tieBreak.Enemies[0].Hp = 80;
+            tieBreak.Enemies[1].Position = new Vector2(660, BattleSession.GroundTop + 70); tieBreak.Enemies[1].Hp = 80;
+            tieBreak.Enemies[2].Position = new Vector2(3000, BattleSession.GroundTop + 70);
+            Step(tieBreak, 1f / 60f);
+            Require(tieBreak.AutoDebug.TargetId == tieBreak.Enemies[1].Id, "Equal-HP tie-break did not select the nearest enemy.");
+            passed.Add("auto-target-tie-break-nearest");
+
+            var targeted = NewCloseSession();
+            targeted.Enemies[1].Position = new Vector2(670, BattleSession.GroundTop + 70); targeted.Enemies[1].Spawn = targeted.Enemies[1].Position;
+            Require(targeted.Attack(-1, false, targeted.Enemies[0].Id), "targetId-forced attack did not begin.");
+            Step(targeted, .5f);
+            Require(targeted.Enemies[0].Hp < targeted.Enemies[0].MaxHp && targeted.Enemies[1].Hp == targeted.Enemies[1].MaxHp,
+                "Attack(targetId) hit the nearer enemy instead of the forced target.");
+            passed.Add("attack-targetid-override");
+
+            var fallback = NewCloseSession();
+            fallback.Enemies[1].Position = new Vector2(700, BattleSession.GroundTop + 70); fallback.Enemies[1].Spawn = fallback.Enemies[1].Position;
+            fallback.Enemies[0].Hp = 0;
+            Require(fallback.Attack(-1, false, fallback.Enemies[0].Id), "Attack should fall back to Nearest() when the requested targetId is dead.");
+            Step(fallback, .5f);
+            Require(fallback.Enemies[1].Hp < fallback.Enemies[1].MaxHp, "Dead targetId did not fall back to Nearest().");
+            passed.Add("attack-targetid-dead-fallback");
+
+            var stuck = new BattleSession { Hero = new Vector2(BattleSession.MovableRangeMaxX, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            // Recover > 0 freezes each enemy's own chase AI so its position is never touched (and
+            // never re-clamped into bounds by that unrelated code path) - isolates the hero being
+            // pinned against the world edge as the only source of "no progress" in this fixture.
+            stuck.Enemies[0].Position = new Vector2(BattleSession.MovableRangeMaxX + 500, BattleSession.GroundTop + 70); stuck.Enemies[0].Recover = 999f;
+            stuck.Enemies[1].Position = new Vector2(BattleSession.MovableRangeMaxX + 600, BattleSession.GroundTop + 70); stuck.Enemies[1].Recover = 999f;
+            stuck.Enemies[2].Position = new Vector2(BattleSession.MovableRangeMaxX + 700, BattleSession.GroundTop + 70); stuck.Enemies[2].Recover = 999f;
+            Step(stuck, 2.5f);
+            Require(stuck.AutoDebug.State == AutoHuntState.Reposition, "No progress against the world edge for 2.5s did not escalate to Reposition.");
+            stuck.Enemies[0].Position = new Vector2(BattleSession.MovableRangeMaxX - 100, BattleSession.GroundTop + 70);
+            stuck.Enemies[0].Hp = stuck.Enemies[0].MaxHp;
+            Step(stuck, .25f);
+            Require(stuck.AutoDebug.State == AutoHuntState.Engage, "Engage did not override Reposition once an enemy entered range.");
+            passed.Add("auto-engage-overrides-reposition");
+
+            var dodgeSelfLock = new BattleSession { Hero = new Vector2(650, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            var dodgeManualBefore = dodgeSelfLock.ManualUntil;
+            Require(dodgeSelfLock.Dodge(Vector2.left, false), "Auto dodge (manual:false) did not execute.");
+            Require(Mathf.Approximately(dodgeSelfLock.ManualUntil, dodgeManualBefore), "Auto dodge triggered the self-lock bug (ManualUntil changed).");
+
+            var jumpSelfLock = new BattleSession { Hero = new Vector2(650, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            var jumpManualBefore = jumpSelfLock.ManualUntil;
+            Require(jumpSelfLock.Jump(false), "Auto jump (manual:false) did not execute.");
+            Require(Mathf.Approximately(jumpSelfLock.ManualUntil, jumpManualBefore), "Auto jump triggered the self-lock bug (ManualUntil changed).");
+
+            var potionSelfLock = new BattleSession { Hero = new Vector2(650, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            potionSelfLock.Hp = 50;
+            var potionManualBefore = potionSelfLock.ManualUntil;
+            Require(potionSelfLock.UseHpPotion(false), "Auto HP potion (manual:false) did not execute.");
+            Require(Mathf.Approximately(potionSelfLock.ManualUntil, potionManualBefore), "Auto HP potion triggered the self-lock bug (ManualUntil changed).");
+            passed.Add("auto-self-lock-regression");
+
+            var autoPotion = new BattleSession { Hero = new Vector2(650, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            autoPotion.Hp = 40;
+            autoPotion.Enemies[0].Position = new Vector2(3000, BattleSession.GroundTop + 70);
+            autoPotion.Enemies[1].Position = new Vector2(3200, BattleSession.GroundTop + 70);
+            autoPotion.Enemies[2].Position = new Vector2(3400, BattleSession.GroundTop + 70);
+            var autoPotionManualBefore = autoPotion.ManualUntil;
+            var potionsBefore = autoPotion.HpPotions;
+            Step(autoPotion, 1f / 60f);
+            Require(autoPotion.Hp == 100, "Auto HP potion did not heal by the fixed 60 HP amount below the 35% threshold.");
+            Require(autoPotion.HpPotions == potionsBefore - 1, "Auto HP potion did not consume exactly one potion.");
+            Require(Mathf.Approximately(autoPotion.ManualUntil, autoPotionManualBefore), "Auto HP potion triggered the self-lock bug (ManualUntil changed).");
+            passed.Add("auto-low-hp-potion");
+
+            var noPotions = new BattleSession { Hero = new Vector2(650, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            noPotions.Hp = 10; noPotions.HpPotions = 0;
+            noPotions.Enemies[0].Position = new Vector2(3000, BattleSession.GroundTop + 70);
+            noPotions.Enemies[1].Position = new Vector2(3200, BattleSession.GroundTop + 70);
+            noPotions.Enemies[2].Position = new Vector2(3400, BattleSession.GroundTop + 70);
+            Step(noPotions, .5f);
+            Require(!noPotions.Dead && noPotions.Hp == 10, "Depleted HP potions should be a no-op, not a crash or a phantom heal.");
+            passed.Add("auto-no-potions-no-crash");
+
+            var caching = new BattleSession { Hero = new Vector2(0, BattleSession.GroundTop + BattleSession.HeroHalfHeight) };
+            caching.Enemies[0].Position = new Vector2(500, BattleSession.GroundTop + 70);
+            caching.Enemies[1].Position = new Vector2(3000, BattleSession.GroundTop + 70);
+            caching.Enemies[2].Position = new Vector2(3200, BattleSession.GroundTop + 70);
+            Step(caching, 1f / 60f);
+            var firstTargetId = caching.AutoDebug.TargetId;
+            caching.Enemies[1].Position = new Vector2(10, BattleSession.GroundTop + 70);
+            Step(caching, .05f);
+            Require(caching.AutoDebug.TargetId == firstTargetId, "Cached intent changed target before the 0.2s decision boundary elapsed.");
+            passed.Add("auto-decision-cache-window");
         }
 
         static BattleSession NewCloseSession()
@@ -228,6 +346,13 @@ namespace Lighthaven2D.Editor
                 Load<Texture2D>(Root + "/Art/MagePose09.png"),
                 Load<Texture2D>(Root + "/Art/MagePose14.png")
             };
+            screen.parallaxFarLayer = Load<Texture2D>(Root + "/Art/Backgrounds/WinterTreesFar.png");
+            screen.parallaxNearLayer = Load<Texture2D>(Root + "/Art/Backgrounds/CaveCrystalRidgeB.png");
+            screen.vfxMagicMissileSheet = Load<Texture2D>(Root + "/Art/VFX/MagicMissile.png");
+            screen.goblinVariantPixelArt = Load<Texture2D>(Root + "/Art/Enemies/GoblinPixelArtIdle.png");
+            screen.goblinVariantMonster = Load<Texture2D>(Root + "/Art/Enemies/GoblinMonsterFrame.png");
+            screen.inventoryIconSheet = Load<Texture2D>(Root + "/Art/UI/InventoryShopIcons.png");
+            screen.fantasyPanelBorder = Load<Texture2D>(Root + "/Art/UI/FantasyPanelBorder.png");
 
             Require(EditorSceneManager.SaveScene(scene, ScenePath), "Could not save battle scene.");
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };

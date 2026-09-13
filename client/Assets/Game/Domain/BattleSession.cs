@@ -29,6 +29,13 @@ namespace Lighthaven2D
         public readonly float[] Cooldowns = new float[4];
         public readonly int[] Costs = { 12, 24, 16, 22 };
         public readonly float[] MaxCooldowns = { 2.8f, 5.5f, 4.0f, 7.0f };
+        // Shared with AutoHuntDirector so target/engage-range and the horizontal walk bounds are a
+        // single source of truth instead of duplicated literals (M2b tech spec).
+        public const float AttackRange = 390f;
+        // Shared with AutoHuntDirector.BuildEngageIntent so the AoE-skill grouping check and the
+        // single-target AoE hit test never drift apart (previously duplicated as the literal 410).
+        public const float AoeGroupRadius = 410f;
+        public const float MovableRangeMinX = 75f, MovableRangeMaxX = 1205f;
         public readonly PlatformSurface[] Platforms =
         {
             new PlatformSurface(320, 540, 414),
@@ -44,9 +51,17 @@ namespace Lighthaven2D
         public bool Attacking => AttackAge >= 0;
         public string LastAction = "달빛 회랑에 입장했습니다";
         Enemy target; bool hit; Vector2 castFacing, dodgeDirection; float dodgeUntil;
+        readonly AutoHuntDirector autoHunt = new AutoHuntDirector();
+        float autoDecisionBaselineX; int autoDecisionBaselineImpactCount;
+        // Reused across both BuildAutoHuntSnapshot calls within the same Tick (the HP-potion check
+        // and the layer A/B Evaluate) so a fresh List<AutoHuntEnemySnapshot> isn't allocated twice
+        // per Tick - Enemies never change between those two calls, only Hero/Mp/HpPotions can.
+        readonly List<AutoHuntEnemySnapshot> autoHuntEnemyScratch = new List<AutoHuntEnemySnapshot>();
+        public AutoDebugState AutoDebug => autoHunt.Debug;
         public BattleSession()
         {
             for (int i = 0; i < 3; i++) { var p = new Vector2(800 + i * 150, GroundTop + 70); Enemies.Add(new Enemy { Id = i, Position = p, Spawn = p }); }
+            autoDecisionBaselineX = Hero.x;
         }
         public Enemy Nearest()
         {
@@ -56,12 +71,14 @@ namespace Lighthaven2D
         }
         public void Manual() { if (Auto) ManualUntil = Time + 3; }
         public void ToggleAuto() { Auto = !Auto; ManualUntil = Time; LastAction = Auto ? "자동사냥 시작" : "자동사냥 종료"; }
-        public bool Attack(int skill = -1, bool manual = true)
+        public bool Attack(int skill = -1, bool manual = true, int targetId = -1)
         {
             if (Closed || Dead || Attacking || Time < dodgeUntil || skill < -1 || skill > 3) return false;
             if (skill >= 0 && (Cooldowns[skill] > 0 || Mp < Costs[skill])) { LastAction = Mp < Costs[skill] ? "마나가 부족합니다" : "스킬 재사용 대기 중"; return false; }
-            var e = Nearest();
-            if (skill < 2 && (e == null || Vector2.Distance(Hero, e.Position) > 390)) { LastAction = "적에게 더 가까이 이동하세요"; return false; }
+            Enemy e = null;
+            if (targetId >= 0) foreach (var candidate in Enemies) if (candidate.Id == targetId && !candidate.Dead) { e = candidate; break; }
+            if (e == null) e = Nearest();
+            if (skill < 2 && (e == null || Vector2.Distance(Hero, e.Position) > AttackRange)) { LastAction = "적에게 더 가까이 이동하세요"; return false; }
             if (manual) Manual();
             if (skill >= 0) { Mp -= Costs[skill]; Cooldowns[skill] = MaxCooldowns[skill]; }
             if (skill == 2) { dodgeDirection = Horizontal(Facing); Hero = ClampHorizontal(Hero + dodgeDirection * 165); Invulnerable = Time + .5f; LastAction = "점멸"; return true; }
@@ -71,24 +88,28 @@ namespace Lighthaven2D
             LastAction = skill == 0 ? "비전 화살" : skill == 1 ? "수정 파동" : "지팡이 공격";
             return true;
         }
-        public bool Dodge(Vector2 input)
+        public bool Dodge(Vector2 input, bool manual = true)
         {
             if (Closed || Dead || DodgeCooldown > 0) return false;
-            Manual(); AttackAge = -1; target = null;
+            if (manual) Manual();
+            AttackAge = -1; target = null;
             dodgeDirection = Horizontal(Mathf.Abs(input.x) > .01f ? input : Facing);
             dodgeUntil = Time + .22f; Invulnerable = Time + .42f; DodgeCooldown = 2;
             LastAction = "회피"; return true;
         }
-        public bool Jump()
+        public bool Jump(bool manual = true)
         {
             if (Closed || Dead || !Grounded || Attacking) return false;
-            Manual(); Grounded = false; VerticalVelocity = 720; SupportTop = -1;
+            if (manual) Manual();
+            Grounded = false; VerticalVelocity = 720; SupportTop = -1;
             LastAction = "점프"; return true;
         }
-        public bool UseHpPotion()
+        public bool UseHpPotion(bool manual = true)
         {
             if (Closed || Dead || HpPotions <= 0 || Hp >= MaxHp) return false;
-            HpPotions--; Hp = Mathf.Min(MaxHp, Hp + 60); Manual(); LastAction = "체력 물약"; return true;
+            HpPotions--; Hp = Mathf.Min(MaxHp, Hp + 60);
+            if (manual) Manual();
+            LastAction = "체력 물약"; return true;
         }
         public bool UseMpPotion()
         {
@@ -105,18 +126,34 @@ namespace Lighthaven2D
             Mp = Mathf.Min(100, Mp + dt * 7);
             input = new Vector2(Mathf.Clamp(input.x, -1, 1), 0);
             if (Mathf.Abs(input.x) > .01f) Manual();
+
+            // Enemies never change between the potion check below and the Evaluate() call further
+            // down, so the snapshot's enemy list is built once here and shared by both.
+            RefreshAutoHuntEnemyScratch();
+
+            // Low-HP auto potion is independent of the layer A/B state machine and of the 0.2s
+            // decision cadence - re-checked every Tick with the latest Hp (M2b parent decision 4).
+            try
+            {
+                if (autoHunt.ShouldAutoUseHpPotion(BuildAutoHuntSnapshot(false))) UseHpPotion(false);
+            }
+            catch (Exception exception) { Debug.LogException(exception); }
+
             if (Time < dodgeUntil) Hero = ClampHorizontal(Hero + dodgeDirection * (dt * 550));
             else if (!Attacking)
             {
                 var move = input;
-                var nearest = Nearest();
-                if (AutoActing && nearest != null)
+                AutoIntent intent;
+                try
                 {
-                    var difference = nearest.Position - Hero;
-                    if (Mathf.Abs(difference.x) > 255 || Mathf.Abs(difference.y) > 110) move = new Vector2(Mathf.Sign(difference.x), 0);
-                    else if (CanAutoCast(1) && Enemies.FindAll(e => !e.Dead && Vector2.Distance(Hero, e.Position) <= 410).Count >= 2) Attack(1, false);
-                    else if (CanAutoCast(0)) Attack(0, false);
-                    else Attack(-1, false);
+                    intent = autoHunt.Evaluate(BuildAutoHuntSnapshot(HasProgressedSinceAutoBaseline()));
+                    if (autoHunt.DecisionMadeThisEvaluate) { autoDecisionBaselineX = Hero.x; autoDecisionBaselineImpactCount = Impacts.Count; }
+                }
+                catch (Exception exception) { Debug.LogException(exception); intent = autoHunt.LastCachedIntent; }
+                if (AutoActing)
+                {
+                    ApplyAutoIntent(intent);
+                    move = new Vector2(intent.MoveDirection, 0);
                 }
                 if (Mathf.Abs(move.x) > .01f) { Facing = Horizontal(move); Hero = ClampHorizontal(Hero + Facing * (dt * 150)); }
             }
@@ -129,7 +166,7 @@ namespace Lighthaven2D
                     hit = true;
                     if (CastSkill == 1)
                     {
-                        foreach (var e in Enemies) if (CanHit(e, 410)) Hurt(e, 52);
+                        foreach (var e in Enemies) if (CanHit(e, AoeGroupRadius)) Hurt(e, 52);
                     }
                     else if (target != null && CanHit(target, 420)) Hurt(target, CastSkill == 0 ? 60 : 30 + Level * 2);
                 }
@@ -191,7 +228,40 @@ namespace Lighthaven2D
             return top == GroundTop;
         }
         bool CanHit(Enemy e, float range) => !e.Dead && Vector2.Distance(Hero, e.Position) <= range && Vector2.Dot((e.Position - Hero).normalized, castFacing) >= .25f;
-        bool CanAutoCast(int skill) => Cooldowns[skill] <= 0 && Mp >= Costs[skill];
+        // AutoHuntDirector plumbing: BattleSession owns building the snapshot, tracking "progress
+        // since the previous decision" and applying whatever intent comes back, all through the
+        // session's own existing public methods (M2b tech spec - Director never touches these fields).
+        void RefreshAutoHuntEnemyScratch()
+        {
+            autoHuntEnemyScratch.Clear();
+            foreach (var e in Enemies) autoHuntEnemyScratch.Add(new AutoHuntEnemySnapshot { Id = e.Id, Position = e.Position, Hp = e.Hp, MaxHp = e.MaxHp, Dead = e.Dead, Windup = e.Windup, Facing = e.Facing });
+        }
+        AutoHuntSnapshot BuildAutoHuntSnapshot(bool progressed)
+        {
+            return new AutoHuntSnapshot
+            {
+                HeroPosition = Hero, HeroFacing = Facing, Grounded = Grounded,
+                Hp = Hp, MaxHp = MaxHp, Mp = Mp, HpPotions = HpPotions,
+                Invulnerable = Invulnerable, ShieldUntil = ShieldUntil, DodgeCooldown = DodgeCooldown,
+                Enemies = autoHuntEnemyScratch, Cooldowns = Cooldowns, MaxCooldowns = MaxCooldowns, Costs = Costs,
+                Time = Time, Auto = Auto, ManualUntil = ManualUntil,
+                MovableRangeMinX = MovableRangeMinX, MovableRangeMaxX = MovableRangeMaxX,
+                ProgressSincePreviousDecision = progressed
+            };
+        }
+        bool HasProgressedSinceAutoBaseline()
+        {
+            for (int i = autoDecisionBaselineImpactCount; i < Impacts.Count; i++) if (!Impacts[i].Hero) return true;
+            if (Mathf.Abs(Hero.x - autoDecisionBaselineX) >= AutoHuntDirector.ProgressDistanceThreshold) return true;
+            return Vector2.Distance(Hero, AutoHuntDirector.SafeAnchor) <= AutoHuntDirector.SafeAnchorRadius;
+        }
+        void ApplyAutoIntent(AutoIntent intent)
+        {
+            if (intent.WantsDodge) Dodge(Hero - intent.DodgeAwayFrom, false);
+            else if (intent.Attack == AutoAttackAction.Basic) Attack(-1, false, intent.TargetId);
+            else if (intent.Attack == AutoAttackAction.Skill) Attack(intent.SkillIndex, false, intent.TargetId);
+            if (!string.IsNullOrEmpty(intent.Reason)) LastAction = intent.Reason;
+        }
         void Hurt(Enemy e, int damage)
         {
             if (e.Dead) return;
@@ -199,8 +269,8 @@ namespace Lighthaven2D
             Impacts.Add(new Impact { Position = e.Position, Amount = damage });
             if (e.Dead) { e.Windup = 0; e.Respawn = 3.4f; Kills++; Xp += 25; Gold += 12; if (Xp >= Level * 100) { Xp -= Level * 100; Level++; Hp = MaxHp; LastAction = "LEVEL UP · 체력 회복"; } }
         }
-        public void Close() { Closed = true; AttackAge = -1; target = null; Impacts.Clear(); }
+        public void Close() { Closed = true; AttackAge = -1; target = null; Impacts.Clear(); autoHunt.Reset(); }
         static Vector2 Horizontal(Vector2 value) => new Vector2(value.x < 0 ? -1 : 1, 0);
-        static Vector2 ClampHorizontal(Vector2 p) => new Vector2(Mathf.Clamp(p.x, 75, 1205), p.y);
+        static Vector2 ClampHorizontal(Vector2 p) => new Vector2(Mathf.Clamp(p.x, MovableRangeMinX, MovableRangeMaxX), p.y);
     }
 }

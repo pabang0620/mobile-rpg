@@ -13,6 +13,8 @@ namespace Lighthaven2D
         public Texture2D background, mageIdle, magePortrait, goblin, skillSheet, menuIconSheet, menuPanelTexture, hudControlSheet, uiChromeSheet;
         public Font uiFont;
         public Texture2D[] mageAttackPoses;
+        // New asset bundle: parallax background layers, skill VFX, contrast goblin variants, UI icon/border placeholders.
+        public Texture2D parallaxFarLayer, parallaxNearLayer, vfxMagicMissileSheet, goblinVariantPixelArt, goblinVariantMonster, inventoryIconSheet, fantasyPanelBorder;
         readonly List<Image> enemies = new List<Image>();
         readonly List<Image> enemyBars = new List<Image>();
         readonly List<Text> enemyTexts = new List<Text>();
@@ -24,6 +26,7 @@ namespace Lighthaven2D
         Canvas canvas; Camera sceneCamera; Transform worldLayer; GameObject menuRoot; Image hero, hpFill, mpFill, xpFill, targetHpFill, autoLamp, autoRune, shield, telegraph, menuHeader; Outline autoOutline;
         Text levelText, statusText, hpText, mpText, targetText, autoText, retryText, menuTitle, menuBody, killPopup, hpPotionCount, mpPotionCount;
         Sprite idleSprite, portraitSprite, goblinSprite, menuPanelSprite, circleSprite; Sprite[] attackSprites; Sprite[] skillSprites; Sprite[] menuSprites; Sprite[] hudSprites; Sprite[] chromeSprites;
+        Sprite goblinVariantPixelArtSprite, goblinVariantMonsterSprite; Sprite[] vfxMagicMissileSprites; Sprite[] inventorySprites; Sprite panelBorderSprite;
         Font font; int impactCursor, presentedKills; bool smoke; Coroutine killPopupRoutine;
 
         void Awake()
@@ -37,6 +40,11 @@ namespace Lighthaven2D
             attackSprites = new Sprite[mageAttackPoses.Length]; for (int i = 0; i < attackSprites.Length; i++) attackSprites[i] = Trimmed(mageAttackPoses[i]);
             skillSprites = Slice(skillSheet, 4, 2);
             menuSprites = Slice(menuIconSheet, 4, 2); hudSprites = Slice(hudControlSheet, 4, 2); chromeSprites=SliceTrimmed(uiChromeSheet,4,2); menuPanelSprite = Full(menuPanelTexture);
+            if(goblinVariantPixelArt) goblinVariantPixelArtSprite = TrimmedRect(goblinVariantPixelArt, new Rect(9*32,0,32,32));
+            if(goblinVariantMonster) goblinVariantMonsterSprite = Trimmed(goblinVariantMonster);
+            if(vfxMagicMissileSheet) vfxMagicMissileSprites = Slice(vfxMagicMissileSheet, 42, 1);
+            if(inventoryIconSheet) inventorySprites = Slice(inventoryIconSheet, 4, 2);
+            if(fantasyPanelBorder) panelBorderSprite = SlicedBorder(fantasyPanelBorder, 16);
             BuildUi(); ResetRun();
             smoke = Array.Exists(Environment.GetCommandLineArgs(), a => a == "--smoke");
             if (smoke) StartCoroutine(Smoke());
@@ -49,6 +57,8 @@ namespace Lighthaven2D
             var scaler = root.GetComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; scaler.referenceResolution = new Vector2(1280, 720); scaler.matchWidthOrHeight = .5f;
             if (!UnityEngine.Object.FindAnyObjectByType<EventSystem>()) new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
             Image("Background", root.transform, Full(background), new Vector2(640,360), new Vector2(1280,720), Color.white, false);
+            if(parallaxFarLayer) Image("Parallax Far", root.transform, Full(parallaxFarLayer), new Vector2(640,610), new Vector2(1280,150), new Color(1,1,1,.85f), false);
+            if(parallaxNearLayer) Image("Parallax Near", root.transform, Full(parallaxNearLayer), new Vector2(640,120), new Vector2(1280,210), Color.white, false);
             var worldObject = new GameObject("World Layer", typeof(RectTransform)); worldObject.transform.SetParent(root.transform,false); worldLayer=worldObject.transform;
             var worldRect=worldObject.GetComponent<RectTransform>();worldRect.anchorMin=Vector2.zero;worldRect.anchorMax=Vector2.one;worldRect.offsetMin=worldRect.offsetMax=Vector2.zero;
             hero = Image("Mage", worldLayer, idleSprite, new Vector2(350,BattleSession.GroundTop+BattleSession.HeroHalfHeight), new Vector2(180,180), Color.white, false); hero.preserveAspect = true;
@@ -103,11 +113,12 @@ namespace Lighthaven2D
 
             var dim=Image("Menu Modal",root,null,new Vector2(640,360),new Vector2(1280,720),new Color(0,0,.015f,.22f),true);menuRoot=dim.gameObject;dim.GetComponent<Button>().onClick.AddListener(CloseMenu);
             var panel=Panel(dim.transform,"Right Menu Panel",new Vector2(400,0),new Vector2(480,720),new Color(.018f,.026f,.035f,.82f),new Color(.62f,.68f,.72f,.34f));panel.raycastTarget=true;
+            if(panelBorderSprite){var border=Image("Right Menu Panel Border",panel.transform,panelBorderSprite,Vector2.zero,new Vector2(480,720),new Color(1,1,1,.55f),false);border.type=UnityEngine.UI.Image.Type.Sliced;}
             menuHeader=Image("Menu Header",panel.transform,hudSprites[7],new Vector2(-184,315),new Vector2(46,46),Color.white,false);menuHeader.preserveAspect=true;
             menuTitle=Text("Menu Title",panel.transform,"메뉴",new Vector2(-105,315),new Vector2(140,42),25,Color.white,TextAnchor.MiddleLeft);
             menuBody=Text("Menu Body",panel.transform,"",new Vector2(0,244),new Vector2(400,58),15,new Color(.86f,.88f,.90f),TextAnchor.UpperLeft);
             string[] labels={"가방","스킬","장비","퀘스트","던전","레이드","상점","설정"};
-            for(int i=0;i<8;i++){var x=-153+(i%4)*102;var y=150-(i/4)*118;SquareControl("Menu Slot Frame "+i,panel.transform,menuSprites[i%menuSprites.Length],new Vector2(x,y),72,false,out menuSlots[i]);Text("Menu Label "+i,panel.transform,labels[i],new Vector2(x,y-52),new Vector2(90,24),15,new Color(.94f,.95f,.96f),TextAnchor.MiddleCenter);}
+            for(int i=0;i<8;i++){var x=-153+(i%4)*102;var y=150-(i/4)*118;var initialIcon=InventoryPlaceholder(i)??menuSprites[i%menuSprites.Length];SquareControl("Menu Slot Frame "+i,panel.transform,initialIcon,new Vector2(x,y),72,false,out menuSlots[i]);Text("Menu Label "+i,panel.transform,labels[i],new Vector2(x,y-52),new Vector2(90,24),15,new Color(.94f,.95f,.96f),TextAnchor.MiddleCenter);}
             Text("Menu Section",panel.transform,"모험과 성장",new Vector2(-148,-78),new Vector2(160,24),15,new Color(.68f,.74f,.78f),TextAnchor.MiddleLeft);
             var divider=Image("Menu Divider",panel.transform,null,new Vector2(0,-98),new Vector2(408,1),new Color(.72f,.76f,.8f,.24f),false);
             var close=SquareControl("Close Menu",panel.transform,hudSprites[6],new Vector2(202,315),42,true,out var closeIcon);closeIcon.rectTransform.localRotation=Quaternion.Euler(0,0,90);close.GetComponent<Button>().onClick.AddListener(CloseMenu);
@@ -123,11 +134,12 @@ namespace Lighthaven2D
                 "달빛 회랑  ·  권장 레벨 1\n일반 전투 → 정예 전투 → 보스 → 결과 정산 흐름으로 확장됩니다.",
                 "봉인된 청룡  ·  준비 중\n자동사냥으로 성장한 뒤 패턴 대응과 장비 구성을 시험하는 목표 콘텐츠입니다."};
             menuHeader.sprite=menuSprites[index];menuTitle.text=titles[index];menuBody.text=index==0?"가방 · 스킬 · 장비 · 퀘스트\n던전 · 레이드 · 상점 · 설정":bodies[index];
-            for(int i=0;i<menuSlots.Length;i++){menuSlots[i].gameObject.SetActive(true);menuSlots[i].sprite=index==1?skillSprites[i%skillSprites.Length]:menuSprites[i%menuSprites.Length];}
+            for(int i=0;i<menuSlots.Length;i++){menuSlots[i].gameObject.SetActive(true);menuSlots[i].sprite=InventoryPlaceholder(i)??(index==1?skillSprites[i%skillSprites.Length]:menuSprites[i%menuSprites.Length]);}
             menuRoot.SetActive(true);menuRoot.transform.SetAsLastSibling();
         }
 
         void CloseMenu(){if(menuRoot)menuRoot.SetActive(false);}
+        Sprite InventoryPlaceholder(int slotIndex){if(inventorySprites==null||inventorySprites.Length<8)return null;if(slotIndex==0)return inventorySprites[0];if(slotIndex==6)return inventorySprites[2];return null;}
 
         void ResetRun()
         {
@@ -135,7 +147,11 @@ namespace Lighthaven2D
             foreach(var e in enemies) Destroy(e.gameObject); enemies.Clear(); enemyBars.Clear(); enemyTexts.Clear();
             for(int i=0;i<battle.Enemies.Count;i++)
             {
-                var img=Image("Goblin"+i,worldLayer,goblinSprite,battle.Enemies[i].Position,new Vector2(140,140),Color.white,false);img.preserveAspect=true;enemies.Add(img);
+                // Slot 0 stays the canonical Goblin.png. Slots 1/2 show the two candidate contrast
+                // variants (GOBLIN FREE PIXELART, then OpenGameArt "Goblin monster") side by side with it
+                // for direct tone comparison, per asset-review instructions.
+                var variantSprite=goblinSprite;if(i==1&&goblinVariantPixelArtSprite!=null)variantSprite=goblinVariantPixelArtSprite;else if(i==2&&goblinVariantMonsterSprite!=null)variantSprite=goblinVariantMonsterSprite;
+                var img=Image("Goblin"+i,worldLayer,variantSprite,battle.Enemies[i].Position,new Vector2(140,140),Color.white,false);img.preserveAspect=true;enemies.Add(img);
                 var bar=Image("EnemyHP",worldLayer,null,battle.Enemies[i].Position+new Vector2(0,80),new Vector2(92,7),new Color(.7f,.08f,.1f,1),false);enemyBars.Add(bar);
                 enemyTexts.Add(Text("EnemyName",worldLayer,"고블린",battle.Enemies[i].Position+new Vector2(0,96),new Vector2(100,18),12,Color.white,TextAnchor.MiddleCenter));
             }
@@ -183,7 +199,9 @@ namespace Lighthaven2D
 
         IEnumerator FloatText(Text t){float age=0;var start=t.rectTransform.anchoredPosition;while(age<.7f){age+=Time.deltaTime;t.rectTransform.anchoredPosition=start+Vector2.up*age*50;t.color=new Color(t.color.r,t.color.g,t.color.b,1-age/.7f);yield return null;}damageTexts.Remove(t);Destroy(t.gameObject);}
         IEnumerator ShowKillProgress(int kills){killPopup.text=$"{(kills % 5 == 0 ? 5 : kills % 5)} / 5";float age=0;while(age<.55f){age+=Time.deltaTime;float a=Mathf.Sin(Mathf.Clamp01(age/.55f)*Mathf.PI);killPopup.color=new Color(.72f,.9f,1,a*.82f);yield return null;}killPopup.color=new Color(.72f,.9f,1,0);killPopupRoutine=null;}
-        IEnumerator ImpactFlash(Vector2 position,bool heroHit){var holder=Image("Impact Flash",worldLayer,null,position,new Vector2(80,80),Color.clear,false);var color=heroHit?new Color(1,.25f,.18f,.9f):new Color(.12f,.72f,1,.95f);var rayA=Image("Ray A",holder.transform,null,Vector2.zero,new Vector2(68,8),color,false);var rayB=Image("Ray B",holder.transform,null,Vector2.zero,new Vector2(68,8),color,false);rayA.rectTransform.localRotation=Quaternion.Euler(0,0,45);rayB.rectTransform.localRotation=Quaternion.Euler(0,0,-45);float age=0;while(age<.22f){age+=Time.deltaTime;float t=Mathf.Clamp01(age/.22f);holder.rectTransform.localScale=Vector3.one*Mathf.Lerp(.35f,1.45f,t);var faded=new Color(color.r,color.g,color.b,1-t);rayA.color=rayB.color=faded;yield return null;}Destroy(holder.gameObject);}
+        IEnumerator ImpactFlash(Vector2 position,bool heroHit){var holder=Image("Impact Flash",worldLayer,null,position,new Vector2(80,80),Color.clear,false);var color=heroHit?new Color(1,.25f,.18f,.9f):new Color(.12f,.72f,1,.95f);var rayA=Image("Ray A",holder.transform,null,Vector2.zero,new Vector2(68,8),color,false);var rayB=Image("Ray B",holder.transform,null,Vector2.zero,new Vector2(68,8),color,false);rayA.rectTransform.localRotation=Quaternion.Euler(0,0,45);rayB.rectTransform.localRotation=Quaternion.Euler(0,0,-45);
+            Image vfx=null;if(!heroHit&&vfxMagicMissileSprites!=null&&vfxMagicMissileSprites.Length>0)vfx=Image("Skill VFX",worldLayer,vfxMagicMissileSprites[0],position,new Vector2(130,130),Color.white,false);
+            float age=0;while(age<.22f){age+=Time.deltaTime;float t=Mathf.Clamp01(age/.22f);holder.rectTransform.localScale=Vector3.one*Mathf.Lerp(.35f,1.45f,t);var faded=new Color(color.r,color.g,color.b,1-t);rayA.color=rayB.color=faded;if(vfx){int frame=Mathf.Clamp(14+Mathf.FloorToInt(t*13),14,vfxMagicMissileSprites.Length-1);vfx.sprite=vfxMagicMissileSprites[frame];vfx.color=new Color(1,1,1,1-t);}yield return null;}Destroy(holder.gameObject);if(vfx)Destroy(vfx.gameObject);}
         IEnumerator Smoke()
         {
             float deadline=Time.realtimeSinceStartup+18;while(battle.Kills<1&&Time.realtimeSinceStartup<deadline)yield return null;
@@ -205,6 +223,11 @@ namespace Lighthaven2D
         static Sprite CircleSprite(int size){var texture=new Texture2D(size,size,TextureFormat.RGBA32,false){filterMode=FilterMode.Bilinear,wrapMode=TextureWrapMode.Clamp};var pixels=new Color32[size*size];float c=(size-1)*.5f,r=c-1;for(int y=0;y<size;y++)for(int x=0;x<size;x++){float d=Vector2.Distance(new Vector2(x,y),new Vector2(c,c));byte a=(byte)Mathf.RoundToInt(Mathf.Clamp01(r-d+1)*255);pixels[y*size+x]=new Color32(255,255,255,a);}texture.SetPixels32(pixels);texture.Apply();return Sprite.Create(texture,new Rect(0,0,size,size),new Vector2(.5f,.5f),100);}
         static Sprite[] Slice(Texture2D t,int columns,int rows){var result=new Sprite[columns*rows];int w=t.width/columns,h=t.height/rows;for(int y=0;y<rows;y++)for(int x=0;x<columns;x++)result[(rows-1-y)*columns+x]=Sprite.Create(t,new Rect(x*w,y*h,w,h),new Vector2(.5f,.5f),100);return result;}
         static Sprite[] SliceTrimmed(Texture2D t,int columns,int rows){var result=new Sprite[columns*rows];int w=t.width/columns,h=t.height/rows;var pixels=t.GetPixels32();for(int y=0;y<rows;y++)for(int x=0;x<columns;x++){int x0=x*w,y0=y*h,minX=x0+w,minY=y0+h,maxX=-1,maxY=-1;for(int py=y0;py<y0+h;py++)for(int px=x0;px<x0+w;px++)if(pixels[py*t.width+px].a>8){minX=Mathf.Min(minX,px);minY=Mathf.Min(minY,py);maxX=Mathf.Max(maxX,px);maxY=Mathf.Max(maxY,py);}var rect=maxX<minX?new Rect(x0,y0,w,h):new Rect(minX,minY,maxX-minX+1,maxY-minY+1);result[(rows-1-y)*columns+x]=Sprite.Create(t,rect,new Vector2(.5f,.5f),100);}return result;}
+        // Alpha-trims a single cell of a multi-frame strip and anchors the pivot at the visual foot line,
+        // matching Trimmed()'s convention so imported enemy variants sit on the same ground line as Goblin.png.
+        static Sprite TrimmedRect(Texture2D texture,Rect cell){if(!texture.isReadable)return Sprite.Create(texture,cell,new Vector2(.5f,0),100);var pixels=texture.GetPixels32();int cx0=(int)cell.x,cy0=(int)cell.y,cw=(int)cell.width,ch=(int)cell.height;int minX=cx0+cw,minY=cy0+ch,maxX=cx0-1,maxY=cy0-1;for(int y=cy0;y<cy0+ch;y++)for(int x=cx0;x<cx0+cw;x++)if(pixels[y*texture.width+x].a>8){minX=Mathf.Min(minX,x);minY=Mathf.Min(minY,y);maxX=Mathf.Max(maxX,x);maxY=Mathf.Max(maxY,y);}return maxX<minX?Sprite.Create(texture,cell,new Vector2(.5f,0),100):Sprite.Create(texture,new Rect(minX,minY,maxX-minX+1,maxY-minY+1),new Vector2(.5f,0),100);}
+        // 9-slice sprite with a uniform border inset (pixels), used for the Fantasy UI Borders overlay frame.
+        static Sprite SlicedBorder(Texture2D t,float border)=>Sprite.Create(t,new Rect(0,0,t.width,t.height),new Vector2(.5f,.5f),100,0,SpriteMeshType.FullRect,new Vector4(border,border,border,border));
         Image RoundControl(string name,Transform parent,Sprite sprite,Vector2 pos,float size,bool button,out Image icon){var frame=Image(name,parent,chromeSprites[0],pos,new Vector2(size,size),new Color(1,1,1,.78f),button);icon=Image(name+" Icon",frame.transform,sprite,Vector2.zero,new Vector2(size*.68f,size*.68f),new Color(1,1,1,.92f),false);icon.preserveAspect=true;return frame;}
         Image SquareControl(string name,Transform parent,Sprite sprite,Vector2 pos,float size,bool button,out Image icon){var frame=Image(name,parent,chromeSprites[2],pos,new Vector2(size,size),new Color(1,1,1,.76f),button);icon=Image(name+" Icon",frame.transform,sprite,Vector2.zero,new Vector2(size*.62f,size*.62f),new Color(.9f,.92f,.94f,.9f),false);icon.preserveAspect=true;return frame;}
         Image Image(string name,Transform parent,Sprite sprite,Vector2 pos,Vector2 size,Color color,bool button){var go=new GameObject(name,typeof(RectTransform),typeof(CanvasRenderer),typeof(Image));go.transform.SetParent(parent,false);var img=go.GetComponent<Image>();img.sprite=sprite;img.color=color;img.raycastTarget=button;var rt=img.rectTransform;rt.anchorMin=rt.anchorMax=parent==canvas.transform||parent==worldLayer?Vector2.zero:new Vector2(.5f,.5f);rt.pivot=new Vector2(.5f,.5f);rt.anchoredPosition=pos;rt.sizeDelta=size;if(button)go.AddComponent<Button>().targetGraphic=img;return img;}

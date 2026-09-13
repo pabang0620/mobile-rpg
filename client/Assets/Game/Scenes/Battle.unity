@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &260283296
+--- !u!1 &188119754
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,69 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 260283298}
-  - component: {fileID: 260283297}
-  m_Layer: 0
-  m_Name: Front Flow
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &260283297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 260283296}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b3d7e5cf6b2c1f45afbeb709cb063de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Lighthaven2D.FrontFlowScreen
-  town: {fileID: 2800000, guid: 422a13bd77921ec4bb0a17884315910b, type: 3}
-  background: {fileID: 2800000, guid: 011db73bdcb5a7745adff30dba499b59, type: 3}
-  mageIdle: {fileID: 2800000, guid: e6db083d95447bf44aaaf8825d9f5a7e, type: 3}
-  magePortrait: {fileID: 2800000, guid: 9f852210796d92a4a8562ae1376dd3d3, type: 3}
-  goblin: {fileID: 2800000, guid: f44e289d8f92f8e4d90ed1e2bb88e35a, type: 3}
-  skillSheet: {fileID: 2800000, guid: 6220877a89129cb45b1c64521b3295d4, type: 3}
-  menuIconSheet: {fileID: 2800000, guid: 63ecf5f94abfdc04580d5cf1791ee34f, type: 3}
-  menuPanelTexture: {fileID: 2800000, guid: 01e7888f8c75ed347b530222cd157589, type: 3}
-  hudControlSheet: {fileID: 2800000, guid: 2bc3c768d0e7f9d4b9f66d7498d13fa4, type: 3}
-  uiChromeSheet: {fileID: 2800000, guid: 11eeb349ac0cf48459d7f76925bc1a61, type: 3}
-  wideButtonTexture: {fileID: 2800000, guid: 83f631b7d5ed98d48b668a11f9f66289, type: 3}
-  uiFont: {fileID: 12800000, guid: 00619acf8eaa82141918fab61eea7bf2, type: 3}
-  mageAttackPoses:
-  - {fileID: 2800000, guid: 51d684c4adfca164b8663aee4908d388, type: 3}
-  - {fileID: 2800000, guid: b9ba8d8a72100474ca4fba70721f10d5, type: 3}
-  - {fileID: 2800000, guid: 477ebc53b36b565498301dcc5e7c9360, type: 3}
-  - {fileID: 2800000, guid: 1f1851f13de911141a887f4a4124ba71, type: 3}
---- !u!4 &260283298
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 260283296}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &736618124
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 736618126}
-  - component: {fileID: 736618125}
+  - component: {fileID: 188119756}
+  - component: {fileID: 188119755}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -197,13 +136,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &736618125
+--- !u!20 &188119755
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 736618124}
+  m_GameObject: {fileID: 188119754}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -248,13 +187,81 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &736618126
+--- !u!4 &188119756
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 736618124}
+  m_GameObject: {fileID: 188119754}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1127070849
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1127070851}
+  - component: {fileID: 1127070850}
+  m_Layer: 0
+  m_Name: Front Flow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1127070850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1127070849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b3d7e5cf6b2c1f45afbeb709cb063de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lighthaven2D.FrontFlowScreen
+  town: {fileID: 2800000, guid: 422a13bd77921ec4bb0a17884315910b, type: 3}
+  background: {fileID: 2800000, guid: 011db73bdcb5a7745adff30dba499b59, type: 3}
+  mageIdle: {fileID: 2800000, guid: e6db083d95447bf44aaaf8825d9f5a7e, type: 3}
+  magePortrait: {fileID: 2800000, guid: 9f852210796d92a4a8562ae1376dd3d3, type: 3}
+  goblin: {fileID: 2800000, guid: f44e289d8f92f8e4d90ed1e2bb88e35a, type: 3}
+  skillSheet: {fileID: 2800000, guid: 6220877a89129cb45b1c64521b3295d4, type: 3}
+  menuIconSheet: {fileID: 2800000, guid: 63ecf5f94abfdc04580d5cf1791ee34f, type: 3}
+  menuPanelTexture: {fileID: 2800000, guid: 01e7888f8c75ed347b530222cd157589, type: 3}
+  hudControlSheet: {fileID: 2800000, guid: 2bc3c768d0e7f9d4b9f66d7498d13fa4, type: 3}
+  uiChromeSheet: {fileID: 2800000, guid: 11eeb349ac0cf48459d7f76925bc1a61, type: 3}
+  wideButtonTexture: {fileID: 2800000, guid: 83f631b7d5ed98d48b668a11f9f66289, type: 3}
+  uiFont: {fileID: 12800000, guid: 00619acf8eaa82141918fab61eea7bf2, type: 3}
+  mageAttackPoses:
+  - {fileID: 2800000, guid: 51d684c4adfca164b8663aee4908d388, type: 3}
+  - {fileID: 2800000, guid: b9ba8d8a72100474ca4fba70721f10d5, type: 3}
+  - {fileID: 2800000, guid: 477ebc53b36b565498301dcc5e7c9360, type: 3}
+  - {fileID: 2800000, guid: 1f1851f13de911141a887f4a4124ba71, type: 3}
+  parallaxFarLayer: {fileID: 2800000, guid: e2477123986883f42b1de06c81a21642, type: 3}
+  parallaxNearLayer: {fileID: 2800000, guid: f2c6c0709d3742e43b10caffe528bcd7, type: 3}
+  vfxMagicMissileSheet: {fileID: 2800000, guid: 760de52c88fe29141aa5c2c3c3529c19, type: 3}
+  goblinVariantPixelArt: {fileID: 2800000, guid: ad368679c1a6c8245bb2677b237b479e, type: 3}
+  goblinVariantMonster: {fileID: 2800000, guid: ae64b78f88cafca4a8ebc1c8e68dbf8c, type: 3}
+  inventoryIconSheet: {fileID: 2800000, guid: 4f9c8fb9199eb9b44964af3016f043a9, type: 3}
+  fantasyPanelBorder: {fileID: 2800000, guid: 67fdf3b6edce1434582bd3ecb27cabf0, type: 3}
+--- !u!4 &1127070851
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1127070849}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -267,5 +274,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 736618126}
-  - {fileID: 260283298}
+  - {fileID: 188119756}
+  - {fileID: 1127070851}

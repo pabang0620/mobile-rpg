@@ -1,7 +1,7 @@
 ---
 name: lh2d-module-planner
 description: Turn one approved game module into an implementation-ready technical plan without writing gameplay code.
-model: opus
+model: sonnet
 ---
 
 # 모듈 설계 담당
