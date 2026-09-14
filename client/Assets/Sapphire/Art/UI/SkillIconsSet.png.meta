@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ec323211b48c392499b0f6ad7632a0d0
+guid: c44b01b3c942af9488097d2dcead3006
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,13 +123,35 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SkillIcons_ArcaneBolt
+      name: SkillIcons_BasicAttack
       rect:
         serializedVersion: 2
         x: 0
-        y: 611
-        width: 643
-        height: 611
+        y: 528
+        width: 519
+        height: 496
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39a06d1ee3e0864f0800000000000000
+      internalID: -835402067637564781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SkillIcons_ArcaneBolt
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 528
+        width: 481
+        height: 496
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,10 +170,10 @@ TextureImporter:
       name: SkillIcons_FrostWave
       rect:
         serializedVersion: 2
-        x: 643
-        y: 611
-        width: 644
-        height: 611
+        x: 1000
+        y: 528
+        width: 536
+        height: 496
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -172,8 +194,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 643
-        height: 611
+        width: 519
+        height: 528
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -192,10 +214,10 @@ TextureImporter:
       name: SkillIcons_Shield
       rect:
         serializedVersion: 2
-        x: 643
+        x: 519
         y: 0
-        width: 644
-        height: 611
+        width: 481
+        height: 528
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -206,6 +228,28 @@ TextureImporter:
       bones: []
       spriteID: 22dd1aab191d4f2d0800000000000000
       internalID: -3245739007595651806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SkillIcons_Haste
+      rect:
+        serializedVersion: 2
+        x: 1000
+        y: 0
+        width: 536
+        height: 528
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe1e8b9d01c5c7f30800000000000000
+      internalID: 4574632548943585775
       vertices: []
       indices: 
       edges: []
@@ -225,8 +269,10 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       SkillIcons_ArcaneBolt: -4022862723262657296
+      SkillIcons_BasicAttack: -835402067637564781
       SkillIcons_Blink: -1281768639844829492
       SkillIcons_FrostWave: -6975916738523526400
+      SkillIcons_Haste: 4574632548943585775
       SkillIcons_Shield: -3245739007595651806
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

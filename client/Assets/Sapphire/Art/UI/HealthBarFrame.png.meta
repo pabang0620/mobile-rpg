@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cd4db459fb829244cb5802c78cc2f491
+guid: 218242360393b8b42a1134398f5e601b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SkillIcons_BasicAttack
+      name: HealthBarFrame_Track
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 643
-        height: 611
+        y: 407
+        width: 1774
+        height: 480
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -138,20 +138,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 39a06d1ee3e0864f0800000000000000
-      internalID: -835402067637564781
+      spriteID: 5fbca90545a7624a0800000000000000
+      internalID: -6618468099826201611
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SkillIcons_Haste
+      name: HealthBarFrame_Fill
       rect:
         serializedVersion: 2
-        x: 643
+        x: 0
         y: 0
-        width: 644
-        height: 611
+        width: 1774
+        height: 407
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,8 +160,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fe1e8b9d01c5c7f30800000000000000
-      internalID: 4574632548943585775
+      spriteID: 52f6385a462e83050800000000000000
+      internalID: 5780619043631492901
       vertices: []
       indices: 
       edges: []
@@ -180,8 +180,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SkillIcons_BasicAttack: -835402067637564781
-      SkillIcons_Haste: 4574632548943585775
+      HealthBarFrame_Fill: 5780619043631492901
+      HealthBarFrame_Track: -6618468099826201611
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

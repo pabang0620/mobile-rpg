@@ -58,6 +58,22 @@ UI 개편(좌측 가상패드 + 우측 원형 스킬메뉴, `docs/DECISIONS.md` 
 
 **알파 채널 실측 검증** (`docs/DECISIONS.md`의 과거 `MageDirectional.png` 알파 사고 재발 방지 원칙 적용): PIL로 원본 생성 이미지와 최종 크롭·리사이즈 후 시트 양쪽 모두 확인 - 네 모서리 픽셀이 `(0,0,0,0)`(완전 투명), 아이콘 내부 픽셀이 alpha 0~255 범위로 분포(안티에일리어싱 경계 포함)하는 실제 알파 채널임을 확인했다(`Read` 도구가 보여주는 흰 배경은 렌더링 관례일 뿐 실제 알파와 무관 - 눈으로만 보고 판단하지 않았다).
 
+## 2026-09-14 갱신: UI 에셋 전면 교체 (기존 UI 전부 폐기) + HP 바 신규 추가
+
+사용자 지시("지금 있는 UI는 다 버려야해")로 신규 생성된 UI 에셋 4종(`Art/UI/SkillButtonFrame.png`, `Art/UI/HealthBarFrame.png`, `Art/UI/SkillIconsSet.png`, `Art/UI/MessagePanelFrame.png`)을 전부 배선하고 이전 UI 텍스처를 대체했다. 배선 세부는 `docs/HANDOFF.md`의 같은 날짜 "UI 에셋 전면 교체 + HP 바 신규 추가" 항목 참고.
+
+**삭제한 파일** (grep으로 새 배선 이후 참조가 전혀 없음을 확인 후 `git rm`):
+
+- `Art/UI/FantasyPanelBorder.png` - `MessagePanelFrame.png`로 대체.
+- `Art/UI/SkillIcons.png`, `Art/UI/SkillIconsExtra.png` - `SkillIconsSet.png` 1개로 통합.
+- `Art/UiChrome.png`, `Art/MainMenuIcons.png`, `Art/MenuPanel.png`, `Art/HudControls.png` - 이번 작업 전부터 이미 코드 어디에서도 참조되지 않던 미사용 UI chrome 에셋(위 "2026-09-14 정리" 문단이 "그 외 UI chrome/버튼 이미지"로 유지 대상 나열했던 것과 달리, 실제 grep 재확인 결과 참조가 전무해 이번에 함께 정리했다).
+
+**유지한 파일**: `Art/WideButton.png`(메시지 패널 닫기 버튼, 계속 참조됨), `Art/UI/InventoryShopIcons.png`(별도 용도, 이번 작업과 무관).
+
+**신규 파일**: 위 4개 신규 텍스처 + `Presentation/UI/HealthBarView.cs`(HP 바 채움 게이지 컴포넌트, 현재는 전투 시스템이 없어 100% 고정 표시).
+
+알파 채널·9-slice border·그리드 셀 경계는 전부 `Read`로 눈으로 보지 않고 PIL/numpy로 알파 컬럼/로우 카운트 프로파일을 직접 실측해 구했다(이 문서가 반복 강조하는 "측정하지 않고 균등분할을 가정하지 말 것" 원칙 재적용 - SkillButtonFrame/HealthBarFrame/SkillIconsSet 셋 다 실제로는 정확히 절반/균등 그리드가 아니었다). 컴파일·EditMode 테스트 30/30·씬 파일 파싱(스프라이트 참조 null 아님 확인)·플레이어 재빌드·35초 이상 프로세스 생존까지 확인했고, 화면 렌더링·미학 판단은 하지 않았다(사용자 몫).
+
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.

@@ -2,7 +2,19 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-14 (최신): RadialSkillMenu 우측 배치 버그 수정 - 현재 상태
+## 2026-09-14 (최신): UI 에셋 전면 교체 + HP 바 신규 추가 - 현재 상태
+
+사용자 지시("지금 있는 UI는 다 버려야해")로 신규 생성된 UI 에셋 4종을 전부 배선하고 기존 UI를 완전히 교체했다.
+
+1. **원형 스킬 버튼**: `VillageHubUiBuilder.BuildRadialSkillMenu`가 쓰던 Unity 빌트인 `UI/Skin/Knob.psd`를 `SkillButtonFrame.png`(1536x1024, 2셀)로 교체했다. 좌측 셀(`SkillButtonFrame_Skill`)은 5개 스킬 버튼 전부에, 우측 셀(`SkillButtonFrame_BasicAttack`, 더 큰 원)은 중앙 기본공격 버튼에 쓴다. 두 원의 알파 내용을 컬럼 카운트 프로파일로 실측한 결과 정확히 절반(768/768)으로 나누면 우측 원의 내용(컬럼 738-1488)을 침범하므로, 둘 사이 공백 구간(632-737)의 중점(684)을 셀 경계로 잡았다 - `ArtImportConfigurator.ConfigureSkillButtonFrame` 참고.
+2. **스킬 아이콘**: `SkillIconsSet.png`(1536x1024, 3x2=6칸)를 알파 컬럼/로우 카운트 프로파일로 실측해 정확한 슬라이스 좌표를 구했다(균등 512x512 그리드가 아니라 컬럼 519/1000, 로우 496 경계 - 갭 구간의 중점). 순서는 기본공격/비전탄/서리파동(위 행), 점멸/보호막/질주(아래 행)로, 각 아이콘 그림(지팡이+섬광/날아가는 파편/눈꽃/속도 화살표/방패/날개+번개)을 직접 눈으로 봐서 확인했다. `VillageHubUiBuilder.LoadSkillIcon`을 `SkillIconsSet.png` 단일 참조로 단순화했고(기존 `SkillIcons.png`+`SkillIconsExtra.png` 2-시트 폴백 로직 제거), 스프라이트 이름(`SkillIcons_ArcaneBolt` 등)은 그대로 유지해 `SkillCatalog.cs`는 코드 변경이 필요 없었다. 기존 두 시트 파일은 `git rm`으로 삭제했다.
+3. **메시지 패널**: `FantasyPanelBorder.png`(48x48)를 `MessagePanelFrame.png`(1649x954, 9-slice)로 교체했다. 9-slice border는 골드 프레임과 남색 내부 채움 사이의 알파/색상 전환 지점을 이미지 가장자리(x=0/y=0 기준)에서 여러 지점(코너·중앙부 별 장식을 피해서) 실측해 구했다: 좌우 116px, 상단 181px, 하단 244-252px(하단이 상단보다 실제로 더 두껍다 - 7개 x축 지점에서 상단은 전부 정확히 181로 일관됐고 하단은 244-252 범위의 내부 텍스처 노이즈만 있어 측정 오차가 아니라 실제 비대칭으로 판단) - `ArtImportConfigurator.ConfigureUiFrames`의 `MessagePanelFrame` 항목 참고. 기존 48x48 border=10 값은 재사용하지 않았다(이미지 크기·프레임 두께가 전혀 다름).
+4. **HP바 신규 추가**: 화면 좌측 상단에 `HealthBarFrame.png`(1774x887, 2셀 세로)를 이용한 새 HP 바를 만들었다. 위 셀(테두리+트랙)이 배경, 아래 셀(진홍색 필)이 `Image.Type.Filled`(Horizontal, Left origin) 채움 게이지다. 두 셀도 균등 반분이 아니라 알파 로우 카운트 프로파일로 실측한 갭(452-508)의 중점(480)을 경계로 썼다. 신규 파일 `Presentation/UI/HealthBarView.cs`(관심사 분리, God 클래스 아님)가 `fillImage.fillAmount`만 노출하며, 이번 슬라이스엔 전투/데미지 시스템이 없으므로 `Awake()`에서 100% 고정으로 표시한다 - 향후 전투 시스템이 생기면 `SetFillAmount(currentHp/maxHp)`를 호출하도록 설계했다. `VillageHubUiBuilder.BuildHealthBar`가 배선한다.
+5. **기존 파일 정리**: 새 배선 이후에도 어디에서도 참조되지 않는 것을 grep으로 확인 후 `git rm`으로 삭제했다 - `UiChrome.png`, `MainMenuIcons.png`, `MenuPanel.png`, `HudControls.png`(이번 작업 전부터 이미 코드에서 미참조 상태였음), `FantasyPanelBorder.png`(MessagePanelFrame.png로 대체되며 참조 소멸), `SkillIcons.png`/`SkillIconsExtra.png`(SkillIconsSet.png로 통합되며 참조 소멸). `WideButton.png`(닫기 버튼)과 `InventoryShopIcons.png`은 계속 참조되므로 유지했다.
+
+Unity CLI로 컴파일 확인(경고 1건만 - `TextureImporter.spritesheet` obsolete API, 이번 변경과 무관한 기존 경고), EditMode 테스트 30/30 재통과, `SapphireSceneBuilder.BuildAll` 재실행 후 씬 파일(`VillageHub.unity`)을 YAML 파싱해 확인 - `HealthBar`/`Fill`/`MessagePanel`/`AttackButton`/`SkillButton_0~4`/6개 `Icon`/`CloseButton` GameObject의 Image 컴포넌트 `m_Sprite` 필드가 전부 null(`fileID: 0`)이 아니고 각각 올바른 소스 텍스처 guid(SkillButtonFrame/SkillIconsSet/HealthBarFrame/MessagePanelFrame/WideButton)를 가리키는지, `HealthBarView`의 `fillImage` 필드가 실제 Fill Image 컴포넌트를 참조하는지, Fill Image의 `m_Type=3`(Filled)/`m_FillMethod=0`(Horizontal)/`m_FillAmount=1`/`m_FillOrigin=0`(Left)인지까지 전부 직접 파싱해 확인했다(육안 판단 없음). `SapphireBuildPlayer.BuildWindows`로 재빌드(빌드 산출물의 `Assembly-CSharp.dll` 타임스탬프가 이번 빌드 시각과 일치함을 확인) 후 기존 실행 중이던 프로세스가 없음을 확인하고 새 빌드를 실행해 35초 이상 프로세스가 살아있음을 `tasklist`로 확인했다. 화면 렌더링·미학 판단은 하지 않았다(AGENTS.md 검증 관행 및 사용자 지시에 따름) - 사용자 몫이다.
+
+## 2026-09-14: RadialSkillMenu 우측 배치 버그 수정 - 이전 상태
 
 사용자가 실제 빌드를 플레이해 원형 스킬메뉴가 우측이 아니라 화면 정중앙에 떠 있다고 보고했다(스킬 아이콘이 안 보인다던 최초 지적과 같은 세션에서 재확인됨). 근본 원인과 수정 내용은 `docs/DECISIONS.md`의 같은 날짜 "RadialSkillMenu가 실제로는 화면 중앙에 렌더된 버그 수정" 항목 참고 - 요약하면 `VillageHubUiBuilder.BuildRadialSkillMenu`의 루트 앵커를 좌하단(0,0)에서 우하단(1,0)으로 바꾸고 `anchoredPosition`을 우측 모서리 기준 오프셋(`x=-130`)으로 재정의했다. 이전 빌드타임 assertion(`leftmostEdge >= 360`)은 캔버스 폭이 항상 720이라는 잘못된 가정을 재검증하고 있어서 실제 레이아웃 오류를 잡아내지 못했다 - 이번에 그 assertion도 우측 모서리 기준 거리로 다시 정의했다.
 

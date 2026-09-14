@@ -20,8 +20,9 @@ namespace Sapphire.EditorTools
             ConfigureVillagePropsAtlas();
             ConfigureCharacterSheets();
             ConfigureUiFrames();
-            ConfigureSkillIcons();
-            ConfigureSkillIconsExtra();
+            ConfigureSkillButtonFrame();
+            ConfigureHealthBarFrame();
+            ConfigureSkillIconsSet();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -119,13 +120,23 @@ namespace Sapphire.EditorTools
 
         private static void ConfigureUiFrames()
         {
-            // UI: small 48x48 ornate frame. Measured alpha shows a 2px border line
-            // inset ~4-5px, with corner flourishes extending to ~10px - border=10
-            // keeps the whole corner ornament fixed while edges/middle stretch.
+            // UI: message panel frame, 1649x954 ornate rounded-rect border (gold
+            // trim + corner gem flourishes) around a navy fill, replacing the old
+            // 48x48 FantasyPanelBorder.png (2026-09-14 full UI asset replacement).
+            // Border measured directly from the alpha/color transition between the
+            // gold frame and the navy interior fill, sampled at several points
+            // along each edge away from the corners and the small mid-edge star
+            // accents (which locally read as thicker/thinner and would skew a
+            // single-sample measurement): left/right stable at ~116px, top stable
+            // at 181px, bottom stable at ~244-252px (this frame's bottom trim is
+            // genuinely thicker than its top trim, not a measurement artifact -
+            // confirmed by resampling top at 7 different x-fractions, all exactly
+            // 181, vs bottom varying only 244-252 which is real interior-texture
+            // noise around a thicker true border).
             ConfigureSingleSprite(
-                SapphireSceneBuilder.UiArtDir + "/FantasyPanelBorder.png",
-                border: new Vector4(10, 10, 10, 10),
-                filterMode: FilterMode.Point,
+                SapphireSceneBuilder.UiArtDir + "/MessagePanelFrame.png",
+                border: new Vector4(116, 248, 116, 181),
+                filterMode: FilterMode.Bilinear,
                 mipmaps: false);
 
             // UI: wide pill button, 2149x732. Border measured from the alpha
@@ -138,54 +149,91 @@ namespace Sapphire.EditorTools
                 mipmaps: false);
         }
 
-        private static void ConfigureSkillIcons()
+        private static void ConfigureSkillButtonFrame()
         {
-            // Skill bar icons: 1287x1222, 2x2 grid (measured via alpha bounding box per
-            // quadrant - each icon sits well clear of the midlines, so an equal split is
-            // safe). Reading order matches docs/planning/02_SYSTEM_CONTRACTS.md's skill
-            // table: arcane bolt (top-left) / frost wave (top-right) / blink (bottom-left)
-            // / shield (bottom-right). Plain (non-sliced) icons for a UI Image, so PPU is
-            // cosmetic only.
+            // UI: circular skill button frame, 1536x1024, 2 cells side by side -
+            // left cell is the plain skill-slot ring, right cell is the larger
+            // basic-attack ring (2026-09-14 full UI asset replacement, was the
+            // Unity builtin UI/Skin/Knob.psd). Measured the alpha content of each
+            // circle (column-count profile): left circle spans columns 69-631,
+            // right circle spans columns 738-1488, with a shared zero-alpha gap
+            // at columns 632-737. An even 768/768 half-width split would fall
+            // INSIDE the right circle's own content (738-1488 straddles 768), so
+            // the cell boundary is placed at the gap's midpoint (684) instead.
             var centerPivot = new Vector2(0.5f, 0.5f);
             ConfigureMultiSprite(
-                SapphireSceneBuilder.UiArtDir + "/SkillIcons.png",
+                SapphireSceneBuilder.UiArtDir + "/SkillButtonFrame.png",
                 ppu: 100,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
                 maxSize: null,
                 slices: new[]
                 {
-                    ("SkillIcons_ArcaneBolt", new Rect(0, 611, 643, 611), centerPivot),
-                    ("SkillIcons_FrostWave", new Rect(643, 611, 644, 611), centerPivot),
-                    ("SkillIcons_Blink", new Rect(0, 0, 643, 611), centerPivot),
-                    ("SkillIcons_Shield", new Rect(643, 0, 644, 611), centerPivot),
+                    ("SkillButtonFrame_Skill", new Rect(0, 0, 684, 1024), centerPivot),
+                    ("SkillButtonFrame_BasicAttack", new Rect(684, 0, 852, 1024), centerPivot),
                 });
         }
 
-        private static void ConfigureSkillIconsExtra()
+        private static void ConfigureHealthBarFrame()
         {
-            // 2026-09-14 UI overhaul added a center "기본공격" button and a 5th
-            // "질주"(haste) skill to the radial menu, neither of which had an
-            // icon in the original 4-icon SkillIcons.png sheet. Generated via
-            // gpt-image (ChatGPT-subscription bridge, ../SkillIcons.png passed
-            // as style reference) as a single 1287x611 image, 1 row x 2 cells
-            // (same 643/644-wide cell split as SkillIcons.png's rows) - basic
-            // attack (starburst) on the left, haste (wing pair) on the right.
-            // Real alpha transparency measured before this asset was accepted
-            // (corners alpha=0, icon interior alpha up to 255 - not a baked
-            // checkerboard/white background, see docs/ASSET_STATUS.md's
-            // recurring "measure alpha, don't eyeball it" caution).
+            // UI: HP bar frame, 1774x887, 2 cells stacked vertically - top cell is
+            // the capsule outline/track, bottom cell is the crimson fill capsule
+            // (2026-09-14, new HealthBarView scaffold - see docs/HANDOFF.md).
+            // Measured via row-count alpha profile: the two cells are NOT an even
+            // 443/443 vertical split - top (track) content spans rows 173-451,
+            // bottom (fill) content spans rows 509-705 (image top-left origin),
+            // with a shared zero-alpha gap at rows 452-508. Cell boundary placed
+            // at the gap's midpoint (480, top-left origin) rather than the image's
+            // literal half-height.
             var centerPivot = new Vector2(0.5f, 0.5f);
             ConfigureMultiSprite(
-                SapphireSceneBuilder.UiArtDir + "/SkillIconsExtra.png",
+                SapphireSceneBuilder.UiArtDir + "/HealthBarFrame.png",
                 ppu: 100,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
                 maxSize: null,
                 slices: new[]
                 {
-                    ("SkillIcons_BasicAttack", new Rect(0, 0, 643, 611), centerPivot),
-                    ("SkillIcons_Haste", new Rect(643, 0, 644, 611), centerPivot),
+                    ("HealthBarFrame_Track", new Rect(0, 407, 1774, 480), centerPivot),
+                    ("HealthBarFrame_Fill", new Rect(0, 0, 1774, 407), centerPivot),
+                });
+        }
+
+        private static void ConfigureSkillIconsSet()
+        {
+            // Skill icons: 1536x1024, 3x2 grid, 6 cells (2026-09-14 full UI asset
+            // replacement, merges the old 4-icon SkillIcons.png + 2-icon
+            // SkillIconsExtra.png into one sheet - both source files removed).
+            // Reading order (top-left to bottom-right, same convention as the old
+            // 2x2 sheet) matches SkillCatalog.All's slot order plus the separate
+            // basic-attack button: 기본공격/비전탄(arcane bolt)/서리파동(frost wave)
+            // top row, 점멸(blink)/보호막(shield)/질주(haste) bottom row - visually
+            // confirmed against each icon's artwork (staff+burst, flying shard,
+            // snowflake, speed chevron, shield, winged bolt).
+            //
+            // Cells are NOT an even 512x512 grid - measured via alpha column/row
+            // profiles: column gaps at 483-555 and 972-1028 (px, top-left origin),
+            // row gap at 483-508. Cell boundaries placed at each gap's midpoint
+            // (columns 519/1000, row 496) rather than the naive even thirds/halves,
+            // the same "measure, don't assume equal cells" approach used above for
+            // SkillButtonFrame/HealthBarFrame. Sprite names are unchanged from the
+            // old two-sheet setup so SkillCatalog.cs and RadialSkillMenu need no
+            // changes - only the source texture moved.
+            var centerPivot = new Vector2(0.5f, 0.5f);
+            ConfigureMultiSprite(
+                SapphireSceneBuilder.UiArtDir + "/SkillIconsSet.png",
+                ppu: 100,
+                filterMode: FilterMode.Bilinear,
+                mipmaps: false,
+                maxSize: null,
+                slices: new[]
+                {
+                    ("SkillIcons_BasicAttack", new Rect(0, 528, 519, 496), centerPivot),
+                    ("SkillIcons_ArcaneBolt", new Rect(519, 528, 481, 496), centerPivot),
+                    ("SkillIcons_FrostWave", new Rect(1000, 528, 536, 496), centerPivot),
+                    ("SkillIcons_Blink", new Rect(0, 0, 519, 528), centerPivot),
+                    ("SkillIcons_Shield", new Rect(519, 0, 481, 528), centerPivot),
+                    ("SkillIcons_Haste", new Rect(1000, 0, 536, 528), centerPivot),
                 });
         }
 

@@ -29,12 +29,15 @@ namespace Sapphire.EditorTools
     /// <summary>
     /// Builds the VillageHub scene's UI: EventSystem, Canvas, the message
     /// panel (with its close button), the bottom-left virtual movement pad,
-    /// and the bottom-right radial skill menu (basic attack + skill circle
-    /// buttons + range indicator/RadialSkillMenu wiring). Split out of
+    /// the bottom-right radial skill menu (basic attack + skill circle
+    /// buttons + range indicator/RadialSkillMenu wiring), and the top-left HP
+    /// bar (visual scaffold, see <see cref="HealthBarView"/>). Split out of
     /// <see cref="SapphireSceneBuilder"/> (UI responsibility only - grid/tile/
     /// fence generation lives in <see cref="VillageHubTerrainBuilder"/>).
     /// 2026-09-14: replaced the old bottom horizontal skill bar with this
-    /// left-pad/right-radial-menu layout (see docs/DECISIONS.md).
+    /// left-pad/right-radial-menu layout (see docs/DECISIONS.md); later the
+    /// same day, replaced every UI texture (message panel, skill button
+    /// frames, skill icons) with newly generated art and added the HP bar.
     /// </summary>
     internal static class VillageHubUiBuilder
     {
@@ -43,13 +46,14 @@ namespace Sapphire.EditorTools
             BuildEventSystem();
             GameObject canvasGo = BuildCanvas();
 
-            Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/FantasyPanelBorder.png");
+            Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MessagePanelFrame.png");
             Sprite buttonSprite = LoadSingleSprite(SapphireSceneBuilder.RootArtDir + "/WideButton.png");
 
             SimpleMessagePanel messagePanel = BuildMessagePanel(canvasGo, panelSprite, buttonSprite);
 
             BuildVirtualMovementPad(canvasGo, playerInputReader);
             BuildRadialSkillMenu(canvasGo, playerController, castFeedback);
+            BuildHealthBar(canvasGo);
 
             return new UiBuildResult(messagePanel);
         }
@@ -199,10 +203,12 @@ namespace Sapphire.EditorTools
 
         // --- Right-side radial skill menu: a big center "기본공격" button plus
         // a fan of skill buttons above/left of it (so the fan opens toward the
-        // screen center and stays on-screen). Every button is a circle (Unity
-        // builtin "Knob" sprite, same reasoning as the movement pad above) -
-        // click or key (J for attack, 1-5 for skills) both call the same
-        // RadialSkillMenu methods.
+        // screen center and stays on-screen). 2026-09-14 full UI asset
+        // replacement: buttons now use the real SkillButtonFrame.png circular
+        // frame art (2 cells - a plain ring for skill slots, a larger ring for
+        // the basic-attack button) instead of the Unity builtin "Knob" sprite
+        // the movement pad above still uses. Click or key (J for attack, 1-5
+        // for skills) both call the same RadialSkillMenu methods.
 
         // 2026-09-14 bug found via live playtest: this root used to be anchored
         // to the canvas's BOTTOM-LEFT corner (anchorMin/Max = zero) with a fixed
@@ -224,7 +230,8 @@ namespace Sapphire.EditorTools
 
         private static void BuildRadialSkillMenu(GameObject canvasGo, PlayerGridController playerController, SkillCastFeedback castFeedback)
         {
-            Sprite circleSprite = LoadBuiltinCircleSprite();
+            Sprite skillFrameSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrame.png", "SkillButtonFrame_Skill");
+            Sprite basicAttackFrameSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrame.png", "SkillButtonFrame_BasicAttack");
 
             var rootGo = new GameObject("RadialSkillMenu", typeof(RectTransform));
             rootGo.transform.SetParent(canvasGo.transform, false);
@@ -236,7 +243,7 @@ namespace Sapphire.EditorTools
             rootRect.anchoredPosition = new Vector2(-130f, 150f);
 
             Sprite attackIcon = LoadSkillIcon("SkillIcons_BasicAttack");
-            Button attackButton = BuildRadialButton(rootGo, circleSprite, "AttackButton", Vector2.zero, 140f, attackIcon, "기본공격", "J");
+            Button attackButton = BuildRadialButton(rootGo, basicAttackFrameSprite, "AttackButton", Vector2.zero, 140f, attackIcon, "기본공격", "J");
 
             const float skillRadius = 130f;
             const float skillButtonSize = 96f;
@@ -252,7 +259,7 @@ namespace Sapphire.EditorTools
 
                 SkillDefinition skill = SkillCatalog.All[i];
                 Sprite iconSprite = LoadSkillIcon(skill.IconSpriteName);
-                skillButtons[i] = BuildRadialButton(rootGo, circleSprite, "SkillButton_" + i, offset, skillButtonSize, iconSprite, null, (i + 1).ToString());
+                skillButtons[i] = BuildRadialButton(rootGo, skillFrameSprite, "SkillButton_" + i, offset, skillButtonSize, iconSprite, null, (i + 1).ToString());
             }
 
             // rootRect is now anchored to the canvas's bottom-right corner, so
@@ -272,26 +279,13 @@ namespace Sapphire.EditorTools
             BuildSkillSystems(attackButton, skillButtons, playerController, castFeedback);
         }
 
-        // SkillIcons_BasicAttack/SkillIcons_Haste live in the newer
-        // SkillIconsExtra.png sheet (added 2026-09-14, see
-        // ArtImportConfigurator.ConfigureSkillIconsExtra) while the original 4
-        // skills live in SkillIcons.png - this tries the original sheet first
-        // so existing icon names keep working unchanged.
+        // All 6 skill icons (basic attack + the 5 SkillCatalog entries) now live
+        // in the single SkillIconsSet.png sheet (2026-09-14 full UI asset
+        // replacement, see ArtImportConfigurator.ConfigureSkillIconsSet) -
+        // replaces the old 2-sheet SkillIcons.png/SkillIconsExtra.png fallback.
         private static Sprite LoadSkillIcon(string spriteName)
         {
-            Sprite sprite = TryLoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIcons.png", spriteName);
-            if (sprite != null)
-            {
-                return sprite;
-            }
-
-            sprite = TryLoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIconsExtra.png", spriteName);
-            if (sprite == null)
-            {
-                throw new Exception($"Sprite '{spriteName}' not found in SkillIcons.png or SkillIconsExtra.png");
-            }
-
-            return sprite;
+            return LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIconsSet.png", spriteName);
         }
 
         private static Button BuildRadialButton(GameObject parent, Sprite circleSprite, string name, Vector2 anchoredPosition, float size, Sprite iconSprite, string labelText, string keyHint)
@@ -374,6 +368,51 @@ namespace Sapphire.EditorTools
             AssignField(radialSkillMenu, "castFeedback", castFeedback);
         }
 
+        // --- Top-left HP bar: visual scaffold only (2026-09-14, new
+        // HealthBarView component in Presentation/UI). There is no combat/damage
+        // system in this slice yet, so the bar is built fixed at 100% fill - see
+        // HealthBarView's class doc for how a future combat system should wire in
+        // real values.
+
+        private static void BuildHealthBar(GameObject canvasGo)
+        {
+            Sprite trackSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrame.png", "HealthBarFrame_Track");
+            Sprite fillSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrame.png", "HealthBarFrame_Fill");
+
+            const float barWidth = 260f;
+            const float barHeight = 70f;
+
+            var barGo = new GameObject("HealthBar", typeof(Image));
+            barGo.transform.SetParent(canvasGo.transform, false);
+            var barRect = barGo.GetComponent<RectTransform>();
+            barRect.anchorMin = new Vector2(0f, 1f);
+            barRect.anchorMax = new Vector2(0f, 1f);
+            barRect.pivot = new Vector2(0f, 1f);
+            barRect.sizeDelta = new Vector2(barWidth, barHeight);
+            barRect.anchoredPosition = new Vector2(20f, -20f);
+            var trackImage = barGo.GetComponent<Image>();
+            trackImage.sprite = trackSprite;
+            trackImage.raycastTarget = false;
+
+            var fillGo = new GameObject("Fill", typeof(Image));
+            fillGo.transform.SetParent(barGo.transform, false);
+            var fillRect = fillGo.GetComponent<RectTransform>();
+            fillRect.anchorMin = new Vector2(0.06f, 0.18f);
+            fillRect.anchorMax = new Vector2(0.94f, 0.82f);
+            fillRect.offsetMin = Vector2.zero;
+            fillRect.offsetMax = Vector2.zero;
+            var fillImage = fillGo.GetComponent<Image>();
+            fillImage.sprite = fillSprite;
+            fillImage.type = Image.Type.Filled;
+            fillImage.fillMethod = Image.FillMethod.Horizontal;
+            fillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+            fillImage.fillAmount = 1f;
+            fillImage.raycastTarget = false;
+
+            var healthBarView = barGo.AddComponent<HealthBarView>();
+            AssignField(healthBarView, "fillImage", fillImage);
+        }
+
         private static Sprite LoadBuiltinCircleSprite()
         {
             Sprite sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
@@ -385,9 +424,15 @@ namespace Sapphire.EditorTools
             return sprite;
         }
 
-        private static Sprite TryLoadNamedSprite(string path, string name)
+        private static Sprite LoadNamedSprite(string path, string name)
         {
-            return AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().FirstOrDefault(s => s.name == name);
+            Sprite sprite = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().FirstOrDefault(s => s.name == name);
+            if (sprite == null)
+            {
+                throw new Exception($"Sprite '{name}' not found at {path}");
+            }
+
+            return sprite;
         }
 
         private static Sprite LoadSingleSprite(string path)
