@@ -17,24 +17,24 @@ namespace Sapphire.Presentation.Movement
             "재상향(약 2.5배, 0.4s)함.")]
         [SerializeField] private float moveDuration = 0.4f;
 
-        [Tooltip("한 칸 이동 완료 직후 다음 이동을 시작하기 전 두는 짧은 정지 간격. " +
-            "연속 이동 시 '이동 -> 살짝 멈춤 -> 이동'의 칸 단위 리듬을 만들어 자유이동처럼 보이지 않게 한다. " +
-            "2026-09-14 추가.")]
+        [Tooltip("새로 눌러서 시작된 첫 스텝 완료 직후에만 두는 짧은 정지 간격(칸 단위 리듬을 살리기 위함). " +
+            "같은 방향키를 계속 누르고 있어서 이어지는 스텝(isContinuousHold=true)에는 적용하지 않는다 - " +
+            "그래야 길게 누르고 있는 동안 매 칸마다 끊기지 않고 매끄럽게 이어진다. 2026-09-14 추가/조정.")]
         [SerializeField] private float stepPause = 0.04f;
 
         private Coroutine activeMove;
 
-        public void PlayMove(Transform target, WorldPoint from, WorldPoint to, Action onComplete)
+        public void PlayMove(Transform target, WorldPoint from, WorldPoint to, bool isContinuousHold, Action onComplete)
         {
             if (activeMove != null)
             {
                 StopCoroutine(activeMove);
             }
 
-            activeMove = StartCoroutine(MoveRoutine(target, from, to, onComplete));
+            activeMove = StartCoroutine(MoveRoutine(target, from, to, isContinuousHold, onComplete));
         }
 
-        private IEnumerator MoveRoutine(Transform target, WorldPoint from, WorldPoint to, Action onComplete)
+        private IEnumerator MoveRoutine(Transform target, WorldPoint from, WorldPoint to, bool isContinuousHold, Action onComplete)
         {
             Vector3 start = new Vector3(from.X, from.Y, target.position.z);
             Vector3 end = new Vector3(to.X, to.Y, target.position.z);
@@ -50,12 +50,13 @@ namespace Sapphire.Presentation.Movement
 
             target.position = end;
 
-            if (stepPause > 0f)
+            if (!isContinuousHold && stepPause > 0f)
             {
                 // Domain stays IsMoving==true through this wait (onComplete, which calls
                 // GridMover.CompleteMove(), fires only after it) - this is what blocks the
-                // next TryBeginMove and creates the "step -> brief stop -> step" rhythm
-                // instead of the moves chaining into continuous free-roam motion.
+                // next TryBeginMove. Only a freshly-pressed step pauses here; a step that is
+                // itself a continuation of a held key (isContinuousHold) skips this entirely
+                // so held movement chains straight into the next step with no stutter.
                 yield return new WaitForSeconds(stepPause);
             }
 

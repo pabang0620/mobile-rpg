@@ -19,6 +19,12 @@ namespace Sapphire.Presentation.Movement
         private GridMover mover;
         private GridMap map;
 
+        // Tracks the held direction from the previous frame, updated every frame
+        // (even while a move is in progress and Update returns early below) so that
+        // continuity survives the frames where mover.IsMoving blocks input handling.
+        // null means "no direction was held last frame".
+        private GridDirection? previousHeldDirection;
+
         public GridMover Mover => mover;
 
         private void Awake()
@@ -43,12 +49,23 @@ namespace Sapphire.Presentation.Movement
 
         private void Update()
         {
+            bool isDirectionHeld = inputReader.TryGetHeldDirection(out GridDirection direction);
+
+            // Same direction key held on both this frame and the previous one (tracked
+            // unconditionally, so it still counts across the frames a move blocks input
+            // handling below) means this is a continuous hold, not a fresh key press.
+            bool isContinuousHold = isDirectionHeld
+                && previousHeldDirection.HasValue
+                && previousHeldDirection.Value == direction;
+
+            previousHeldDirection = isDirectionHeld ? direction : (GridDirection?)null;
+
             if (mover == null || map == null || mover.IsMoving)
             {
                 return;
             }
 
-            if (!inputReader.TryGetHeldDirection(out GridDirection direction))
+            if (!isDirectionHeld)
             {
                 return;
             }
@@ -68,7 +85,7 @@ namespace Sapphire.Presentation.Movement
             WorldPoint to = GridWorldConversion.GridToWorld(destination);
 
             spriteAnimator?.SetMoving(true);
-            moveAnimator.PlayMove(transform, from, to, OnMoveAnimationComplete);
+            moveAnimator.PlayMove(transform, from, to, isContinuousHold, OnMoveAnimationComplete);
         }
 
         private void OnMoveAnimationComplete()
