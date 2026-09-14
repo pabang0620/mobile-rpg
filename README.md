@@ -16,18 +16,13 @@ Unity 6000.5.9f1 기반 탑다운 2D 액션 RPG 세로 슬라이스. 사파이�
 
 ## 현재 구현 상태 (요약)
 
-`client/Assets/Sapphire/`에 이미 상당 분량이 구현되어 있다 (2026-09-13 세션 산출물). 자세한 현황과 확정 방향과의 격차는 [`docs/HANDOFF.md`](docs/HANDOFF.md)를 본다. 핵심만 요약하면:
+**2026-09-14 정리로 이전 구현(2026-09-13 세션 산출물)은 전부 제거됐다.** 아날로그 자유이동 기반 게임플레이 C# 코드 전체(`Domain/`, `Application/`, `Presentation/`, `Editor/BuildGame.cs`, `Tests/`)와 AI 생성물이 아니고 UI도 아닌 플레이스홀더/커뮤니티 에셋을 삭제했다. 롤백 지점은 git 태그 `pre-cleanup-2026-09-14`. 자세한 내용은 [`docs/HANDOFF.md`](docs/HANDOFF.md)를 본다.
 
-- 마을/집 탐험(`Domain/World/TileWorld`)은 이미 타일 격자 기반으로 동작한다. 다만 이동이 즉시 스냅이라 확정 방향의 짧은 tween은 아직 없다.
-- 필드/던전 전투(`Domain/Combat/CombatWorld`)는 아직 연속 XY 자유 이동(8방향 아날로그)이다. 확정된 격자 스냅 방향으로 옮기는 작업은 별도 후속 구현이다.
-- 화면 스케일링은 자체 제작 `PixelCameraFollow`(pixelsPerUnit=16)를 쓰고 있고, Unity 공식 `com.unity.2d.pixel-perfect` 패키지는 아직 도입되지 않았다.
-- 에셋은 하이브리드 전략 적용 전이다. 현재 아트는 전부 이전 세션의 AI 생성/원본 참고 이미지다. 자세한 내용은 [`docs/ASSET_STATUS.md`](docs/ASSET_STATUS.md).
+`client/Assets/Sapphire/`는 현재 빈 씬(`Scenes/Boot.unity`) 1개, 폰트, 정리된 `Art/`(AI 생성 Mage 아트 + UI 에셋만)만 남은 상태다. **격자 스냅 이동 기반 재구현이 필요하다** - 위 "확정된 기술 방향"에 맞춰 처음부터 새로 만든다. 에셋 현황은 [`docs/ASSET_STATUS.md`](docs/ASSET_STATUS.md).
 
 ## 열기와 빌드
 
-Unity Hub에서 `client` 폴더를 Unity 6000.5.9f1로 연다. 에디터 라이선스를 활성화한 다음 메뉴 또는 batchmode에서 `Sapphire.Editor.BuildGame.BuildAndTest`를 실행한다. 결과는 `client/builds/Windows/SapphireRPG.exe`다.
-
-조작(현재 코드 기준): WASD/방향키 이동, J 공격, 1~4 스킬, Shift 회피, Q/F 물약, T AUTO, E 상호작용, Esc 메뉴. 화면 버튼도 같은 명령을 호출한다.
+Unity Hub에서 `client` 폴더를 Unity 6000.5.9f1로 연다. 빌드 파이프라인(`Editor/BuildGame.cs`)은 이전 코드 구조에 종속적이라 함께 삭제됐으므로, 재구현 시 새로 만들어야 한다(참고할 만한 텍스처 임포트 로직은 `docs/HANDOFF.md`에 메모로 남겨뒀다).
 
 ## 개발 프로세스
 

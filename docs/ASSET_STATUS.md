@@ -20,11 +20,25 @@
 
 ## 이 프로젝트(lighthaven-2d)의 현재 상태
 
-**하이브리드 전략 적용 전이다.** `CREDITS.md`가 아직 없고, `client/Assets/Sapphire/Art/`의 모든 파일은 2026-09-13 세션에서 AI 생성 또는 원본(Lighthaven 기획) 참고로 만든 것들이다. 무료 커뮤니티 팩은 아직 도입되지 않았다.
+**하이브리드 전략 적용 전이다.** `CREDITS.md`가 아직 없다. 무료 커뮤니티 팩은 아직 도입되지 않았다.
+
+### 2026-09-14 정리: 비AI·비UI 플레이스홀더 제거
+
+사용자 지시로 AI 생성물이 아니고 UI도 아닌 에셋을 제거했다. 제거한 것:
+
+- `Art/Enemies/`의 고블린 커뮤니티 스프라이트 6개(`GoblinPixelArtIdle/Run/Attack/Death.png`, `GoblinMonsterSpritesheet32.png`, `GoblinMonsterFrame.png` - CC0 무료팩, 2026-09-13에 받아온 것) 및 폴더 자체
+- `Art/VFX/MagicMissile.png`(무료팩) 및 이제 빈 폴더가 된 `Art/VFX/`
+- `Art/Goblin.png`(플레이스홀더 fallback, AI 생성 여부 불명확)
+- `Art-Backgrounds-Unused-Sidescroll/`(이미 미사용으로 분리해뒀던 폴더 전체 5파일)
+- 시안 단계 배경 4개: `TopdownTown.png`, `MoonshardField.png`, `SapphirePlatformMap.png`, `SapphireTown.png`
+
+**판단 보류(임의로 지우지 않음)**: `MoonCourtyard.png`, `TopdownDungeon.png`, `WorldTiles6x4-v2.png` - 문서에 AI 생성 여부나 폐기 여부가 명시돼 있지 않아 판단이 서지 않았다. 정확한 출처 확인이 필요하면 `lh2d-asset-specialist`에게 위임한다.
+
+유지한 것: Mage 관련 AI 생성 캐릭터 아트 전부(`MageIdle.png`, `MagePortrait.png`, `MagePose*.png`, `MageDirectional.png`, `MageSDDirectional*.png`, `MageWalk4x3-v2.png`, `MageSkills.png`), `Art/UI/` 폴더 전체(`FantasyPanelBorder.png`, `InventoryShopIcons.png`)와 그 외 UI chrome/버튼 이미지(`HudControls.png`, `MainMenuIcons.png`, `MenuPanel.png`, `UiChrome.png`, `WideButton.png`), `Fonts/`.
 
 ### 폴더 실측 (참고, 개별 파일 상태는 미실사 - TBD)
 
-이전 `ASSET_STATUS.md`는 파일별 치수/해시/상태 표를 유지했으나, 이번 재작성 시점에 실제 `Art/` 폴더를 확인한 결과 그 표에 없던 파일이 다수 추가돼 있었다(`Enemies/GoblinMonsterFrame.png`, `Enemies/GoblinPixelArt*.png`, `MageSDDirectional*.png`, `MageWalk4x3-v2.png`, `WorldTiles6x4-v2.png`, `VFX/MagicMissile.png`, `UI/FantasyPanelBorder.png`, `UI/InventoryShopIcons.png` 등). 각 파일이 실제로 게임에서 쓰이는지, 방향/투명도 검사를 통과했는지는 이번 기술 문서 재작성 범위에서 다시 실사하지 않았다 - 지어내지 않고 **TBD로 남긴다.** 정확한 인벤토리가 필요하면 별도 작업으로 `lh2d-asset-specialist`에게 위임해 파일 존재/해시/치수/알파 실측부터 다시 만든다.
+각 파일이 실제로 게임에서 쓰이는지, 방향/투명도 검사를 통과했는지는 이번 정리 범위에서 다시 실사하지 않았다 - 지어내지 않고 **TBD로 남긴다.** 정확한 인벤토리가 필요하면 별도 작업으로 `lh2d-asset-specialist`에게 위임해 파일 존재/해시/치수/알파 실측부터 다시 만든다.
 
 ### 과거 실패 사례 (참고, 알파 검수 근거)
 
@@ -33,7 +47,7 @@
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.
-- 현재 AI 생성 캐릭터/몬스터 아트가 하이브리드 전략의 "정체성 요소"로 유지할 수준인지, 재생성이 필요한지 판단.
+- 현재 AI 생성 캐릭터(Mage) 아트가 하이브리드 전략의 "정체성 요소"로 유지할 수준인지, 재생성이 필요한지 판단. 몬스터 아트는 2026-09-14 정리로 커뮤니티 플레이스홀더가 제거되어 현재 전무하므로 신규 구현 시 처음부터 다시 만들어야 한다.
 - 이 레포에 `CREDITS.md` 신설(CC-BY 팩을 채택하는 즉시).
 - `Art/` 폴더 전체 실사(파일 존재/해시/치수/알파/사용 여부) 및 상태 인벤토리 재구축.
 - 카메라 마이그레이션(`docs/HANDOFF.md` 참고)에 맞춰 타일 크기/PPU 기준으로 에셋 치수 재검토.
