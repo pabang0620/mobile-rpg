@@ -26,3 +26,9 @@ Thumbs.db
 /builds/
 /captures/
 /logs/
+
+# Asset generation staging / debug output (not source, duplicated into client/Assets)
+/generated-images/
+
+# Claude build/test run logs (same nature as /logs/)
+client/_claudelogs/

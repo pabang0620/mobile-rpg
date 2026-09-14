@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Sapphire/Scenes/Boot.unity
+    path: Assets/Sapphire/Scenes/VillageHub.unity
     guid: c0740018f8c61c14bac95e08d2b33132
   m_configObjects: {}
