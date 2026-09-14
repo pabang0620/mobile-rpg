@@ -2,13 +2,41 @@
 
 기술 방향 결정을 날짜순으로 남긴다(최신이 위). 기획 자체(무엇을 만들지)는 `docs/planning/*.md`가 SSOT이고 여기서는 다루지 않는다 - 여기는 "어떻게 구현할지"에 대한 결정만 남긴다.
 
+## 2026-09-14: 캐릭터 스프라이트 시트를 단일 통합 시트(MageTopdownGridSheet.png)로 교체
+
+**결정**: 방향별 유휴(`MageIdleDirectional.png`, 2열x4행)와 이동(`MageWalk4x3-v2.png`, 3열x4행) 두 시트로 나눠 관리하던 방식을 버리고, 하나의 시트(`MageTopdownGridSheet.png`, 1086x1448, 3열(idle/walkA/walkB) x 4행(Down/Left/Right/Up), 셀 362x362)로 통합했다. pivot도 12셀 전부를 개별 하드코딩하지 않고, 실측 결과가 2개 축(정면계열 Down/Left/Right vs 후면 Up, idle·walkA열 vs walkB열)으로만 갈리는 것을 확인해 그룹 단위 pivot 4종(front x normal, front x walkB, back x normal, back x walkB)으로 정리했다.
+
+**근거**: 셀별 알파 바운딩박스 실측(`Read`로 보는 게 아니라 PIL로 알파>128 픽셀의 bbox를 직접 측정) - Down/Left/Right 발위치는 셀 하단 기준 약 97~100% 지점에서 방향 간 편차가 1%p 안팎이고, Up만 약 90% 지점으로 확연히 다르다(후면 로브가 프레임 아래로 더 내려와서). 가로 중심은 idle/walkA가 방향 불문 대체로 50% 근처인 반면 walkB만 방향 불문 좌측으로 5~12%p 치우쳐 있다. 이 패턴이 12셀 전부에 걸쳐 재현되므로 셀마다 다른 pivot을 따로 구하지 않고 그룹화하는 것이 타당하다고 판단했다. 최종 채택값: front pivotY=0.01, back(Up) pivotY=0.10, normal(idle/walkA) pivotX=0.50, walkB pivotX=0.44.
+
+**영향**: `ArtImportConfigurator.ConfigureCharacterSheets()`가 `BuildMageGridSlices` 헬퍼(그룹 pivot 로직) 하나로 단순화됐고, 이전의 `BuildDirectionalGridSlices`(호출자가 12개 pivot을 전부 넘겨야 했던 범용 헬퍼, 사용처가 이제 없음)는 제거했다. `DirectionalSpriteAnimator`는 방향당 Sprite[] 2~3개 배열 대신 idle/walkA/walkB 각 1장씩 단일 Sprite 필드로 재설계했고, 이동 애니메이션은 idle→walkA→idle→walkB 4프레임 순환으로 바뀌었다(정지 시엔 여전히 idle 열 1프레임 고정, 애니메이션 루프 없음 - 이 요구사항은 유지). `SapphireSceneBuilder.BuildPlayer()`도 새 시트/필드명에 맞춰 스프라이트 로딩 코드를 갱신했다. 구 시트 2개(`MageIdleDirectional.png`, `MageWalk4x3-v2.png`)와 각 `.meta`는 참조하는 코드가 더 없음을 grep으로 확인한 뒤 `git rm`으로 삭제했다.
+
+## 2026-09-14: GridWorldConversion 코너 vs 중앙 버그 수정
+
+**버그 수정 기록** (설계 결정이 아니라 실측으로 확인한 결함 수정): `GridWorldConversion.GridToWorld`가 `coord * CellSize`(셀의 좌하단 코너)를 반환하던 것을 `(coord + 0.5) * CellSize`(셀 중앙)로 고쳤다. 이전 공식대로면 플레이어·스킬 범위 마커 등 격자 기반 위치가 항상 타일 4개가 만나는 코너 위에 그려져 "타일 경계에 걸쳐 서 있는 것처럼 보인다"는 증상이 났다. `VillageHubTerrainBuilder`의 펜스/사인포스트 배치도 같은 코너 좌표를 직접 재계산하던 중복 코드였던 것을 걷어내고 `GridWorldConversion` 하나로 위임하도록 정리했다(같은 버그가 여러 곳에 중복 존재하는 것을 막기 위함).
+
+**영향**: `GridWorldConversionTests`도 코너가 아니라 중앙 좌표를 기대하도록 케이스를 갱신했다. Unity `Tilemap.CellToWorld`는 코너를 반환하므로 `GridToWorld`가 그 값을 그대로 재사용하지 않는다는 점을 클래스 doc comment에 남겼다.
+
+## 2026-09-14: 이동 속도·정지 간격, 카메라 PPU 최종값 확정
+
+**결정**: 격자 스냅 이동의 tween 지속시간을 초안값(0.08s → 0.16s)에서 재상향해 `moveDuration=0.4s`로 확정했다(한 칸 이동이 자유이동처럼 보이지 않고 눈에 확실히 보이도록). 한 칸 이동 완료 후 `stepPause=0.04s`를 추가로 둬서 "이동 → 살짝 멈춤 → 이동"의 칸 단위 리듬을 만들었다. 카메라는 `PixelPerfectCamera.assetsPPU`를 20 → 100 → 72 순으로 재조정해 최종 72로 확정했다(참고 해상도 720x1280에서 가로 10칸이 보이는 밀도 - 바람의나라/포켓몬 골드 스타일 목표치에 부합).
+
+**근거**: 사용자 피드백을 거쳐 반복 조정했다 - 0.08s/0.16s는 여전히 자유이동처럼 보인다는 피드백, assetsPPU=20은 타일/캐릭터가 너무 작다는 피드백, assetsPPU=100은 한 칸 이동이 화면을 과하게 잠식해 보인다는 피드백. 스프라이트 임포트 PPU(구 320/302, 이제 통합 시트의 302 하나)는 캐릭터의 월드 공간 크기만 결정하고 화면 스케일과는 독립적이라는 점을 `SapphireSceneBuilder.BuildCamera()` 주석에 남겼다.
+
+**현재 코드 상태**: `GridMoveAnimator.moveDuration=0.4f`, `stepPause=0.04f`(둘 다 인스펙터 노출 필드, 폴리싱 시 조정 가능). 카메라는 아래 2026-09-14 "화면 스케일링" 결정대로 `com.unity.2d.pixel-perfect`의 `PixelPerfectCamera`를 실제로 쓰고 있고(자체 제작 코드가 아님 - 아래 항목의 "현재 코드 상태" 서술은 이 값으로 갱신됨), `assetsPPU=72`, `refResolutionX/Y=720/1280`, `pixelSnapping=false`(페인터리 AI 아트라 스냅 지터 방지 목적).
+
+## 2026-09-14: GroundTiles 아틀라스 재생성 (내부 균일성 버그)
+
+**버그 수정 기록**: 이전 "hq" 1024x1024 셀 아틀라스가 셀 내부가 4개의 서로 다른 512x512 서브이미지로 구성돼 있던 것(솔기만의 문제가 아니라 실제 내용 차이 - 사분면 간 평균 절대 RGB 차이 실측 약 39-49)을 발견해, 1536x1024 3x2 그리드(잔디 3종 + 흙 3종, 셀당 진짜 균일한 512x512 텍스처)로 아틀라스 전체를 재생성했다. 재생성 후 사분면 간 차이는 약 17-25로 정상 범위(기존 정상 참고 에셋 ~25와 동급)로 떨어졌고, 타일링 시 이음매도 랩어라운드 비율 약 1.0-1.1x(재생성 전 1.8-2.4x)로 해소를 확인했다.
+
+**영향**: 셀 전체를 그대로 슬라이스하는 방식(ppu=512, 셀 높이/너비와 동일해 1타일=1월드유닛)으로 되돌렸다 - 이전에 512x512 서브영역만 잘라 쓰던 임시방편은 더 이상 필요 없다.
+
 ## 2026-09-14: 이동 방식을 격자(타일) 스냅 이동으로 확정
 
 **결정**: 캐릭터 이동은 자유로운 아날로그 XY 이동이 아니라, 방향 입력 1회(또는 꾹 눌렀을 때 반복 틱 1회)마다 정확히 타일 1칸만 이동하는 격자 스냅 방식으로 한다. 짧은 tween(약 0.05~0.1초, 정확한 값은 폴리싱 단계에서 재조정)으로 부드럽게 스냅하고, 이동 중에는 새 입력을 무시해 여러 칸이 겹쳐 밀리지 않게 한다. 목표 조작감은 바람의나라/제노니아/포켓몬 골드 스타일의 클래식 탑다운.
 
 **근거**: 별도 실험 프로젝트 `../topdown-asset-mvp/`(`client/Assets/Scripts/PlayerMovement.cs`)에서 실제로 구현·테스트해 확정. 그 구현은 half-tile 단위 스텝(`stepDuration=0.082s`, `repeatDelay=0.034s`)으로 이동 중 애니메이션이 더 매끄럽게 보이도록 했다 - 실제 타일 그리드 크기 자체는 그대로 두고 스텝 거리만 절반으로 나눈 방식이다. 이 세부 파라미터는 참고값이고 본 프로젝트에 그대로 이식할지는 마이그레이션 시점에 다시 정한다.
 
-**현재 코드 상태**: `Domain/Combat/CombatWorld`(필드/던전 전투 중 이동)는 아직 연속 XY 자유 이동(8방향 아날로그, `Vec2` 기반 `Step`)이다. 반대로 `Domain/World/TileWorld`(마을/탐험 이동)는 이미 타일 좌표(`TileCoord`) 기반으로 동작하고 있었다 - 다만 이동이 즉시 스냅이라 이번에 확정한 짧은 tween은 아직 없다. 즉 탐험 이동은 격자 개념 자체는 이미 있었고, 전투 이동은 완전히 새로 갈아엎어야 한다. 이 마이그레이션은 별도 후속 구현 작업이다.
+**현재 코드 상태 (2026-09-14 갱신, 구현 완료)**: 이 단락이 서술하던 `Domain/Combat/CombatWorld`·`Domain/World/TileWorld`(연속 XY 자유 이동 기반)는 이후 `docs/HANDOFF.md`의 "이전 구현 전체 제거" 정리로 코드베이스에서 완전히 삭제되고, `Domain/Grid`(`GridCoord`/`GridDirection`/`GridMover`/`GridWorldConversion`) 네임스페이스로 처음부터 다시 구현됐다. 방향 입력 1회 = 정확히 1칸 이동, `GridMoveAnimator`가 `moveDuration=0.4s` tween + `stepPause=0.04s`로 스냅을 부드럽게 만든다(값 확정 근거는 아래 "이동 속도·정지 간격, 카메라 PPU 최종값 확정" 항목). 이동 중 새 입력은 무시된다(`GridMover`가 `IsMoving` 동안 `TryBeginMove` 거절). VillageHub 씬에서 실제로 동작하며 `GridMoverTests` 등 EditMode 테스트로 회귀 검증된다.
 
 **초래하는 영향**: `docs/planning/02_SYSTEM_CONTRACTS.md`가 명시한 "월드는 XY 평면, 중력/점프 없음... 8방향 이동"이라는 표현은 여전히 유효하다(8방향이라는 것과 중력 없음은 격자 이동에서도 그대로 성립). 다만 그 문서가 전제하는 연속 이동/충돌 해소 방식(반경 0.22 원, 축별 충돌 해소 등)은 격자 스냅 이동에서는 그대로 쓰기 어렵다. 이 계약을 실제로 어떻게 재정의할지는 마이그레이션 착수 시점에 별도 결정으로 남긴다 - 기획 문서 자체는 고치지 않는다.
 
@@ -18,7 +46,7 @@
 
 **근거**: `../topdown-asset-mvp/client/Assets/Scenes/MainScene.unity`와 `Assets/Editor/BuildMvp.cs`에서 `assetsPPU=20`, `refResolutionX=720`, `refResolutionY=1280`으로 실제 구성해 확인. 참고 해상도이며 최종 값은 폴리싱 단계에서 조정한다.
 
-**현재 코드 상태**: 이 프로젝트(`lighthaven-2d`)는 아직 `com.unity.2d.pixel-perfect` 패키지를 쓰지 않는다. 대신 자체 제작한 `Presentation/Exploration/PixelCameraFollow.cs`(`pixelsPerUnit=16`로 수동 라운딩하는 방식)를 쓰고 있다. 공식 패키지로 교체하는 것은 별도 후속 작업이다.
+**현재 코드 상태 (2026-09-14 갱신, 마이그레이션 완료)**: 자체 제작 `PixelCameraFollow`는 격자 이동 구현 과정에서 완전히 제거됐다. `SapphireSceneBuilder.BuildCamera()`가 공식 `com.unity.2d.pixel-perfect` 패키지의 `PixelPerfectCamera`를 직접 붙이고, `assetsPPU=72`(참고치였던 20에서 최종 확정), `refResolutionX/Y=720/1280`, `upscaleRT=false`, `pixelSnapping=false`, `cropFrameX/Y=false`, `stretchFill=false`로 설정한다. 최종 PPU 값과 근거는 바로 아래 2026-09-14 "이동 속도·정지 간격, 카메라 PPU 최종값 확정" 항목 참고.
 
 ## 2026-09-14: 에셋 전략을 하이브리드(무료 팩 + AI 생성)로 확정
 

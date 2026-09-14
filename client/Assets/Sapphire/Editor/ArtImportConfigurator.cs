@@ -89,61 +89,41 @@ namespace Sapphire.EditorTools
 
         private static void ConfigureCharacterSheets()
         {
-            // 2026-09-14 measured alpha bounding box per frame (both width AND
-            // height, not just height as before). Overall size check: max width
-            // across all frames = 0.87 units (idle) / 0.82 units (walk), both
-            // <= 1 unit - no PPU change needed. Max height = 1.20 units (idle) /
-            // 1.18 units (walk), within the 1.0-1.5 target band - no PPU change
-            // needed either. ppu values below (320, 302) are therefore unchanged
-            // from before.
+            // 2026-09-14: replaced the two separate idle (MageIdleDirectional.png)
+            // and walk (MageWalk4x3-v2.png) sheets with a single unified sheet,
+            // MageTopdownGridSheet.png (1086x1448, 3 columns x 4 rows, 362x362
+            // cells). Columns are idle/walkA/walkB; rows are Down/Left/Right/Up
+            // (see BuildMageGridSlices). PPU=302 is carried over unchanged from
+            // the old walk sheet (same 362px cell size -> 362/302 ~= 1.2 world
+            // units tall, within the previously-verified 1.0-1.5 unit target band).
             //
-            // Pivot: a single uniform (0.5, 0) pivot per sheet (previous behavior)
-            // does NOT correctly center every frame - measured per-frame alpha
-            // bbox shows the character art is not horizontally centered within its
-            // cell (idle frames offset by up to +-0.21 units from cell-center) and,
-            // more importantly, does not consistently touch the cell's bottom edge
-            // (idle Up-facing frames leave a 61px / 0.19-unit gap between the
-            // character's feet and the cell bottom - Down/Left/Right leave 0px; walk
-            // sheet leaves 0-48px / 0-0.16 units depending on direction). With a
-            // single shared pivot, this makes the character visually float above
-            // the tile by a direction-dependent amount and jitter left/right
-            // between animation frames - a plausible cause of "걸쳐 있는 것처럼
-            // 보인다" (looks like it's straddling tiles). Fixed by giving every
-            // slice its own custom pivot computed
-            // from that frame's own measured bbox (center-x, bottom-y), so the
-            // character's feet are pinned to the tile's floor and its body stays
-            // horizontally centered on the tile for every direction and frame.
+            // Pivot: measured per-cell alpha bounding box (center-x, bottom-y)
+            // across all 12 cells instead of hardcoding one pivot per cell
+            // (12 one-off values, previous approach). The measurements cluster
+            // into just two independent groups instead of being random per-cell:
+            //
+            // - Foot baseline (pivot Y): Down/Left/Right feet sit at ~97-100% down
+            //   the cell and are within a fraction of a percentage point of each
+            //   other - one shared "front" pivot Y covers all three. Up (the only
+            //   back-facing row) sits higher, ~90% down the cell (the robe/cloak
+            //   drawn from behind extends lower into the frame) - one shared
+            //   "back" pivot Y covers it alone.
+            // - Horizontal center (pivot X): idle and walkA columns are both
+            //   close to the cell's horizontal center (~49-57%) regardless of
+            //   direction, so they share one "normal" pivot X. walkB is
+            //   consistently offset left by ~5-12 percentage points in every
+            //   direction, so it gets its own "walkB" pivot X.
+            //
+            // That gives 2 (Y groups) x 2 (X groups) = 4 pivot combinations total,
+            // reused across all 12 cells by (row, column) group membership - see
+            // BuildMageGridSlices.
             ConfigureMultiSprite(
-                SapphireSceneBuilder.RootArtDir + "/MageIdleDirectional.png",
-                ppu: 320,
-                filterMode: FilterMode.Bilinear,
-                mipmaps: true,
-                maxSize: null,
-                slices: BuildDirectionalGridSlices(1024, 1536, columns: 2, rows: 4, cellW: 512, cellH: 384, prefix: "MageIdle",
-                    pivotsRowMajor: new[]
-                    {
-                        new Vector2(0.6045f, 0.0000f), new Vector2(0.3896f, 0.0000f), // Down_0, Down_1
-                        new Vector2(0.6035f, 0.0000f), new Vector2(0.3926f, 0.0000f), // Left_0, Left_1
-                        new Vector2(0.6309f, 0.0000f), new Vector2(0.3955f, 0.0000f), // Right_0, Right_1
-                        new Vector2(0.6328f, 0.1589f), new Vector2(0.4014f, 0.1589f), // Up_0, Up_1
-                    }));
-
-            // Walk sheet: 1086x1448, 4 rows (Down/Left/Right/Up) x 3 columns (frames).
-            // PPU=302 -> 362px cell / 302 ~= 1.2 world units tall, matching idle above.
-            ConfigureMultiSprite(
-                SapphireSceneBuilder.RootArtDir + "/MageWalk4x3-v2.png",
+                SapphireSceneBuilder.RootArtDir + "/MageTopdownGridSheet.png",
                 ppu: 302,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: true,
                 maxSize: null,
-                slices: BuildDirectionalGridSlices(1086, 1448, columns: 3, rows: 4, cellW: 362, cellH: 362, prefix: "MageWalk",
-                    pivotsRowMajor: new[]
-                    {
-                        new Vector2(0.5111f, 0.0221f), new Vector2(0.4793f, 0.0221f), new Vector2(0.4683f, 0.0221f), // Down_0..2
-                        new Vector2(0.5055f, 0.0801f), new Vector2(0.4793f, 0.0801f), new Vector2(0.4710f, 0.0801f), // Left_0..2
-                        new Vector2(0.5552f, 0.0000f), new Vector2(0.4931f, 0.0000f), new Vector2(0.4696f, 0.0000f), // Right_0..2
-                        new Vector2(0.5510f, 0.1022f), new Vector2(0.5193f, 0.1326f), new Vector2(0.4876f, 0.1022f), // Up_0..2
-                    }));
+                slices: BuildMageGridSlices(1086, 1448, cellSize: 362));
         }
 
         private static void ConfigureUiFrames()
@@ -191,29 +171,46 @@ namespace Sapphire.EditorTools
                 });
         }
 
-        private static IEnumerable<(string name, Rect rect, Vector2 pivot)> BuildDirectionalGridSlices(
-            int textureWidth, int textureHeight, int columns, int rows, int cellW, int cellH, string prefix,
-            Vector2[] pivotsRowMajor)
+        private static IEnumerable<(string name, Rect rect, Vector2 pivot)> BuildMageGridSlices(
+            int textureWidth, int textureHeight, int cellSize)
         {
             // Row order top-to-bottom in the source image: Down, Left, Right, Up.
+            // Column order left-to-right: idle, walkA, walkB.
             string[] rowNames = { "Down", "Left", "Right", "Up" };
-            var result = new List<(string, Rect, Vector2)>();
+            string[] colNames = { "Idle", "WalkA", "WalkB" };
 
-            if (pivotsRowMajor.Length != rows * columns)
+            // Pivot Y group: front-facing rows (Down/Left/Right) share one value,
+            // the back-facing row (Up) gets its own - see ConfigureCharacterSheets
+            // for the measurement this is based on. Pivot is Unity's bottom-up
+            // normalized coordinate, so "closer to the cell's bottom edge" == "closer to 0".
+            const float frontPivotY = 0.01f;
+            const float backPivotY = 0.10f;
+
+            // Pivot X group: idle/walkA share one centered value, walkB shares a
+            // separate value offset left of center.
+            const float normalPivotX = 0.50f;
+            const float walkBPivotX = 0.44f;
+
+            if (textureWidth != cellSize * colNames.Length || textureHeight != cellSize * rowNames.Length)
             {
-                throw new Exception($"pivotsRowMajor length {pivotsRowMajor.Length} does not match rows*columns {rows * columns} for {prefix}");
+                throw new Exception($"MageTopdownGridSheet grid size mismatch: expected {cellSize * colNames.Length}x{cellSize * rowNames.Length}, got {textureWidth}x{textureHeight}");
             }
 
-            for (int r = 0; r < rows; r++)
+            var result = new List<(string, Rect, Vector2)>();
+            for (int r = 0; r < rowNames.Length; r++)
             {
+                bool isBackRow = rowNames[r] == "Up";
+                float pivotY = isBackRow ? backPivotY : frontPivotY;
                 // Unity rects are bottom-up; row 0 (Down) is the topmost row in the image.
-                float yBottom = textureHeight - (r + 1) * cellH;
-                for (int c = 0; c < columns; c++)
+                float yBottom = textureHeight - (r + 1) * cellSize;
+
+                for (int c = 0; c < colNames.Length; c++)
                 {
-                    float xLeft = c * cellW;
-                    string name = $"{prefix}_{rowNames[r]}_{c}";
-                    Vector2 pivot = pivotsRowMajor[r * columns + c];
-                    result.Add((name, new Rect(xLeft, yBottom, cellW, cellH), pivot));
+                    bool isWalkBColumn = colNames[c] == "WalkB";
+                    float pivotX = isWalkBColumn ? walkBPivotX : normalPivotX;
+                    float xLeft = c * cellSize;
+                    string name = $"Mage_{rowNames[r]}_{colNames[c]}";
+                    result.Add((name, new Rect(xLeft, yBottom, cellSize, cellSize), new Vector2(pivotX, pivotY)));
                 }
             }
 

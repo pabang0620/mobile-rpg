@@ -34,7 +34,11 @@
 
 **판단 보류(임의로 지우지 않음)**: `MoonCourtyard.png`, `TopdownDungeon.png`, `WorldTiles6x4-v2.png` - 문서에 AI 생성 여부나 폐기 여부가 명시돼 있지 않아 판단이 서지 않았다. 정확한 출처 확인이 필요하면 `lh2d-asset-specialist`에게 위임한다.
 
-유지한 것: Mage 관련 AI 생성 캐릭터 아트 전부(`MageIdle.png`, `MagePortrait.png`, `MagePose*.png`, `MageDirectional.png`, `MageSDDirectional*.png`, `MageWalk4x3-v2.png`, `MageSkills.png`), `Art/UI/` 폴더 전체(`FantasyPanelBorder.png`, `InventoryShopIcons.png`)와 그 외 UI chrome/버튼 이미지(`HudControls.png`, `MainMenuIcons.png`, `MenuPanel.png`, `UiChrome.png`, `WideButton.png`), `Fonts/`.
+유지한 것: Mage 관련 AI 생성 캐릭터 아트 전부(`MageIdle.png`, `MagePortrait.png`, `MagePose*.png`, `MageDirectional.png`, `MageSDDirectional*.png`, `MageSkills.png` - 목록은 이번 정리 시점 기준, 아래 2026-09-14 갱신 참고), `Art/UI/` 폴더 전체(`FantasyPanelBorder.png`, `InventoryShopIcons.png`)와 그 외 UI chrome/버튼 이미지(`HudControls.png`, `MainMenuIcons.png`, `MenuPanel.png`, `UiChrome.png`, `WideButton.png`), `Fonts/`.
+
+### 2026-09-14 갱신: 캐릭터 시트를 단일 통합 시트로 교체
+
+`MageIdleDirectional.png`(2열x4행 유휴 시트)와 `MageWalk4x3-v2.png`(3열x4행 이동 시트) 2개를 폐기하고, `MageTopdownGridSheet.png`(1086x1448, 3열(idle/walkA/walkB) x 4행(Down/Left/Right/Up), 셀 362x362) 단일 시트로 교체했다. 실제 사용 중인 캐릭터 시트는 이제 이 파일 하나뿐이다 - `MageIdle.png`, `MageDirectional.png`, `MageSDDirectional*.png` 등 위 문단이 나열하는 나머지 Mage 원화/시안 파일들은 게임플레이 코드가 참조하지 않는 참고용 원본으로 그대로 둔다(이번 정리에서 손대지 않음). Pivot은 `ArtImportConfigurator.ConfigureCharacterSheets()`가 그룹 단위(전면계열/후면 x idle·walkA/walkB, 4가지 조합)로 적용한다 - 자세한 실측 근거는 `docs/DECISIONS.md`의 "캐릭터 스프라이트 시트를 단일 통합 시트로 교체" 항목.
 
 ### 폴더 실측 (참고, 개별 파일 상태는 미실사 - TBD)
 
@@ -50,4 +54,5 @@
 - 현재 AI 생성 캐릭터(Mage) 아트가 하이브리드 전략의 "정체성 요소"로 유지할 수준인지, 재생성이 필요한지 판단. 몬스터 아트는 2026-09-14 정리로 커뮤니티 플레이스홀더가 제거되어 현재 전무하므로 신규 구현 시 처음부터 다시 만들어야 한다.
 - 이 레포에 `CREDITS.md` 신설(CC-BY 팩을 채택하는 즉시).
 - `Art/` 폴더 전체 실사(파일 존재/해시/치수/알파/사용 여부) 및 상태 인벤토리 재구축.
-- 카메라 마이그레이션(`docs/HANDOFF.md` 참고)에 맞춰 타일 크기/PPU 기준으로 에셋 치수 재검토.
+- ~~카메라 마이그레이션에 맞춰 타일 크기/PPU 기준으로 에셋 치수 재검토~~ - 2026-09-14 완료: 카메라 `assetsPPU=72`, 캐릭터 시트 `ppu=302`, 지형 아틀라스 `ppu=512`로 전부 확정(`docs/DECISIONS.md` 참고).
+- 몬스터 아트는 여전히 전무하다 - 신규 전투 콘텐츠 착수 시 하이브리드 전략에 따라 처음부터 제작 필요.

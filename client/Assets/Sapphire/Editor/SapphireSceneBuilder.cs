@@ -107,19 +107,26 @@ namespace Sapphire.EditorTools
         // --- Player ---
         private static (PlayerGridController controller, PlayerInputReader inputReader, SkillCastFeedback castFeedback) BuildPlayer()
         {
-            Sprite[] idleUp = { LoadNamedSprite(RootArtDir + "/MageIdleDirectional.png", "MageIdle_Up_0"), LoadNamedSprite(RootArtDir + "/MageIdleDirectional.png", "MageIdle_Up_1") };
-            Sprite[] idleDown = { LoadNamedSprite(RootArtDir + "/MageIdleDirectional.png", "MageIdle_Down_0"), LoadNamedSprite(RootArtDir + "/MageIdleDirectional.png", "MageIdle_Down_1") };
-            Sprite[] idleLeft = { LoadNamedSprite(RootArtDir + "/MageIdleDirectional.png", "MageIdle_Left_0"), LoadNamedSprite(RootArtDir + "/MageIdleDirectional.png", "MageIdle_Left_1") };
-            Sprite[] idleRight = { LoadNamedSprite(RootArtDir + "/MageIdleDirectional.png", "MageIdle_Right_0"), LoadNamedSprite(RootArtDir + "/MageIdleDirectional.png", "MageIdle_Right_1") };
+            const string sheet = RootArtDir + "/MageTopdownGridSheet.png";
 
-            Sprite[] walkUp = { LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Up_0"), LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Up_1"), LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Up_2") };
-            Sprite[] walkDown = { LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Down_0"), LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Down_1"), LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Down_2") };
-            Sprite[] walkLeft = { LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Left_0"), LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Left_1"), LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Left_2") };
-            Sprite[] walkRight = { LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Right_0"), LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Right_1"), LoadNamedSprite(RootArtDir + "/MageWalk4x3-v2.png", "MageWalk_Right_2") };
+            Sprite idleUp = LoadNamedSprite(sheet, "Mage_Up_Idle");
+            Sprite idleDown = LoadNamedSprite(sheet, "Mage_Down_Idle");
+            Sprite idleLeft = LoadNamedSprite(sheet, "Mage_Left_Idle");
+            Sprite idleRight = LoadNamedSprite(sheet, "Mage_Right_Idle");
+
+            Sprite walkAUp = LoadNamedSprite(sheet, "Mage_Up_WalkA");
+            Sprite walkADown = LoadNamedSprite(sheet, "Mage_Down_WalkA");
+            Sprite walkALeft = LoadNamedSprite(sheet, "Mage_Left_WalkA");
+            Sprite walkARight = LoadNamedSprite(sheet, "Mage_Right_WalkA");
+
+            Sprite walkBUp = LoadNamedSprite(sheet, "Mage_Up_WalkB");
+            Sprite walkBDown = LoadNamedSprite(sheet, "Mage_Down_WalkB");
+            Sprite walkBLeft = LoadNamedSprite(sheet, "Mage_Left_WalkB");
+            Sprite walkBRight = LoadNamedSprite(sheet, "Mage_Right_WalkB");
 
             var playerGo = new GameObject("Player", typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(PlayerGridController));
             playerGo.transform.position = CellCenter(SpawnX, SpawnY);
-            playerGo.GetComponent<SpriteRenderer>().sprite = idleDown[0];
+            playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
             playerGo.GetComponent<SpriteRenderer>().sortingOrder = 0;
 
             var spriteAnimator = playerGo.GetComponent<DirectionalSpriteAnimator>();
@@ -127,10 +134,14 @@ namespace Sapphire.EditorTools
             AssignField(spriteAnimator, "idleDown", idleDown);
             AssignField(spriteAnimator, "idleLeft", idleLeft);
             AssignField(spriteAnimator, "idleRight", idleRight);
-            AssignField(spriteAnimator, "walkUp", walkUp);
-            AssignField(spriteAnimator, "walkDown", walkDown);
-            AssignField(spriteAnimator, "walkLeft", walkLeft);
-            AssignField(spriteAnimator, "walkRight", walkRight);
+            AssignField(spriteAnimator, "walkAUp", walkAUp);
+            AssignField(spriteAnimator, "walkADown", walkADown);
+            AssignField(spriteAnimator, "walkALeft", walkALeft);
+            AssignField(spriteAnimator, "walkARight", walkARight);
+            AssignField(spriteAnimator, "walkBUp", walkBUp);
+            AssignField(spriteAnimator, "walkBDown", walkBDown);
+            AssignField(spriteAnimator, "walkBLeft", walkBLeft);
+            AssignField(spriteAnimator, "walkBRight", walkBRight);
 
             var playerController = playerGo.GetComponent<PlayerGridController>();
             AssignField(playerController, "moveAnimator", playerGo.GetComponent<GridMoveAnimator>());

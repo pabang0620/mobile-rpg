@@ -4,29 +4,39 @@ using Sapphire.Domain.Grid;
 namespace Sapphire.Presentation.Movement
 {
     /// <summary>
-    /// Swaps a SpriteRenderer's frame based on facing/moving state. Idle
-    /// state is a static pose - only frame 0 of the idle set is ever shown
-    /// (2026-09-14: grid movement made a looping idle animation unnecessary,
-    /// so the idle breathing frame is no longer cycled). Moving state still
-    /// loops the 3-frame walk cycle. Frame arrays are assigned in the
-    /// inspector by the scene builder - no Domain dependency.
+    /// Swaps a SpriteRenderer's frame based on facing/moving state, sourced
+    /// from the single MageTopdownGridSheet.png sheet (3 columns: idle/walkA/
+    /// walkB, 4 rows: Down/Left/Right/Up - see ArtImportConfigurator). Idle
+    /// state is a static pose - only the idle column frame is ever shown
+    /// while not moving (2026-09-14: grid movement made a looping idle
+    /// animation unnecessary). Moving state cycles idle -> walkA -> idle ->
+    /// walkB so the walk animation returns to the neutral pose between steps
+    /// instead of jumping directly from one step pose to the other. Frame
+    /// sprites are assigned in the inspector by the scene builder - no
+    /// Domain dependency.
     /// </summary>
     [RequireComponent(typeof(SpriteRenderer))]
     public class DirectionalSpriteAnimator : MonoBehaviour
     {
         [SerializeField] private float framesPerSecond = 8f;
 
-        [Header("Idle (MageIdleDirectional.png, 2 frames per direction - only frame 0 used)")]
-        [SerializeField] private Sprite[] idleUp = new Sprite[0];
-        [SerializeField] private Sprite[] idleDown = new Sprite[0];
-        [SerializeField] private Sprite[] idleLeft = new Sprite[0];
-        [SerializeField] private Sprite[] idleRight = new Sprite[0];
+        [Header("Idle column (MageTopdownGridSheet.png)")]
+        [SerializeField] private Sprite idleUp;
+        [SerializeField] private Sprite idleDown;
+        [SerializeField] private Sprite idleLeft;
+        [SerializeField] private Sprite idleRight;
 
-        [Header("Walk (MageWalk4x3-v2.png, 3 frames per direction)")]
-        [SerializeField] private Sprite[] walkUp = new Sprite[0];
-        [SerializeField] private Sprite[] walkDown = new Sprite[0];
-        [SerializeField] private Sprite[] walkLeft = new Sprite[0];
-        [SerializeField] private Sprite[] walkRight = new Sprite[0];
+        [Header("WalkA column (MageTopdownGridSheet.png)")]
+        [SerializeField] private Sprite walkAUp;
+        [SerializeField] private Sprite walkADown;
+        [SerializeField] private Sprite walkALeft;
+        [SerializeField] private Sprite walkARight;
+
+        [Header("WalkB column (MageTopdownGridSheet.png)")]
+        [SerializeField] private Sprite walkBUp;
+        [SerializeField] private Sprite walkBDown;
+        [SerializeField] private Sprite walkBLeft;
+        [SerializeField] private Sprite walkBRight;
 
         private SpriteRenderer spriteRenderer;
         private GridDirection facing = GridDirection.Down;
@@ -34,9 +44,33 @@ namespace Sapphire.Presentation.Movement
         private float frameTimer;
         private int frameIndex;
 
+        // Precomputed per-direction frame sets, built once in Awake from the
+        // serialized single sprites above so Update()/ApplyFrame() never
+        // allocate. Idle sets are a single frame; moving sets are the
+        // idle -> walkA -> idle -> walkB cycle.
+        private Sprite[] idleFramesUp;
+        private Sprite[] idleFramesDown;
+        private Sprite[] idleFramesLeft;
+        private Sprite[] idleFramesRight;
+        private Sprite[] movingFramesUp;
+        private Sprite[] movingFramesDown;
+        private Sprite[] movingFramesLeft;
+        private Sprite[] movingFramesRight;
+
         private void Awake()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
+
+            idleFramesUp = new[] { idleUp };
+            idleFramesDown = new[] { idleDown };
+            idleFramesLeft = new[] { idleLeft };
+            idleFramesRight = new[] { idleRight };
+
+            movingFramesUp = new[] { idleUp, walkAUp, idleUp, walkBUp };
+            movingFramesDown = new[] { idleDown, walkADown, idleDown, walkBDown };
+            movingFramesLeft = new[] { idleLeft, walkALeft, idleLeft, walkBLeft };
+            movingFramesRight = new[] { idleRight, walkARight, idleRight, walkBRight };
+
             ApplyFrame();
         }
 
@@ -68,9 +102,9 @@ namespace Sapphire.Presentation.Movement
 
         private void Update()
         {
-            // Idle has no animation loop - it stays locked on frame 0 (set by
-            // ApplyFrame on the SetFacing/SetMoving transition). Only the
-            // walk cycle needs to keep advancing frames every tick.
+            // Idle has no animation loop - it stays locked on the idle column
+            // frame (set by ApplyFrame on the SetFacing/SetMoving transition).
+            // Only the moving state needs to keep advancing frames every tick.
             if (!isMoving)
             {
                 return;
@@ -113,15 +147,15 @@ namespace Sapphire.Presentation.Movement
             switch (facing)
             {
                 case GridDirection.Up:
-                    return isMoving ? walkUp : idleUp;
+                    return isMoving ? movingFramesUp : idleFramesUp;
                 case GridDirection.Down:
-                    return isMoving ? walkDown : idleDown;
+                    return isMoving ? movingFramesDown : idleFramesDown;
                 case GridDirection.Left:
-                    return isMoving ? walkLeft : idleLeft;
+                    return isMoving ? movingFramesLeft : idleFramesLeft;
                 case GridDirection.Right:
-                    return isMoving ? walkRight : idleRight;
+                    return isMoving ? movingFramesRight : idleFramesRight;
                 default:
-                    return idleDown;
+                    return idleFramesDown;
             }
         }
     }
