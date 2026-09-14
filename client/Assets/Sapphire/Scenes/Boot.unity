@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1275527944
+--- !u!1 &42711765
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,9 +127,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1275527947}
-  - component: {fileID: 1275527946}
-  - component: {fileID: 1275527945}
+  - component: {fileID: 42711768}
+  - component: {fileID: 42711767}
+  - component: {fileID: 42711766}
   m_Layer: 0
   m_Name: Sapphire RPG
   m_TagString: Untagged
@@ -137,19 +137,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1275527945
+--- !u!114 &42711766
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275527944}
+  m_GameObject: {fileID: 42711765}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bdbd54241860324ba65bba0040d9a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sapphire.GamePresenter
   Art:
+  - {fileID: 2800000, guid: 3ec389d06c34aa94ca08c9fbc5ce2386, type: 3}
+  - {fileID: 2800000, guid: 9afcee323d52f4643bc7783b146aaa40, type: 3}
+  - {fileID: 2800000, guid: 4b4fd611fe0560341937a13e015617a8, type: 3}
+  - {fileID: 2800000, guid: 2c51dbc7a69dc044490b08f75ea6b63c, type: 3}
+  - {fileID: 2800000, guid: 16aef695133e02a418fd14d903bdb55b, type: 3}
+  - {fileID: 2800000, guid: 7a2856f0b2f57e84ca55312aa0e4be27, type: 3}
   - {fileID: 2800000, guid: 53bd3504fe00e0d4185bda91587e8010, type: 3}
   - {fileID: 2800000, guid: c17d995f51acfaf439782468babad4fd, type: 3}
   - {fileID: 2800000, guid: 83f91bf7fffae604e81b521bbe30cf9d, type: 3}
@@ -169,17 +175,20 @@ MonoBehaviour:
   - {fileID: 2800000, guid: c1f1863e4c02e3042a7ec9b17a937a41, type: 3}
   - {fileID: 2800000, guid: 3d4462a9664f88b40b6e3d1d3059887d, type: 3}
   - {fileID: 2800000, guid: 118a0a828b03d794caa788d248bb30d2, type: 3}
+  - {fileID: 2800000, guid: 95ec3bd3c61310a489e5c3e0ca66cc48, type: 3}
+  - {fileID: 2800000, guid: d9eb235195af0db47b5b67873f0d7c30, type: 3}
   - {fileID: 2800000, guid: 2fc01fae2cd24a640a7adeb72859f35f, type: 3}
+  - {fileID: 2800000, guid: f19fbb86e55b4de48abd03df5de6aa60, type: 3}
   - {fileID: 2800000, guid: 90d70cd92a98fd34a9db9d36fc64c970, type: 3}
   - {fileID: 2800000, guid: d13d7c60c7cc17648a3cfb1fe24cba4c, type: 3}
   UiFont: {fileID: 12800000, guid: 00619acf8eaa82141918fab61eea7bf2, type: 3}
---- !u!114 &1275527946
+--- !u!114 &42711767
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275527944}
+  m_GameObject: {fileID: 42711765}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69ab93fb8166450479d07b74bdead7c5, type: 3}
@@ -229,13 +238,13 @@ MonoBehaviour:
   - "\uB2EC\uBE5B \uC232 I"
   - "\uB2EC\uBE5B \uC232 II"
   - "\uB2EC\uBE5B \uD3D0\uD5C8 \uB358\uC804"
---- !u!4 &1275527947
+--- !u!4 &42711768
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275527944}
+  m_GameObject: {fileID: 42711765}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -248,4 +257,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1275527947}
+  - {fileID: 42711768}

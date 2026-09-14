@@ -148,6 +148,14 @@ namespace Sapphire
         {
             if(modal)Destroy(modal);modal=Box("Modal",safe,new Vector2(.5f,.5f),Vector2.zero,new Vector2(1080,574),ink).gameObject;
             var outline=modal.AddComponent<Outline>();outline.effectColor=line;
+            var corner=ArtSprite("PanelCorner","FantasyPanelBorder");
+            if(corner!=null)
+            {
+                var tl=Box("Corner TL",modal.transform,new Vector2(0,1),new Vector2(28,-28),new Vector2(48,48),new Color(1,1,1,.85f));tl.sprite=corner;tl.raycastTarget=false;
+                var tr=Box("Corner TR",modal.transform,new Vector2(1,1),new Vector2(-28,-28),new Vector2(48,48),new Color(1,1,1,.85f));tr.sprite=corner;tr.raycastTarget=false;tr.rectTransform.localScale=new Vector3(-1,1,1);
+                var bl=Box("Corner BL",modal.transform,new Vector2(0,0),new Vector2(28,28),new Vector2(48,48),new Color(1,1,1,.85f));bl.sprite=corner;bl.raycastTarget=false;bl.rectTransform.localScale=new Vector3(1,-1,1);
+                var br=Box("Corner BR",modal.transform,new Vector2(1,0),new Vector2(-28,28),new Vector2(48,48),new Color(1,1,1,.85f));br.sprite=corner;br.raycastTarget=false;br.rectTransform.localScale=new Vector3(-1,-1,1);
+            }
             Label(heading,modal.transform,new Vector2(.5f,.5f),new Vector2(-190,238),new Vector2(620,48),28,gold);
             Label(app.SaveStatus,modal.transform,new Vector2(.5f,.5f),new Vector2(267,235),new Vector2(260,36),13,muted,TextAnchor.MiddleRight);
             Button("닫기 ×",modal.transform,new Vector2(.5f,.5f),new Vector2(462,236),new Vector2(116,48),()=>CloseMenu());
@@ -163,7 +171,7 @@ namespace Sapphire
         void InventoryMenu()
         {
             var list=app.Inventory;int first=inventoryPage*4;Label("보유 골드   "+app.Gold+" G     ·     장비 "+list.Count+" / 24",modal.transform,new Vector2(.5f,.5f),new Vector2(0,109),new Vector2(1000,36),17,muted);
-            for(int n=0;n<4 && first+n<list.Count;n++){var item=list[first+n];string id=item.Id;float y=49-n*74;Box("Item row",modal.transform,new Vector2(.5f,.5f),new Vector2(0,y),new Vector2(1000,67),panel);Label(item.Name+" +"+item.Upgrade+(item.Equipped?"  [장착 중]":""),modal.transform,new Vector2(.5f,.5f),new Vector2(-251,y+12),new Vector2(460,28),18,item.Equipped?gold:Color.white);Label(item.Description,modal.transform,new Vector2(.5f,.5f),new Vector2(-251,y-14),new Vector2(460,25),13,muted);Button("장착",modal.transform,new Vector2(.5f,.5f),new Vector2(51,y),new Vector2(96,48),()=>app.Equip(id),!item.Equipped);Button("강화",modal.transform,new Vector2(.5f,.5f),new Vector2(165,y),new Vector2(110,48),()=>app.Upgrade(id));Button("판매 "+item.Price+" G",modal.transform,new Vector2(.5f,.5f),new Vector2(337,y),new Vector2(200,48),()=>app.Sell(id));}
+            for(int n=0;n<4 && first+n<list.Count;n++){var item=list[first+n];string id=item.Id;float y=49-n*74;Box("Item row",modal.transform,new Vector2(.5f,.5f),new Vector2(0,y),new Vector2(1000,67),panel);var icon=Box("Item icon",modal.transform,new Vector2(.5f,.5f),new Vector2(-478,y),new Vector2(36,36),Color.white);icon.sprite=AtlasSprite("InventoryShopIcons",item.Slot=="Weapon"?0:1,0,4,2)??circle;icon.preserveAspect=true;icon.raycastTarget=false;Label(item.Name+" +"+item.Upgrade+(item.Equipped?"  [장착 중]":""),modal.transform,new Vector2(.5f,.5f),new Vector2(-231,y+12),new Vector2(400,28),18,item.Equipped?gold:Color.white);Label(item.Description,modal.transform,new Vector2(.5f,.5f),new Vector2(-231,y-14),new Vector2(400,25),13,muted);Button("장착",modal.transform,new Vector2(.5f,.5f),new Vector2(51,y),new Vector2(96,48),()=>app.Equip(id),!item.Equipped);Button("강화",modal.transform,new Vector2(.5f,.5f),new Vector2(165,y),new Vector2(110,48),()=>app.Upgrade(id));Button("판매 "+item.Price+" G",modal.transform,new Vector2(.5f,.5f),new Vector2(337,y),new Vector2(200,48),()=>app.Sell(id));}
             Label("강화 비용  +1 30 G / +2 60 G / +3 100 G   ·   장착 중인 장비는 판매할 수 없습니다",modal.transform,new Vector2(.5f,.5f),new Vector2(-80,-229),new Vector2(850,30),13,muted);
             if(first>0)Button("이전",modal.transform,new Vector2(.5f,.5f),new Vector2(349,-239),new Vector2(90,43),()=>{inventoryPage--;menuSignature="";});if(first+4<list.Count)Button("다음",modal.transform,new Vector2(.5f,.5f),new Vector2(453,-239),new Vector2(90,43),()=>{inventoryPage++;menuSignature="";});
         }
@@ -177,8 +185,10 @@ namespace Sapphire
         {
             Label("상인 루미   ·   필요한 만큼 준비하세요",modal.transform,new Vector2(.5f,.5f),new Vector2(-120,128),new Vector2(760,45),23,Color.white);
             Label("보유 골드  "+app.Gold+" G",modal.transform,new Vector2(.5f,.5f),new Vector2(0,69),new Vector2(1000,45),20,gold);
-            Label("체력 물약    HP 60 회복    보유 "+app.HpPotions,modal.transform,new Vector2(.5f,.5f),new Vector2(-132,-8),new Vector2(735,54),21,Color.white);Button("HP 물약 구매",modal.transform,new Vector2(.5f,.5f),new Vector2(355,-8),new Vector2(230,56),()=>app.BuyPotion(true),true);
-            Label("마나 물약    MP 45 회복    보유 "+app.MpPotions,modal.transform,new Vector2(.5f,.5f),new Vector2(-132,-91),new Vector2(735,54),21,Color.white);Button("MP 물약 구매",modal.transform,new Vector2(.5f,.5f),new Vector2(355,-91),new Vector2(230,56),()=>app.BuyPotion(false),true);
+            var hpIcon=Box("HP potion icon",modal.transform,new Vector2(.5f,.5f),new Vector2(-495,-8),new Vector2(38,38),Color.white);hpIcon.sprite=AtlasSprite("InventoryShopIcons",2,1,4,2)??circle;hpIcon.preserveAspect=true;hpIcon.raycastTarget=false;
+            Label("체력 물약    HP 60 회복    보유 "+app.HpPotions,modal.transform,new Vector2(.5f,.5f),new Vector2(-112,-8),new Vector2(695,54),21,Color.white);Button("HP 물약 구매",modal.transform,new Vector2(.5f,.5f),new Vector2(355,-8),new Vector2(230,56),()=>app.BuyPotion(true),true);
+            var mpIcon=Box("MP potion icon",modal.transform,new Vector2(.5f,.5f),new Vector2(-495,-91),new Vector2(38,38),Color.white);mpIcon.sprite=AtlasSprite("InventoryShopIcons",2,0,4,2)??circle;mpIcon.preserveAspect=true;mpIcon.raycastTarget=false;
+            Label("마나 물약    MP 45 회복    보유 "+app.MpPotions,modal.transform,new Vector2(.5f,.5f),new Vector2(-112,-91),new Vector2(695,54),21,Color.white);Button("MP 물약 구매",modal.transform,new Vector2(.5f,.5f),new Vector2(355,-91),new Vector2(230,56),()=>app.BuyPotion(false),true);
             Label("거래 결과: "+app.Notice,modal.transform,new Vector2(.5f,.5f),new Vector2(0,-198),new Vector2(1000,58),17,muted);
         }
         void TravelMenu()
