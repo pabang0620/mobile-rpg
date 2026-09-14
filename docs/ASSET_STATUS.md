@@ -48,6 +48,16 @@
 
 `MageDirectional.png`는 4×4 방향 시트로 생성됐으나 배경 체크무늬가 알파가 아니라 RGB 픽셀로 구워져 있어 런타임에서 제외됐고, 기존 투명 `MageIdle.png`을 계속 쓰고 있다. 배경 추출 재시도로도 진짜 알파를 만들지 못했다. **AI 생성 에셋은 알파 채널을 실측해서 검수해야 한다** - `Read` 도구로 눈으로 보는 것만으로는 RGB 배경과 투명 배경을 구분하지 못할 수 있다.
 
+## 2026-09-14 갱신: 스킬 아이콘 2개 신규 생성 (기본공격/질주)
+
+UI 개편(좌측 가상패드 + 우측 원형 스킬메뉴, `docs/DECISIONS.md` 참고)으로 기본공격 버튼과 5번째 스킬 "질주"가 추가됐는데, 기존 `Art/UI/SkillIcons.png`(2x2, 비전탄/서리파동/점멸/보호막 4개뿐)에는 둘 다 아이콘이 없었다.
+
+**재사용 후보 확인(채택 안 함)**: `MageSkills.png`(루트 `Art/`, painterly 픽셀아트 스타일) - 알파 채널이 없어(배경이 RGB 검정으로 구워짐) UI 아이콘으로 바로 못 쓴다. `Art/UI/InventoryShopIcons.png`, `Art/MainMenuIcons.png` - 스타일(플랫 아이콘 / 보석형 프레임 아이콘)이 `SkillIcons.png`의 "저폴리 각진 크리스탈, 진한 블루+가끔 골드 베벨" 스타일과 확연히 달라 같은 메뉴에 섞으면 어색하다.
+
+**채택**: gpt-image 스킬(ChatGPT 구독 브릿지, `scripts/gpt_image.mjs generate`)로 `SkillIcons.png`를 `--reference`로 첨부하고 `--background transparent`로 신규 생성했다. 결과는 `Art/UI/SkillIconsExtra.png`(1287x611, 1행 2열 - 기존 시트의 643/644x611 셀 폭과 동일하게 맞춤): 왼쪽 `SkillIcons_BasicAttack`(저폴리 크리스탈 스타버스트), 오른쪽 `SkillIcons_Haste`(저폴리 크리스탈 날개 한 쌍). `ArtImportConfigurator.ConfigureSkillIconsExtra()`가 슬라이스한다.
+
+**알파 채널 실측 검증** (`docs/DECISIONS.md`의 과거 `MageDirectional.png` 알파 사고 재발 방지 원칙 적용): PIL로 원본 생성 이미지와 최종 크롭·리사이즈 후 시트 양쪽 모두 확인 - 네 모서리 픽셀이 `(0,0,0,0)`(완전 투명), 아이콘 내부 픽셀이 alpha 0~255 범위로 분포(안티에일리어싱 경계 포함)하는 실제 알파 채널임을 확인했다(`Read` 도구가 보여주는 흰 배경은 렌더링 관례일 뿐 실제 알파와 무관 - 눈으로만 보고 판단하지 않았다).
+
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.

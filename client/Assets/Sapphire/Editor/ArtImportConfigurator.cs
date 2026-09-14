@@ -21,6 +21,7 @@ namespace Sapphire.EditorTools
             ConfigureCharacterSheets();
             ConfigureUiFrames();
             ConfigureSkillIcons();
+            ConfigureSkillIconsExtra();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -158,6 +159,33 @@ namespace Sapphire.EditorTools
                     ("SkillIcons_FrostWave", new Rect(643, 611, 644, 611), centerPivot),
                     ("SkillIcons_Blink", new Rect(0, 0, 643, 611), centerPivot),
                     ("SkillIcons_Shield", new Rect(643, 0, 644, 611), centerPivot),
+                });
+        }
+
+        private static void ConfigureSkillIconsExtra()
+        {
+            // 2026-09-14 UI overhaul added a center "기본공격" button and a 5th
+            // "질주"(haste) skill to the radial menu, neither of which had an
+            // icon in the original 4-icon SkillIcons.png sheet. Generated via
+            // gpt-image (ChatGPT-subscription bridge, ../SkillIcons.png passed
+            // as style reference) as a single 1287x611 image, 1 row x 2 cells
+            // (same 643/644-wide cell split as SkillIcons.png's rows) - basic
+            // attack (starburst) on the left, haste (wing pair) on the right.
+            // Real alpha transparency measured before this asset was accepted
+            // (corners alpha=0, icon interior alpha up to 255 - not a baked
+            // checkerboard/white background, see docs/ASSET_STATUS.md's
+            // recurring "measure alpha, don't eyeball it" caution).
+            var centerPivot = new Vector2(0.5f, 0.5f);
+            ConfigureMultiSprite(
+                SapphireSceneBuilder.UiArtDir + "/SkillIconsExtra.png",
+                ppu: 100,
+                filterMode: FilterMode.Bilinear,
+                mipmaps: false,
+                maxSize: null,
+                slices: new[]
+                {
+                    ("SkillIcons_BasicAttack", new Rect(0, 0, 643, 611), centerPivot),
+                    ("SkillIcons_Haste", new Rect(643, 0, 644, 611), centerPivot),
                 });
         }
 

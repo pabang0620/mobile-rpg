@@ -27,6 +27,9 @@ namespace Sapphire.Presentation.Movement
 
         public GridMover Mover => mover;
 
+        /// <summary>Exposed so the skill bar can trigger the "질주" speed-boost skill directly.</summary>
+        public GridMoveAnimator MoveAnimator => moveAnimator;
+
         private void Awake()
         {
             inputReader = GetComponent<PlayerInputReader>();

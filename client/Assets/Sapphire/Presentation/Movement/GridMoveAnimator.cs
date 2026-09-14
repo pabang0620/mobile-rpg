@@ -15,13 +15,14 @@ namespace Sapphire.Presentation.Movement
         [Tooltip("docs/DECISIONS.md의 0.08s는 topdown-asset-mvp 참고치였고, 0.16s로 1차 상향했으나 " +
             "여전히 자유이동처럼 보인다는 2026-09-14 사용자 피드백으로 한 칸 이동이 눈에 확실히 보이도록 " +
             "재상향(약 2.5배, 0.4s)했으나, 전체적으로 더 빠르게 해달라는 후속 피드백으로 1.25배 단축(0.32s)함. " +
-            "단발 탭 이동(isContinuousHold=false)에 적용되는 기본 속도.")]
+            "탭 이동과 연속 이동(꾹 누름) 모두에 적용되는 기본 속도 - 연속 이동만 더 빠르게 하던 이전 시도는 " +
+            "2026-09-14 재원복되어 탭/연속 구분 없이 항상 이 값을 쓴다(질주 스킬로 부스트 중일 때만 예외).")]
         [SerializeField] private float moveDuration = 0.32f;
 
-        [Tooltip("방향키를 꾹 눌러 연속 이동 중(isContinuousHold=true)일 때 적용하는 스텝당 소요 시간. " +
-            "정지(stepPause)는 이미 스킵하지만 스텝 자체가 moveDuration만큼 걸리면 여전히 '걷다 쉬다'처럼 " +
-            "느껴진다는 2026-09-14 피드백으로, 기본값보다 확실히 짧게 두어 매끄럽게 흐르듯 이동하게 함.")]
-        [SerializeField] private float continuousMoveDuration = 0.22f;
+        [Tooltip("'질주' 공용 스킬(SkillCatalog의 skill.haste) 사용 중(IsSpeedBoosted=true) 10초간 적용되는 " +
+            "스텝당 소요 시간. 한때 연속 이동(꾹 누름) 전용 속도로 쓰였던 값을 그대로 재사용 - " +
+            "이제는 isContinuousHold 여부와 무관하게 부스트 상태에서만 적용된다. 2026-09-14 질주 스킬 추가.")]
+        [SerializeField] private float boostedMoveDuration = 0.22f;
 
         [Tooltip("새로 눌러서 시작된 첫 스텝 완료 직후에만 두는 짧은 정지 간격(칸 단위 리듬을 살리기 위함). " +
             "같은 방향키를 계속 누르고 있어서 이어지는 스텝(isContinuousHold=true)에는 적용하지 않는다 - " +
@@ -29,6 +30,33 @@ namespace Sapphire.Presentation.Movement
         [SerializeField] private float stepPause = 0.04f;
 
         private Coroutine activeMove;
+        private Coroutine speedBoostRoutine;
+
+        /// <summary>True while the "질주" skill's 10-second speed boost is active.</summary>
+        public bool IsSpeedBoosted { get; private set; }
+
+        /// <summary>
+        /// Turns on the boosted move speed (boostedMoveDuration) for durationSeconds,
+        /// then automatically reverts to the normal moveDuration. Re-casting while
+        /// already boosted simply restarts the 10-second window.
+        /// </summary>
+        public void ActivateSpeedBoost(float durationSeconds)
+        {
+            if (speedBoostRoutine != null)
+            {
+                StopCoroutine(speedBoostRoutine);
+            }
+
+            IsSpeedBoosted = true;
+            speedBoostRoutine = StartCoroutine(SpeedBoostRoutine(durationSeconds));
+        }
+
+        private IEnumerator SpeedBoostRoutine(float durationSeconds)
+        {
+            yield return new WaitForSeconds(durationSeconds);
+            IsSpeedBoosted = false;
+            speedBoostRoutine = null;
+        }
 
         public void PlayMove(Transform target, WorldPoint from, WorldPoint to, bool isContinuousHold, Action onComplete)
         {
@@ -44,7 +72,7 @@ namespace Sapphire.Presentation.Movement
         {
             Vector3 start = new Vector3(from.X, from.Y, target.position.z);
             Vector3 end = new Vector3(to.X, to.Y, target.position.z);
-            float duration = isContinuousHold ? continuousMoveDuration : moveDuration;
+            float duration = IsSpeedBoosted ? boostedMoveDuration : moveDuration;
             float elapsed = 0f;
 
             while (elapsed < duration)

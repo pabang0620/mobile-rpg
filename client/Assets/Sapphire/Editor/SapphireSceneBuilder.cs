@@ -91,7 +91,7 @@ namespace Sapphire.EditorTools
             TerrainBuildResult terrain = VillageHubTerrainBuilder.Build();
             (PlayerGridController playerController, PlayerInputReader playerInputReader, SkillCastFeedback castFeedback) = BuildPlayer();
             CameraFollowRig followRig = BuildCamera(playerController.transform.position);
-            UiBuildResult ui = VillageHubUiBuilder.Build(playerController, castFeedback);
+            UiBuildResult ui = VillageHubUiBuilder.Build(playerController, playerInputReader, castFeedback);
 
             ComposeSceneRoot(terrain, playerController, playerInputReader, followRig, ui.MessagePanel);
 

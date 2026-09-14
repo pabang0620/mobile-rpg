@@ -2,6 +2,20 @@
 
 기술 방향 결정을 날짜순으로 남긴다(최신이 위). 기획 자체(무엇을 만들지)는 `docs/planning/*.md`가 SSOT이고 여기서는 다루지 않는다 - 여기는 "어떻게 구현할지"에 대한 결정만 남긴다.
 
+## 2026-09-14: 연속이동 속도 원복 + 질주 스킬 + UI 개편(좌측 가상패드/우측 원형 스킬메뉴)
+
+**결정 1 - 연속이동 속도 원복**: `GridMoveAnimator`가 `isContinuousHold`(방향키 꾹 누름)일 때 더 짧은 `continuousMoveDuration=0.22s`를 쓰던 로직을 제거했다. 탭 이동과 연속 이동 모두 다시 공통 `moveDuration=0.32s`를 쓴다. **근거**: 사용자가 이 구분을 되돌려달라고 명시적으로 요청했다(연속 이동이 유지되어야 할 이유가 사라짐 - 아래 질주 스킬이 대신 그 역할을 맡음). 0.22s 값 자체는 폐기하지 않고 필드명을 `boostedMoveDuration`으로 바꿔 질주 스킬 전용 부스트 속도로 재활용했다 - 같은 상수를 용도만 바꿔 재사용하는 편이 "0.22s가 왜 좋은 속도였는지"에 대한 기존 튜닝 근거를 그대로 이어받을 수 있어 새 값을 다시 튜닝하는 것보다 낫다고 판단했다.
+
+**결정 2 - "질주"(Haste) 공용 스킬 추가**: 클릭 또는 5번 키로 발동하는 5번째 공용 스킬을 추가했다. 발동 시 10초간 이동 애니메이션 속도가 `boostedMoveDuration=0.22s`로 상승하고(`GridMoveAnimator.IsSpeedBoosted`/`ActivateSpeedBoost(float)`), 시간이 지나면 자동으로 `moveDuration=0.32s`로 복귀한다. 이 부스트는 `isContinuousHold` 여부와 무관하게 적용된다 - "이동속도 자체"를 10초간 바꾸는 효과이지 연속 이동 전용 효과가 아니기 때문이다. 구현은 코루틴 기반 단순 타이머(`SpeedBoostRoutine`)로, 별도 상태머신이나 이벤트버스 없이 최소 슬라이스로 유지했다. 재시전 시 타이머가 처음부터 다시 시작된다(스택 없음, 갱신만).
+
+**결정 3 - UI 개편: 하단 가로 스킬바 → 좌측 가상 이동패드 + 우측 원형 스킬메뉴**: 사용자가 "게임콘솔로 움직이고" 우측에 원형 배치 스킬 버튼을 요구했다. `docs/planning/01_PRODUCT.md`의 "입력은 WASD/방향키 또는 좌측 가상 스틱... 우하단 공격 중심 스킬 4개" 서술과 방향은 일치하지만, 그 문서는 "원형/부채꼴 배치"까지는 명시하지 않는다 - 이번 결정으로 그 배치 형태를 구체화했다. 기존 `SkillBarController`(하단 가로 4버튼)를 `RadialSkillMenu`로 rename하고, 신규 `VirtualMovementPad`(좌하단, 드래그 기반 4방향 가상 스틱)와 `RadialSkillMenu`가 관리하는 원형 버튼 6개(기본공격 1 + 스킬 5)로 교체했다. 기본공격은 이번에 처음 추가된 액션이지만 데미지 계산 등 전투 로직은 만들지 않고(범위 밖) 기존 스킬과 동일 수준의 캐스트 피드백만 붙였다. 모든 버튼은 원(circle) 모양이어야 한다는 요구사항에 따라 Unity 빌트인 `UI/Skin/Knob.psd` 스프라이트를 재사용했다(신규 아트 없이 원형 프레임 확보).
+
+**결정 3-1 - 우측 배치 검증**: "원형 스킬메뉴는 반드시 화면 우측"이라는 요구를 좌표 계산으로만 만족시키지 않고, `VillageHubUiBuilder.BuildRadialSkillMenu`에 방어적 체크를 넣었다 - 메뉴가 가장 왼쪽으로 벌어지는 지점이 캔버스 절반(720 기준 x=360) 밑으로 내려가면 씬 빌드 자체가 예외로 실패한다. 실제 배치는 루트 앵커 x=590, 스킬 반지름 130, 버튼 반지름 48(크기 96/2) → 최소 x=590-130-48=412 > 360으로 여유 있게 우측 절반 안에 있다.
+
+**결정 4 - 기본공격/질주 아이콘 신규 생성**: 기존 `Art/UI/SkillIcons.png`(비전탄/서리파동/점멸/보호막 4개)에는 기본공격·질주 아이콘이 없다. 재사용 후보를 먼저 확인했다 - `MageSkills.png`(painterly 픽셀아트, 알파 채널 없음 - RGB로 구워진 배경이라 그대로 못 씀, 팔레트 참고용으로만 검토), `Art/UI/InventoryShopIcons.png`·`Art/MainMenuIcons.png`(플랫/보석형 다른 스타일, `SkillIcons.png`의 "저폴리 각진 크리스탈 + 진한 블루+골드 베벨" 스타일과 확연히 달라 섞으면 시각적으로 어긋남) - 전부 부적합 판정. gpt-image 스킬(ChatGPT 구독 브릿지)로 `SkillIcons.png`를 스타일 레퍼런스로 첨부해 신규 생성했다. **알파 채널 실측**(PIL로 코너 픽셀 alpha=0, 아이콘 내부 alpha>128 분포 확인 - `docs/ASSET_STATUS.md`가 반복 지적하는 "Read 도구는 알파를 무시하고 흰 배경으로 보여준다" 함정을 피하기 위함)으로 진짜 투명 배경임을 확인한 뒤에만 채택했다. 최종 파일은 `Art/UI/SkillIconsExtra.png`(1287x611, 1행 2열 - 기존 `SkillIcons.png`의 셀 크기(643/644 x 611)와 동일하게 맞춰 시각적 크기가 어긋나지 않게 함).
+
+**영향**: `GridMoveAnimator`, `PlayerGridController`(신규 `MoveAnimator` getter), `SkillCatalog`(5번째 항목 + `HasteSkillId` 상수), `RadialSkillMenu`(rename + `CastBasicAttack`), `VirtualMovementPad`(신규), `PlayerInputReader`(가상패드 우선 폴백), `VillageHubUiBuilder`(레이아웃 전면 교체 + `LoadSkillIcon` 2-시트 폴백 + 우측 배치 방어 체크), `ArtImportConfigurator`(`ConfigureSkillIconsExtra` 추가), `SapphireSceneBuilder`(UI 빌더 호출 시그니처에 `playerInputReader` 추가) - 전부 코드/에셋 변경만이고 `docs/planning/*.md`는 손대지 않았다.
+
 ## 2026-09-14: 캐릭터 스프라이트 시트를 단일 통합 시트(MageTopdownGridSheet.png)로 교체
 
 **결정**: 방향별 유휴(`MageIdleDirectional.png`, 2열x4행)와 이동(`MageWalk4x3-v2.png`, 3열x4행) 두 시트로 나눠 관리하던 방식을 버리고, 하나의 시트(`MageTopdownGridSheet.png`, 1086x1448, 3열(idle/walkA/walkB) x 4행(Down/Left/Right/Up), 셀 362x362)로 통합했다. pivot도 12셀 전부를 개별 하드코딩하지 않고, 실측 결과가 2개 축(정면계열 Down/Left/Right vs 후면 Up, idle·walkA열 vs walkB열)으로만 갈리는 것을 확인해 그룹 단위 pivot 4종(front x normal, front x walkB, back x normal, back x walkB)으로 정리했다.

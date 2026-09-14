@@ -28,14 +28,17 @@ namespace Sapphire.EditorTools
 
     /// <summary>
     /// Builds the VillageHub scene's UI: EventSystem, Canvas, the message
-    /// panel (with its close button), and the skill bar (icon buttons + key
-    /// hints + range indicator/skill-bar controller wiring). Split out of
+    /// panel (with its close button), the bottom-left virtual movement pad,
+    /// and the bottom-right radial skill menu (basic attack + skill circle
+    /// buttons + range indicator/RadialSkillMenu wiring). Split out of
     /// <see cref="SapphireSceneBuilder"/> (UI responsibility only - grid/tile/
     /// fence generation lives in <see cref="VillageHubTerrainBuilder"/>).
+    /// 2026-09-14: replaced the old bottom horizontal skill bar with this
+    /// left-pad/right-radial-menu layout (see docs/DECISIONS.md).
     /// </summary>
     internal static class VillageHubUiBuilder
     {
-        internal static UiBuildResult Build(PlayerGridController playerController, SkillCastFeedback castFeedback)
+        internal static UiBuildResult Build(PlayerGridController playerController, PlayerInputReader playerInputReader, SkillCastFeedback castFeedback)
         {
             BuildEventSystem();
             GameObject canvasGo = BuildCanvas();
@@ -45,9 +48,8 @@ namespace Sapphire.EditorTools
 
             SimpleMessagePanel messagePanel = BuildMessagePanel(canvasGo, panelSprite, buttonSprite);
 
-            GameObject skillBarGo = BuildSkillBarContainer(canvasGo, panelSprite);
-            Button[] skillButtons = BuildSkillButtons(skillBarGo, panelSprite);
-            BuildSkillSystems(skillButtons, playerController, castFeedback);
+            BuildVirtualMovementPad(canvasGo, playerInputReader);
+            BuildRadialSkillMenu(canvasGo, playerController, castFeedback);
 
             return new UiBuildResult(messagePanel);
         }
@@ -151,105 +153,223 @@ namespace Sapphire.EditorTools
             return button;
         }
 
-        // --- Skill bar: 4 icon buttons docked bottom-center, click or 1-4 keys.
-        // Reuses FantasyPanelBorder.png (sliced) for both the bar background and
-        // each button's frame, matching the message panel's style.
+        // --- Left virtual movement pad: fixed-center touch/mouse stick docked
+        // bottom-left (2026-09-14, the old build had keyboard-only input).
+        // Uses Unity's builtin circular "Knob" UI sprite for both the
+        // background ring and the knob - a plain shape needs no new art here,
+        // unlike the basic-attack/haste buttons below which needed real icons
+        // (see LoadSkillIcon / docs/ASSET_STATUS.md).
 
-        private static GameObject BuildSkillBarContainer(GameObject canvasGo, Sprite panelSprite)
+        private static void BuildVirtualMovementPad(GameObject canvasGo, PlayerInputReader playerInputReader)
         {
-            var skillBarGo = new GameObject("SkillBar", typeof(Image));
-            skillBarGo.transform.SetParent(canvasGo.transform, false);
-            var skillBarRect = skillBarGo.GetComponent<RectTransform>();
-            skillBarRect.anchorMin = new Vector2(0.5f, 0f);
-            skillBarRect.anchorMax = new Vector2(0.5f, 0f);
-            skillBarRect.pivot = new Vector2(0.5f, 0f);
-            skillBarRect.sizeDelta = new Vector2(460, 140);
-            skillBarRect.anchoredPosition = new Vector2(0f, 30f);
-            var skillBarImage = skillBarGo.GetComponent<Image>();
-            skillBarImage.sprite = panelSprite;
-            skillBarImage.type = Image.Type.Sliced;
-            return skillBarGo;
+            Sprite circleSprite = LoadBuiltinCircleSprite();
+            const float padSize = 200f;
+
+            var padGo = new GameObject("VirtualMovementPad", typeof(Image));
+            padGo.transform.SetParent(canvasGo.transform, false);
+            var padRect = padGo.GetComponent<RectTransform>();
+            padRect.anchorMin = Vector2.zero;
+            padRect.anchorMax = Vector2.zero;
+            padRect.pivot = new Vector2(0.5f, 0.5f);
+            padRect.sizeDelta = new Vector2(padSize, padSize);
+            padRect.anchoredPosition = new Vector2(150f, 150f);
+            var padImage = padGo.GetComponent<Image>();
+            padImage.sprite = circleSprite;
+            padImage.color = new Color(1f, 1f, 1f, 0.35f);
+
+            var knobGo = new GameObject("Knob", typeof(Image));
+            knobGo.transform.SetParent(padGo.transform, false);
+            var knobRect = knobGo.GetComponent<RectTransform>();
+            knobRect.anchorMin = new Vector2(0.5f, 0.5f);
+            knobRect.anchorMax = new Vector2(0.5f, 0.5f);
+            knobRect.pivot = new Vector2(0.5f, 0.5f);
+            knobRect.sizeDelta = new Vector2(padSize * 0.4f, padSize * 0.4f);
+            knobRect.anchoredPosition = Vector2.zero;
+            var knobImage = knobGo.GetComponent<Image>();
+            knobImage.sprite = circleSprite;
+            knobImage.color = new Color(1f, 1f, 1f, 0.7f);
+            knobImage.raycastTarget = false;
+
+            var pad = padGo.AddComponent<VirtualMovementPad>();
+            AssignField(pad, "background", padRect);
+            AssignField(pad, "knob", knobRect);
+
+            AssignField(playerInputReader, "virtualPad", pad);
         }
 
-        private static Button[] BuildSkillButtons(GameObject skillBarGo, Sprite panelSprite)
+        // --- Right-side radial skill menu: a big center "기본공격" button plus
+        // a fan of skill buttons above/left of it (so the fan opens toward the
+        // screen center and stays on-screen). Every button is a circle (Unity
+        // builtin "Knob" sprite, same reasoning as the movement pad above) -
+        // click or key (J for attack, 1-5 for skills) both call the same
+        // RadialSkillMenu methods.
+
+        // Canvas reference width is 720 (BuildCanvas) - the whole menu (root
+        // anchor + the widest-swinging skill button at arcEndDeg) must stay at
+        // or right of x=360 so it never crosses into the virtual pad's left
+        // half. Asserted below rather than just commented, since this is
+        // exactly the kind of layout regression a later radius/angle tweak
+        // could silently reintroduce.
+        private const float ScreenHalfWidth = 360f;
+
+        private static void BuildRadialSkillMenu(GameObject canvasGo, PlayerGridController playerController, SkillCastFeedback castFeedback)
         {
-            var skillButtons = new Button[SkillCatalog.All.Length];
+            Sprite circleSprite = LoadBuiltinCircleSprite();
+
+            var rootGo = new GameObject("RadialSkillMenu", typeof(RectTransform));
+            rootGo.transform.SetParent(canvasGo.transform, false);
+            var rootRect = rootGo.GetComponent<RectTransform>();
+            rootRect.anchorMin = Vector2.zero;
+            rootRect.anchorMax = Vector2.zero;
+            rootRect.pivot = new Vector2(0.5f, 0.5f);
+            rootRect.sizeDelta = Vector2.zero;
+            rootRect.anchoredPosition = new Vector2(590f, 150f);
+
+            Sprite attackIcon = LoadSkillIcon("SkillIcons_BasicAttack");
+            Button attackButton = BuildRadialButton(rootGo, circleSprite, "AttackButton", Vector2.zero, 140f, attackIcon, "기본공격", "J");
+
+            const float skillRadius = 130f;
             const float skillButtonSize = 96f;
-            const float skillButtonGap = 16f;
-            float skillBarStartX = -((skillButtonSize + skillButtonGap) * (SkillCatalog.All.Length - 1)) * 0.5f;
+            const float arcStartDeg = 100f;
+            const float arcEndDeg = 190f;
+            var skillButtons = new Button[SkillCatalog.All.Length];
 
             for (int i = 0; i < SkillCatalog.All.Length; i++)
             {
-                float x = skillBarStartX + i * (skillButtonSize + skillButtonGap);
-                skillButtons[i] = BuildSkillButton(skillBarGo, panelSprite, SkillCatalog.All[i], i, x, skillButtonSize);
+                float t = SkillCatalog.All.Length > 1 ? i / (float)(SkillCatalog.All.Length - 1) : 0f;
+                float angleRad = Mathf.Lerp(arcStartDeg, arcEndDeg, t) * Mathf.Deg2Rad;
+                Vector2 offset = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * skillRadius;
+
+                SkillDefinition skill = SkillCatalog.All[i];
+                Sprite iconSprite = LoadSkillIcon(skill.IconSpriteName);
+                skillButtons[i] = BuildRadialButton(rootGo, circleSprite, "SkillButton_" + i, offset, skillButtonSize, iconSprite, null, (i + 1).ToString());
             }
 
-            return skillButtons;
+            float leftmostEdge = rootRect.anchoredPosition.x - skillRadius - skillButtonSize * 0.5f;
+            if (leftmostEdge < ScreenHalfWidth)
+            {
+                throw new Exception($"RadialSkillMenu leftmost edge ({leftmostEdge}) crosses into the screen's left half (< {ScreenHalfWidth}) - the menu must stay entirely on the right side, opposite the virtual movement pad.");
+            }
+
+            BuildSkillSystems(attackButton, skillButtons, playerController, castFeedback);
         }
 
-        private static Button BuildSkillButton(GameObject skillBarGo, Sprite panelSprite, SkillDefinition skill, int index, float anchoredX, float size)
+        // SkillIcons_BasicAttack/SkillIcons_Haste live in the newer
+        // SkillIconsExtra.png sheet (added 2026-09-14, see
+        // ArtImportConfigurator.ConfigureSkillIconsExtra) while the original 4
+        // skills live in SkillIcons.png - this tries the original sheet first
+        // so existing icon names keep working unchanged.
+        private static Sprite LoadSkillIcon(string spriteName)
         {
-            var skillButtonGo = new GameObject("SkillButton_" + index, typeof(Image), typeof(Button));
-            skillButtonGo.transform.SetParent(skillBarGo.transform, false);
-            var skillButtonRect = skillButtonGo.GetComponent<RectTransform>();
-            skillButtonRect.anchorMin = new Vector2(0.5f, 0.5f);
-            skillButtonRect.anchorMax = new Vector2(0.5f, 0.5f);
-            skillButtonRect.sizeDelta = new Vector2(size, size);
-            skillButtonRect.anchoredPosition = new Vector2(anchoredX, 0f);
-            var skillButtonImage = skillButtonGo.GetComponent<Image>();
-            skillButtonImage.sprite = panelSprite;
-            skillButtonImage.type = Image.Type.Sliced;
-            Button button = skillButtonGo.GetComponent<Button>();
+            Sprite sprite = TryLoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIcons.png", spriteName);
+            if (sprite != null)
+            {
+                return sprite;
+            }
 
-            Sprite iconSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIcons.png", skill.IconSpriteName);
-            var iconGo = new GameObject("Icon", typeof(Image));
-            iconGo.transform.SetParent(skillButtonGo.transform, false);
-            var iconRect = iconGo.GetComponent<RectTransform>();
-            iconRect.anchorMin = Vector2.zero;
-            iconRect.anchorMax = Vector2.one;
-            iconRect.offsetMin = new Vector2(14f, 14f);
-            iconRect.offsetMax = new Vector2(-14f, -14f);
-            var iconImage = iconGo.GetComponent<Image>();
-            iconImage.sprite = iconSprite;
-            iconImage.preserveAspect = true;
+            sprite = TryLoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIconsExtra.png", spriteName);
+            if (sprite == null)
+            {
+                throw new Exception($"Sprite '{spriteName}' not found in SkillIcons.png or SkillIconsExtra.png");
+            }
 
-            var hintGo = new GameObject("KeyHint", typeof(Text));
-            hintGo.transform.SetParent(skillButtonGo.transform, false);
-            var hintRect = hintGo.GetComponent<RectTransform>();
-            hintRect.anchorMin = new Vector2(0.6f, 0f);
-            hintRect.anchorMax = new Vector2(1f, 0.34f);
-            hintRect.offsetMin = Vector2.zero;
-            hintRect.offsetMax = Vector2.zero;
-            var hintText = hintGo.GetComponent<Text>();
-            hintText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            hintText.alignment = TextAnchor.LowerRight;
-            hintText.color = Color.white;
-            hintText.fontSize = 20;
-            hintText.text = (index + 1).ToString();
+            return sprite;
+        }
+
+        private static Button BuildRadialButton(GameObject parent, Sprite circleSprite, string name, Vector2 anchoredPosition, float size, Sprite iconSprite, string labelText, string keyHint)
+        {
+            var buttonGo = new GameObject(name, typeof(Image), typeof(Button));
+            buttonGo.transform.SetParent(parent.transform, false);
+            var buttonRect = buttonGo.GetComponent<RectTransform>();
+            buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
+            buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
+            buttonRect.pivot = new Vector2(0.5f, 0.5f);
+            buttonRect.sizeDelta = new Vector2(size, size);
+            buttonRect.anchoredPosition = anchoredPosition;
+            var buttonImage = buttonGo.GetComponent<Image>();
+            buttonImage.sprite = circleSprite;
+            Button button = buttonGo.GetComponent<Button>();
+
+            if (iconSprite != null)
+            {
+                var iconGo = new GameObject("Icon", typeof(Image));
+                iconGo.transform.SetParent(buttonGo.transform, false);
+                var iconRect = iconGo.GetComponent<RectTransform>();
+                iconRect.anchorMin = Vector2.zero;
+                iconRect.anchorMax = Vector2.one;
+                float inset = size * 0.2f;
+                iconRect.offsetMin = new Vector2(inset, inset);
+                iconRect.offsetMax = new Vector2(-inset, -inset);
+                var iconImage = iconGo.GetComponent<Image>();
+                iconImage.sprite = iconSprite;
+                iconImage.preserveAspect = true;
+                iconImage.raycastTarget = false;
+            }
+            else if (!string.IsNullOrEmpty(labelText))
+            {
+                var labelGo = new GameObject("Label", typeof(Text));
+                labelGo.transform.SetParent(buttonGo.transform, false);
+                var labelRect = labelGo.GetComponent<RectTransform>();
+                labelRect.anchorMin = Vector2.zero;
+                labelRect.anchorMax = Vector2.one;
+                labelRect.offsetMin = Vector2.zero;
+                labelRect.offsetMax = Vector2.zero;
+                var label = labelGo.GetComponent<Text>();
+                label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                label.alignment = TextAnchor.MiddleCenter;
+                label.color = Color.black;
+                label.fontSize = 24;
+                label.text = labelText;
+                label.raycastTarget = false;
+            }
+
+            if (!string.IsNullOrEmpty(keyHint))
+            {
+                var hintGo = new GameObject("KeyHint", typeof(Text));
+                hintGo.transform.SetParent(buttonGo.transform, false);
+                var hintRect = hintGo.GetComponent<RectTransform>();
+                hintRect.anchorMin = new Vector2(0.62f, 0f);
+                hintRect.anchorMax = new Vector2(1f, 0.32f);
+                hintRect.offsetMin = Vector2.zero;
+                hintRect.offsetMax = Vector2.zero;
+                var hintText = hintGo.GetComponent<Text>();
+                hintText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                hintText.alignment = TextAnchor.LowerRight;
+                hintText.color = Color.black;
+                hintText.fontSize = 18;
+                hintText.text = keyHint;
+                hintText.raycastTarget = false;
+            }
 
             return button;
         }
 
-        private static void BuildSkillSystems(Button[] skillButtons, PlayerGridController playerController, SkillCastFeedback castFeedback)
+        private static void BuildSkillSystems(Button attackButton, Button[] skillButtons, PlayerGridController playerController, SkillCastFeedback castFeedback)
         {
             var skillSystemsGo = new GameObject("SkillSystems");
             var rangeIndicator = skillSystemsGo.AddComponent<SkillRangeIndicator>();
-            var skillBarController = skillSystemsGo.AddComponent<SkillBarController>();
-            AssignField(skillBarController, "skillButtons", skillButtons);
-            AssignField(skillBarController, "player", playerController);
-            AssignField(skillBarController, "rangeIndicator", rangeIndicator);
-            AssignField(skillBarController, "castFeedback", castFeedback);
+            var radialSkillMenu = skillSystemsGo.AddComponent<RadialSkillMenu>();
+            AssignField(radialSkillMenu, "basicAttackButton", attackButton);
+            AssignField(radialSkillMenu, "skillButtons", skillButtons);
+            AssignField(radialSkillMenu, "player", playerController);
+            AssignField(radialSkillMenu, "rangeIndicator", rangeIndicator);
+            AssignField(radialSkillMenu, "castFeedback", castFeedback);
         }
 
-        private static Sprite LoadNamedSprite(string path, string name)
+        private static Sprite LoadBuiltinCircleSprite()
         {
-            Sprite sprite = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().FirstOrDefault(s => s.name == name);
+            Sprite sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
             if (sprite == null)
             {
-                throw new Exception($"Sprite '{name}' not found at {path}");
+                throw new Exception("Builtin circle sprite (UI/Skin/Knob.psd) not found");
             }
 
             return sprite;
+        }
+
+        private static Sprite TryLoadNamedSprite(string path, string name)
+        {
+            return AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().FirstOrDefault(s => s.name == name);
         }
 
         private static Sprite LoadSingleSprite(string path)
