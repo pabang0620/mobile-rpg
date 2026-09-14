@@ -204,12 +204,22 @@ namespace Sapphire.EditorTools
         // click or key (J for attack, 1-5 for skills) both call the same
         // RadialSkillMenu methods.
 
-        // Canvas reference width is 720 (BuildCanvas) - the whole menu (root
-        // anchor + the widest-swinging skill button at arcEndDeg) must stay at
-        // or right of x=360 so it never crosses into the virtual pad's left
-        // half. Asserted below rather than just commented, since this is
-        // exactly the kind of layout regression a later radius/angle tweak
-        // could silently reintroduce.
+        // 2026-09-14 bug found via live playtest: this root used to be anchored
+        // to the canvas's BOTTOM-LEFT corner (anchorMin/Max = zero) with a fixed
+        // anchoredPosition.x = 590, which only lands on the right side if the
+        // canvas is exactly the 720-wide reference resolution. CanvasScaler is
+        // ScaleWithScreenSize (BuildCanvas), so the canvas's actual unit width
+        // equals screenWidth/scaleFactor and only equals 720 when the runtime
+        // aspect ratio matches the 720x1280 reference exactly - any other
+        // window size (confirmed locally via a stale Windows
+        // "Screenmanager Resolution Width/Height" registry override landing on
+        // 1201x700) makes the effective canvas ~1257 units wide, so x=590
+        // lands near dead-center instead of the right side. The old
+        // leftmostEdge assertion below still "passed" because it re-derived
+        // the same wrong 720-wide assumption instead of checking real layout.
+        // Fix: anchor to the BOTTOM-RIGHT corner instead and offset left from
+        // there - anchoredPosition is then always measured from the true right
+        // edge regardless of the canvas's actual resolved width.
         private const float ScreenHalfWidth = 360f;
 
         private static void BuildRadialSkillMenu(GameObject canvasGo, PlayerGridController playerController, SkillCastFeedback castFeedback)
@@ -219,11 +229,11 @@ namespace Sapphire.EditorTools
             var rootGo = new GameObject("RadialSkillMenu", typeof(RectTransform));
             rootGo.transform.SetParent(canvasGo.transform, false);
             var rootRect = rootGo.GetComponent<RectTransform>();
-            rootRect.anchorMin = Vector2.zero;
-            rootRect.anchorMax = Vector2.zero;
+            rootRect.anchorMin = new Vector2(1f, 0f);
+            rootRect.anchorMax = new Vector2(1f, 0f);
             rootRect.pivot = new Vector2(0.5f, 0.5f);
             rootRect.sizeDelta = Vector2.zero;
-            rootRect.anchoredPosition = new Vector2(590f, 150f);
+            rootRect.anchoredPosition = new Vector2(-130f, 150f);
 
             Sprite attackIcon = LoadSkillIcon("SkillIcons_BasicAttack");
             Button attackButton = BuildRadialButton(rootGo, circleSprite, "AttackButton", Vector2.zero, 140f, attackIcon, "기본공격", "J");
@@ -245,10 +255,18 @@ namespace Sapphire.EditorTools
                 skillButtons[i] = BuildRadialButton(rootGo, circleSprite, "SkillButton_" + i, offset, skillButtonSize, iconSprite, null, (i + 1).ToString());
             }
 
-            float leftmostEdge = rootRect.anchoredPosition.x - skillRadius - skillButtonSize * 0.5f;
-            if (leftmostEdge < ScreenHalfWidth)
+            // rootRect is now anchored to the canvas's bottom-right corner, so
+            // anchoredPosition.x is a leftward offset FROM the true right edge
+            // (always negative here). The widest swing's distance from that
+            // right edge is this offset's magnitude plus the fan radius and
+            // half the button size - as long as that stays under half of the
+            // narrowest canvas width we still want to support (the 720
+            // reference width), the menu can't cross into the left half on any
+            // canvas the CanvasScaler actually produces.
+            float distanceFromRightEdge = -rootRect.anchoredPosition.x + skillRadius + skillButtonSize * 0.5f;
+            if (distanceFromRightEdge > ScreenHalfWidth)
             {
-                throw new Exception($"RadialSkillMenu leftmost edge ({leftmostEdge}) crosses into the screen's left half (< {ScreenHalfWidth}) - the menu must stay entirely on the right side, opposite the virtual movement pad.");
+                throw new Exception($"RadialSkillMenu's widest swing sits {distanceFromRightEdge} units left of the right edge, further than half the {ScreenHalfWidth * 2}-wide reference canvas - it could cross into the screen's left half, opposite the virtual movement pad.");
             }
 
             BuildSkillSystems(attackButton, skillButtons, playerController, castFeedback);
