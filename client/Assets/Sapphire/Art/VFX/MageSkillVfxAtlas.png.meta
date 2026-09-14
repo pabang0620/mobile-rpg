@@ -1,0 +1,1037 @@
+fileFormatVersion: 2
+guid: 55f457a2dec89ef40ad16065bd5ee0ab
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 198.125
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: MageVfx_Shield_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1371a7f9ffcc42e30800000000000000
+      internalID: 4477929327777421105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Shield_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 099d0da355bf62af0800000000000000
+      internalID: -421373171635005040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Shield_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0715fc75adb174200800000000000000
+      internalID: 164130536012337520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Shield_03
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b1453e0f6f4d4680800000000000000
+      internalID: -8769265561022152267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Shield_04
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 794
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5714d5a5f796d69a0800000000000000
+      internalID: -6238213913140444811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Shield_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 272afbeb4f9558880800000000000000
+      internalID: -8609376204941712782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Shield_06
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a5caf82db32e3910800000000000000
+      internalID: 1818930594847573412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Shield_07
+      rect:
+        serializedVersion: 2
+        x: 1387
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c055342c2fa76d4c0800000000000000
+      internalID: -4263084814199728884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Teleport_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d152ef4e25c59d80800000000000000
+      internalID: -8244466740132425261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Teleport_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb745bb4ab9cea9e0800000000000000
+      internalID: -1608126214953416770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Teleport_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8823b662e25d4010800000000000000
+      internalID: 1174686210152671370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Teleport_03
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 217fef3f05afaf2e0800000000000000
+      internalID: -2091083851362273518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Teleport_04
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 595
+        width: 199
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52af2063f3d6ae350800000000000000
+      internalID: 6046765567954844197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Teleport_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7be090f0eb2f9c430800000000000000
+      internalID: 3803838258401054391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Teleport_06
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a70515dc894217c0800000000000000
+      internalID: -4102135441361926240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Teleport_07
+      rect:
+        serializedVersion: 2
+        x: 1387
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c6ffcbbe60a853c0800000000000000
+      internalID: -4370567040905251131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Thunder_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5710933a027912c30800000000000000
+      internalID: 4332910482940297589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Thunder_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d06479df7a5efd30800000000000000
+      internalID: 4467107385553739988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Thunder_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae58d830eb868c960800000000000000
+      internalID: 7622457534637245930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Thunder_03
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46d7421647b0b80a0800000000000000
+      internalID: -6878391411404407452
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Thunder_04
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 397
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 836ff4ac993ab2df0800000000000000
+      internalID: -203889477195663816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Thunder_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d2ded0794a041980800000000000000
+      internalID: -8569212880436669743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Thunder_06
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97552ed7d78b7d130800000000000000
+      internalID: 3591542076973667705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_Thunder_07
+      rect:
+        serializedVersion: 2
+        x: 1387
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad547492076c77c00800000000000000
+      internalID: 898404835714876890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_IceSpike_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c931eebe6face7d0800000000000000
+      internalID: -2887740370867635769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_IceSpike_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c4864534d00def20800000000000000
+      internalID: 3453417400689919176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_IceSpike_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e715acd74c67bc820800000000000000
+      internalID: 2939573768085459326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_IceSpike_03
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 581175a04d3760d70800000000000000
+      internalID: 9009015459144995205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_IceSpike_04
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 198
+        width: 199
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b819b406caec4470800000000000000
+      internalID: 8380331142833313975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_IceSpike_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2547e36bc5d335b30800000000000000
+      internalID: 4274827939708564562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_IceSpike_06
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07ed0ce4102059b10800000000000000
+      internalID: 1987497015193427568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_IceSpike_07
+      rect:
+        serializedVersion: 2
+        x: 1387
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b740cff440dfd56e0800000000000000
+      internalID: -1847042077188422533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_LightningSpear_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 550deb9f868b50320800000000000000
+      internalID: 2523625927217172565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_LightningSpear_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c95355e2f44db2f20800000000000000
+      internalID: 3399043780326012316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_LightningSpear_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84f4a323cad09c2d0800000000000000
+      internalID: -3258057822197625016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_LightningSpear_03
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bfeba950d8c013b0800000000000000
+      internalID: -5543710344109887568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_LightningSpear_04
+      rect:
+        serializedVersion: 2
+        x: 792
+        y: 0
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4641d2422a5788eb0800000000000000
+      internalID: -4717391270418508700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_LightningSpear_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2f1b0ad3d6d4dc00800000000000000
+      internalID: 924600028902399788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_LightningSpear_06
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38d98ed92489cba40800000000000000
+      internalID: 5385346666312801667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MageVfx_LightningSpear_07
+      rect:
+        serializedVersion: 2
+        x: 1387
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12c6ddcb25b82a840800000000000000
+      internalID: 5233898904430144545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      MageVfx_IceSpike_00: -2887740370867635769
+      MageVfx_IceSpike_01: 3453417400689919176
+      MageVfx_IceSpike_02: 2939573768085459326
+      MageVfx_IceSpike_03: 9009015459144995205
+      MageVfx_IceSpike_04: 8380331142833313975
+      MageVfx_IceSpike_05: 4274827939708564562
+      MageVfx_IceSpike_06: 1987497015193427568
+      MageVfx_IceSpike_07: -1847042077188422533
+      MageVfx_LightningSpear_00: 2523625927217172565
+      MageVfx_LightningSpear_01: 3399043780326012316
+      MageVfx_LightningSpear_02: -3258057822197625016
+      MageVfx_LightningSpear_03: -5543710344109887568
+      MageVfx_LightningSpear_04: -4717391270418508700
+      MageVfx_LightningSpear_05: 924600028902399788
+      MageVfx_LightningSpear_06: 5385346666312801667
+      MageVfx_LightningSpear_07: 5233898904430144545
+      MageVfx_Shield_00: 4477929327777421105
+      MageVfx_Shield_01: -421373171635005040
+      MageVfx_Shield_02: 164130536012337520
+      MageVfx_Shield_03: -8769265561022152267
+      MageVfx_Shield_04: -6238213913140444811
+      MageVfx_Shield_05: -8609376204941712782
+      MageVfx_Shield_06: 1818930594847573412
+      MageVfx_Shield_07: -4263084814199728884
+      MageVfx_Teleport_00: -8244466740132425261
+      MageVfx_Teleport_01: -1608126214953416770
+      MageVfx_Teleport_02: 1174686210152671370
+      MageVfx_Teleport_03: -2091083851362273518
+      MageVfx_Teleport_04: 6046765567954844197
+      MageVfx_Teleport_05: 3803838258401054391
+      MageVfx_Teleport_06: -4102135441361926240
+      MageVfx_Teleport_07: -4370567040905251131
+      MageVfx_Thunder_00: 4332910482940297589
+      MageVfx_Thunder_01: 4467107385553739988
+      MageVfx_Thunder_02: 7622457534637245930
+      MageVfx_Thunder_03: -6878391411404407452
+      MageVfx_Thunder_04: -203889477195663816
+      MageVfx_Thunder_05: -8569212880436669743
+      MageVfx_Thunder_06: 3591542076973667705
+      MageVfx_Thunder_07: 898404835714876890
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -54,6 +54,7 @@ namespace Sapphire.EditorTools
             BuildVirtualMovementPad(canvasGo, playerInputReader);
             BuildRadialSkillMenu(canvasGo, playerController, castFeedback);
             BuildHealthBar(canvasGo);
+            BuildMainMenu(canvasGo, messagePanel);
 
             return new UiBuildResult(messagePanel);
         }
@@ -411,6 +412,51 @@ namespace Sapphire.EditorTools
 
             var healthBarView = barGo.AddComponent<HealthBarView>();
             AssignField(healthBarView, "fillImage", fillImage);
+        }
+
+        private static void BuildMainMenu(GameObject canvasGo, SimpleMessagePanel messagePanel)
+        {
+            Sprite buttonSprite = LoadSingleSprite(SapphireSceneBuilder.RootArtDir + "/WideButton.png");
+            Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MessagePanelFrame.png");
+
+            var openGo = new GameObject("MainMenuButton", typeof(Image), typeof(Button));
+            openGo.transform.SetParent(canvasGo.transform, false);
+            var openRect = openGo.GetComponent<RectTransform>();
+            openRect.anchorMin = openRect.anchorMax = new Vector2(1f, 1f);
+            openRect.pivot = new Vector2(1f, 1f);
+            openRect.sizeDelta = new Vector2(150f, 72f);
+            openRect.anchoredPosition = new Vector2(-20f, -20f);
+            var openImage = openGo.GetComponent<Image>();openImage.sprite = buttonSprite;openImage.type = Image.Type.Sliced;
+            AddButtonLabel(openGo, "메뉴", 25);
+
+            var panelGo = new GameObject("MainMenuPanel", typeof(Image));
+            panelGo.transform.SetParent(canvasGo.transform, false);
+            var panelRect = panelGo.GetComponent<RectTransform>();
+            panelRect.anchorMin = panelRect.anchorMax = new Vector2(1f, 1f);
+            panelRect.pivot = new Vector2(1f, 1f);
+            panelRect.sizeDelta = new Vector2(390f, 790f);
+            panelRect.anchoredPosition = new Vector2(-20f, -102f);
+            var panelImage = panelGo.GetComponent<Image>();panelImage.sprite = panelSprite;panelImage.type = Image.Type.Sliced;
+
+            string[] names={"장비창","지도","상급던전","레이드","스킬","커뮤니티","길드"};
+            var buttons=new Button[names.Length];
+            for(int i=0;i<names.Length;i++)
+            {
+                var item=new GameObject("Menu_"+names[i],typeof(Image),typeof(Button));item.transform.SetParent(panelGo.transform,false);
+                var rect=item.GetComponent<RectTransform>();rect.anchorMin=rect.anchorMax=new Vector2(.5f,1f);rect.pivot=new Vector2(.5f,1f);rect.sizeDelta=new Vector2(310f,76f);rect.anchoredPosition=new Vector2(0f,-86f-i*91f);
+                var image=item.GetComponent<Image>();image.sprite=buttonSprite;image.type=Image.Type.Sliced;buttons[i]=item.GetComponent<Button>();AddButtonLabel(item,names[i],23);
+            }
+
+            var controller=canvasGo.AddComponent<MainMenuPanel>();
+            controller.Configure(panelGo,openGo.GetComponent<Button>(),buttons,messagePanel,names);
+            panelGo.SetActive(false);
+        }
+
+        private static void AddButtonLabel(GameObject parent,string value,int fontSize)
+        {
+            var textGo=new GameObject("Text",typeof(Text));textGo.transform.SetParent(parent.transform,false);
+            var rect=textGo.GetComponent<RectTransform>();rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
+            var text=textGo.GetComponent<Text>();text.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");text.alignment=TextAnchor.MiddleCenter;text.color=Color.white;text.fontSize=fontSize;text.text=value;text.raycastTarget=false;
         }
 
         private static Sprite LoadBuiltinCircleSprite()

@@ -56,6 +56,7 @@ namespace Sapphire.EditorTools
             try
             {
                 ArtImportConfigurator.ConfigureArtImportSettings();
+                SkillVfxImporter.ConfigureLibrary();
                 BuildVillageHubScene();
                 Debug.Log("SAPPHIRE_BUILD SUCCESS");
             }

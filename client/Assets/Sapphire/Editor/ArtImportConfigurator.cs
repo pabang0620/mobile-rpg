@@ -255,7 +255,10 @@ namespace Sapphire.EditorTools
             {
                 ["Down"] = new Vector2(0.57f, 0.01f),
                 ["Left"] = new Vector2(0.59f, 0.08f),
-                ["Right"] = new Vector2(0.59f, 0.00f),
+                // Side-view feet must share the same baseline.  The previous
+                // zero Y pivot left the Right row's transparent bottom margin
+                // above the grid centre, making rightward steps look airborne.
+                ["Right"] = new Vector2(0.59f, 0.08f),
                 ["Up"] = new Vector2(0.57f, 0.22f),
             };
 

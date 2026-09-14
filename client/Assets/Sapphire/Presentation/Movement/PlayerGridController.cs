@@ -50,6 +50,16 @@ namespace Sapphire.Presentation.Movement
             spriteAnimator?.SetFacing(mover.Facing);
         }
 
+        public bool TryBlink(int rangeTiles)
+        {
+            if (mover == null || map == null || mover.TryBlink(rangeTiles, map) != MoveResult.Started) return false;
+            WorldPoint destination = GridWorldConversion.GridToWorld(mover.Position);
+            transform.position = new Vector3(destination.X, destination.Y, transform.position.z);
+            previousHeldDirection = null;
+            spriteAnimator?.SetMoving(false);
+            return true;
+        }
+
         private void Update()
         {
             bool isDirectionHeld = inputReader.TryGetHeldDirection(out GridDirection direction);

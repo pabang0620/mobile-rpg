@@ -25,7 +25,6 @@ namespace Sapphire.Presentation.Skills
     /// </summary>
     public class RadialSkillMenu : MonoBehaviour
     {
-        private const float HasteDurationSeconds = 10f;
         private const string BasicAttackDisplayName = "기본공격";
 
         [SerializeField] private Button basicAttackButton;
@@ -33,9 +32,12 @@ namespace Sapphire.Presentation.Skills
         [SerializeField] private PlayerGridController player;
         [SerializeField] private SkillRangeIndicator rangeIndicator;
         [SerializeField] private SkillCastFeedback castFeedback;
+        private SkillVfxPlayer skillVfx;
 
         private void Awake()
         {
+            if (player != null)
+                skillVfx = player.GetComponent<SkillVfxPlayer>() ?? player.gameObject.AddComponent<SkillVfxPlayer>();
             if (basicAttackButton != null)
             {
                 basicAttackButton.onClick.AddListener(CastBasicAttack);
@@ -103,27 +105,24 @@ namespace Sapphire.Presentation.Skills
                 return;
             }
 
-            if (player == null || player.Mover == null)
+            if (player == null || player.Mover == null || player.Mover.IsMoving)
             {
                 return;
             }
 
             SkillDefinition skill = SkillCatalog.All[index];
             GridCoord origin = player.Mover.Position;
+            GridDirection facing = player.Mover.Facing;
 
-            if (rangeIndicator != null && skill.RangeShape != SkillRangeShape.None)
+            if (skill.Id == SkillCatalog.BlinkSkillId && !player.TryBlink(skill.RangeTiles))
             {
-                var tiles = skill.RangeShape == SkillRangeShape.Radius
-                    ? SkillRangeCalculator.TilesInRadius(origin, skill.RangeTiles)
-                    : SkillRangeCalculator.TilesInLine(origin, player.Mover.Facing, skill.RangeTiles);
-
-                rangeIndicator.Show(tiles);
+                castFeedback?.PlayCast("이동할 공간이 없습니다");
+                return;
             }
 
-            if (skill.Id == SkillCatalog.HasteSkillId)
-            {
-                player.MoveAnimator?.ActivateSpeedBoost(HasteDurationSeconds);
-            }
+            if (skillVfx == null)
+                skillVfx = player.GetComponent<SkillVfxPlayer>() ?? player.gameObject.AddComponent<SkillVfxPlayer>();
+            skillVfx.Play(index, origin, player.Mover.Position, facing);
 
             castFeedback?.PlayCast(skill.DisplayName);
         }

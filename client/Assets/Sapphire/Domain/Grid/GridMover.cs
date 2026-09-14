@@ -47,6 +47,23 @@ namespace Sapphire.Domain.Grid
             return MoveResult.Started;
         }
 
+        /// <summary>Instant step-by-step blink; obstacles and bounds stop the path.</summary>
+        public MoveResult TryBlink(int rangeTiles, GridMap map)
+        {
+            if (map == null) throw new ArgumentNullException(nameof(map));
+            if (IsMoving) return MoveResult.AlreadyMoving;
+            GridCoord destination = Position;
+            for (int i = 0; i < Math.Max(0, rangeTiles); i++)
+            {
+                GridCoord next = destination + Facing.ToOffset();
+                if (!map.IsWalkable(next)) break;
+                destination = next;
+            }
+            if (destination == Position) return MoveResult.BlockedByObstacle;
+            Position = targetPosition = destination;
+            return MoveResult.Started;
+        }
+
         public void CompleteMove()
         {
             if (!IsMoving)
