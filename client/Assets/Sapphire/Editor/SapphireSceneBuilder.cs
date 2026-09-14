@@ -5,6 +5,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Sapphire.Composition;
+using Sapphire.Domain.Grid;
 using Sapphire.Presentation.Camera;
 using Sapphire.Presentation.Movement;
 using Sapphire.Presentation.Skills;
@@ -142,31 +143,35 @@ namespace Sapphire.EditorTools
         }
 
         // --- Camera ---
-        // 2026-09-14 player feedback: "화면이 너무 작다" - characters/tiles read as
-        // tiny. Traced to PixelPerfectCameraInternal.CalculateCameraProperties
-        // (com.unity.2d.pixel-perfect source): with no cropFrame/upscaleRT, it
-        // computes orthoSize = screenHeight / (2 * zoom * assetsPPU), i.e. each
-        // world unit ends up drawn at (zoom * assetsPPU) screen pixels. At the
-        // project's default 720x1280 window (== refResolutionX/Y, so zoom==1),
-        // assetsPPU=20 meant 1 tile = 20 screen px and the ~1.2-unit-tall player
-        // sprite rendered ~24px tall on a 1280px-tall screen - the actual bug.
-        // Raising assetsPPU (not lowering it - lowering shrinks things further,
-        // since it's the divisor above) zooms in: assetsPPU=100 -> 100px/tile,
-        // ~10 tiles tall / ~7.2 tiles wide visible, ~120px-tall player. Sprite
-        // import PPUs (1024/512/320/302, see ArtImportConfigurator) are untouched -
-        // they only fix each sprite's *world* size, independent of this
-        // camera-side screen scale.
+        // 2026-09-14 player feedback history on PixelPerfectCameraInternal.CalculateCameraProperties
+        // (com.unity.2d.pixel-perfect source): with no cropFrame/upscaleRT, it computes
+        // orthoSize = screenHeight / (2 * zoom * assetsPPU), i.e. each world unit ends up
+        // drawn at (zoom * assetsPPU) screen pixels. At the project's default 720x1280
+        // window (== refResolutionX/Y, so zoom==1):
+        //   1st pass: assetsPPU=20  -> 1 tile = 20px, characters/tiles read as tiny.
+        //   2nd pass: assetsPPU=100 -> fixed the "too small" complaint but overcorrected -
+        //             only 720/100 = 7.2 tiles fit across the screen, so a single grid
+        //             step covers a large fraction of the view and reads as a big sweeping
+        //             motion rather than "one small step".
+        //   3rd pass: assetsPPU=72  -> 720/72 = exactly 10 tiles visible horizontally,
+        //             matching the GBA-Pokemon-style topdown density (~9-11 tiles across)
+        //             the player asked for. Sprite import PPUs (1024/512/320/302, see
+        //             ArtImportConfigurator) are untouched - they only fix each sprite's
+        //             *world* size (measured: mage sprite content is ~1.0-1.2 world units
+        //             tall across all directions/frames, already within the intended
+        //             ~1-1.5 unit topdown-RPG proportion - not the source of the "too big"
+        //             feel), independent of this camera-side screen scale.
         private static CameraFollowRig BuildCamera(Vector3 playerPosition)
         {
             var cameraGo = new GameObject("Main Camera", typeof(UnityEngine.Camera));
             cameraGo.tag = "MainCamera";
             var cam = cameraGo.GetComponent<UnityEngine.Camera>();
             cam.orthographic = true;
-            cam.orthographicSize = 6.4f; // editor-preview only; matches runtime orthoSize = 1280 / (2 * 100).
+            cam.orthographicSize = 8.888889f; // editor-preview only; matches runtime orthoSize = 1280 / (2 * 72).
             cameraGo.transform.position = playerPosition + new Vector3(0f, 0f, -10f);
 
             var pixelPerfect = cameraGo.AddComponent<UnityEngine.U2D.PixelPerfectCamera>();
-            pixelPerfect.assetsPPU = 100;
+            pixelPerfect.assetsPPU = 72;
             pixelPerfect.refResolutionX = 720;
             pixelPerfect.refResolutionY = 1280;
             pixelPerfect.upscaleRT = false;
@@ -203,7 +208,14 @@ namespace Sapphire.EditorTools
 
         internal static Vector3 CellCenter(int x, int y)
         {
-            return new Vector3(x, y, 0f);
+            // Delegates to the single conversion source (GridWorldConversion)
+            // instead of re-deriving corner vs. center math here. Runtime
+            // player position is overwritten by PlayerGridController.Initialize
+            // (also via GridWorldConversion) and the camera converges onto the
+            // player every frame, so this only affected the editor-preview
+            // (pre-Play) position - fixed for consistency, not a runtime bug.
+            WorldPoint world = GridWorldConversion.GridToWorld(new GridCoord(x, y));
+            return new Vector3(world.X, world.Y, 0f);
         }
 
         private static Sprite LoadNamedSprite(string path, string name)

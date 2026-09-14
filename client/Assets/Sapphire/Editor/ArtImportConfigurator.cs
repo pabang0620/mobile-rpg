@@ -28,28 +28,41 @@ namespace Sapphire.EditorTools
 
         private static void ConfigureGroundAtlas()
         {
-            // Ground atlas: 3072x2048, 3x2 grid (3 grass + 3 dirt), each tile 1024x1024.
-            // PPU = tile pixel size so one sliced sprite exactly fills one 1x1 grid cell
-            // (matches Sapphire.Domain.Grid.GridWorldConversion.CellSize = 1f).
-            // Max Size 256 per user instruction: the atlas renders at ~100px/tile on
-            // screen (Pixel Perfect Camera assetsPPU=100 - see SapphireSceneBuilder's
-            // camera setup for why), so the 1024px source is downscaled at import
-            // instead of shipping full-resolution art. 256px source for a 100px
-            // on-screen tile still leaves ~2.5x supersampling headroom.
+            // Ground atlas: 2026-09-14 regenerated from scratch (GroundTiles.png
+            // replaced, see docs/DECISIONS.md) after discovering the previous
+            // "hq" 1024x1024-cell atlas had each cell internally composed of four
+            // different 512x512 sub-images (real content difference, not a
+            // seam-only artifact - measured cross-quadrant mean abs RGB diff ~39-49
+            // on the old asset). The workaround of slicing only a 512x512 sub-rect
+            // per cell (kept in git history) avoided the symptom without fixing the
+            // source asset, and is no longer needed.
+            //
+            // New atlas: 1536x1024, 3x2 grid (3 grass + 3 dirt), each cell a true
+            // 512x512 whole tile generated as one continuous texture. Verified
+            // internally uniform (cross-quadrant mean abs diff ~17-25 on the final
+            // seamless-processed asset, in the same range as the known-good
+            // pre-regen reference asset ~25, well below the broken asset's ~39-49)
+            // and seamless when tiled (wrap-around edge-vs-interior-baseline ratio
+            // ~1.0-1.1x after the roll+blend seamless-ify pass, vs ~1.8-2.4x on the
+            // raw unprocessed generation). Whole-cell slicing restored - ppu=512
+            // (cell height/width) so each cell fills exactly 1 world unit, matching
+            // pre-bugfix behavior now that the source is actually correct.
+            var centerPivot = new Vector2(0.5f, 0.5f);
             ConfigureMultiSprite(
                 SapphireSceneBuilder.WorldArtDir + "/GroundTiles.png",
-                ppu: 1024,
+                ppu: 512,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: true,
                 maxSize: 256,
                 slices: new[]
                 {
-                    ("GroundTiles_Grass_0", new Rect(0, 1024, 1024, 1024)),
-                    ("GroundTiles_Grass_1", new Rect(1024, 1024, 1024, 1024)),
-                    ("GroundTiles_Grass_2", new Rect(2048, 1024, 1024, 1024)),
-                    ("GroundTiles_Dirt_0", new Rect(0, 0, 1024, 1024)),
-                    ("GroundTiles_Dirt_1", new Rect(1024, 0, 1024, 1024)),
-                    ("GroundTiles_Dirt_2", new Rect(2048, 0, 1024, 1024)),
+                    // Top row = grass (y=512..1024), bottom row = dirt (y=0..512).
+                    ("GroundTiles_Grass_0", new Rect(0, 512, 512, 512), centerPivot),
+                    ("GroundTiles_Grass_1", new Rect(512, 512, 512, 512), centerPivot),
+                    ("GroundTiles_Grass_2", new Rect(1024, 512, 512, 512), centerPivot),
+                    ("GroundTiles_Dirt_0", new Rect(0, 0, 512, 512), centerPivot),
+                    ("GroundTiles_Dirt_1", new Rect(512, 0, 512, 512), centerPivot),
+                    ("GroundTiles_Dirt_2", new Rect(1024, 0, 512, 512), centerPivot),
                 });
         }
 
@@ -58,6 +71,7 @@ namespace Sapphire.EditorTools
             // Village props atlas: 1536x1024, 2x2 grid, each cell 768x512.
             // PPU = cell height so each prop is ~1 grid cell tall (props are wider
             // than 1 cell by design - fence rails span slightly more than one tile).
+            var bottomCenterPivot = new Vector2(0.5f, 0f);
             ConfigureMultiSprite(
                 SapphireSceneBuilder.WorldArtDir + "/VillageProps.png",
                 ppu: 512,
@@ -66,27 +80,53 @@ namespace Sapphire.EditorTools
                 maxSize: null,
                 slices: new[]
                 {
-                    ("VillageProps_FenceStraight", new Rect(0, 512, 768, 512)),
-                    ("VillageProps_FenceCornerA", new Rect(768, 512, 768, 512)),
-                    ("VillageProps_FenceCornerB", new Rect(0, 0, 768, 512)),
-                    ("VillageProps_Signpost", new Rect(768, 0, 768, 512)),
-                },
-                pivot: new Vector2(0.5f, 0f));
+                    ("VillageProps_FenceStraight", new Rect(0, 512, 768, 512), bottomCenterPivot),
+                    ("VillageProps_FenceCornerA", new Rect(768, 512, 768, 512), bottomCenterPivot),
+                    ("VillageProps_FenceCornerB", new Rect(0, 0, 768, 512), bottomCenterPivot),
+                    ("VillageProps_Signpost", new Rect(768, 0, 768, 512), bottomCenterPivot),
+                });
         }
 
         private static void ConfigureCharacterSheets()
         {
-            // Idle sheet: 1024x1536, 4 rows (Down/Left/Right/Up) x 2 columns (frames).
-            // PPU chosen so the character renders ~1.2 grid cells tall, matching the
-            // walk sheet's world size below (see comment there).
+            // 2026-09-14 measured alpha bounding box per frame (both width AND
+            // height, not just height as before). Overall size check: max width
+            // across all frames = 0.87 units (idle) / 0.82 units (walk), both
+            // <= 1 unit - no PPU change needed. Max height = 1.20 units (idle) /
+            // 1.18 units (walk), within the 1.0-1.5 target band - no PPU change
+            // needed either. ppu values below (320, 302) are therefore unchanged
+            // from before.
+            //
+            // Pivot: a single uniform (0.5, 0) pivot per sheet (previous behavior)
+            // does NOT correctly center every frame - measured per-frame alpha
+            // bbox shows the character art is not horizontally centered within its
+            // cell (idle frames offset by up to +-0.21 units from cell-center) and,
+            // more importantly, does not consistently touch the cell's bottom edge
+            // (idle Up-facing frames leave a 61px / 0.19-unit gap between the
+            // character's feet and the cell bottom - Down/Left/Right leave 0px; walk
+            // sheet leaves 0-48px / 0-0.16 units depending on direction). With a
+            // single shared pivot, this makes the character visually float above
+            // the tile by a direction-dependent amount and jitter left/right
+            // between animation frames - a plausible cause of "걸쳐 있는 것처럼
+            // 보인다" (looks like it's straddling tiles). Fixed by giving every
+            // slice its own custom pivot computed
+            // from that frame's own measured bbox (center-x, bottom-y), so the
+            // character's feet are pinned to the tile's floor and its body stays
+            // horizontally centered on the tile for every direction and frame.
             ConfigureMultiSprite(
                 SapphireSceneBuilder.RootArtDir + "/MageIdleDirectional.png",
                 ppu: 320,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: true,
                 maxSize: null,
-                slices: BuildDirectionalGridSlices(1024, 1536, columns: 2, rows: 4, cellW: 512, cellH: 384, prefix: "MageIdle"),
-                pivot: new Vector2(0.5f, 0f));
+                slices: BuildDirectionalGridSlices(1024, 1536, columns: 2, rows: 4, cellW: 512, cellH: 384, prefix: "MageIdle",
+                    pivotsRowMajor: new[]
+                    {
+                        new Vector2(0.6045f, 0.0000f), new Vector2(0.3896f, 0.0000f), // Down_0, Down_1
+                        new Vector2(0.6035f, 0.0000f), new Vector2(0.3926f, 0.0000f), // Left_0, Left_1
+                        new Vector2(0.6309f, 0.0000f), new Vector2(0.3955f, 0.0000f), // Right_0, Right_1
+                        new Vector2(0.6328f, 0.1589f), new Vector2(0.4014f, 0.1589f), // Up_0, Up_1
+                    }));
 
             // Walk sheet: 1086x1448, 4 rows (Down/Left/Right/Up) x 3 columns (frames).
             // PPU=302 -> 362px cell / 302 ~= 1.2 world units tall, matching idle above.
@@ -96,8 +136,14 @@ namespace Sapphire.EditorTools
                 filterMode: FilterMode.Bilinear,
                 mipmaps: true,
                 maxSize: null,
-                slices: BuildDirectionalGridSlices(1086, 1448, columns: 3, rows: 4, cellW: 362, cellH: 362, prefix: "MageWalk"),
-                pivot: new Vector2(0.5f, 0f));
+                slices: BuildDirectionalGridSlices(1086, 1448, columns: 3, rows: 4, cellW: 362, cellH: 362, prefix: "MageWalk",
+                    pivotsRowMajor: new[]
+                    {
+                        new Vector2(0.5111f, 0.0221f), new Vector2(0.4793f, 0.0221f), new Vector2(0.4683f, 0.0221f), // Down_0..2
+                        new Vector2(0.5055f, 0.0801f), new Vector2(0.4793f, 0.0801f), new Vector2(0.4710f, 0.0801f), // Left_0..2
+                        new Vector2(0.5552f, 0.0000f), new Vector2(0.4931f, 0.0000f), new Vector2(0.4696f, 0.0000f), // Right_0..2
+                        new Vector2(0.5510f, 0.1022f), new Vector2(0.5193f, 0.1326f), new Vector2(0.4876f, 0.1022f), // Up_0..2
+                    }));
         }
 
         private static void ConfigureUiFrames()
@@ -129,6 +175,7 @@ namespace Sapphire.EditorTools
             // table: arcane bolt (top-left) / frost wave (top-right) / blink (bottom-left)
             // / shield (bottom-right). Plain (non-sliced) icons for a UI Image, so PPU is
             // cosmetic only.
+            var centerPivot = new Vector2(0.5f, 0.5f);
             ConfigureMultiSprite(
                 SapphireSceneBuilder.UiArtDir + "/SkillIcons.png",
                 ppu: 100,
@@ -137,19 +184,25 @@ namespace Sapphire.EditorTools
                 maxSize: null,
                 slices: new[]
                 {
-                    ("SkillIcons_ArcaneBolt", new Rect(0, 611, 643, 611)),
-                    ("SkillIcons_FrostWave", new Rect(643, 611, 644, 611)),
-                    ("SkillIcons_Blink", new Rect(0, 0, 643, 611)),
-                    ("SkillIcons_Shield", new Rect(643, 0, 644, 611)),
+                    ("SkillIcons_ArcaneBolt", new Rect(0, 611, 643, 611), centerPivot),
+                    ("SkillIcons_FrostWave", new Rect(643, 611, 644, 611), centerPivot),
+                    ("SkillIcons_Blink", new Rect(0, 0, 643, 611), centerPivot),
+                    ("SkillIcons_Shield", new Rect(643, 0, 644, 611), centerPivot),
                 });
         }
 
-        private static IEnumerable<(string name, Rect rect)> BuildDirectionalGridSlices(
-            int textureWidth, int textureHeight, int columns, int rows, int cellW, int cellH, string prefix)
+        private static IEnumerable<(string name, Rect rect, Vector2 pivot)> BuildDirectionalGridSlices(
+            int textureWidth, int textureHeight, int columns, int rows, int cellW, int cellH, string prefix,
+            Vector2[] pivotsRowMajor)
         {
             // Row order top-to-bottom in the source image: Down, Left, Right, Up.
             string[] rowNames = { "Down", "Left", "Right", "Up" };
-            var result = new List<(string, Rect)>();
+            var result = new List<(string, Rect, Vector2)>();
+
+            if (pivotsRowMajor.Length != rows * columns)
+            {
+                throw new Exception($"pivotsRowMajor length {pivotsRowMajor.Length} does not match rows*columns {rows * columns} for {prefix}");
+            }
 
             for (int r = 0; r < rows; r++)
             {
@@ -159,7 +212,8 @@ namespace Sapphire.EditorTools
                 {
                     float xLeft = c * cellW;
                     string name = $"{prefix}_{rowNames[r]}_{c}";
-                    result.Add((name, new Rect(xLeft, yBottom, cellW, cellH)));
+                    Vector2 pivot = pivotsRowMajor[r * columns + c];
+                    result.Add((name, new Rect(xLeft, yBottom, cellW, cellH), pivot));
                 }
             }
 
@@ -168,7 +222,7 @@ namespace Sapphire.EditorTools
 
         private static void ConfigureMultiSprite(
             string path, int ppu, FilterMode filterMode, bool mipmaps, int? maxSize,
-            IEnumerable<(string name, Rect rect)> slices, Vector2? pivot = null)
+            IEnumerable<(string name, Rect rect, Vector2 pivot)> slices)
         {
             var importer = AssetImporter.GetAtPath(path) as TextureImporter;
             if (importer == null)
@@ -189,16 +243,15 @@ namespace Sapphire.EditorTools
                 importer.maxTextureSize = maxSize.Value;
             }
 
-            Vector2 usedPivot = pivot ?? new Vector2(0.5f, 0.5f);
             var metas = new List<SpriteMetaData>();
-            foreach (var (name, rect) in slices)
+            foreach (var (name, rect, pivot) in slices)
             {
                 metas.Add(new SpriteMetaData
                 {
                     name = name,
                     rect = rect,
                     alignment = (int)SpriteAlignment.Custom,
-                    pivot = usedPivot,
+                    pivot = pivot,
                 });
             }
 

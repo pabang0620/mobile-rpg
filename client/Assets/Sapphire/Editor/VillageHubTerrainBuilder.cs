@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Sapphire.Domain.Grid;
 using Sapphire.Presentation.World;
 
 namespace Sapphire.EditorTools
@@ -175,7 +176,12 @@ namespace Sapphire.EditorTools
 
         private static Vector3 CellCenter(int x, int y)
         {
-            return new Vector3(x, y, 0f);
+            // Delegates to the single conversion source (GridWorldConversion)
+            // instead of re-deriving corner vs. center math here - fixes the
+            // same "0.5 unit off" bug this file used to duplicate (fences and
+            // the signpost were rendering on the tile corner, not its center).
+            WorldPoint world = GridWorldConversion.GridToWorld(new GridCoord(x, y));
+            return new Vector3(world.X, world.Y, 0f);
         }
 
         private static Tile CreateBlockerTile()
