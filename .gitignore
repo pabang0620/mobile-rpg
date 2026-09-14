@@ -21,3 +21,8 @@ verification/
 *.tmp
 Thumbs.db
 .DS_Store
+
+# Root-level build/capture/log outputs (generated, not source)
+/builds/
+/captures/
+/logs/
