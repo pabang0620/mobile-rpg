@@ -14,8 +14,14 @@ namespace Sapphire.Presentation.Movement
     {
         [Tooltip("docs/DECISIONS.md의 0.08s는 topdown-asset-mvp 참고치였고, 0.16s로 1차 상향했으나 " +
             "여전히 자유이동처럼 보인다는 2026-09-14 사용자 피드백으로 한 칸 이동이 눈에 확실히 보이도록 " +
-            "재상향(약 2.5배, 0.4s)함.")]
-        [SerializeField] private float moveDuration = 0.4f;
+            "재상향(약 2.5배, 0.4s)했으나, 전체적으로 더 빠르게 해달라는 후속 피드백으로 1.25배 단축(0.32s)함. " +
+            "단발 탭 이동(isContinuousHold=false)에 적용되는 기본 속도.")]
+        [SerializeField] private float moveDuration = 0.32f;
+
+        [Tooltip("방향키를 꾹 눌러 연속 이동 중(isContinuousHold=true)일 때 적용하는 스텝당 소요 시간. " +
+            "정지(stepPause)는 이미 스킵하지만 스텝 자체가 moveDuration만큼 걸리면 여전히 '걷다 쉬다'처럼 " +
+            "느껴진다는 2026-09-14 피드백으로, 기본값보다 확실히 짧게 두어 매끄럽게 흐르듯 이동하게 함.")]
+        [SerializeField] private float continuousMoveDuration = 0.22f;
 
         [Tooltip("새로 눌러서 시작된 첫 스텝 완료 직후에만 두는 짧은 정지 간격(칸 단위 리듬을 살리기 위함). " +
             "같은 방향키를 계속 누르고 있어서 이어지는 스텝(isContinuousHold=true)에는 적용하지 않는다 - " +
@@ -38,12 +44,13 @@ namespace Sapphire.Presentation.Movement
         {
             Vector3 start = new Vector3(from.X, from.Y, target.position.z);
             Vector3 end = new Vector3(to.X, to.Y, target.position.z);
+            float duration = isContinuousHold ? continuousMoveDuration : moveDuration;
             float elapsed = 0f;
 
-            while (elapsed < moveDuration)
+            while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / moveDuration);
+                float t = Mathf.Clamp01(elapsed / duration);
                 target.position = Vector3.Lerp(start, end, t);
                 yield return null;
             }
