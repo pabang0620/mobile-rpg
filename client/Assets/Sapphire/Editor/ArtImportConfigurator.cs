@@ -97,26 +97,16 @@ namespace Sapphire.EditorTools
             // the old walk sheet (same 362px cell size -> 362/302 ~= 1.2 world
             // units tall, within the previously-verified 1.0-1.5 unit target band).
             //
-            // Pivot: measured per-cell alpha bounding box (center-x, bottom-y)
-            // across all 12 cells instead of hardcoding one pivot per cell
-            // (12 one-off values, previous approach). The measurements cluster
-            // into just two independent groups instead of being random per-cell:
-            //
-            // - Foot baseline (pivot Y): Down/Left/Right feet sit at ~97-100% down
-            //   the cell and are within a fraction of a percentage point of each
-            //   other - one shared "front" pivot Y covers all three. Up (the only
-            //   back-facing row) sits higher, ~90% down the cell (the robe/cloak
-            //   drawn from behind extends lower into the frame) - one shared
-            //   "back" pivot Y covers it alone.
-            // - Horizontal center (pivot X): idle and walkA columns are both
-            //   close to the cell's horizontal center (~49-57%) regardless of
-            //   direction, so they share one "normal" pivot X. walkB is
-            //   consistently offset left by ~5-12 percentage points in every
-            //   direction, so it gets its own "walkB" pivot X.
-            //
-            // That gives 2 (Y groups) x 2 (X groups) = 4 pivot combinations total,
-            // reused across all 12 cells by (row, column) group membership - see
-            // BuildMageGridSlices.
+            // 2026-09-14 (later same day): swapped in the v4 body-stable
+            // walk-cycle artwork (same 1086x1448 / 362px-cell layout, no grid
+            // change needed). Re-measured per-cell alpha bounding box (center-x,
+            // bottom-y) across all 12 cells and re-checked the previous grouping
+            // assumption: idle/walkA/walkB no longer differ meaningfully within a
+            // direction (within-row spread across the 3 poses is only 0.14-0.55
+            // percentage points on both axes - noise, not a real walkB offset).
+            // Each direction now gets exactly one pivot shared by all 3 poses in
+            // that row - 4 pivots total, one per row, instead of the previous
+            // approach of crossing 2 Y groups x 2 X groups. See BuildMageGridSlices.
             ConfigureMultiSprite(
                 SapphireSceneBuilder.RootArtDir + "/MageTopdownGridSheet.png",
                 ppu: 302,
@@ -179,17 +169,19 @@ namespace Sapphire.EditorTools
             string[] rowNames = { "Down", "Left", "Right", "Up" };
             string[] colNames = { "Idle", "WalkA", "WalkB" };
 
-            // Pivot Y group: front-facing rows (Down/Left/Right) share one value,
-            // the back-facing row (Up) gets its own - see ConfigureCharacterSheets
-            // for the measurement this is based on. Pivot is Unity's bottom-up
-            // normalized coordinate, so "closer to the cell's bottom edge" == "closer to 0".
-            const float frontPivotY = 0.01f;
-            const float backPivotY = 0.10f;
-
-            // Pivot X group: idle/walkA share one centered value, walkB shares a
-            // separate value offset left of center.
-            const float normalPivotX = 0.50f;
-            const float walkBPivotX = 0.44f;
+            // One pivot per direction, shared by all 3 poses in that row -
+            // measured as the average alpha-bounding-box center-x/bottom-y across
+            // idle/walkA/walkB (see ConfigureCharacterSheets for why no per-pose
+            // split is needed with the v4 artwork). Pivot is Unity's bottom-up
+            // normalized coordinate, so a value closer to 0 sits closer to the
+            // cell's bottom edge.
+            var pivotByRow = new Dictionary<string, Vector2>
+            {
+                ["Down"] = new Vector2(0.57f, 0.01f),
+                ["Left"] = new Vector2(0.59f, 0.08f),
+                ["Right"] = new Vector2(0.59f, 0.00f),
+                ["Up"] = new Vector2(0.57f, 0.22f),
+            };
 
             if (textureWidth != cellSize * colNames.Length || textureHeight != cellSize * rowNames.Length)
             {
@@ -199,18 +191,15 @@ namespace Sapphire.EditorTools
             var result = new List<(string, Rect, Vector2)>();
             for (int r = 0; r < rowNames.Length; r++)
             {
-                bool isBackRow = rowNames[r] == "Up";
-                float pivotY = isBackRow ? backPivotY : frontPivotY;
+                Vector2 pivot = pivotByRow[rowNames[r]];
                 // Unity rects are bottom-up; row 0 (Down) is the topmost row in the image.
                 float yBottom = textureHeight - (r + 1) * cellSize;
 
                 for (int c = 0; c < colNames.Length; c++)
                 {
-                    bool isWalkBColumn = colNames[c] == "WalkB";
-                    float pivotX = isWalkBColumn ? walkBPivotX : normalPivotX;
                     float xLeft = c * cellSize;
                     string name = $"Mage_{rowNames[r]}_{colNames[c]}";
-                    result.Add((name, new Rect(xLeft, yBottom, cellSize, cellSize), new Vector2(pivotX, pivotY)));
+                    result.Add((name, new Rect(xLeft, yBottom, cellSize, cellSize), pivot));
                 }
             }
 
