@@ -2,7 +2,7 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): REMEDIATION_PLAN.md Phase 2(HUD 재배선) + Phase 3(오딘식 메뉴) 완료
+## 2026-09-15 (최신): REMEDIATION_PLAN.md Phase 2(HUD 재배선) + Phase 3(오딘식 메뉴) 완료
 
 Phase 1(가로 1280x720 기준 정정, 아래 절 참고) 이후 Phase 2·3을 한 세션에서 연속 구현했다.
 측정은 전부 PIL/numpy로 알파/색상 전이 지점을 직접 스캔해 구했다(균등분할 가정 금지 원칙
