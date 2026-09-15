@@ -14,6 +14,7 @@ namespace Sapphire.EditorTools
         public const string AtlasPath = "Assets/Sapphire/Art/VFX/MageSkillVfxAtlas.png";
         public const string ThunderAtlasPath = "Assets/Sapphire/Art/VFX/ThunderFieldPadded.png";
         public const string ShieldAtlasPath = "Assets/Sapphire/Art/VFX/ManaShieldPadded.png";
+        public const string DirectionalAtlasPath = "Assets/Sapphire/Art/VFX/MageDirectionalPadded.png";
         private const string LibraryPath = "Assets/Sapphire/Resources/MageSkillVfxLibrary.asset";
         private static readonly string[] Rows = { "Shield", "Teleport", "Thunder", "IceSpike", "LightningSpear" };
         private void OnPreprocessTexture()
@@ -26,6 +27,11 @@ namespace Sapphire.EditorTools
             if (assetPath == ShieldAtlasPath)
             {
                 ConfigureStripTexture((TextureImporter)assetImporter, assetPath, "Shield");
+                return;
+            }
+            if (assetPath == DirectionalAtlasPath)
+            {
+                ConfigureDirectionalTexture((TextureImporter)assetImporter);
                 return;
             }
             if (assetPath != AtlasPath) return;
@@ -120,9 +126,44 @@ namespace Sapphire.EditorTools
 #pragma warning restore 618
         }
 
+        private static void ConfigureDirectionalTexture(TextureImporter importer)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Multiple;
+            importer.alphaIsTransparency = true;
+            importer.mipmapEnabled = false;
+            importer.filterMode = FilterMode.Bilinear;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.maxTextureSize = 4096;
+            importer.GetSourceTextureWidthAndHeight(out int width, out int height);
+            importer.spritePixelsPerUnit = width / 8f;
+            byte[] alpha = ReadAlphaBytes(DirectionalAtlasPath);
+            var slices = new SpriteMetaData[24];
+            string[] names = { "Teleport", "IceSpike", "LightningSpear" };
+            for (int row = 0; row < 3; row++)
+                for (int frame = 0; frame < 8; frame++)
+                {
+                    int left = Mathf.RoundToInt(frame * width / 8f);
+                    int right = Mathf.RoundToInt((frame + 1) * width / 8f);
+                    int top = Mathf.RoundToInt(row * height / 3f);
+                    int bottom = Mathf.RoundToInt((row + 1) * height / 3f);
+                    (float pivotX, float pivotY) = VfxFramePivotCalculator.ComputeContentPivot(alpha, width, left, height - bottom, right - left, bottom - top, directional: row == 2);
+                    slices[row * 8 + frame] = new SpriteMetaData
+                    {
+                        name = "MageVfx_Directional_" + names[row] + "_" + frame.ToString("00"),
+                        rect = new Rect(left, height - bottom, right - left, bottom - top),
+                        alignment = (int)SpriteAlignment.Custom,
+                        pivot = new Vector2(pivotX, pivotY)
+                    };
+                }
+#pragma warning disable 618
+            importer.spritesheet = slices;
+#pragma warning restore 618
+        }
+
         private static void OnPostprocessAllAssets(string[] imported, string[] deleted, string[] moved, string[] oldPaths)
         {
-            if (imported.Contains(AtlasPath) || imported.Contains(ThunderAtlasPath) || imported.Contains(ShieldAtlasPath)) EditorApplication.delayCall += ConfigureLibrary;
+            if (imported.Contains(AtlasPath) || imported.Contains(ThunderAtlasPath) || imported.Contains(ShieldAtlasPath) || imported.Contains(DirectionalAtlasPath)) EditorApplication.delayCall += ConfigureLibrary;
         }
         [InitializeOnLoadMethod]
         private static void ScheduleLibrary() { EditorApplication.delayCall += ConfigureLibrary; }
@@ -154,6 +195,16 @@ namespace Sapphire.EditorTools
             if (shieldSprites.Length == 8)
                 for (int frame = 0; frame < 8; frame++)
                     frames[frame] = shieldSprites.Single(s => s.name == "MageVfx_Shield_" + frame.ToString("00"));
+            var directionalSprites = AssetDatabase.LoadAllAssetsAtPath(DirectionalAtlasPath).OfType<Sprite>().ToArray();
+            if (directionalSprites.Length == 24)
+            {
+                for (int frame = 0; frame < 8; frame++)
+                {
+                    frames[8 + frame] = directionalSprites.Single(s => s.name == "MageVfx_Directional_Teleport_" + frame.ToString("00"));
+                    frames[24 + frame] = directionalSprites.Single(s => s.name == "MageVfx_Directional_IceSpike_" + frame.ToString("00"));
+                    frames[32 + frame] = directionalSprites.Single(s => s.name == "MageVfx_Directional_LightningSpear_" + frame.ToString("00"));
+                }
+            }
             if (!created && library.Frames != null && library.Frames.SequenceEqual(frames)) return;
             library.Frames = frames;
             if (created) AssetDatabase.CreateAsset(library, LibraryPath);

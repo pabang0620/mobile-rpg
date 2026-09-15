@@ -30,6 +30,7 @@ namespace Sapphire.EditorTools
             ConfigureMenuHamburgerIcon();
             ConfigureLevelBadge();
             ConfigureMenuIconsSet();
+            ConfigureDarkMenuArt();
             ConfigureMenuLockBadge();
             ConfigureGaugeFillMana();
         }
@@ -316,6 +317,17 @@ namespace Sapphire.EditorTools
                     ("MenuIcons_Map", new Rect(868f, 0f, 474f, 454f), centerPivot),
                     ("MenuIcons_Dungeon", new Rect(1342f, 0f, 432f, 454f), centerPivot),
                 });
+        }
+
+        private static void ConfigureDarkMenuArt()
+        {
+            ArtImportConfigurator.ConfigureSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuPanelDark.png", new Vector4(52, 52, 52, 52), FilterMode.Bilinear, false, 100f);
+            var center = new Vector2(.5f, .5f);
+            var names = new[] { "MenuIcons_CharacterInfo", "MenuIcons_SkillBook", "MenuIcons_Bag", "MenuIcons_Quest", "MenuIcons_Crafting", "MenuIcons_Market", "MenuIcons_Achievements", "MenuIcons_Ranking", "MenuIcons_Guild", "MenuIcons_Dungeon", "MenuIcons_Pvp", "MenuIcons_Friends", "MenuIcons_Mail", "MenuIcons_Settings", "MenuIcons_Collection", "MenuIcons_Codex", "MenuIcons_Equipment", "MenuIcons_Map", "MenuIcons_Party", "MenuIcons_Shop" };
+            var slices = new (string, Rect, Vector2)[20];
+            for (int i = 0; i < names.Length; i++)
+                slices[i] = (names[i], new Rect((i % 5) * 280.4f, (3 - i / 5) * 280.5f, 280.4f, 280.5f), center);
+            ArtImportConfigurator.ConfigureMultiSprite(SapphireSceneBuilder.UiArtDir + "/MenuIconsSetDark.png", 100, FilterMode.Bilinear, false, null, slices);
         }
 
         private static void ConfigureMenuLockBadge()

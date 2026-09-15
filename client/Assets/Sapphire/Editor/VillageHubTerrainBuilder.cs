@@ -16,16 +16,16 @@ namespace Sapphire.EditorTools
     internal readonly struct TerrainBuildResult
     {
         internal readonly TilemapGridMapBuilder GridMapBuilder;
-        internal readonly InteractableZone SignpostZone;
+        internal readonly InteractableZone[] InteractableZones;
         // 2026-09-15 (Phase 1): exposed so the camera (CameraFollowRig) can read
         // the map's actual extent from cellBounds instead of a hardcoded size -
         // see SapphireSceneBuilder.BuildCamera.
         internal readonly Tilemap GroundTilemap;
 
-        internal TerrainBuildResult(TilemapGridMapBuilder gridMapBuilder, InteractableZone signpostZone, Tilemap groundTilemap)
+        internal TerrainBuildResult(TilemapGridMapBuilder gridMapBuilder, InteractableZone[] interactableZones, Tilemap groundTilemap)
         {
             GridMapBuilder = gridMapBuilder;
-            SignpostZone = signpostZone;
+            InteractableZones = interactableZones;
             GroundTilemap = groundTilemap;
         }
     }
@@ -49,8 +49,9 @@ namespace Sapphire.EditorTools
 
             BuildFences();
             InteractableZone signpostZone = BuildSignpost();
+            InteractableZone slimeGateZone = BuildSlimeGate();
 
-            return new TerrainBuildResult(gridMapBuilder, signpostZone, groundTilemap);
+            return new TerrainBuildResult(gridMapBuilder, new[] { signpostZone, slimeGateZone }, groundTilemap);
         }
 
         private static (Tile blocker, Tile[] grass, Tile[] dirt) CreateTiles()
@@ -198,7 +199,10 @@ namespace Sapphire.EditorTools
             for (int x = 1; x < mapWidth - 1; x++)
             {
                 PlaceFence(fencesRoot.transform, fenceStraight, x, 0, 0f, "Fence_Bottom_" + x);
-                PlaceFence(fencesRoot.transform, fenceStraight, x, mapHeight - 1, 0f, "Fence_Top_" + x);
+                if (x != SapphireSceneBuilder.SpawnX)
+                {
+                    PlaceFence(fencesRoot.transform, fenceStraight, x, mapHeight - 1, 0f, "Fence_Top_" + x);
+                }
             }
 
             for (int y = 1; y < mapHeight - 1; y++)
@@ -227,6 +231,25 @@ namespace Sapphire.EditorTools
             AssignField(interactableZone, "gridY", SapphireSceneBuilder.SignY);
             AssignField(interactableZone, "message", "Welcome to the village hub.");
             return interactableZone;
+        }
+
+        private static InteractableZone BuildSlimeGate()
+        {
+            Sprite gateSprite = LoadNamedSprite(SapphireSceneBuilder.WorldArtDir + "/SlimeKingdomAtlas.png", "SlimeProp_Gate");
+            var gateGo = new GameObject("SlimeKingdomGate", typeof(SpriteRenderer));
+            gateGo.transform.position = CellCenter(SapphireSceneBuilder.SpawnX, SapphireSceneBuilder.MapHeight - 1);
+            gateGo.transform.localScale = new Vector3(2.6f, 2.6f, 1f);
+            var renderer = gateGo.GetComponent<SpriteRenderer>();
+            renderer.sprite = gateSprite;
+            renderer.sortingOrder = 2;
+
+            var zone = gateGo.AddComponent<InteractableZone>();
+            AssignField(zone, "interactableId", "slime_kingdom_gate");
+            AssignField(zone, "gridX", SapphireSceneBuilder.SpawnX);
+            AssignField(zone, "gridY", SapphireSceneBuilder.MapHeight - 1);
+            AssignField(zone, "message", "슬라임 왕국으로 이동합니다.");
+            AssignField(zone, "destinationScene", "SlimeKingdom");
+            return zone;
         }
 
         private static void PlaceFence(Transform parent, Sprite sprite, int x, int y, float rotationZ, string name)

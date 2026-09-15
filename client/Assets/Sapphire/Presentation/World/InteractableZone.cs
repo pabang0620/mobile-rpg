@@ -17,10 +17,12 @@ namespace Sapphire.Presentation.World
         [SerializeField] private int gridY;
         [TextArea]
         [SerializeField] private string message = "A weathered signpost.";
+        [SerializeField] private string destinationScene;
         [SerializeField] private UnityEvent onInteract = new UnityEvent();
 
         public string InteractableIdValue => interactableId;
         public string Message => message;
+        public string DestinationScene => destinationScene;
         public GridCoord Coord => new GridCoord(gridX, gridY);
         public UnityEvent OnInteract => onInteract;
 

@@ -226,7 +226,6 @@ namespace Sapphire.EditorTools
         private static void BuildSkillSystems(Button attackButton, Button[] skillButtons, PlayerGridController playerController, SkillCastFeedback castFeedback, CharacterClass characterClass)
         {
             var skillSystemsGo = new GameObject("SkillSystems_" + characterClass);
-            var rangeIndicator = skillSystemsGo.AddComponent<SkillRangeIndicator>();
             var radialSkillMenu = skillSystemsGo.AddComponent<RadialSkillMenu>();
             // Reuses VillageHubUiBuilder's AssignField (code-reviewer flagged
             // this file's own copy as a duplicated reflection helper - see that
@@ -234,7 +233,9 @@ namespace Sapphire.EditorTools
             VillageHubUiBuilder.AssignField(radialSkillMenu, "basicAttackButton", attackButton);
             VillageHubUiBuilder.AssignField(radialSkillMenu, "skillButtons", skillButtons);
             VillageHubUiBuilder.AssignField(radialSkillMenu, "player", playerController);
-            VillageHubUiBuilder.AssignField(radialSkillMenu, "rangeIndicator", rangeIndicator);
+            // RangeTile markers are intentionally disabled: casts show only
+            // the authored VFX, never cyan checkbox/grid overlays.
+            VillageHubUiBuilder.AssignField(radialSkillMenu, "rangeIndicator", null);
             VillageHubUiBuilder.AssignField(radialSkillMenu, "castFeedback", castFeedback);
             VillageHubUiBuilder.AssignField(radialSkillMenu, "characterClass", characterClass);
         }

@@ -36,6 +36,7 @@ namespace Sapphire.EditorTools
         internal const string WorldArtDir = "Assets/Sapphire/Art/World";
         internal const string UiArtDir = "Assets/Sapphire/Art/UI";
         private const string ScenePath = "Assets/Sapphire/Scenes/VillageHub.unity";
+        private const string SlimeKingdomScenePath = "Assets/Sapphire/Scenes/SlimeKingdom.unity";
         internal const string GeneratedDir = "Assets/Sapphire/Generated";
 
         // 2026-09-14 player feedback: 14x10 felt cramped to walk around in.
@@ -61,6 +62,7 @@ namespace Sapphire.EditorTools
                 SkillVfxImporter.ConfigureLibrary();
                 WarriorSkillVfxImporter.ConfigureLibrary();
                 BuildVillageHubScene();
+                BuildSlimeKingdomScene();
                 Debug.Log("SAPPHIRE_BUILD SUCCESS");
             }
             catch (Exception e)
@@ -105,6 +107,7 @@ namespace Sapphire.EditorTools
                 "Assets/Sapphire/Scenes/CharacterSelect.unity",
                 "Assets/Sapphire/Scenes/CharacterCreate.unity",
                 ScenePath,
+                SlimeKingdomScenePath,
             });
         }
 
@@ -130,8 +133,8 @@ namespace Sapphire.EditorTools
             // sprite loading can't happen at runtime, so there is no way to
             // swap a single rig's sprites post-build; instead both exist and
             // SceneComposer activates exactly one at runtime).
-            (PlayerGridController mageController, PlayerInputReader mageInputReader, SkillCastFeedback mageCastFeedback) = BuildPlayer(CharacterClass.Mage);
-            (PlayerGridController warriorController, PlayerInputReader warriorInputReader, SkillCastFeedback warriorCastFeedback) = BuildPlayer(CharacterClass.Warrior);
+            (PlayerGridController mageController, PlayerInputReader mageInputReader, SkillCastFeedback mageCastFeedback) = BuildPlayer(CharacterClass.Mage, SpawnX, SpawnY);
+            (PlayerGridController warriorController, PlayerInputReader warriorInputReader, SkillCastFeedback warriorCastFeedback) = BuildPlayer(CharacterClass.Warrior, SpawnX, SpawnY);
 
             CameraFollowRig followRig = BuildCamera(mageController.transform.position, terrain.GroundTilemap);
             UiBuildResult ui = VillageHubUiBuilder.Build(
@@ -155,6 +158,35 @@ namespace Sapphire.EditorTools
             AssetDatabase.SaveAssets();
         }
 
+        private static void BuildSlimeKingdomScene()
+        {
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            TerrainBuildResult terrain = SlimeKingdomTerrainBuilder.Build();
+
+            (PlayerGridController mageController, PlayerInputReader mageInputReader, SkillCastFeedback mageCastFeedback) =
+                BuildPlayer(CharacterClass.Mage, SlimeKingdomTerrainBuilder.SpawnX, SlimeKingdomTerrainBuilder.SpawnY);
+            (PlayerGridController warriorController, PlayerInputReader warriorInputReader, SkillCastFeedback warriorCastFeedback) =
+                BuildPlayer(CharacterClass.Warrior, SlimeKingdomTerrainBuilder.SpawnX, SlimeKingdomTerrainBuilder.SpawnY);
+
+            CameraFollowRig followRig = BuildCamera(mageController.transform.position, terrain.GroundTilemap);
+            UiBuildResult ui = VillageHubUiBuilder.Build(
+                mageController, mageInputReader, mageCastFeedback,
+                warriorController, warriorInputReader, warriorCastFeedback,
+                "슬라임 왕국");
+
+            ComposeSceneRoot(
+                terrain, mageController, mageInputReader, ui.MageSkillMenuRoot,
+                warriorController, warriorInputReader, ui.WarriorSkillMenuRoot,
+                followRig, ui.MessagePanel,
+                SlimeKingdomTerrainBuilder.SpawnX, SlimeKingdomTerrainBuilder.SpawnY);
+
+            if (!EditorSceneManager.SaveScene(scene, SlimeKingdomScenePath))
+                throw new Exception("SlimeKingdom scene save failed");
+
+            BuildSettingsSceneRegistrar.Register(SlimeKingdomScenePath);
+            AssetDatabase.SaveAssets();
+        }
+
         // --- Player ---
         // 2026-09 character-flow slice: generalized from a Mage-only hardcoded
         // sheet path/sprite-name prefix to any CharacterClass. Warrior's sheet
@@ -165,7 +197,7 @@ namespace Sapphire.EditorTools
         // Calling this with CharacterClass.Mage loads the exact same sheet/
         // sprite names as before this method took a parameter, so Mage's
         // built rig is byte-for-byte unchanged.
-        private static (PlayerGridController controller, PlayerInputReader inputReader, SkillCastFeedback castFeedback) BuildPlayer(CharacterClass characterClass)
+        private static (PlayerGridController controller, PlayerInputReader inputReader, SkillCastFeedback castFeedback) BuildPlayer(CharacterClass characterClass, int spawnX, int spawnY)
         {
             string className = characterClass.ToString();
             string sheet = RootArtDir + "/" + className + "TopdownGridSheet.png";
@@ -186,7 +218,7 @@ namespace Sapphire.EditorTools
             Sprite walkBRight = LoadNamedSprite(sheet, className + "_Right_WalkB");
 
             var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(PlayerGridController));
-            playerGo.transform.position = CellCenter(SpawnX, SpawnY);
+            playerGo.transform.position = CellCenter(spawnX, spawnY);
             playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
             playerGo.GetComponent<SpriteRenderer>().sortingOrder = 0;
 
@@ -269,7 +301,9 @@ namespace Sapphire.EditorTools
             PlayerInputReader warriorInputReader,
             GameObject warriorSkillMenuRoot,
             CameraFollowRig followRig,
-            SimpleMessagePanel messagePanel)
+            SimpleMessagePanel messagePanel,
+            int spawnX = SpawnX,
+            int spawnY = SpawnY)
         {
             var systemsGo = new GameObject("Systems", typeof(InteractionTrigger), typeof(SceneComposer));
             var interactionTrigger = systemsGo.GetComponent<InteractionTrigger>();
@@ -285,9 +319,9 @@ namespace Sapphire.EditorTools
             AssignField(sceneComposer, "cameraFollowRig", followRig);
             AssignField(sceneComposer, "interactionTrigger", interactionTrigger);
             AssignField(sceneComposer, "messagePanel", messagePanel);
-            AssignField(sceneComposer, "playerSpawnX", SpawnX);
-            AssignField(sceneComposer, "playerSpawnY", SpawnY);
-            AssignField(sceneComposer, "interactableZones", new System.Collections.Generic.List<InteractableZone> { terrain.SignpostZone });
+            AssignField(sceneComposer, "playerSpawnX", spawnX);
+            AssignField(sceneComposer, "playerSpawnY", spawnY);
+            AssignField(sceneComposer, "interactableZones", new System.Collections.Generic.List<InteractableZone>(terrain.InteractableZones));
         }
 
         internal static Vector3 CellCenter(int x, int y)

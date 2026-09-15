@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Sapphire/Scenes/VillageHub.unity
     guid: c0740018f8c61c14bac95e08d2b33132
+  - enabled: 1
+    path: Assets/Sapphire/Scenes/SlimeKingdom.unity
+    guid: ace42b7247777c44bbe006f29265b38e
   m_configObjects: {}

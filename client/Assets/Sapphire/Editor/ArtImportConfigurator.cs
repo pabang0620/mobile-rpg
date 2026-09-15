@@ -28,6 +28,8 @@ namespace Sapphire.EditorTools
         {
             ConfigureGroundAtlas();
             ConfigureVillagePropsAtlas();
+            ConfigureSlimeKingdomAtlas();
+            ConfigureSlimeKingdomGroundTiles();
             ConfigureCharacterSheets();
             ConfigureUiFrames();
             ConfigureSkillButtonFrame();
@@ -38,6 +40,57 @@ namespace Sapphire.EditorTools
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        private static void ConfigureSlimeKingdomAtlas()
+        {
+            const float cell = 362f;
+            string[] names =
+            {
+                "SlimeGround_Grass", "SlimeGround_Road", "SlimeGround_Pool", "SlimeGround_Stone",
+                "SlimeProp_Tree", "SlimeProp_Crystal", "SlimeProp_Mushroom", "SlimeProp_Statue",
+                "SlimeProp_Slime", "SlimeProp_Chest", "SlimeProp_Gate", "SlimeProp_Throne",
+            };
+            var slices = new (string, Rect, Vector2)[names.Length];
+            for (int i = 0; i < names.Length; i++)
+            {
+                slices[i] = (names[i], new Rect((i % 4) * cell, (2 - i / 4) * cell, cell, cell), new Vector2(0.5f, 0.5f));
+            }
+
+            ConfigureMultiSprite(
+                SapphireSceneBuilder.WorldArtDir + "/SlimeKingdomAtlas.png",
+                cell,
+                FilterMode.Bilinear,
+                false,
+                null,
+                slices);
+        }
+
+        private static void ConfigureSlimeKingdomGroundTiles()
+        {
+            foreach (string name in new[] { "Grass", "RoyalRoad", "JellyPool", "CastleStone" })
+            {
+                string path = SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/Ground/" + name + ".png";
+                var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (importer == null) throw new Exception("Texture not found or not a TextureImporter: " + path);
+
+                importer.textureType = TextureImporterType.Sprite;
+                importer.spriteImportMode = SpriteImportMode.Single;
+                importer.spritePixelsPerUnit = 1250f;
+                importer.filterMode = FilterMode.Bilinear;
+                importer.mipmapEnabled = false;
+                importer.wrapMode = TextureWrapMode.Clamp;
+                importer.maxTextureSize = 512;
+                importer.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.alphaIsTransparency = false;
+                var settings = new TextureImporterSettings();
+                importer.ReadTextureSettings(settings);
+                settings.spriteAlignment = (int)SpriteAlignment.Center;
+                settings.spritePivot = new Vector2(0.5f, 0.5f);
+                settings.spriteMeshType = SpriteMeshType.FullRect;
+                importer.SetTextureSettings(settings);
+                importer.SaveAndReimport();
+            }
         }
 
         // 2026-09-15: one shared PPU for all 6 individually-imported ground

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Sapphire.Domain.Character;
 using Sapphire.Domain.Grid;
 using Sapphire.Domain.Interaction;
@@ -61,6 +62,11 @@ namespace Sapphire.Composition
             {
                 zone.OnInteract.AddListener(() =>
                 {
+                    if (!string.IsNullOrEmpty(zone.DestinationScene))
+                    {
+                        SceneManager.LoadScene(zone.DestinationScene);
+                        return;
+                    }
                     messagePanel.SetText(zone.Message);
                     messagePanel.Show();
                 });

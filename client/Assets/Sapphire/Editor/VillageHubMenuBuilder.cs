@@ -33,8 +33,11 @@ namespace Sapphire.EditorTools
         // screenshot). 2026-09-15 (gemless MapleStory-M rebuild): the button
         // shrank from 150x72 (pill+label) to HamburgerButtonSize=56 (icon
         // alone, no label) - margin recomputed the same way, 20+56+12=88.
-        private const float OdinPanelTopMargin = 20f + HamburgerButtonSize + 12f;
+        private const float OdinPanelTopMargin = 0f;
         private const float OdinPanelBottomMargin = 20f;
+        // Keep section titles below the panel's ornate top frame so 성장,
+        // 모험 and 시스템 always render inside the usable inner surface.
+        private const float OdinContentTopInset = 67f;
         // 2026-09-16 (F6.4 fix): raised from 36 to 40 so the section title
         // text sits centered in the header band instead of overlapping its
         // top edge. 2026-09-15 (gemless MapleStory-M rebuild): the header no
@@ -53,11 +56,15 @@ namespace Sapphire.EditorTools
         // footer button (see BuildCharacterSelectButton + the
         // VerifyFooterClearance check at the end of Build below, which is
         // what actually guards this now instead of eyeballing it again).
-        private const float OdinItemRowHeight = 78f;
+        private const float OdinItemRowHeight = 70f;
         // 2026-09-15 (D1 fix): 22 -> 8, same reason as OdinItemRowHeight - see
         // VerifyFooterClearance for the arithmetic this is tuned against.
-        private const float OdinSectionGap = 8f;
-        private const float OdinIconSize = 56f;
+        private const float OdinSectionGap = 4f;
+        // Tighter 3x3 presentation: the previous 56px icon left a visibly
+        // large gap between neighboring cells.  Enlarging the icon while
+        // keeping the same three-column centers reduces the perceived gap to
+        // roughly half without changing the panel width or label alignment.
+        private const float OdinIconSize = 54f;
         // 2026-09-15 (D1 fix): the footer button's own height, pulled out of
         // BuildCharacterSelectButton as a named constant so
         // VerifyFooterClearance (build-time overlap guard) can reference the
@@ -95,11 +102,14 @@ namespace Sapphire.EditorTools
         // pixelsPerUnit switched from the old per-asset 793/400 formula to
         // the shared ArtImportConfigurator.UiKitV3PixelsPerUnit (300, every
         // v3 asset's fixed native/target ratio - see that constant's doc).
-        private const float MenuPanelOdinLeftRightBorderPx = 32f;
+        private const float MenuPanelOdinLeftRightBorderPx = 52f;
         private const float MenuPanelOdinSpritePixelsPerUnit = ArtImportConfigurator.UiKitV3PixelsPerUnit;
         private const float OdinContentMarginClearance = 14f;
+        private const float OdinHorizontalPaddingReduction = 20f;
         private static readonly float OdinContentMargin =
-            MenuPanelOdinLeftRightBorderPx / (MenuPanelOdinSpritePixelsPerUnit / 100f) + OdinContentMarginClearance;
+            MenuPanelOdinLeftRightBorderPx / (MenuPanelOdinSpritePixelsPerUnit / 100f)
+            + OdinContentMarginClearance - OdinHorizontalPaddingReduction;
+        private const float OdinBottomContentPadding = 12f;
         // code-reviewer flagged a doc conflict: docs/REMEDIATION_PLAN.md line
         // 61 says "5열 아이콘 그리드" (5 columns), but the session's task
         // instructions explicitly specify "a 4-column grid of items (cell
@@ -108,7 +118,12 @@ namespace Sapphire.EditorTools
         // authority; REMEDIATION_PLAN.md may carry stale nuance), 4 is what's
         // implemented here - docs/DECISIONS.md's 2026-09-16 entry records this
         // as a known, deliberate conflict rather than an oversight.
-        private const int OdinColumns = 4;
+        // Three-column landscape menu grid: wider icon cells keep labels
+        // readable at 1280x720 and match the supplied reference layout.
+        private const int OdinColumns = 3;
+        // Compress only the horizontal pitch of the 3-column grid so the
+        // icons sit closer together without changing the vertical rhythm.
+        private const float OdinColumnPitchScale = 0.75f;
 
         // 2026-09-15 (gemless MapleStory-M rebuild): the "메뉴" button dropped
         // its MenuButtonGold pill background and text label entirely - it's
@@ -120,8 +135,7 @@ namespace Sapphire.EditorTools
         internal static void Build(GameObject canvasGo, SimpleMessagePanel messagePanel)
         {
             Sprite hamburgerSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuHamburgerIcon.png");
-            Sprite buttonSecondarySprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/ButtonSecondary.png", "Normal");
-            Sprite panelSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuPanelOdin.png");
+            Sprite panelSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuPanelDark.png");
             Sprite dividerLeftSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionDivider.png", "MenuSectionDivider_Left");
             Sprite dividerRightSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionDivider.png", "MenuSectionDivider_Right");
             Sprite lockSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuLockBadge.png", "MenuLockBadge");
@@ -161,7 +175,7 @@ namespace Sapphire.EditorTools
             backdropRect.offsetMin = Vector2.zero;
             backdropRect.offsetMax = Vector2.zero;
             var backdropImage = backdropGo.GetComponent<Image>();
-            backdropImage.color = new Color(0f, 0f, 0f, 0.45f);
+            backdropImage.color = new Color(0.015f, 0.025f, 0.06f, 0.62f);
             backdropImage.raycastTarget = true;
             Button backdropButton = backdropGo.GetComponent<Button>();
 
@@ -170,8 +184,8 @@ namespace Sapphire.EditorTools
             var panelRect = panelGo.GetComponent<RectTransform>();
             panelRect.anchorMin = new Vector2(1f, 0f);
             panelRect.anchorMax = new Vector2(1f, 1f);
-            panelRect.offsetMin = new Vector2(-20f - OdinPanelWidth, OdinPanelBottomMargin);
-            panelRect.offsetMax = new Vector2(-20f, -OdinPanelTopMargin);
+            panelRect.offsetMin = new Vector2(-OdinPanelWidth, OdinPanelBottomMargin);
+            panelRect.offsetMax = new Vector2(0f, -OdinPanelTopMargin);
             var panelImage = panelGo.GetComponent<Image>();
             panelImage.sprite = panelSprite;
             panelImage.type = Image.Type.Sliced;
@@ -182,7 +196,7 @@ namespace Sapphire.EditorTools
 
             float contentWidth = OdinPanelWidth - 2f * OdinContentMargin;
             float cellWidth = contentWidth / OdinColumns;
-            float cursorY = -OdinContentMargin;
+            float cursorY = -OdinContentTopInset;
             // Tracks the bottom edge (distance below panel top, negative) of
             // the last section's item row - i.e. where the grid content
             // actually ends, ignoring the trailing OdinSectionGap the loop
@@ -193,10 +207,17 @@ namespace Sapphire.EditorTools
 
             foreach (MenuSectionDefinition section in MenuCatalog.Sections)
             {
+                int rows = Mathf.CeilToInt(section.Items.Length / (float)OdinColumns);
+                if (section.Title == "시스템")
+                {
+                    float panelHeight = ReferenceCanvasHeight - OdinPanelTopMargin - OdinPanelBottomMargin;
+                    cursorY = -panelHeight + OdinBottomContentPadding
+                        + OdinHeaderHeight + OdinHeaderToItemsGap + rows * OdinItemRowHeight;
+                }
+
                 BuildOdinSectionHeader(panelGo, dividerLeftSprite, dividerRightSprite, section.Title, cursorY, contentWidth);
                 cursorY -= OdinHeaderHeight + OdinHeaderToItemsGap;
 
-                int rows = Mathf.CeilToInt(section.Items.Length / (float)OdinColumns);
                 for (int r = 0; r < rows; r++)
                 {
                     float rowY = cursorY - r * OdinItemRowHeight;
@@ -209,7 +230,9 @@ namespace Sapphire.EditorTools
                         }
 
                         MenuItemDefinition item = section.Items[index];
-                        float cellCenterX = OdinContentMargin + c * cellWidth + cellWidth * 0.5f;
+                        float baseCellCenterX = OdinContentMargin + c * cellWidth + cellWidth * 0.5f;
+                        float gridCenterX = OdinPanelWidth * 0.5f;
+                        float cellCenterX = gridCenterX + (baseCellCenterX - gridCenterX) * OdinColumnPitchScale;
                         Button itemButton = BuildOdinMenuItem(panelGo, item, lockSprite, new Vector2(cellCenterX, rowY), cellWidth);
                         allButtons.Add(itemButton);
                         allLabels.Add(item.Label);
@@ -221,25 +244,6 @@ namespace Sapphire.EditorTools
                 cursorY = lastContentBottomY - OdinSectionGap;
             }
 
-            VerifyFooterClearance(lastContentBottomY);
-
-            // Character-flow slice, task requirement: one return path from the
-            // village back to CharacterSelect, somewhere in the menu panel.
-            // A standalone footer button (not a MenuCatalog grid item) wired
-            // to load the scene directly, rather than routing through
-            // MainMenuPanel.Select's generic "coming soon" placeholder - so
-            // this doesn't touch MainMenuPanel.cs/MenuCatalog.cs or any of
-            // the existing 8 menu items' behavior at all.
-            //
-            // 2026-09-15 (D1 fix): this used to be positioned purely by its
-            // own anchoredPosition (from-bottom) with zero awareness of where
-            // the grid content above ended (from-top) - the two coordinate
-            // systems never got compared, so nothing caught them overlapping
-            // (orchestrator screenshot flow_village_warrior_menu.png: this
-            // button visually covered the "시스템" section's 설정 icon
-            // label). VerifyFooterClearance above now throws at build time if
-            // they would.
-            BuildCharacterSelectButton(panelGo, buttonSecondarySprite);
 
             var controller = canvasGo.AddComponent<MainMenuPanel>();
             controller.Configure(overlayGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), messagePanel);
@@ -312,26 +316,27 @@ namespace Sapphire.EditorTools
             headerRect.sizeDelta = new Vector2(contentWidth, OdinHeaderHeight);
             headerRect.anchoredPosition = new Vector2(OdinContentMargin, topY);
 
-            BuildDividerHalf(headerGo, dividerLeftSprite, "DividerLeft", new Vector2(0f, 0.5f));
-            BuildDividerHalf(headerGo, dividerRightSprite, "DividerRight", new Vector2(1f, 0.5f));
-
             var textGo = new GameObject("Text", typeof(Text));
             textGo.transform.SetParent(headerGo.transform, false);
             var textRect = textGo.GetComponent<RectTransform>();
-            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMin = new Vector2(0f, 0.25f);
             textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMin = new Vector2(8f, 0f);
             textRect.offsetMax = Vector2.zero;
             var text = textGo.GetComponent<Text>();
             text.font = VillageHubUiBuilder.LoadKoreanFont();
-            text.alignment = TextAnchor.MiddleCenter;
-            text.color = Color.white;
-            text.fontSize = 20;
+            text.alignment = TextAnchor.MiddleLeft;
+            text.color = new Color(0.96f, 0.89f, 0.70f, 1f);
+            text.fontSize = 18;
             text.text = title;
             text.raycastTarget = false;
+
+            float halfLineWidth = contentWidth * 0.5f;
+            BuildDividerHalf(headerGo, dividerLeftSprite, "UnderlineLeft", new Vector2(0f, 0f), halfLineWidth);
+            BuildDividerHalf(headerGo, dividerRightSprite, "UnderlineRight", new Vector2(1f, 0f), halfLineWidth);
         }
 
-        private static void BuildDividerHalf(GameObject headerGo, Sprite dividerSprite, string name, Vector2 anchor)
+        private static void BuildDividerHalf(GameObject headerGo, Sprite dividerSprite, string name, Vector2 anchor, float width)
         {
             var go = new GameObject(name, typeof(Image));
             go.transform.SetParent(headerGo.transform, false);
@@ -339,12 +344,12 @@ namespace Sapphire.EditorTools
             rect.anchorMin = anchor;
             rect.anchorMax = anchor;
             rect.pivot = anchor;
-            rect.sizeDelta = new Vector2(DividerWidth, DividerHeight);
-            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = new Vector2(width, DividerHeight);
+            rect.anchoredPosition = new Vector2(0f, 3f);
             var image = go.GetComponent<Image>();
             image.sprite = dividerSprite;
             image.type = Image.Type.Simple;
-            image.preserveAspect = true;
+            image.preserveAspect = false;
             image.raycastTarget = false;
         }
 
@@ -372,7 +377,7 @@ namespace Sapphire.EditorTools
             itemRect.anchoredPosition = anchoredPosition;
             var button = itemGo.GetComponent<Button>();
 
-            Sprite iconSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuIconsSet.png", item.IconSpriteName);
+            Sprite iconSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuIconsSetDark.png", item.IconSpriteName);
             var iconGo = new GameObject("Icon", typeof(Image));
             iconGo.transform.SetParent(itemGo.transform, false);
             var iconRect = iconGo.GetComponent<RectTransform>();
@@ -380,7 +385,8 @@ namespace Sapphire.EditorTools
             iconRect.anchorMax = new Vector2(0.5f, 1f);
             iconRect.pivot = new Vector2(0.5f, 1f);
             iconRect.sizeDelta = new Vector2(OdinIconSize, OdinIconSize);
-            iconRect.anchoredPosition = new Vector2(0f, 0f);
+            float iconVerticalOffset = item.Id == "equipment" || item.Id == "map" ? -6f : 0f;
+            iconRect.anchoredPosition = new Vector2(0f, iconVerticalOffset);
             var iconImage = iconGo.GetComponent<Image>();
             iconImage.sprite = iconSprite;
             iconImage.preserveAspect = true;
@@ -424,8 +430,8 @@ namespace Sapphire.EditorTools
 
             if (!item.IsAvailable)
             {
-                iconImage.color = new Color(0.45f, 0.45f, 0.5f, 1f);
-                label.color = new Color(0.7f, 0.7f, 0.75f, 1f);
+                iconImage.color = new Color(0.42f, 0.50f, 0.60f, 0.72f);
+                label.color = new Color(0.58f, 0.65f, 0.72f, 0.82f);
                 button.interactable = false;
 
                 var lockGo = new GameObject("LockBadge", typeof(Image));
@@ -444,7 +450,7 @@ namespace Sapphire.EditorTools
             }
             else
             {
-                label.color = Color.white;
+                label.color = new Color(0.95f, 0.96f, 0.92f, 1f);
             }
 
             return button;

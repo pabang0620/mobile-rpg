@@ -54,7 +54,8 @@ namespace Sapphire.EditorTools
     {
         internal static UiBuildResult Build(
             PlayerGridController mageController, PlayerInputReader mageInputReader, SkillCastFeedback mageCastFeedback,
-            PlayerGridController warriorController, PlayerInputReader warriorInputReader, SkillCastFeedback warriorCastFeedback)
+            PlayerGridController warriorController, PlayerInputReader warriorInputReader, SkillCastFeedback warriorCastFeedback,
+            string regionName = "사파이어 광장")
         {
             BuildEventSystem();
             GameObject canvasGo = BuildCanvas();
@@ -72,7 +73,7 @@ namespace Sapphire.EditorTools
             GameObject mageSkillMenuRoot = VillageHubSkillMenuBuilder.Build(canvasGo, mageController, mageCastFeedback, CharacterClass.Mage, "SkillIconsSetGold.png");
             GameObject warriorSkillMenuRoot = VillageHubSkillMenuBuilder.Build(canvasGo, warriorController, warriorCastFeedback, CharacterClass.Warrior, "WarriorSkillIconsSetGold.png");
             BuildGauges(canvasGo);
-            BuildRegionNameBanner(canvasGo);
+            BuildRegionNameBanner(canvasGo, regionName);
             VillageHubMenuBuilder.Build(canvasGo, messagePanel);
 
             return new UiBuildResult(messagePanel, mageSkillMenuRoot, warriorSkillMenuRoot);
@@ -388,7 +389,7 @@ namespace Sapphire.EditorTools
         // one dimension is not a free layout choice. Text is left-aligned in
         // the space to the right of the pin (not centered across the whole
         // capsule - centering would run the name text across the pin icon).
-        private static void BuildRegionNameBanner(GameObject canvasGo)
+        private static void BuildRegionNameBanner(GameObject canvasGo, string regionName)
         {
             Sprite bannerSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/RegionNameplate.png");
             const float bannerWidth = 220f;
@@ -422,7 +423,7 @@ namespace Sapphire.EditorTools
             text.alignment = TextAnchor.MiddleLeft;
             text.color = Color.white;
             text.fontSize = 18;
-            text.text = "사파이어 광장";
+            text.text = regionName;
             text.raycastTarget = false;
         }
 
