@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Sapphire.Domain.Vfx;
 using Sapphire.Presentation.Skills;
 
 namespace Sapphire.EditorTools
@@ -18,12 +20,12 @@ namespace Sapphire.EditorTools
         {
             if (assetPath == ThunderAtlasPath)
             {
-                ConfigureStripTexture((TextureImporter)assetImporter, "Thunder");
+                ConfigureStripTexture((TextureImporter)assetImporter, assetPath, "Thunder");
                 return;
             }
             if (assetPath == ShieldAtlasPath)
             {
-                ConfigureStripTexture((TextureImporter)assetImporter, "Shield");
+                ConfigureStripTexture((TextureImporter)assetImporter, assetPath, "Shield");
                 return;
             }
             if (assetPath != AtlasPath) return;
@@ -37,6 +39,7 @@ namespace Sapphire.EditorTools
             importer.maxTextureSize = 4096;
             importer.GetSourceTextureWidthAndHeight(out int width, out int height);
             importer.spritePixelsPerUnit = width / 8f;
+            byte[] alpha = ReadAlphaBytes(assetPath);
             var slices = new SpriteMetaData[40];
             for (int row = 0; row < 5; row++)
                 for (int frame = 0; frame < 8; frame++)
@@ -45,15 +48,21 @@ namespace Sapphire.EditorTools
                     int right = Mathf.RoundToInt((frame + 1) * width / 8f);
                     int top = Mathf.RoundToInt(row * height / 5f);
                     int bottom = Mathf.RoundToInt((row + 1) * height / 5f);
+                    // Every spell uses the actor as its origin. The spear row
+                    // grows forward from its left edge; all other rows stay
+                    // centered directly over the actor/grid origin. The pivot is
+                    // anchored to THIS frame's own alpha content bbox (not the
+                    // cell's fixed geometric center) - see
+                    // VfxFramePivotCalculator's class doc for why (2026-09-15
+                    // skill-cast jitter fix).
+                    (float pivotX, float pivotY) = VfxFramePivotCalculator.ComputeContentPivot(
+                        alpha, width, left, height - bottom, right - left, bottom - top, directional: row == 4);
                     slices[row * 8 + frame] = new SpriteMetaData
                     {
                         name = "MageVfx_" + Rows[row] + "_" + frame.ToString("00"),
                         rect = new Rect(left, height - bottom, right - left, bottom - top),
-                        // Every spell uses the actor as its origin. The spear row
-                        // grows forward from its left edge; all other rows stay
-                        // centered directly over the actor/grid origin.
                         alignment = (int)SpriteAlignment.Custom,
-                        pivot = row == 4 ? new Vector2(0f, .5f) : new Vector2(.5f, .5f)
+                        pivot = new Vector2(pivotX, pivotY)
                     };
                 }
 #pragma warning disable 618
@@ -61,7 +70,22 @@ namespace Sapphire.EditorTools
 #pragma warning restore 618
         }
 
-        private static void ConfigureStripTexture(TextureImporter importer, string effectName)
+        // Raw per-pixel alpha for the whole texture, bottom-to-top (matches
+        // Texture2D.GetPixels32/the rect flip above) - read directly from the PNG
+        // bytes via a throwaway Texture2D since OnPreprocessTexture runs before the
+        // asset's own Texture2D is importable/readable.
+        private static byte[] ReadAlphaBytes(string path)
+        {
+            var raw = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            raw.LoadImage(File.ReadAllBytes(path));
+            Color32[] pixels = raw.GetPixels32();
+            var alpha = new byte[pixels.Length];
+            for (int i = 0; i < pixels.Length; i++) alpha[i] = pixels[i].a;
+            UnityEngine.Object.DestroyImmediate(raw);
+            return alpha;
+        }
+
+        private static void ConfigureStripTexture(TextureImporter importer, string path, string effectName)
         {
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Multiple;
@@ -72,17 +96,23 @@ namespace Sapphire.EditorTools
             importer.maxTextureSize = 4096;
             importer.GetSourceTextureWidthAndHeight(out int width, out int height);
             importer.spritePixelsPerUnit = width / 8f;
+            byte[] alpha = ReadAlphaBytes(path);
             var slices = new SpriteMetaData[8];
             for (int frame = 0; frame < 8; frame++)
             {
                 int left = Mathf.RoundToInt(frame * width / 8f);
                 int right = Mathf.RoundToInt((frame + 1) * width / 8f);
+                // Content-bbox pivot, same reasoning as the main atlas above -
+                // ManaShieldPadded/ThunderFieldPadded are single-row strips of the
+                // same AI-generated-per-frame kind.
+                (float pivotX, float pivotY) = VfxFramePivotCalculator.ComputeContentPivot(
+                    alpha, width, left, 0, right - left, height, directional: false);
                 slices[frame] = new SpriteMetaData
                 {
                     name = "MageVfx_" + effectName + "_" + frame.ToString("00"),
                     rect = new Rect(left, 0, right - left, height),
-                    alignment = (int)SpriteAlignment.Center,
-                    pivot = new Vector2(.5f, .5f)
+                    alignment = (int)SpriteAlignment.Custom,
+                    pivot = new Vector2(pivotX, pivotY)
                 };
             }
 #pragma warning disable 618

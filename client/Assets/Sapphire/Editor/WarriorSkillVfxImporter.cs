@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Sapphire.Domain.Vfx;
 using Sapphire.Presentation.Skills;
 
 namespace Sapphire.EditorTools
@@ -33,9 +35,10 @@ namespace Sapphire.EditorTools
         // BasicAttackSlash/DashStreak are directional (drawn facing right)
         // and grow from their left edge, same convention as mage's
         // LightningSpear row (SkillVfxImporter) - the other three are
-        // direction-less area effects centered on the caster.
-        private static readonly Vector2 LeftEdgePivot = new Vector2(0f, .5f);
-        private static readonly Vector2 CenterPivot = new Vector2(.5f, .5f);
+        // direction-less area effects centered on the caster. (Pivots
+        // themselves are now content-bbox-based per frame, see
+        // VfxFramePivotCalculator - "directional" only picks which axis
+        // convention that calculator uses.)
 
         private void OnPreprocessTexture()
         {
@@ -60,30 +63,54 @@ namespace Sapphire.EditorTools
             importer.maxTextureSize = 4096;
             importer.GetSourceTextureWidthAndHeight(out int width, out int height);
             importer.spritePixelsPerUnit = width / 8f;
+            byte[] alpha = ReadAlphaBytes(assetPath);
 
             var slices = new SpriteMetaData[40];
             for (int row = 0; row < 5; row++)
             {
                 bool directional = AtlasRowNames[row] == "BasicAttackSlash" || AtlasRowNames[row] == "DashStreak";
-                Vector2 pivot = directional ? LeftEdgePivot : CenterPivot;
                 for (int frame = 0; frame < 8; frame++)
                 {
                     int left = Mathf.RoundToInt(frame * width / 8f);
                     int right = Mathf.RoundToInt((frame + 1) * width / 8f);
                     int top = Mathf.RoundToInt(row * height / 5f);
                     int bottom = Mathf.RoundToInt((row + 1) * height / 5f);
+                    // Pivot anchored to THIS frame's own alpha content bbox (not a
+                    // fixed cell-relative LeftEdgePivot/CenterPivot) - see
+                    // VfxFramePivotCalculator's class doc for why (2026-09-15
+                    // skill-cast jitter fix, mirrors SkillVfxImporter's mage fix).
+                    (float pivotX, float pivotY) = VfxFramePivotCalculator.ComputeContentPivot(
+                        alpha, width, left, height - bottom, right - left, bottom - top, directional);
                     slices[row * 8 + frame] = new SpriteMetaData
                     {
                         name = "WarriorVfx_" + AtlasRowNames[row] + "_" + frame.ToString("00"),
                         rect = new Rect(left, height - bottom, right - left, bottom - top),
                         alignment = (int)SpriteAlignment.Custom,
-                        pivot = pivot,
+                        pivot = new Vector2(pivotX, pivotY),
                     };
                 }
             }
 #pragma warning disable 618
             importer.spritesheet = slices;
 #pragma warning restore 618
+        }
+
+        // Raw per-pixel alpha for the whole texture, bottom-to-top (matches
+        // Texture2D.GetPixels32/the rect flip above) - read directly from the PNG
+        // bytes via a throwaway Texture2D since OnPreprocessTexture runs before the
+        // asset's own Texture2D is importable/readable. Mirrors
+        // SkillVfxImporter.ReadAlphaBytes exactly (same convention, separate Editor
+        // classes - see WarriorSkillVfxPlayer's class doc for why this codebase
+        // duplicates rather than shares mage/warrior Editor-tool code).
+        private static byte[] ReadAlphaBytes(string path)
+        {
+            var raw = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            raw.LoadImage(File.ReadAllBytes(path));
+            Color32[] pixels = raw.GetPixels32();
+            var alpha = new byte[pixels.Length];
+            for (int i = 0; i < pixels.Length; i++) alpha[i] = pixels[i].a;
+            UnityEngine.Object.DestroyImmediate(raw);
+            return alpha;
         }
 
         // GroundSlam is a single row, 8 frames, center-pivoted - the actual
@@ -101,18 +128,21 @@ namespace Sapphire.EditorTools
             importer.maxTextureSize = 4096;
             importer.GetSourceTextureWidthAndHeight(out int width, out int height);
             importer.spritePixelsPerUnit = width / 8f;
+            byte[] alpha = ReadAlphaBytes(GroundSlamStripPath);
 
             var slices = new SpriteMetaData[8];
             for (int frame = 0; frame < 8; frame++)
             {
                 int left = Mathf.RoundToInt(frame * width / 8f);
                 int right = Mathf.RoundToInt((frame + 1) * width / 8f);
+                (float pivotX, float pivotY) = VfxFramePivotCalculator.ComputeContentPivot(
+                    alpha, width, left, 0, right - left, height, directional: false);
                 slices[frame] = new SpriteMetaData
                 {
                     name = "WarriorVfx_GroundSlam_" + frame.ToString("00"),
                     rect = new Rect(left, 0, right - left, height),
                     alignment = (int)SpriteAlignment.Custom,
-                    pivot = CenterPivot,
+                    pivot = new Vector2(pivotX, pivotY),
                 };
             }
 #pragma warning disable 618

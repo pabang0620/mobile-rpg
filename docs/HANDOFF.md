@@ -2,7 +2,58 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): 미사용 에셋/죽은 코드 정리
+## 2026-09-15 (최신): 스킬 캐스트 중 "캐릭터가 흔들린다" 버그 - 원인은 VFX 아틀라스 프레임별 알파 중심 불일치
+
+사용자 리포트: "스킬들이 법사도 그렇고 전사도 그렇고 캐릭터가 정가운데 있어야하는데 엄청 흔들린다".
+
+**원인 확정**: 캐릭터 자신의 `transform.position`은 스킬 캐스트 중 어떤 코드 경로도 건드리지
+않는다(`SkillVfxPlayer`/`WarriorSkillVfxPlayer.Play`는 항상 새로 생성한 VFX GameObject의
+transform만 움직이고, `GridMoveAnimator`/`PlayerGridController`는 이동 중에만 동작 - 코드
+추적으로 확인, 이동 스킬(블링크/대시)의 1회 순간이동은 의도된 동작이지 버그 아님). 대신
+`MageSkillVfxAtlas.png`/`WarriorSkillVfxAtlas.png`/`ManaShieldPadded.png`/
+`ThunderFieldPadded.png`/`WarriorGroundSlamPadded.png` 5개 VFX 시트가 AI 생성 특성상
+같은 행(row)의 8프레임끼리 그려진 내용(알파 bbox)이 프레임마다 셀 안에서 최대 47.5px(셀
+폭 198px 대비 약 24%)까지 어긋나 있었다(PIL로 프레임별 alpha bbox center 실측,
+`SkillVfxImporter`/`WarriorSkillVfxImporter`가 그동안 모든 프레임에 고정 pivot(0.5,0.5 또는
+방향성 행은 0,0.5)을 부여해 슬라이스하고 있었던 것과 충돌). 캐스터에 고정된
+transform.position에 고정 pivot으로 매 프레임을 렌더하니, 실제 그림 내용이 셀 안에서
+제자리가 아닌 프레임이 나올 때마다 화면상 그 프레임만 위치가 튀어 보였다 - 이게 8~12fps로
+반복되며 "캐릭터가 흔들린다"로 지각된 것. VFX가 캐릭터와 거의 같은 크기로 겹쳐 그려지는
+지속형 자기 버프(마력쉴드/방패막기)에서 특히 두드러졌다.
+
+**수정**: `Domain/Vfx/VfxFramePivotCalculator.cs`(신설, 엔진 비의존 순수 C#) -
+프레임의 alpha bbox를 받아 그 bbox 자체를 pivot으로 계산(중심형 행은 bbox 중심, 방향성
+행(창/슬래시/대시)은 bbox 좌측 끝 - 타일 수만큼 늘리는 localScale 확장이 그림이 실제로
+시작하는 지점에서부터 자연스럽게 벌어지도록). `SkillVfxImporter.cs`/
+`WarriorSkillVfxImporter.cs`가 `OnPreprocessTexture`에서 PNG 원본 바이트를 직접 읽어
+(`ReadAlphaBytes`, 임포트 파이프라인이 아직 텍스처를 못 읽는 시점이라 별도 Texture2D로 디코드)
+프레임마다 이 계산기로 pivot을 구해 `SpriteMetaData.pivot`에 대입 - 5개 텍스처 임포터 전부
+동일 적용(Custom alignment로 통일, 이전엔 strip 텍스처 2종이 Center alignment였음). 기존
+`.meta`가 이미 슬라이스 40/8개를 캐싱하고 있어 `ConfigureLibrary()`가 자동 재수입하지
+않으므로, 임시 Editor 스크립트로 5개 텍스처를 `ImportAssetOptions.ForceUpdate`로 강제
+재수입해 새 pivot을 `.meta`에 반영한 뒤 삭제했다(git diff로 pivot 값만 바뀌고 rect는 무변경
+확인 - 예: ManaShieldPadded 프레임들 pivot이 (0.5,0.5) 고정에서 (0.498~0.524, 0.498~0.506)
+범위로, WarriorSkillVfxAtlas BasicAttackSlash 행은 (0,0.5) 고정에서 프레임별 (0~0.27, 0.44~
+0.45)로 변경).
+
+**회귀 테스트**: `Tests/Domain/VfxFramePivotCalculatorTests.cs`(신설, 6건) - 순수 알고리즘
+단위 테스트. `SkillVfxPlayer`/`WarriorSkillVfxPlayer`는 MonoBehaviour+코루틴이라 EditMode
+`[Test]`에서 직접 호출 불가(Play 모드 밖 StartCoroutine은 예외)라 캐릭터 transform 불변을
+직접 도는 테스트 대신, 실제 버그를 만든 계산 자체(프레임마다 pivot이 달라져야 함/빈 프레임
+폴백/방향성 좌측단 앵커/텍스처 오프셋 무관)를 검증한다.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 0에러, EditMode 64/64 PASS(기존 58 + 신규 6). 임시
+디버그 훅(`RadialSkillMenu`에 `-sapphire-cast-skill=<index>` 커맨드라인 인자로 스킬 자동
+캐스트 - SendKeys 없이 스크린샷 검증용, 검증 후 완전히 제거해 git diff 0 확인)으로
+`-sapphire-class=mage -sapphire-cast-skill=0`(마력쉴드)·`-sapphire-class=warrior
+-sapphire-cast-skill=2`(방패막기) 각각 연속 캡처(`generated-images/diagnostics/
+shake_mage_{1,2,3}.png`, `shake_warrior_{1..5}.png`) - 눈으로도 VFX가 캐릭터 중앙에
+원형으로 고정돼 보이고, PIL로 두 프레임씩(0.25~0.3초 간격) ±6px 탐색범위 교차상관 분석한
+결과 최적 정렬 오프셋이 둘 다 (dx=0, dy=0) - 프레임 간 차이는 전부 이펙트 자체의 반짝임
+애니메이션이지 위치 이동이 아님을 정량 확인. `SapphireSceneBuilder.BuildEverything` ->
+`SapphireBuildPlayer.BuildWindows` 재빌드 성공(디버그 훅 제거 후 최종 재검증까지 포함).
+
+## 2026-09-15: 미사용 에셋/죽은 코드 정리
 
 `client/Assets/Sapphire/` 전체를 대상으로 미사용 PNG 45개 전수 grep 감사 +
 죽은 코드 감사를 수행했다. 상세 근거는 `docs/ASSET_STATUS.md` 같은 날짜
