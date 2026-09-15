@@ -78,7 +78,12 @@ namespace Sapphire.EditorTools
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             var scaler = canvasGo.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(720, 1280);
+            // 2026-09-15 (Phase 1, REMEDIATION_PLAN.md D1(b)): reference flipped
+            // from the previous 720x1280 (portrait) to 1280x720 (landscape) -
+            // docs/planning/01_PRODUCT.md is explicit about a landscape,
+            // 1280x720-based screen, and the old portrait value was a leftover
+            // from an unrelated discarded experiment project, never the SSOT.
+            scaler.referenceResolution = new Vector2(1280, 720);
             scaler.matchWidthOrHeight = 0.5f;
             return canvasGo;
         }
@@ -249,15 +254,29 @@ namespace Sapphire.EditorTools
             rootRect.anchorMax = new Vector2(1f, 0f);
             rootRect.pivot = new Vector2(0.5f, 0.5f);
             rootRect.sizeDelta = Vector2.zero;
-            rootRect.anchoredPosition = new Vector2(-130f, 150f);
+            rootRect.anchoredPosition = new Vector2(-90f, 150f);
 
             Sprite attackIcon = LoadSkillIcon("SkillIcons_BasicAttack");
             Button attackButton = BuildRadialButton(rootGo, basicAttackFrameSprite, "AttackButton", Vector2.zero, 140f, attackIcon, "기본공격", "J");
 
-            const float skillRadius = 130f;
+            // 2026-09-16: skillRadius/arc widened (130 -> 200, 100-190deg ->
+            // 95-223deg) after coordinate-math verification found the 5 skill
+            // buttons visibly overlapping. With 5 buttons over a 90deg arc the
+            // angular step was 22.5deg, giving an adjacent center-to-center
+            // chord of 2*130*sin(11.25deg) ~= 50.7 units - well under the 96
+            // units (skillButtonSize) two same-size circles need to just touch,
+            // i.e. ~47% of each button was covered by its neighbor. The new
+            // values (step 32deg, radius 200) give a chord of ~110.3 units, a
+            // +14.8% margin over the 96-unit touching distance. rootRect's
+            // anchoredPosition.x also moved from -130 to -90 (root closer to
+            // the right edge) to keep the widest swing under the
+            // ScreenHalfWidth assertion below now that the radius grew -
+            // distanceFromRightEdge becomes 90+200+48=338, still 22 units under
+            // the 360 limit.
+            const float skillRadius = 200f;
             const float skillButtonSize = 96f;
-            const float arcStartDeg = 100f;
-            const float arcEndDeg = 190f;
+            const float arcStartDeg = 95f;
+            const float arcEndDeg = 223f;
             var skillButtons = new Button[SkillCatalog.All.Length];
 
             for (int i = 0; i < SkillCatalog.All.Length; i++)
@@ -390,16 +409,18 @@ namespace Sapphire.EditorTools
             Sprite trackSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Track");
             Sprite fillSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Fill");
 
-            // barHeight raised from the old 70 to 74: the Track image is
-            // rendered with Image.Type.Simple (no preserveAspect), so it
-            // stretches to fill barWidth x barHeight exactly - it must match the
-            // sprite's own aspect to avoid visible squish. The old value (260/70
-            // = 3.71 aspect) was tuned for the old Track cell (1774x480, aspect
-            // 3.70). The new Track cell measures 1774x504 (aspect 3.52,
-            // see ArtImportConfigurator.ConfigureHealthBarFrame) so barHeight
-            // must grow to 260/3.52 ~= 73.9 to keep the same close match.
+            // barHeight recalibrated (74 -> ~53.4): the Track image is rendered
+            // with Image.Type.Simple (no preserveAspect), so it stretches to
+            // fill barWidth x barHeight exactly - it must match the sprite's own
+            // aspect to avoid visible squish. 74 was tuned for the OLD Track
+            // slice (0,383,1774,504 - the full half-cell, aspect 3.52), but that
+            // slice was never cropped to the actual art - see
+            // ArtImportConfigurator.ConfigureHealthBarFrame's 2026-09-16 note.
+            // The tight-cropped Track sprite measures 1744x358 (aspect ~4.872),
+            // so barHeight must shrink to 260/4.872 ~= 53.4 to match without
+            // squish.
             const float barWidth = 260f;
-            const float barHeight = 74f;
+            const float barHeight = 53.4f;
 
             var barGo = new GameObject("HealthBar", typeof(Image));
             barGo.transform.SetParent(canvasGo.transform, false);
@@ -416,13 +437,18 @@ namespace Sapphire.EditorTools
             var fillGo = new GameObject("Fill", typeof(Image));
             fillGo.transform.SetParent(barGo.transform, false);
             var fillRect = fillGo.GetComponent<RectTransform>();
-            // y-span widened from 0.18-0.82 (0.64) to 0.17-0.83 (0.66): the Fill
-            // sprite's own aspect is now 1774x383 = 4.63 (vs the old cell's 4.36)
-            // - at barWidth/barHeight=260/74 the inner rect's width is fixed by
-            // the x-span (0.88 * 260 = 228.8), so the y-span that keeps the
-            // inner rect's aspect close to 4.63 is 228.8/4.63/74 ~= 0.667.
-            fillRect.anchorMin = new Vector2(0.06f, 0.17f);
-            fillRect.anchorMax = new Vector2(0.94f, 0.83f);
+            // 2026-09-16: anchors recalibrated to the Track's actual interior
+            // navy window, re-measured directly on HealthBarFrameGold.png
+            // (longest contiguous non-gold run per row/column, avoiding corner
+            // scrollwork and center gem studs) - see
+            // ArtImportConfigurator.ConfigureHealthBarFrame's 2026-09-16 note.
+            // The previous 0.06-0.94 / 0.17-0.83 anchors were derived from the
+            // uncropped half-cell's proportions and extended past the window on
+            // every edge (the Fill overflowed the Track frame - "HP바가
+            // 프레임에 안 맞음"). Measured window, as a fraction of the
+            // tight-cropped Track sprite: x=[0.096, 0.901], y=[0.249, 0.757].
+            fillRect.anchorMin = new Vector2(0.096f, 0.249f);
+            fillRect.anchorMax = new Vector2(0.901f, 0.757f);
             fillRect.offsetMin = Vector2.zero;
             fillRect.offsetMax = Vector2.zero;
             var fillImage = fillGo.GetComponent<Image>();

@@ -126,10 +126,10 @@ TextureImporter:
       name: HealthBarFrame_Track
       rect:
         serializedVersion: 2
-        x: 0
-        y: 383
-        width: 1774
-        height: 504
+        x: 15
+        y: 400
+        width: 1744
+        height: 358
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,10 +148,10 @@ TextureImporter:
       name: HealthBarFrame_Fill
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1774
-        height: 383
+        x: 54
+        y: 152
+        width: 1665
+        height: 213
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

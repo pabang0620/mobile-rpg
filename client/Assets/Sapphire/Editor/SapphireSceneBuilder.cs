@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 using Sapphire.Composition;
 using Sapphire.Domain.Grid;
 using Sapphire.Presentation.Camera;
@@ -91,7 +92,7 @@ namespace Sapphire.EditorTools
 
             TerrainBuildResult terrain = VillageHubTerrainBuilder.Build();
             (PlayerGridController playerController, PlayerInputReader playerInputReader, SkillCastFeedback castFeedback) = BuildPlayer();
-            CameraFollowRig followRig = BuildCamera(playerController.transform.position);
+            CameraFollowRig followRig = BuildCamera(playerController.transform.position, terrain.GroundTilemap);
             UiBuildResult ui = VillageHubUiBuilder.Build(playerController, playerInputReader, castFeedback);
 
             ComposeSceneRoot(terrain, playerController, playerInputReader, followRig, ui.MessagePanel);
@@ -155,44 +156,41 @@ namespace Sapphire.EditorTools
         }
 
         // --- Camera ---
-        // 2026-09-14 player feedback history on PixelPerfectCameraInternal.CalculateCameraProperties
-        // (com.unity.2d.pixel-perfect source): with no cropFrame/upscaleRT, it computes
-        // orthoSize = screenHeight / (2 * zoom * assetsPPU), i.e. each world unit ends up
-        // drawn at (zoom * assetsPPU) screen pixels. At the project's default 720x1280
-        // window (== refResolutionX/Y, so zoom==1):
-        //   1st pass: assetsPPU=20  -> 1 tile = 20px, characters/tiles read as tiny.
-        //   2nd pass: assetsPPU=100 -> fixed the "too small" complaint but overcorrected -
-        //             only 720/100 = 7.2 tiles fit across the screen, so a single grid
-        //             step covers a large fraction of the view and reads as a big sweeping
-        //             motion rather than "one small step".
-        //   3rd pass: assetsPPU=72  -> 720/72 = exactly 10 tiles visible horizontally,
-        //             matching the GBA-Pokemon-style topdown density (~9-11 tiles across)
-        //             the player asked for. Sprite import PPUs (1024/512/320/302, see
-        //             ArtImportConfigurator) are untouched - they only fix each sprite's
-        //             *world* size (measured: mage sprite content is ~1.0-1.2 world units
-        //             tall across all directions/frames, already within the intended
-        //             ~1-1.5 unit topdown-RPG proportion - not the source of the "too big"
-        //             feel), independent of this camera-side screen scale.
-        private static CameraFollowRig BuildCamera(Vector3 playerPosition)
+        // 2026-09-15 (Phase 1, REMEDIATION_PLAN.md D1(b)): replaced the
+        // com.unity.2d.pixel-perfect PixelPerfectCamera with a plain
+        // orthographic camera. That component only allows INTEGER zoom, so
+        // the number of tiles visible on screen jumped around per window size
+        // (24/16/10 tiles depending on resolution - see REMEDIATION_PLAN.md
+        // P1/P2) and it painted an on-screen dev-build warning overlay
+        // whenever the window didn't exactly match its reference resolution.
+        // Neither cost buys anything here - this is painterly AI art (already
+        // running with pixelSnapping=false), not blocky pixel art that needs
+        // integer-pixel alignment.
+        //
+        // Fixed vertical tile count instead: orthographicSize is set so that
+        // exactly VerticalTilesVisible tiles are visible top-to-bottom on ANY
+        // window size or aspect ratio (orthographicSize is a half-height in
+        // world units, and GridWorldConversion.CellSize is 1 world unit per
+        // tile, so half-height = tiles/2). This replaces "N tiles visible"
+        // with a value that no longer depends on screen resolution, unlike
+        // the old assetsPPU-based approach. CameraFollowRig then clamps the
+        // camera's visible rect to the map's own bounds (read from the Ground
+        // tilemap at runtime, not hardcoded) so widening the aspect ratio
+        // reveals more map instead of empty space outside it.
+        private const float VerticalTilesVisible = 9f;
+
+        private static CameraFollowRig BuildCamera(Vector3 playerPosition, Tilemap groundTilemap)
         {
             var cameraGo = new GameObject("Main Camera", typeof(UnityEngine.Camera));
             cameraGo.tag = "MainCamera";
             var cam = cameraGo.GetComponent<UnityEngine.Camera>();
             cam.orthographic = true;
-            cam.orthographicSize = 8.888889f; // editor-preview only; matches runtime orthoSize = 1280 / (2 * 72).
+            cam.orthographicSize = VerticalTilesVisible * 0.5f * GridWorldConversion.CellSize;
             cameraGo.transform.position = playerPosition + new Vector3(0f, 0f, -10f);
 
-            var pixelPerfect = cameraGo.AddComponent<UnityEngine.U2D.PixelPerfectCamera>();
-            pixelPerfect.assetsPPU = 72;
-            pixelPerfect.refResolutionX = 720;
-            pixelPerfect.refResolutionY = 1280;
-            pixelPerfect.upscaleRT = false;
-            pixelPerfect.pixelSnapping = false; // painterly AI art, not blocky pixel art - avoid snap jitter during grid tween.
-            pixelPerfect.cropFrameX = false;
-            pixelPerfect.cropFrameY = false;
-            pixelPerfect.stretchFill = false;
-
-            return cameraGo.AddComponent<CameraFollowRig>();
+            var followRig = cameraGo.AddComponent<CameraFollowRig>();
+            followRig.SetGroundTilemap(groundTilemap);
+            return followRig;
         }
 
         // --- Composition root ---

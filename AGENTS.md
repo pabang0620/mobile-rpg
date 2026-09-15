@@ -21,7 +21,7 @@
 ## 확정된 기술 방향 (요약, 상세는 `docs/DECISIONS.md`)
 
 - 이동: 격자(타일) 스냅 이동. 방향 입력 1회 = 정확히 1칸, 짧은 tween으로 부드럽게.
-- 카메라: Unity 2D Pixel Perfect Camera(`com.unity.2d.pixel-perfect`), 타일당 약 20px, 참고 해상도 720x1280.
+- 카메라: 일반 직교(orthographic) 카메라, 화면 세로 기준 9타일 고정(`orthographicSize=4.5`) + Ground 타일맵 기준 맵 경계 클램프. 참고 해상도 1280x720(가로) - `com.unity.2d.pixel-perfect`(PixelPerfectCamera)는 2026-09-15 제거됨(`docs/DECISIONS.md` 해당 날짜 항목 참고).
 - 에셋: 무료 CC0/CC-BY 커뮤니티 팩(지형/배경) + AI 생성(핵심 캐릭터/몬스터/특징 오브젝트) 하이브리드.
 
 **현재 코드는 이 방향으로 아직 마이그레이션되지 않았다.** `Domain/Combat`(전투 중 이동)은 연속 XY 자유 이동이고, 카메라는 자체 제작 `PixelCameraFollow`(공식 Pixel Perfect Camera 패키지 아님)를 쓴다. 마이그레이션은 별도 후속 작업으로 남겨둔다 - 이 문서 재작성만으로 코드가 바뀐 것처럼 보고하지 않는다. 자세한 현재 상태는 `docs/HANDOFF.md` 참고.

@@ -132,22 +132,28 @@ namespace Sapphire.EditorTools
             // interior); median of 15+ samples per edge in that window: left
             // 144px, right 145px, top 167px, bottom 188px.
             //
-            // pixelsPerUnit is explicitly set to nativeWidth/sizeDelta.x
-            // (1937/560 ~= 3.459) instead of leaving the old 100 default. At
-            // ppu=100 these border pixel counts convert to under 2 canvas units,
-            // i.e. the ornate gold trim would render as a near-invisible sliver
-            // against the panel's 560x320 on-screen size - very likely the actual
-            // mechanism behind "찌그러지고 이상하다" complaints, not just outdated
-            // slice coordinates. Scaling pixelsPerUnit by nativeWidth/sizeDelta.x
-            // uniformly rescales the whole texture to fit the panel's width,
-            // which preserves the border-to-image ratio the artist actually drew
-            // (border/nativeWidth) instead of an arbitrary one.
+            // pixelsPerUnit is explicitly set to nativeWidth/sizeDelta.x, scaled
+            // by the canvas's referencePixelsPerUnit (100) - NOT nativeWidth/
+            // sizeDelta.x alone (2026-09-15 gold-tier pass got this wrong, see
+            // 2026-09-16 fix below). Image.pixelsPerUnit is
+            // sprite.pixelsPerUnit / canvas.referencePixelsPerUnit (Image.cs), so
+            // sprite.pixelsPerUnit must equal the desired ratio times 100 to make
+            // Image.pixelsPerUnit equal that ratio - otherwise it's off by 100x
+            // and Image.Type.Sliced's GetAdjustedBorders (which divides border
+            // AND padding by that same value) inflates both ~100x, forcing the
+            // border-clamp to eat the whole rect while the un-clamped padding
+            // inset stays huge, making the outer padding vert land past the
+            // border verts - a negative-width "slice" that Unity 6's zero/
+            // negative-dimension guard (UUM-71372) then skips for all 9 quads,
+            // rendering nothing. Confirmed via Image.OnPopulateMesh producing
+            // currentVertCount=0 for MainMenuButton (see docs/HANDOFF.md
+            // 2026-09-16 entry) before this fix.
             ConfigureSingleSprite(
                 SapphireSceneBuilder.UiArtDir + "/MessagePanelFrameGold.png",
                 border: new Vector4(144, 188, 145, 167),
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
-                pixelsPerUnit: 1937f / 560f);
+                pixelsPerUnit: 100f * 1937f / 560f);
 
             // UI: wide pill button, 993x251 (2026-09-15, replaces the old flat
             // WideButton.png at every call site - message panel close button,
@@ -158,20 +164,23 @@ namespace Sapphire.EditorTools
             // method as MessagePanelFrameGold above, narrow 40%-60% window):
             // left 114px, right 116px, top 77px, bottom 71px.
             //
-            // pixelsPerUnit calibrated to nativeWidth/280 (~3.546) - 280 is the
-            // close button's width, the middle of this sprite's three call-site
-            // widths (150 main menu button, 280 close button, 310 menu items).
-            // Checked this keeps the border comfortably under the smallest call
-            // site (MainMenuButton, 150x72): border sums to ~65/150 = 43% of
-            // width, ~42/72 = 58% of height on both axes, no overlap/negative
-            // interior - while avoiding the same too-thin-border problem the
-            // 100-default caused above.
+            // pixelsPerUnit calibrated to nativeWidth/280 (~3.546), scaled by
+            // referencePixelsPerUnit (100) - see the *100 note on
+            // MessagePanelFrameGold above; without it this exact asset/border
+            // combo is what produced the "메뉴 버튼 배경이 안 보인다" bug (main
+            // menu open button, MenuButtonGold border sums (114+116)/280 x
+            // 100 no longer fits the ~28x-inflated math, collapsing the
+            // Sliced mesh to 0 vertices). 280 is the close button's width, the
+            // middle of this sprite's three call-site widths (150 main menu
+            // button, 280 close button, 310 menu items). Border comfortably
+            // under the smallest call site (MainMenuButton, 150x72): sums to
+            // ~65/150 = 43% of width, ~42/72 = 58% of height, no overlap.
             ConfigureSingleSprite(
                 SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png",
                 border: new Vector4(114, 71, 116, 77),
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
-                pixelsPerUnit: 993f / 280f);
+                pixelsPerUnit: 100f * 993f / 280f);
 
             // UI: menu list panel frame, 1007x1230 portrait, pre-decorated with 6
             // horizontal divider lines (7 rows - matching MainMenuPanel's 7 menu
@@ -180,20 +189,21 @@ namespace Sapphire.EditorTools
             // measured the same color-transition method, narrow window: left
             // 87px, right 88px, top 92px, bottom 90px.
             //
-            // pixelsPerUnit calibrated to nativeHeight/790 (~1.557) - height is
-            // this portrait panel's defining dimension; 790 is MainMenuPanel's
-            // pre-responsive-fix sizeDelta.y, kept as the reference height the
-            // border proportions are calibrated against even though
-            // VillageHubUiBuilder.BuildMainMenu now stretches the panel's actual
-            // height to fit the screen (see that method's comment) - the border
-            // in canvas units stays fixed regardless of how tall the stretched
-            // panel ends up.
+            // pixelsPerUnit calibrated to nativeHeight/790 (~1.557), scaled by
+            // referencePixelsPerUnit (100) - see the *100 note on
+            // MessagePanelFrameGold above. Height is this portrait panel's
+            // defining dimension; 790 is MainMenuPanel's pre-responsive-fix
+            // sizeDelta.y, kept as the reference height the border proportions
+            // are calibrated against even though VillageHubUiBuilder.BuildMainMenu
+            // now stretches the panel's actual height to fit the screen (see
+            // that method's comment) - the border in canvas units stays fixed
+            // regardless of how tall the stretched panel ends up.
             ConfigureSingleSprite(
                 SapphireSceneBuilder.UiArtDir + "/MenuPanelFrameGold.png",
                 border: new Vector4(87, 90, 88, 92),
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
-                pixelsPerUnit: 1230f / 790f);
+                pixelsPerUnit: 100f * 1230f / 790f);
         }
 
         private static void ConfigureSkillButtonFrame()
@@ -240,13 +250,32 @@ namespace Sapphire.EditorTools
             // (2026-09-15 gold-tier replacement of the 2026-09-14
             // HealthBarFrame.png - identical 1774x887 canvas size and 2-cell
             // vertical layout). Row-count alpha profile gap is at rows 487-521
-            // (top-left origin; was 452-508 on the old asset) - re-measured
-            // rather than reused, midpoint 504 (was 480). Track Rect
-            // (0, 383, 1774, 504), Fill Rect (0, 0, 1774, 383) - both full canvas
-            // width, since this is a wide horizontal pill (not squeezed into a
-            // square button), so the old convention of a row-only split against
-            // the full width is still correct here, unlike SkillButtonFrame
-            // above.
+            // (top-left origin; was 452-508 on the old asset), midpoint 504
+            // (was 480) - unchanged from the 2026-09-15 pass.
+            //
+            // 2026-09-16: the row-only half-cell split above (Track Rect (0, 383,
+            // 1774, 504), Fill Rect (0, 0, 1774, 383)) was never actually cropped
+            // to the visible art - re-measuring each cell's own alpha channel
+            // (PIL/numpy) found ~354px of fully-transparent margin inside the
+            // 504-tall Track cell alone (alpha bbox y:[129,486] of 504, top gem
+            // finial included) and a further offset in the Fill cell (alpha bbox
+            // y:[18,230] of 383). Because BuildHealthBar renders the Track with
+            // Image.Type.Simple (no preserveAspect), that whole half-cell
+            // including its transparent margin gets stretched to fill barWidth x
+            // barHeight, shrinking and off-centering the actual gold capsule
+            // inside the assigned rect - the concrete mechanism behind "HP바가
+            // 프레임에 안 맞음". Fix: crop both cells tightly to their own alpha
+            // bounding box instead of the naive half-cell split, matching this
+            // file's convention for SkillButtonFrame above. Track tight bbox
+            // (bottom-up): x=15 y=400 width=1744 height=358 (aspect ~4.872,
+            // BuildHealthBar's barHeight recalibrated to match, see that
+            // method). Fill tight bbox (bottom-up): x=54 y=152 width=1665
+            // height=213 (aspect ~7.817). Interior navy window inside the Track
+            // crop was also re-measured (longest contiguous non-gold run per
+            // row/column, avoiding the corner scrollwork and center gem studs)
+            // at x:[182,1587] y:[216,398] (top-left origin, out of the 504-tall
+            // cell) - BuildHealthBar's Fill anchors are recalibrated to this
+            // window (previous anchors extended past it on every edge).
             var centerPivot = new Vector2(0.5f, 0.5f);
             ConfigureMultiSprite(
                 SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png",
@@ -256,8 +285,8 @@ namespace Sapphire.EditorTools
                 maxSize: null,
                 slices: new[]
                 {
-                    ("HealthBarFrame_Track", new Rect(0, 383, 1774, 504), centerPivot),
-                    ("HealthBarFrame_Fill", new Rect(0, 0, 1774, 383), centerPivot),
+                    ("HealthBarFrame_Track", new Rect(15, 400, 1744, 358), centerPivot),
+                    ("HealthBarFrame_Fill", new Rect(54, 152, 1665, 213), centerPivot),
                 });
         }
 

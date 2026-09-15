@@ -2,6 +2,23 @@
 
 기술 방향 결정을 날짜순으로 남긴다(최신이 위). 기획 자체(무엇을 만들지)는 `docs/planning/*.md`가 SSOT이고 여기서는 다루지 않는다 - 여기는 "어떻게 구현할지"에 대한 결정만 남긴다.
 
+## 2026-09-15: 기준해상도 세로 720x1280은 오류(SSOT 위반) → 가로 1280x720으로 정정, Pixel Perfect Camera 제거, 세로 9타일 고정 + 맵경계 클램프 (REMEDIATION_PLAN.md Phase 1)
+
+**버그 수정 기록**: `docs/planning/01_PRODUCT.md` 9행·52행은 "탑다운 2D, **가로 화면**", "**1280x720 기준** HUD 배치"를 명시하는데, 실제 구현(`VillageHubUiBuilder.BuildCanvas`의 `CanvasScaler.referenceResolution`, `SapphireSceneBuilder.BuildCamera`의 `PixelPerfectCamera.refResolutionX/Y`, `SapphireBuildPlayer`의 `PlayerSettings.defaultScreenWidth/Height`)는 전부 세로 720x1280이었다. 아래 "2026-09-14: 화면 스케일링은 Unity 2D Pixel Perfect Camera로 확정"과 "2026-09-14: 이동 속도·정지 간격, 카메라 PPU 최종값 확정" 두 항목이 이 세로값을 확정처럼 기록하고 있었으나, 이는 폐기된 별도 실험 프로젝트(`../topdown-asset-mvp/`)의 값을 그대로 가져온 것이었고 SSOT와 정면으로 어긋난다 - **아래 두 항목은 이 항목으로 대체되어 폐기됨(삭제하지 않고 보존, 각 항목에 폐기 표시함)**.
+
+**결정 D1(b) 채택** (`docs/REMEDIATION_PLAN.md` 2절 - 사용자 확정): `com.unity.2d.pixel-perfect`의 `PixelPerfectCamera`를 완전히 제거하고 일반 직교 카메라로 교체한다. 그 컴포넌트는 정수 줌만 허용해 창 크기에 따라 화면에 보이는 타일 수가 24/16/10개로 널뛰었고(구 세로 기준에 가로 창을 대면 정수 줌이 1배로 고정), Development 빌드에서 화면 좌상단에 "Rendering at an odd-numbered resolution", "Screen resolution is smaller than the reference resolution" 온스크린 경고까지 그렸다(이 페인터리 AI 아트는 애초에 `pixelSnapping=false`로 픽셀 스냅 이점을 안 쓰고 있었으므로 잃는 것이 없다).
+
+**수정 내용**:
+- `VillageHubUiBuilder.BuildCanvas`: `CanvasScaler.referenceResolution` (720,1280) → **(1280,720)**, `matchWidthOrHeight=0.5`는 유지.
+- `SapphireSceneBuilder.BuildCamera`: `PixelPerfectCamera` 컴포넌트 추가 제거. 카메라는 `orthographic=true`, **`orthographicSize=4.5`**(=`VerticalTilesVisible(9) * 0.5 * GridWorldConversion.CellSize(1)` - 화면 세로에 정확히 9타일이 보이도록 고정, 어떤 창 크기·비율이든 동일).
+- `Presentation/Camera/CameraFollowRig.cs`: 맵 경계 클램프 신규 추가. `SetGroundTilemap(Tilemap)`으로 Ground 타일맵 참조를 받아 런타임에 `cellBounds`(→`CellToWorld`로 월드 좌표 변환)를 읽고, 카메라의 가시 사각형(반높이=orthographicSize, 반너비=orthographicSize*aspect)이 맵 밖으로 못 나가게 최종 위치를 클램프한다. 화면이 맵보다 넓은/높은 축은 맵 중앙에 고정(Mathf.Clamp의 min>max 방지). 하드코딩된 맵 크기(24x18)를 쓰지 않으므로 맵이 다시 리사이즈돼도 그대로 반영된다. `VillageHubTerrainBuilder`의 `TerrainBuildResult`에 `GroundTilemap` 필드를 추가해 배선했다.
+- `Packages/manifest.json`에서 `com.unity.2d.pixel-perfect` 의존성 제거(grep으로 다른 참조 없음을 확인 후 제거).
+- `SapphireBuildPlayer`: 기존 `BuildWindows()`가 항상 `BuildOptions.Development`로 빌드하던 것을 `BuildOptions.None`으로 바꾸고(플레이테스트/배포 빌드는 비-개발 빌드), 개발 빌드가 필요할 때 쓸 별도 진입점 `BuildWindowsDevelopment()`를 신설했다. `PlayerSettings.defaultScreenWidth/Height`도 720x1280 → 1280x720으로 맞춤(위 세로 기준과 동일한 잔재값이었음).
+
+**추가 수정 (같은 날 후속 - 사용자 피드백 "켜주는 게임 창이 너무 크다")**: `ProjectSettings.asset`의 `defaultIsNativeResolution`이 Unity 템플릿 기본값(`1`, 활성)으로 남아있었다. Windowed 모드에서 이 값이 켜져 있으면 저장된 레지스트리 값이 없는 최초 실행 시 `defaultScreenWidth/Height`를 무시하고 창을 데스크톱 네이티브 해상도로 띄운다 - "창이 너무 크다" 증상의 실제 메커니즘. `SapphireBuildPlayer.Build`에 `PlayerSettings.defaultIsNativeResolution = false`를 추가해 껐다(재빌드로 `ProjectSettings.asset`에 `defaultIsNativeResolution: 0`으로 반영·확인). 로컬 환경에 남아있던 이전 세션의 레지스트리 창 크기/위치 캐시(`HKCU\Software\Sapphire Studio\Sapphire RPG`의 `Screenmanager Resolution Width/Height`, `...Window Width/Height`, `...Use Native`, `...Fullscreen mode`, `...Window Position X/Y` - 해시 접미사 있는 override 키, `...Default` 접미사 키는 보존)도 삭제해 다음 실행이 새 기본값(1280x720, Windowed)으로 뜨도록 정리했다. 인자 없는 실행(`Start-Process`로 검증)으로 창 크기가 콘텐츠 기준 1280x720(윈도우 전체 크기 1296x759, 테두리 포함)임을 직접 확인했다.
+
+**검증 (이번 라운드)**: Unity CLI(6000.5.9f1) 컴파일 확인, EditMode 테스트 33/33 통과, `SapphireSceneBuilder.BuildAll` 재실행 후 `VillageHub.unity`를 직접 파싱해 확인 - Main Camera GameObject 컴포넌트가 Transform/Camera/CameraFollowRig 3개뿐(PixelPerfectCamera 없음), `orthographic size: 4.5`, `CanvasScaler.m_ReferenceResolution: {x: 1280, y: 720}`, `CameraFollowRig.groundTilemap` 필드가 실제 Ground Tilemap을 참조(fileID 비어있지 않음). `ProjectSettings.asset` 직접 확인 - `defaultScreenWidth: 1280`/`defaultScreenHeight: 720`/`fullscreenMode: 3`(Windowed)/`defaultIsNativeResolution: 0`. **플레이어 빌드(`SapphireBuildPlayer.BuildWindows`)와 3개 해상도(1280x720/1920x1080/1936x1048) 스크린샷 검증은 사용자 결정으로 이번 라운드 범위에서 제외했다** - Phase 2·3까지 마친 뒤 마지막에 한 번만 실행 파일을 빌드해 검수한다. 이 세션 중 일부 진단용 스크린샷(`generated-images/diagnostics/phase1_*.png`, gitignore 대상)이 중간 산출물로 남아있으나 최종 검수가 아니므로 그대로 두었을 뿐 이번 완료 판정의 근거로 쓰지 않는다. 화면의 미학적 배치 판단(HUD 요소 배치 등, Phase 2 범위)도 하지 않았다 - 전부 사용자 몫이다.
+
 ## 2026-09-14 (후속): RadialSkillMenu가 실제로는 화면 중앙에 렌더된 버그 수정 (아래 "결정 3-1 - 우측 배치 검증"을 대체)
 
 **버그 수정 기록**: 사용자가 실제 빌드를 플레이해 "원형 스킬메뉴가 우측이 아니라 화면 정중앙"이라고 보고했다. 아래 "결정 3-1"이 서술한 빌드타임 assertion(`leftmostEdge >= 360`)은 통과하고 있었는데도 실제 렌더링은 틀렸다 - assertion 자체가 캔버스 폭이 항상 참고 해상도(720)와 같다고 가정한 채로 같은 720 가정을 재검증하고 있었을 뿐, 실제 런타임 캔버스 폭을 전혀 보지 않았기 때문이다.
@@ -40,7 +57,9 @@
 
 **영향**: `GridWorldConversionTests`도 코너가 아니라 중앙 좌표를 기대하도록 케이스를 갱신했다. Unity `Tilemap.CellToWorld`는 코너를 반환하므로 `GridToWorld`가 그 값을 그대로 재사용하지 않는다는 점을 클래스 doc comment에 남겼다.
 
-## 2026-09-14: 이동 속도·정지 간격, 카메라 PPU 최종값 확정
+## 2026-09-14: 이동 속도·정지 간격, 카메라 PPU 최종값 확정 (카메라 부분 폐기됨 - 위 2026-09-15 항목 참조)
+
+> **폐기됨 (2026-09-15)**: 이 항목의 카메라 관련 서술(`assetsPPU=72`, 참고 해상도 720x1280 세로 기준)은 SSOT(`docs/planning/01_PRODUCT.md`, 가로 1280x720)와 반대 방향이었던 오류로, 위 "2026-09-15: 기준해상도 세로 720x1280은 오류..." 항목으로 대체됐다. 이동 속도·정지 간격(`moveDuration`/`stepPause`) 부분은 카메라와 무관하므로 계속 유효하다. 아래 원문은 당시 기록 그대로 보존한다.
 
 **결정**: 격자 스냅 이동의 tween 지속시간을 초안값(0.08s → 0.16s)에서 재상향해 `moveDuration=0.4s`로 확정했다(한 칸 이동이 자유이동처럼 보이지 않고 눈에 확실히 보이도록). 한 칸 이동 완료 후 `stepPause=0.04s`를 추가로 둬서 "이동 → 살짝 멈춤 → 이동"의 칸 단위 리듬을 만들었다. 카메라는 `PixelPerfectCamera.assetsPPU`를 20 → 100 → 72 순으로 재조정해 최종 72로 확정했다(참고 해상도 720x1280에서 가로 10칸이 보이는 밀도 - 바람의나라/포켓몬 골드 스타일 목표치에 부합).
 
@@ -64,7 +83,9 @@
 
 **초래하는 영향**: `docs/planning/02_SYSTEM_CONTRACTS.md`가 명시한 "월드는 XY 평면, 중력/점프 없음... 8방향 이동"이라는 표현은 여전히 유효하다(8방향이라는 것과 중력 없음은 격자 이동에서도 그대로 성립). 다만 그 문서가 전제하는 연속 이동/충돌 해소 방식(반경 0.22 원, 축별 충돌 해소 등)은 격자 스냅 이동에서는 그대로 쓰기 어렵다. 이 계약을 실제로 어떻게 재정의할지는 마이그레이션 착수 시점에 별도 결정으로 남긴다 - 기획 문서 자체는 고치지 않는다.
 
-## 2026-09-14: 화면 스케일링은 Unity 2D Pixel Perfect Camera로 확정
+## 2026-09-14: 화면 스케일링은 Unity 2D Pixel Perfect Camera로 확정 (폐기됨 - 위 2026-09-15 항목 참조)
+
+> **폐기됨 (2026-09-15)**: `PixelPerfectCamera`는 REMEDIATION_PLAN.md D1(b) 결정으로 완전히 제거됐다(정수 줌만 허용해 창 크기별로 보이는 타일 수가 널뛰는 문제 + Development 빌드 경고 오버레이 문제, 위 2026-09-15 항목 참조). 참고 해상도 720x1280(세로) 역시 SSOT(가로 1280x720)와 반대였던 오류. 아래 원문은 당시 기록 그대로 보존한다.
 
 **결정**: 자체 제작 카메라 스냅 코드 대신 Unity 공식 `com.unity.2d.pixel-perfect` 패키지를 쓴다. 타일 1칸이 화면상 약 20픽셀 정도로 보이게 하고, 모바일 세로 화면과 PC 양쪽을 겸용한다.
 

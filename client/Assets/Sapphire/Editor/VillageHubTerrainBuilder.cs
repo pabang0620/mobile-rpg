@@ -17,11 +17,16 @@ namespace Sapphire.EditorTools
     {
         internal readonly TilemapGridMapBuilder GridMapBuilder;
         internal readonly InteractableZone SignpostZone;
+        // 2026-09-15 (Phase 1): exposed so the camera (CameraFollowRig) can read
+        // the map's actual extent from cellBounds instead of a hardcoded size -
+        // see SapphireSceneBuilder.BuildCamera.
+        internal readonly Tilemap GroundTilemap;
 
-        internal TerrainBuildResult(TilemapGridMapBuilder gridMapBuilder, InteractableZone signpostZone)
+        internal TerrainBuildResult(TilemapGridMapBuilder gridMapBuilder, InteractableZone signpostZone, Tilemap groundTilemap)
         {
             GridMapBuilder = gridMapBuilder;
             SignpostZone = signpostZone;
+            GroundTilemap = groundTilemap;
         }
     }
 
@@ -45,7 +50,7 @@ namespace Sapphire.EditorTools
             BuildFences();
             InteractableZone signpostZone = BuildSignpost();
 
-            return new TerrainBuildResult(gridMapBuilder, signpostZone);
+            return new TerrainBuildResult(gridMapBuilder, signpostZone, groundTilemap);
         }
 
         private static (Tile blocker, Tile[] grass, Tile[] dirt) CreateTiles()

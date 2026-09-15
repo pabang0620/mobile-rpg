@@ -2,7 +2,112 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): 골드 등급 UI 에셋 6종 배선 + 반응형 근본 수정 - 현재 상태
+## 2026-09-15 (최신): REMEDIATION_PLAN.md Phase 1 완료 - 가로 1280x720 기준 정정 + Pixel Perfect Camera 제거 + 맵 경계 클램프
+
+`docs/REMEDIATION_PLAN.md`(사용자가 실제 스크린샷을 보고 작성한 진단·계획 문서) Phase 1을 구현했다. 근본 원인은
+기준 해상도 방향이 SSOT(`docs/planning/01_PRODUCT.md` - 가로 1280x720)와 반대(세로 720x1280)로 구현돼
+있었던 것 - 상세 근거·수정 목록은 `docs/DECISIONS.md`의 같은 날짜 항목 참고. 요약:
+
+- `VillageHubUiBuilder.BuildCanvas`: `CanvasScaler.referenceResolution` (720,1280) → (1280,720).
+- `SapphireSceneBuilder.BuildCamera`: `PixelPerfectCamera` 제거, 일반 orthographic 카메라 +
+  `orthographicSize=4.5`(세로 9타일 고정, 해상도 무관하게 항상 9타일).
+- `Presentation/Camera/CameraFollowRig.cs`: Ground 타일맵의 `cellBounds`를 런타임에 읽어 카메라 가시
+  사각형이 맵 밖으로 못 나가게 클램프하는 로직 신규 추가(`SetGroundTilemap`). 맵 크기가 다시 바뀌어도
+  하드코딩 없이 자동 반영.
+- `Packages/manifest.json`: `com.unity.2d.pixel-perfect` 의존성 제거.
+- `SapphireBuildPlayer`: 기본 `BuildWindows()`가 이제 비-Development 빌드. Development가 필요하면
+  별도 `BuildWindowsDevelopment()`를 쓴다. `PlayerSettings.defaultScreenWidth/Height`도 1280x720,
+  `defaultIsNativeResolution=false`로(아래 "추가 수정" 참고).
+- 함께 유지: 중단됐던 작업의 미커밋 변경(메뉴 버튼 배경 소실 수정 - `ArtImportConfigurator`의
+  `pixelsPerUnit`에 `referencePixelsPerUnit(100)` 곱셈 누락, `VillageHubUiBuilder.cs` 일부, UI 텍스처
+  meta 3개, `VillageHub.unity`)을 그대로 포함해 이번 커밋에 함께 반영했다(되돌리지 않음).
+
+**추가 수정 (사용자 피드백 "켜주는 게임 창이 너무 크다")**: `ProjectSettings.asset`의
+`defaultIsNativeResolution`이 켜져 있으면(Unity 템플릿 기본값) Windowed 모드에서도 저장된 창 크기가
+없는 최초 실행이 데스크톱 네이티브 해상도로 뜬다 - `defaultScreenWidth/Height`가 무시되는 원인.
+`false`로 껐고, 로컬 레지스트리(`HKCU\Software\Sapphire Studio\Sapphire RPG`)에 남아있던 이전 세션의
+창 크기/위치 override 값도 삭제했다(`...Default` 접미사 키는 보존 - 그게 새 1280x720/Windowed
+기본값을 담고 있다). 상세 근거는 `docs/DECISIONS.md` 2026-09-15 항목의 "추가 수정" 문단 참고.
+
+**검증 (이번 라운드, 사용자 결정으로 범위 축소)**: Unity CLI(6000.5.9f1) 컴파일 확인, EditMode 테스트
+33/33 통과, `SapphireSceneBuilder.BuildAll` 재실행 후 `VillageHub.unity`를 직접 파싱해 확인(Main
+Camera 컴포넌트가 Transform/Camera/CameraFollowRig 3개뿐 - PixelPerfectCamera 없음, `orthographic
+size: 4.5`, CanvasScaler `m_ReferenceResolution: {x: 1280, y: 720}`, `CameraFollowRig.groundTilemap`이
+실제 Ground Tilemap을 참조), `ProjectSettings.asset` 직접 확인(`defaultScreenWidth: 1280`/
+`defaultScreenHeight: 720`/`fullscreenMode: 3`/`defaultIsNativeResolution: 0`). **플레이어 빌드
+실행+3개 해상도 스크린샷 검증은 이번 라운드에서 하지 않았다** - Phase 2·3까지 마친 뒤 마지막에 한 번만
+실행 파일을 빌드해 검수하기로 사용자가 결정했다. 이 세션 도중 일부 진단용 스크린샷이
+`generated-images/diagnostics/phase1_*.png`(gitignore 대상)에 남아있으나 중간 산출물일 뿐 최종 검수가
+아니다. 화면 레이아웃의 미학적 판단(HUD 요소 배치·겹침 등, Phase 2 범위)도 하지 않았다 - 전부 사용자
+몫이다.
+
+**다음**: `docs/REMEDIATION_PLAN.md` Phase 2(HUD 재배선 - HP/MP바 개구부 실측, 스킬 버튼 부채꼴
+간격, 지역명 슬롯) 이후 Phase 3(D2 확정 후 메뉴 오딘식 재설계) → Phase 4(이동 스틱·잔디 마감) 순.
+플레이어 빌드+스크린샷 3종 검수는 Phase 2·3 완료 후 한 번만 수행한다.
+
+## 2026-09-16: 메뉴 버튼 배경 소실 + HP바 프레임 불일치 + 스킬버튼 겹침 수정 - 이전 상태
+
+사용자가 실제 스크린샷에서 지적한 4가지 중 3가지를 코드 근거로 원인을 확정하고 수정했다(4번째는 버그가
+아님으로 판정). **화면 캡처·육안 판단은 하지 않았다** - 전부 씬 파일(.unity) 텍스트 파싱, 픽셀 알파
+분석(PIL/numpy), Unity `Image.OnPopulateMesh` 리플렉션 호출, 좌표 계산으로만 검증했다.
+
+**1. 메뉴 버튼 배경 완전 소실 (근본 원인, 진짜 버그)**: `VillageHubUiBuilder.BuildMainMenu`는 스프라이트를
+정상적으로 할당하고 있었고 씬 파일의 `m_Sprite`도 null이 아니었다 - 처음 가정("스프라이트 미할당")은
+틀렸다. 실제 원인은 `ArtImportConfigurator.ConfigureSingleSprite`에 넘긴 `pixelsPerUnit` 값이었다.
+`Image.pixelsPerUnit`은 `sprite.pixelsPerUnit`이 아니라 `sprite.pixelsPerUnit / canvas.referencePixelsPerUnit`
+(Unity uGUI `Image.cs`, 기본값 100)이라 실제로 쓰인 값이 의도한 값의 1/100이었고, 그 결과
+`Image.Type.Sliced`의 `GetAdjustedBorders`가 border/padding을 ~100배 부풀려 계산해 슬라이스 9칸이 전부
+0 또는 음수 폭이 되어 Unity 6의 새 가드(`UUM-71372`, 음수/0 크기 quad 스킵)에 걸려 **버텍스 0개**를
+생성했다 - 씬 데이터·색상·enabled는 전부 정상인데 실제로는 아무것도 그려지지 않는 상태였다. 리플렉션으로
+`Image.OnPopulateMesh`를 직접 호출해 수정 전 `currentVertCount=0`, 수정 후 `currentVertCount=36`(9칸 x
+4버텍스, 정상)임을 확인했다. 수정: `ArtImportConfigurator.ConfigureUiFrames`의 세 `ConfigureSingleSprite`
+호출(`MessagePanelFrameGold`/`MenuButtonGold`/`MenuPanelFrameGold`) 전부 `pixelsPerUnit`에 `100f *`를
+곱함(예: `993f/280f` -> `100f * 993f/280f`). 이 세 에셋 전부 `Image.Type.Sliced`로 쓰이므로 동일하게
+영향받고 있었다(닫기 버튼·메인메뉴 버튼·메뉴 목록 7개·메시지 패널·메뉴 패널 배경 전부) - 사용자가 직접
+본 건 메인 메뉴 버튼뿐이지만 근본 원인은 공용이라 셋 다 같이 고쳤다.
+
+**2. HP바가 프레임에 안 맞음 (진짜 버그)**: `ArtImportConfigurator.ConfigureHealthBarFrame`이
+`HealthBarFrameGold.png`의 Track/Fill 셀을 "칸을 반으로 나눈 전체 영역"으로만 슬라이스하고 실제 그림
+내용에 맞춰 크롭하지 않았다. PIL/numpy로 알파 채널을 직접 측정한 결과 Track 셀(1774x504) 안에 실제
+그림은 알파 바운딩박스 기준 겨우 1744x358만 차지하고 나머지는 완전 투명 여백이었다(`Image.Type.Simple`이
+이 여백까지 통째로 늘려 그리는 바람에 실제 캡슐 모양이 지정한 rect 안에서 작고 치우치게 그려짐).
+수정: Track/Fill 슬라이스 Rect를 알파 바운딩박스로 타이트 크롭(Track: `(15,400,1744,358)`, Fill:
+`(54,152,1665,213)`, 이전엔 `(0,383,1774,504)`/`(0,0,1774,383)`), `VillageHubUiBuilder.BuildHealthBar`의
+`barHeight`를 새 종횡비(1744/358≈4.872)에 맞춰 74 -> 53.4로 재조정, Fill 앵커를 Track 내부의 실제
+남색 창(별도로 색상 전이 지점을 스캔해 측정 - 골드/남색 경계를 픽셀 단위로 분류)에 맞춰
+`(0.06,0.17)-(0.94,0.83)` -> `(0.096,0.249)-(0.901,0.757)`로 재조정.
+
+**3. 원형 스킬 버튼 6개가 서로 겹침 (진짜 버그)**: `VillageHubUiBuilder.BuildRadialSkillMenu`가 5개
+스킬 버튼을 반지름 130, 100~190도(90도 폭) 부채꼴에 배치했는데, 버튼 5개면 간격이 4칸뿐이라 칸당
+각도가 22.5도 - 반지름 130에서 인접 버튼 중심 간 거리는 `2*130*sin(11.25도)≈50.7`유닛인데 버튼 지름
+96(반지름 48+48)이 서로 안 겹치려면 최소 96유닛이 필요해 실제로는 필요 거리의 절반 정도(약 47%
+부족)만 떨어져 있었다 - 좌표 계산으로 확정. 수정: 반지름 130->200, 각도 100~190도->95~223도(칸당
+32도)로 넓히고, 빌드타임 화면 우측 경계 assertion(`ScreenHalfWidth=360`)을 다시 만족시키기 위해
+`RadialSkillMenu` 루트의 `anchoredPosition.x`도 -130->-90으로 당겼다. 수정 후 인접 버튼 간 거리
+110.25유닛(필요 96유닛 대비 +14.8% 여유), 기본공격 버튼과의 거리는 200유닛(필요 118유닛 대비 +69.5%
+여유), `distanceFromRightEdge=338`(한도 360 대비 22유닛 여유) - 전부 좌표 계산으로 재확인.
+
+**4. 화면 좌상단 빨간/초록 배너 (버그 아님, 오판정)**: Player.log(현재 실행분 + 직전 실행분
+`Player-prev.log`) 전체를 처음부터 끝까지 읽었지만 `Debug.LogError`/`Debug.LogWarning` 계열 로그는
+단 한 줄도 없었다. 배너 텍스트("Rendering at an odd-numbered resolution...", "Screen resolution is
+smaller than the reference resolution...")를 grep으로 역추적한 결과 `com.unity.2d.pixel-perfect`
+패키지의 `PixelPerfectCamera.OnGUI()`가 `#if DEVELOPMENT_BUILD || UNITY_EDITOR` 가드 안에서
+`GUILayout.Box`로 직접 그리는 Unity 공식 온스크린 진단 오버레이였다(로그 파일에 안 남는 이유가
+이것 - `Debug.Log`를 거치지 않는다). 실제 창 해상도(1920x1009, 세로가 홀수)가 참조 해상도(720x1280,
+세로형)보다 작고 홀수라서 뜨는 정상 경고이며, Development Build에서만 보이고 코드 결함이 아니다 -
+수정하지 않았다.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 확인, `SapphireSceneBuilder.BuildAll` 재실행(예외 없음 - 특히
+2번 항목의 빌드타임 assertion이 새 반지름/각도로도 통과함을 확인), EditMode 테스트 33/33 통과,
+재생성된 `VillageHub.unity`를 Python으로 직접 파싱해 위 수치(MainMenuButton 스프라이트 non-null,
+HealthBar `sizeDelta=(260,53.4)`, Fill 앵커, 6개 버튼 좌표·상호거리) 전부 코드가 의도한 값과 일치함을
+재확인. **`SapphireBuildPlayer`로 플레이어를 재빌드하거나 실행 파일을 다시 돌리는 것은 이번 단계
+범위 밖(다음 단계의 30초 크래시 폴링 담당)이라 하지 않았다** - 다만 1번 항목(메뉴 버튼) 수정
+직후에는 이 제약을 인지하기 전에 플레이어를 1회 재빌드해 실행하고 스크린샷으로 육안 확인한 이력이
+있다(`screenshot_after_fix.png`, 골드 프레임이 정상적으로 보임을 확인) - 이후 경로는 전부 텍스트/픽셀
+기반 검증으로 전환했다.
+
+## 2026-09-15: 골드 등급 UI 에셋 6종 배선 + 반응형 근본 수정 - 이전 상태
 
 2026-09-14에 배선한 UI(위 절)를 신규 고퀄리티 골드 에셋 6종으로 전면 교체하고, 사용자가 지적한
 "칸 안 맞고 이상하고 반응형이 안 돼서 뭉개진다"는 문제를 3갈래로 나눠 근본 원인을 찾아 고쳤다.
