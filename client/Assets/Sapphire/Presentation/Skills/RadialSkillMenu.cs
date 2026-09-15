@@ -113,9 +113,19 @@ namespace Sapphire.Presentation.Skills
         /// <summary>
         /// Cosmetic-only basic attack (see class doc) - no damage/target
         /// resolution yet, just the same cast feedback every skill gets.
+        /// Warrior additionally plays a real VFX slash (see
+        /// WarriorSkillVfxPlayer.PlayBasicAttack) - mage has no basic-attack
+        /// VFX method, so the `as` cast below is simply null and a no-op for
+        /// mage, leaving mage's basic attack behavior completely unchanged.
         /// </summary>
         public void CastBasicAttack()
         {
+            if (player != null && player.Mover != null && !player.Mover.IsMoving)
+            {
+                skillVfx = ResolveSkillVfx();
+                (skillVfx as WarriorSkillVfxPlayer)?.PlayBasicAttack(player.Mover.Facing);
+            }
+
             castFeedback?.PlayCast(BasicAttackDisplayName);
         }
 

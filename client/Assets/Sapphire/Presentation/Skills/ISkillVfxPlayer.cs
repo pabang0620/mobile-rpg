@@ -7,10 +7,10 @@ namespace Sapphire.Presentation.Skills
     /// RadialSkillMenu can drive whichever class's player is attached to the
     /// active character without knowing its concrete type. row is the index
     /// into that class's SkillCatalog.ForClass(...) array (0-4), matching the
-    /// 1-5 key bindings. Implemented by SkillVfxPlayer (mage, atlas-frame
-    /// based - unchanged by this interface's introduction) and
-    /// WarriorSkillVfxPlayer (procedural primitives, no atlas art available
-    /// for the warrior kit yet).
+    /// 1-5 key bindings. Implemented by SkillVfxPlayer (mage) and
+    /// WarriorSkillVfxPlayer (warrior) - both are atlas-frame based (2026-09-15:
+    /// the warrior kit's real VFX art landed, replacing its earlier
+    /// procedural-primitive placeholder implementation).
     /// </summary>
     public interface ISkillVfxPlayer
     {

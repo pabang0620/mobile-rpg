@@ -25,20 +25,22 @@ namespace Sapphire.EditorTools
     {
         private const float OdinPanelWidth = 400f;
         // 2026-09-16 (F6.1 fix): the MainMenuButton (see Build below) is
-        // anchored top-right, anchoredPosition (-20,-20), sizeDelta (150,72) -
-        // its bottom edge sits 20+72=92 units below the canvas top. The old
-        // 24-unit top margin put the panel's top edge well inside that
-        // button's rect, so the open panel visually covered/clipped the
-        // button's own "메뉴" label (confirmed in the orchestrator's
-        // reference screenshot). 92 + 12px clearance = 104.
-        private const float OdinPanelTopMargin = 104f;
+        // anchored top-right, anchoredPosition (-20,-20) - its bottom edge
+        // sits 20+buttonHeight units below the canvas top. The old 24-unit
+        // top margin put the panel's top edge well inside that button's
+        // rect, so the open panel visually covered/clipped the button's own
+        // "메뉴" label (confirmed in the orchestrator's reference
+        // screenshot). 2026-09-15 (gemless MapleStory-M rebuild): the button
+        // shrank from 150x72 (pill+label) to HamburgerButtonSize=56 (icon
+        // alone, no label) - margin recomputed the same way, 20+56+12=88.
+        private const float OdinPanelTopMargin = 20f + HamburgerButtonSize + 12f;
         private const float OdinPanelBottomMargin = 20f;
-        // 2026-09-16 (F6.4 fix): raised from 36 to 40 alongside the
-        // MenuSectionHeader crop/border recompute in HudArtImportConfigurator
-        // (see that file's ConfigureMenuSectionHeader for the measurement) -
-        // headers now render with less border-eaten space so the section
-        // title text sits centered in the header band instead of overlapping
-        // its top edge.
+        // 2026-09-16 (F6.4 fix): raised from 36 to 40 so the section title
+        // text sits centered in the header band instead of overlapping its
+        // top edge. 2026-09-15 (gemless MapleStory-M rebuild): the header no
+        // longer has a banner backdrop at all (see BuildOdinSectionHeader) -
+        // this height now just reserves vertical room for the divider+title
+        // row, kept at 40 since that still comfortably fits both.
         private const float OdinHeaderHeight = 40f;
         private const float OdinHeaderToItemsGap = 12f;
         // 2026-09-15 (D1 fix): shrunk from 104 to the item's actual content
@@ -82,15 +84,19 @@ namespace Sapphire.EditorTools
         // MenuPanelOdin's border must be converted from source-texture
         // pixels to canvas units the same way Image.Type.Sliced does at
         // runtime: Image.pixelsPerUnit = sprite.pixelsPerUnit /
-        // canvas.referencePixelsPerUnit (see the *100 note in
-        // ArtImportConfigurator.ConfigureUiFrames), so
+        // canvas.referencePixelsPerUnit, so
         // borderCanvasUnits = borderPx / (spritePixelsPerUnit / 100).
-        // Values below (border=84px, pixelsPerUnit=100*793/400) are the
-        // exact ones HudArtImportConfigurator.ConfigureMenuPanelOdin imports
+        // Values below are the exact ones
+        // HudArtImportConfigurator.ConfigureMenuPanelOdin imports
         // MenuPanelOdin.png with - kept in sync as named constants instead
-        // of a duplicated magic number.
-        private const float MenuPanelOdinLeftRightBorderPx = 84f;
-        private const float MenuPanelOdinSpritePixelsPerUnit = 100f * 793f / 400f;
+        // of a duplicated magic number. 2026-09-15 (gemless MapleStory-M
+        // rebuild): border dropped from 84 to 32 (new asset's actual
+        // double-line decoration thickness, see that method's comment) and
+        // pixelsPerUnit switched from the old per-asset 793/400 formula to
+        // the shared ArtImportConfigurator.UiKitV3PixelsPerUnit (300, every
+        // v3 asset's fixed native/target ratio - see that constant's doc).
+        private const float MenuPanelOdinLeftRightBorderPx = 32f;
+        private const float MenuPanelOdinSpritePixelsPerUnit = ArtImportConfigurator.UiKitV3PixelsPerUnit;
         private const float OdinContentMarginClearance = 14f;
         private static readonly float OdinContentMargin =
             MenuPanelOdinLeftRightBorderPx / (MenuPanelOdinSpritePixelsPerUnit / 100f) + OdinContentMarginClearance;
@@ -104,11 +110,20 @@ namespace Sapphire.EditorTools
         // as a known, deliberate conflict rather than an oversight.
         private const int OdinColumns = 4;
 
+        // 2026-09-15 (gemless MapleStory-M rebuild): the "메뉴" button dropped
+        // its MenuButtonGold pill background and text label entirely - it's
+        // now the hamburger icon alone (spec: "배경 없음, 살짝 그림자" - the
+        // shadow is already baked into MenuHamburgerIcon.png). Sized smaller
+        // than the old 150x72 pill since there's no label to fit anymore.
+        private const float HamburgerButtonSize = 56f;
+
         internal static void Build(GameObject canvasGo, SimpleMessagePanel messagePanel)
         {
-            Sprite openButtonSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png");
+            Sprite hamburgerSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuHamburgerIcon.png");
+            Sprite buttonSecondarySprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/ButtonSecondary.png", "Normal");
             Sprite panelSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuPanelOdin.png");
-            Sprite headerSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionHeader.png", "MenuSectionHeader");
+            Sprite dividerLeftSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionDivider.png", "MenuSectionDivider_Left");
+            Sprite dividerRightSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionDivider.png", "MenuSectionDivider_Right");
             Sprite lockSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuLockBadge.png", "MenuLockBadge");
 
             var openGo = new GameObject("MainMenuButton", typeof(Image), typeof(Button));
@@ -116,12 +131,12 @@ namespace Sapphire.EditorTools
             var openRect = openGo.GetComponent<RectTransform>();
             openRect.anchorMin = openRect.anchorMax = new Vector2(1f, 1f);
             openRect.pivot = new Vector2(1f, 1f);
-            openRect.sizeDelta = new Vector2(150f, 72f);
+            openRect.sizeDelta = new Vector2(HamburgerButtonSize, HamburgerButtonSize);
             openRect.anchoredPosition = new Vector2(-20f, -20f);
             var openImage = openGo.GetComponent<Image>();
-            openImage.sprite = openButtonSprite;
-            openImage.type = Image.Type.Sliced;
-            AddButtonLabel(openGo, "메뉴", 25);
+            openImage.sprite = hamburgerSprite;
+            openImage.type = Image.Type.Simple;
+            openImage.preserveAspect = true;
 
             // 2026-09-16 (F6.2 fix): full-screen dim backdrop + click-blocker,
             // toggled together with the panel (both live under one
@@ -178,7 +193,7 @@ namespace Sapphire.EditorTools
 
             foreach (MenuSectionDefinition section in MenuCatalog.Sections)
             {
-                BuildOdinSectionHeader(panelGo, headerSprite, section.Title, cursorY, contentWidth);
+                BuildOdinSectionHeader(panelGo, dividerLeftSprite, dividerRightSprite, section.Title, cursorY, contentWidth);
                 cursorY -= OdinHeaderHeight + OdinHeaderToItemsGap;
 
                 int rows = Mathf.CeilToInt(section.Items.Length / (float)OdinColumns);
@@ -224,7 +239,7 @@ namespace Sapphire.EditorTools
             // button visually covered the "시스템" section's 설정 icon
             // label). VerifyFooterClearance above now throws at build time if
             // they would.
-            BuildCharacterSelectButton(panelGo, openButtonSprite);
+            BuildCharacterSelectButton(panelGo, buttonSecondarySprite);
 
             var controller = canvasGo.AddComponent<MainMenuPanel>();
             controller.Configure(overlayGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), messagePanel);
@@ -275,9 +290,20 @@ namespace Sapphire.EditorTools
             AddButtonLabel(buttonGo, "캐릭터 선택으로", 20);
         }
 
-        private static void BuildOdinSectionHeader(GameObject panelGo, Sprite headerSprite, string title, float topY, float contentWidth)
+        // 2026-09-15 (gemless MapleStory-M rebuild): dropped the
+        // MenuSectionHeader.png banner backdrop entirely - a section header
+        // is now just a centered title with a short fading divider line on
+        // each side (MenuSectionDivider_Left/_Right), no gold plate. Divider
+        // width is a fixed on-screen size (not stretched - a fading line
+        // would break if 9-sliced/stretched), chosen so both dividers plus a
+        // generous center gap for the title fit inside contentWidth for
+        // every current section title (성장/모험/시스템, all short).
+        private const float DividerWidth = 70f;
+        private const float DividerHeight = 7f;
+
+        private static void BuildOdinSectionHeader(GameObject panelGo, Sprite dividerLeftSprite, Sprite dividerRightSprite, string title, float topY, float contentWidth)
         {
-            var headerGo = new GameObject("Section_" + title, typeof(Image));
+            var headerGo = new GameObject("Section_" + title, typeof(RectTransform));
             headerGo.transform.SetParent(panelGo.transform, false);
             var headerRect = headerGo.GetComponent<RectTransform>();
             headerRect.anchorMin = new Vector2(0f, 1f);
@@ -285,10 +311,9 @@ namespace Sapphire.EditorTools
             headerRect.pivot = new Vector2(0f, 1f);
             headerRect.sizeDelta = new Vector2(contentWidth, OdinHeaderHeight);
             headerRect.anchoredPosition = new Vector2(OdinContentMargin, topY);
-            var headerImage = headerGo.GetComponent<Image>();
-            headerImage.sprite = headerSprite;
-            headerImage.type = Image.Type.Sliced;
-            headerImage.raycastTarget = false;
+
+            BuildDividerHalf(headerGo, dividerLeftSprite, "DividerLeft", new Vector2(0f, 0.5f));
+            BuildDividerHalf(headerGo, dividerRightSprite, "DividerRight", new Vector2(1f, 0.5f));
 
             var textGo = new GameObject("Text", typeof(Text));
             textGo.transform.SetParent(headerGo.transform, false);
@@ -304,6 +329,23 @@ namespace Sapphire.EditorTools
             text.fontSize = 20;
             text.text = title;
             text.raycastTarget = false;
+        }
+
+        private static void BuildDividerHalf(GameObject headerGo, Sprite dividerSprite, string name, Vector2 anchor)
+        {
+            var go = new GameObject(name, typeof(Image));
+            go.transform.SetParent(headerGo.transform, false);
+            var rect = go.GetComponent<RectTransform>();
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.pivot = anchor;
+            rect.sizeDelta = new Vector2(DividerWidth, DividerHeight);
+            rect.anchoredPosition = Vector2.zero;
+            var image = go.GetComponent<Image>();
+            image.sprite = dividerSprite;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = true;
+            image.raycastTarget = false;
         }
 
         // Locked items: gray-tinted icon + a MenuLockBadge overlay at the

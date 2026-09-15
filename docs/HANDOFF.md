@@ -2,7 +2,86 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): 캐릭터 생성/선택 + 마을 메뉴 레이아웃 결함 4건 수정
+## 2026-09-15 (최신): 젬리스 메이플스토리M풍 UI 킷 배선 + 전사 VFX 실제 스프라이트 배선
+
+두 묶음을 한 세션에서 끝까지 배선했다. 상세 실측값·좌표계 결정 근거는
+`docs/DECISIONS.md` 같은 날짜 항목, 에셋 목록·교체/신규/폐기 파일은
+`docs/ASSET_STATUS.md` 같은 날짜 항목 참고 - 여기는 "지금 코드가 실제로
+어떤 상태인가"만 요약한다.
+
+**UI 킷 (Part A)**: `tools/ui_kit/build_ui_kit.py`가 생성한 15개 최종 PNG를
+`client/Assets/Sapphire/Art/UI/`에 배선했다 - 9개는 기존 파일 교체
+(MenuPanelOdin/MessagePanelFrameGold/CharacterSlotFrame/InputFieldFrame/
+HealthBarFrameGold/GaugeFillMana/SkillButtonFrameGold/MovementStickGold/
+TitleLogo), 6개는 신규 추가(MenuSectionDivider/RegionNameplate/
+ButtonPrimary/ButtonSecondary/MenuHamburgerIcon/LevelBadgeHex). 관련 Editor
+임포터: `ArtImportConfigurator.cs`(MessagePanelFrameGold/SkillButtonFrame/
+HealthBarFrame 갱신 + `UiKitV3PixelsPerUnit` 상수 신설),
+`HudArtImportConfigurator.cs`(MovementStick/MenuPanelOdin 갱신,
+`ConfigureMenuSectionHeader` 제거하고 `ConfigureMenuSectionDivider`/
+`ConfigureRegionNameplate`/`ConfigureButtons`/`ConfigureMenuHamburgerIcon`/
+`ConfigureLevelBadge` 5개 신설), `CharacterFlowArtImportConfigurator.cs`
+(border 상수 2개 갱신). `MenuSectionHeader.png`(+.meta)는 두 신규 자산이
+기존 두 용도를 모두 대체해 참조 0건이 되어 `git rm`으로 삭제했다.
+
+씬 빌더 변경: `VillageHubMenuBuilder.cs`(우상단 메뉴 버튼을 배경 없는
+아이콘 단독으로, "캐릭터 선택으로" 풋터 버튼을 ButtonSecondary로,
+섹션 헤더를 배너 대신 좌우 페이딩 디바이더+텍스트로 전면 재작성),
+`VillageHubUiBuilder.cs`(HP/MP 게이지 barHeight 53.4->16 + Fill 앵커
+재계산, 레벨 배지 신설, 지역명 배너를 RegionNameplate로 교체),
+`LoginSceneBuilder.cs`/`CharacterCreateSceneBuilder.cs`(시작하기/생성
+버튼을 ButtonPrimary로, "캐릭터 선택으로" 뒤로가기 버튼을
+ButtonSecondary로).
+
+**전사 VFX (Part B)**: `WarriorSkillVfxImporter.cs`(신설) +
+`WarriorSkillVfxLibrary.cs`(신설, ScriptableObject)가
+`WarriorSkillVfxAtlas.png`(8x5)와 `WarriorGroundSlamPadded.png`(8프레임
+스트립)를 이름 기준으로 매핑해 슬라이스한다(아틀라스 행 순서와
+`WarriorSkillVfxPlayer.Play(row,...)`의 파라미터 순서가 서로 달라 인덱스
+매핑이 아니라 이름 매핑을 씀 - 두 클래스의 doc comment 참고).
+`WarriorSkillVfxPlayer.cs`를 프로시저럴 프리미티브 도형에서 실제 아틀라스
+프레임 재생(mage의 `SkillVfxPlayer`와 동일한 Create/Animate 패턴)으로
+전면 재작성 - Dash/GroundSlam은 `Mathf.Atan2` 기반 facing 회전을 신규로
+추가했다(GroundSlam은 이전엔 회전 없이 타일마다 마커를 찍는 방식이었음).
+`Domain/Skills/WarriorCombatConstants.cs`(신설)가 전사 기본공격 사거리(2칸,
+Line)를 담고, `WarriorSkillVfxPlayer.PlayBasicAttack`(신규 public 메서드,
+SkillCatalog 밖의 별도 버튼이라 `Play(row,...)`가 아님)이 이를 재생한다.
+`RadialSkillMenu.CastBasicAttack()`이 전사일 때만
+`(skillVfx as WarriorSkillVfxPlayer)?.PlayBasicAttack(...)`을 호출하도록
+배선 - 법사는 해당 캐스트가 자동으로 null이 되어 동작 무변경.
+`SapphireSceneBuilder.BuildAll()`에 `WarriorSkillVfxImporter.ConfigureLibrary()`
+호출을 추가했다(mage의 `SkillVfxImporter.ConfigureLibrary()`와 동일한
+자리, 동일한 컨벤션).
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 0에러, EditMode 60/60 PASS(신규
+`WarriorBasicAttackRangeTests` 1건 - 사거리 상수값 + `TilesInLine` 결과
+동시 검증), `SapphireSceneBuilder.BuildEverything` -> `SapphireBuildPlayer.
+BuildWindows` 재빌드 성공. 스크린샷 12장
+(`generated-images/diagnostics/final_login.png`, `final_select.png`,
+`final_create.png`, `final_village_{mage,warrior}.png`,
+`final_village_{mage,warrior}_menu.png`, `final_warrior_{basicattack,dash,
+whirlwind,shield,warcry,groundslam}.png`)을 오케스트레이터가 직접 PNG로
+열어 확인 - 보석/금테 잔존 없음, 조이스틱 노브 완전한 원, 메뉴 구분선에
+꺾쇠 없음(페이딩 라인만), 6개 전사 스킬 VFX 전부 절차적 도형이 아닌 실제
+스프라이트 프레임으로 렌더(회오리는 3x3 스월, 대지강타는 전방 3폭x1깊이
+띠, 기본공격/돌진은 방향성 슬래시). 캐릭터 선택 화면의 클래스+레벨 텍스트
+(`Lv.1` 회색조 저대비)는 이번 작업 범위 밖의 기존 결함으로 남아있음(수정
+안 함, 후속 과제로 아래 표기).
+
+**스크린샷 캡처 중 알아낸 사실 (검증 절차, 게임 코드 아님)**:
+`logs/tools/capture.ps1`로 연속 캡처 시 첫 실행이 이전에 실행 흔적이 남은
+상태에서 아주 드물게 엉뚱한(초소형, 160x28) 창을 잡는 현상이 관찰됐다 -
+직전 `Get-Process -Name SapphireRPG | Stop-Process -Force`로 잔류
+프로세스를 정리하고 재시도하면 항상 정상 크기(1296x759)로 캡처됐다(원인
+특정은 못 함, 재현 스크립트 자체는 변경 안 함).
+
+**다음**: `docs/DECISIONS.md`의 같은 날짜 항목(결정 2)에 따라
+ButtonPrimary/Secondary는 이번에 지정된 4개 버튼에만 적용됐다 - 나머지
+버튼(선택/삭제/+생성/닫기/확인/취소/메뉴 그리드 항목)을 신규 스타일로
+통일할지는 후속 결정 필요. CharacterSelect 카드의 `Lv.1` 텍스트 저대비
+문제도 미해결.
+
+## 2026-09-15: 캐릭터 생성/선택 + 마을 메뉴 레이아웃 결함 4건 수정
 
 오케스트레이터가 스크린샷 6장을 직접 보고 판정한 결함 4건을 수정했다.
 

@@ -2,6 +2,18 @@
 
 기술 방향 결정을 날짜순으로 남긴다(최신이 위). 기획 자체(무엇을 만들지)는 `docs/planning/*.md`가 SSOT이고 여기서는 다루지 않는다 - 여기는 "어떻게 구현할지"에 대한 결정만 남긴다.
 
+## 2026-09-15: UI 킷 배선 최종 라운드 - 버튼 적용 범위, PPU 통일, 전사 기본공격 사거리, VFX 좌표계 결정
+
+**결정 1 - PPU를 자산별 개별 공식에서 공용 상수(300)로 통일**: `tools/ui_kit/build_ui_kit.py`가 만드는 모든 9-slice 자산은 `SCALE=3`(native = target * 3) 고정이라, 어느 자산이든 `pixelsPerUnit = 100 * native/target = 300`이 항상 성립한다. 기존 관례(`ArtImportConfigurator.ConfigureUiFrames` 등)는 자산마다 `100*nativeWidth/targetWidth` 공식을 개별 계산했는데, v3 자산군에는 이 계산이 전부 300으로 수렴하므로 `ArtImportConfigurator.UiKitV3PixelsPerUnit` 상수 하나로 대체했다. `CharacterFlowArtImportConfigurator`의 두 자산(CharacterSlotFrame/InputFieldFrame)은 기존 방식(`GetSourceTextureWidthAndHeight` 기반 동적 계산)을 그대로 둬도 결과가 자동으로 300이 되므로 손대지 않았다(코드 변경 없이 값만 바뀜).
+
+**결정 2 - ButtonPrimary/Secondary 적용 범위: "캐릭터 선택으로" 2곳 + 로그인/생성 주요 버튼 2곳만**: 작업 지시서가 명시한 대상(시작하기/생성=Primary, 캐릭터 선택으로=Secondary)을 문자 그대로 좁게 적용했다 - "캐릭터 선택으로" 텍스트를 가진 버튼이 `CharacterCreateSceneBuilder`(뒤로가기)와 `VillageHubMenuBuilder`(메뉴 풋터) 2곳에 존재해 둘 다 Secondary로 교체했지만, 그 외 버튼(CharacterSelect의 선택/삭제/+생성, 메시지·확인 다이얼로그의 닫기/확인/취소, Odin 메뉴 그리드 항목)은 지시서에 없어 `MenuButtonGold.png`를 그대로 유지했다. **기각한 대안**: 신규 UI 스타일 일관성을 위해 전체 버튼을 Primary/Secondary로 확대 교체 - 스코프 크립 금지 원칙(`feedback_dont_expand_given_scope`)에 따라 기각, 필요하면 후속 작업으로 사용자가 명시적으로 요청.
+
+**결정 3 - 전사 기본공격("대검베기") 사거리 = 2칸, Line 형태**: 지시서가 "1~2칸으로 신규 정의"만 요구하고 정확한 값·형태는 위임했다. 대검(양손검)의 리치를 표현하기 위해 상한값인 2칸을 택했고, 형태는 `Cone`(폭 넓은 슬램)이 아니라 `Line`(정면 직선)을 택했다 - 기존 `GroundSlam`이 이미 "폭 넓은 지면 슬램" 이미지를 쓰고 있어 같은 시각 언어(BasicAttackSlash 스프라이트, 좌측edge pivot으로 늘어나는 직선 베기)와 형태 모두 구분하기 위함. `Domain/Skills/WarriorCombatConstants.BasicAttackRangeTiles=2`로 새 Domain 상수를 신설했다(SkillCatalog에는 항목이 없음 - 기본공격은 SkillCatalog 밖의 별도 버튼이라는 기존 설계를 그대로 유지, `SkillCatalog` 클래스 doc 참고).
+
+**결정 4 - GroundSlam VFX 좌표계: pivot 중앙 + 위치=1타일 전방 tile 중심**: 지시서 원문("위치=actorPos+facing*1타일")을 문자 그대로 "1타일 뒤(actor 좌표)에서 시작해 1타일 전진하는 좌측-edge pivot" 방식으로 구현하면, 전사 원점(actor 위치)에서 시작해 딱 1타일만 앞으로 나가는 스프라이트가 origin 타일과 destination 타일에 절반씩 걸쳐, 실제 `TilesInFrontCone(origin,facing,1)`이 가리키는 "전방 1칸(타일 경계 0.5~1.5)"과 어긋난다. 대신 pivot을 중앙(0.5,0.5)으로 하고 위치를 "전방 1칸의 중심"(`Point(origin+facing.ToOffset())`)으로 잡아, 스프라이트의 깊이축(가로, ppu=프레임폭이라 1로컬유닛=1타일)이 정확히 그 칸의 앞뒤 경계(0.5~1.5)를 덮도록 했다 - `TilesInFrontCone`의 실제 판정 범위와 시각 효과가 일치하는 것을 좌표 계산으로 확인(코드 주석에 수록).
+
+**결정 5 - 스크린샷 검증용 임시 디버그 코드는 커밋 전 완전 제거**: 전사 스킬 VFX를 스크린샷으로 확인하기 위해 `RadialSkillMenu`에 `-sapphire-warrior-skill=<name>` 커맨드라인 훅(0.3초 간격 반복 캐스트)을 임시로 추가했었다. Dash는 실제로 캐릭터를 이동시켜(TryBlink) 반복 호출 시 ~1.2초 만에 맵 경계에 막혀 이후 전부 무효 캐스트가 되는 문제가 있어, 가짜 origin(현재 위치에서 facing 반대 방향으로 1칸)을 사용해 실제 이동 없이 VFX만 재생하도록 우회했다(reflection으로 GridMover 내부 위치를 강제 리셋하는 방식도 시도했으나 효과가 없어 폐기 - 정확한 원인은 특정하지 못함, `docs/HANDOFF.md` 참고). 스크린샷 12장을 전부 확보한 뒤 이 훅 전체를 삭제하고 컴파일·EditMode 60/60·씬 재빌드·플레이어 재빌드를 다시 통과시켰다 - 최종 커밋에는 디버그 코드가 전혀 포함되지 않는다.
+
 ## 2026-09-15: 전사 pivot은 좌/우를 강제로 맞추지 않음 (Mage 관례와의 의도적 차이)
 
 `ArtImportConfigurator.BuildMageGridSlices`는 Left/Right 행에 동일한 pivot

@@ -34,8 +34,12 @@ namespace Sapphire.EditorTools
             Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/InputFieldFrame.png");
             InputField accountIdInput = BuildAccountIdInput(canvasGo, inputFrame);
 
-            Sprite menuButton = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png");
-            Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, menuButton, "StartButton", new Vector2(0f, -140f), new Vector2(280f, 90f), "게임 시작", fontSize: 28);
+            // 2026-09-15 (gemless MapleStory-M rebuild): the main action
+            // button ("게임 시작") now uses ButtonPrimary.png (warm brown
+            // hex-cut pill) instead of MenuButtonGold - see
+            // HudArtImportConfigurator.ConfigureButtons.
+            Sprite startButtonSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/ButtonPrimary.png", "Normal");
+            Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, startButtonSprite, "StartButton", new Vector2(0f, -140f), new Vector2(280f, 90f), "게임 시작", fontSize: 28);
 
             Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, -195f), new Vector2(500f, 32f), string.Empty, fontSize: 20);
             errorText.color = new Color(1f, 0.5f, 0.5f);

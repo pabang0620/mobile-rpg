@@ -141,6 +141,70 @@ Login/CharacterSelect/CharacterCreate 4개 씬 전부 재빌드) ->
 확인 - 핑크 텍스처/빈 화면/겹침/잘림/한글 깨짐 없음, 워리어·법사 둘 다 발이
 바닥 타일에 정확히 붙어 서있음.
 
+## 2026-09-15 갱신: 젬리스(gemless) 메이플스토리M풍 UI 킷 배선 + 전사 VFX 실제 스프라이트 배선 완료
+
+`tools/ui_kit/build_ui_kit.py`(procedural, PIL 기반, SCALE=3 supersample - AI
+이미지 아님)로 생성한 15개 최종 에셋을 실제 게임 코드에 배선했다. 베이지
+양피지 패널 + 반투명 다크 HUD + 육각컷 버튼 스타일로, 금색/보석 장식을
+전부 제거했다(사용자 스타일 확정 지시).
+
+**교체(기존 파일명 유지, 내용 전면 교체)**:
+- `Art/UI/MenuPanelOdin.png`(1200x3000), `MessagePanelFrameGold.png`(1680x960),
+  `Art/UI/Title/CharacterSlotFrame.png`(780x1950) - 전부 `build_beige_panel`
+  계열, border 실측(PIL inward-scan) 32px 4면 동일(생성 스크립트 자체
+  파라미터 - margin 6 + radius 4 + 이중선 두께, SCALE 3 배 - 와도 정확히
+  일치).
+- `Art/UI/Title/InputFieldFrame.png`(1080x180, 단일 외곽선 사각형, border
+  22px 4면), `Art/UI/Title/TitleLogo.png`(1942x809, Simple, 무변경 로직).
+- `Art/UI/HealthBarFrameGold.png`(780x120, Track/Fill 각 780x48 캡슐, 상단
+  cell=Track 하단 cell=Fill), `Art/UI/GaugeFillMana.png`(780x48) -
+  `HealthBarFrameGold`의 HP Fill을 hue-rotate(215°)한 것, 절차 동일 유지.
+  barHeight를 53.4(구 자산 보정값)에서 16(신규 자산 native aspect
+  780:48=16.25:1과 target 260:16=16.25:1이 정확히 일치 - 별도 보정 불필요)
+  으로 축소.
+- `Art/UI/SkillButtonFrameGold.png`(756x396, Skill/BasicAttack 원형 2개),
+  `Art/UI/MovementStickGold.png`(792x480, Base/Knob 원형 2개) - 전부 PIL
+  alpha bbox로 재실측(포뮬러 예측값과 1px 이내로 일치).
+
+**신규 추가**:
+- `Art/UI/MenuSectionDivider.png`(1200x60, 좌/우 600x60 페이딩 라인 2셀) -
+  Odin 메뉴 섹션 헤더의 배경 배너(`MenuSectionHeader.png`)를 완전히
+  대체(배너 자체를 없애고 타이틀 좌우에 얇은 선만 남김).
+  `VillageHubMenuBuilder.BuildOdinSectionHeader` 전면 재작성.
+- `Art/UI/RegionNameplate.png`(540x96, 핀 아이콘 내장 캡슐, border
+  152/0/54/0) - 상단 지역명 배너(`MenuSectionHeader.png` 재사용분)를 대체.
+  `VillageHubUiBuilder.BuildRegionNameBanner` 재작성(텍스트를 핀 오른쪽에
+  좌측정렬).
+- `Art/UI/ButtonPrimary.png`/`ButtonSecondary.png`(각 1032x456, 육각컷
+  Normal/Pressed 2셀, border 53px 4면 - corner cut 50.4px 실측 확인 후
+  버퍼) - 로그인/생성 화면 주요 버튼(시작하기/생성)과 "캐릭터 선택으로"
+  버튼(백/풋터 2곳)에 적용, `MenuButtonGold.png`는 그 외 버튼(선택/삭제/
+  +생성/닫기/확인/취소/메뉴 그리드 항목)에 그대로 유지.
+- `Art/UI/MenuHamburgerIcon.png`(240x216, 배경 없는 라인 아이콘+그림자) -
+  우상단 "메뉴" 버튼의 배경 pill을 제거하고 아이콘 단독으로 교체
+  (150x72->56x56).
+- `Art/UI/LevelBadgeHex.png`(192x192, 육각 배지) - "Lv.1" 텍스트 배경으로
+  신규 추가.
+
+**폐기**: `Art/UI/MenuSectionHeader.png`(+.meta) - 위 두 신규 자산(Divider/
+Nameplate)이 기존 두 용도(섹션 헤더/지역명 배너)를 모두 대체해 참조 0건
+확인(grep) 후 `git rm`.
+
+**전사 VFX**: `WarriorSkillVfxAtlas.png`(1586x992, 8x5, 셀 198.25x198.4)와
+`WarriorGroundSlamPadded.png`(2079x756, 8프레임 스트립, 프레임
+259.875x756)를 `WarriorSkillVfxImporter`(신설, 이름 기준 행 매핑)로
+슬라이스해 `WarriorSkillVfxLibrary`(신설 ScriptableObject, Frames[48])로
+빌드, `WarriorSkillVfxPlayer`를 프로시저럴 프리미티브에서 실제 아틀라스
+프레임 재생으로 전면 재작성. 상세 근거·기본공격 신규 사거리는
+`docs/DECISIONS.md`/`docs/HANDOFF.md`의 같은 날짜 항목 참고.
+
+**검증**: Unity CLI 컴파일 0에러, EditMode 60/60(전사 기본공격 range 테스트
+1건 신규), `SapphireSceneBuilder.BuildEverything` -> `SapphireBuildPlayer.
+BuildWindows` 재빌드, 스크린샷 12장(`generated-images/diagnostics/final_*.png`)
+전부 오케스트레이터가 직접 확인 - 보석/금테 잔존 없음, 조이스틱 노브
+완전한 원, 메뉴 구분선 꺾쇠 없이 페이딩 라인만, 6개 전사 스킬 VFX 전부
+실제 스프라이트로 렌더(placeholder 도형 아님).
+
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.

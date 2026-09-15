@@ -32,3 +32,6 @@ Thumbs.db
 
 # Claude build/test run logs (same nature as /logs/)
 client/_claudelogs/
+
+# Python bytecode cache
+__pycache__/

@@ -1,0 +1,1063 @@
+fileFormatVersion: 2
+guid: 5fd5b08a1cd31ce40a2103d349d5952e
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 198.25
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: WarriorVfx_BasicAttackSlash_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0151117417ea1ef0800000000000000
+      internalID: -136542763699056372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_BasicAttackSlash_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd9c7a488f60b8860800000000000000
+      internalID: 7533122466154531293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_BasicAttackSlash_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 794
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed102990bf6c2ded0800000000000000
+      internalID: -2390629670680657442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_BasicAttackSlash_03
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b831cbbd6f66d20a0800000000000000
+      internalID: -6904749443254578293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_BasicAttackSlash_04
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1becf0040cc7596f0800000000000000
+      internalID: -678499003699048783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_BasicAttackSlash_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 794
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d24dacafebeb6ce20800000000000000
+      internalID: 3370591098594055213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_BasicAttackSlash_06
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23eb8599451de1860800000000000000
+      internalID: 7502664190526012978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_BasicAttackSlash_07
+      rect:
+        serializedVersion: 2
+        x: 1388
+        y: 794
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 455d00c2ccec667b0800000000000000
+      internalID: -5231266540837350060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WhirlwindSlash_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74387a241487ed170800000000000000
+      internalID: 8205127792802104135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WhirlwindSlash_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce855a84833a94230800000000000000
+      internalID: 3623606837328566508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WhirlwindSlash_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 595
+        width: 199
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20f1a5bb9403b8fe0800000000000000
+      internalID: -1185800983648002302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WhirlwindSlash_03
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ba693236f1cca3a0800000000000000
+      internalID: -6652729286384325963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WhirlwindSlash_04
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b673fa5e0f91559e0800000000000000
+      internalID: -1633370767415625877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WhirlwindSlash_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 595
+        width: 199
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d1cb92b3450487d0800000000000000
+      internalID: -2917200870311738924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WhirlwindSlash_06
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfea27ea33ab87920800000000000000
+      internalID: 2988343083893174011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WhirlwindSlash_07
+      rect:
+        serializedVersion: 2
+        x: 1388
+        y: 595
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6ac890c08a6f6900800000000000000
+      internalID: 679879169975831146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WarCryShockwave_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed3e4c335e1d23f50800000000000000
+      internalID: 6859775964784944094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WarCryShockwave_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1809cc10ed383c40800000000000000
+      internalID: 5492207778343225372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WarCryShockwave_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 397
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 204f0f0aa59d5a490800000000000000
+      internalID: -7735537801668529150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WarCryShockwave_03
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4059daa78f6173e0800000000000000
+      internalID: -2057740926253969332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WarCryShockwave_04
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dddcad3f85f5965a0800000000000000
+      internalID: -6527581349243859491
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WarCryShockwave_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 397
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5022f96fe82613c30800000000000000
+      internalID: 4337356282297000453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WarCryShockwave_06
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66ed2adc1298e6f40800000000000000
+      internalID: 5723662954711408230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_WarCryShockwave_07
+      rect:
+        serializedVersion: 2
+        x: 1388
+        y: 397
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4b8f4026a02bfec0800000000000000
+      internalID: -3532193584863278259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_ShieldBlockBarrier_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c4fd739820f4b010800000000000000
+      internalID: 1203851057478628551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_ShieldBlockBarrier_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6821933f25ce0d90800000000000000
+      internalID: -7129544353561630611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_ShieldBlockBarrier_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 198
+        width: 199
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb08cbb3c424fc950800000000000000
+      internalID: 6471464084741849276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_ShieldBlockBarrier_03
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75f4b5c6b0bde81f0800000000000000
+      internalID: -1040653621766959273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_ShieldBlockBarrier_04
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6630bdc1dec9bafc0800000000000000
+      internalID: -3482517344635649178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_ShieldBlockBarrier_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 198
+        width: 199
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 162a0459f6b134eb0800000000000000
+      internalID: -4736912217004268959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_ShieldBlockBarrier_06
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbe14f42c8b336c40800000000000000
+      internalID: 5504308642678316731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_ShieldBlockBarrier_07
+      rect:
+        serializedVersion: 2
+        x: 1388
+        y: 198
+        width: 198
+        height: 199
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c253d8d8d8721b010800000000000000
+      internalID: 1202786064403346732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_DashStreak_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0db93a1d3b636790800000000000000
+      internalID: -7538063441110909686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_DashStreak_01
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 992fd378751eaa8e0800000000000000
+      internalID: -1681283744822070631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_DashStreak_02
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 0
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2860a08da7592ee0800000000000000
+      internalID: -1285399815938611154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_DashStreak_03
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff5b66f88e09722e0800000000000000
+      internalID: -2150590968533436929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_DashStreak_04
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e75b0b89246b2eb0800000000000000
+      internalID: -4743587652915472414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_DashStreak_05
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 0
+        width: 199
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13b4b18c0c1be1380800000000000000
+      internalID: -8998559563890603215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_DashStreak_06
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae52519442491fa30800000000000000
+      internalID: 4247338807152944618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: WarriorVfx_DashStreak_07
+      rect:
+        serializedVersion: 2
+        x: 1388
+        y: 0
+        width: 198
+        height: 198
+      alignment: 9
+      pivot: {x: 0, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13a213ebae3562dd0800000000000000
+      internalID: -2511227474534127055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      WarriorVfx_BasicAttackSlash_00: -136542763699056372
+      WarriorVfx_BasicAttackSlash_01: 7533122466154531293
+      WarriorVfx_BasicAttackSlash_02: -2390629670680657442
+      WarriorVfx_BasicAttackSlash_03: -6904749443254578293
+      WarriorVfx_BasicAttackSlash_04: -678499003699048783
+      WarriorVfx_BasicAttackSlash_05: 3370591098594055213
+      WarriorVfx_BasicAttackSlash_06: 7502664190526012978
+      WarriorVfx_BasicAttackSlash_07: -5231266540837350060
+      WarriorVfx_DashStreak_00: -7538063441110909686
+      WarriorVfx_DashStreak_01: -1681283744822070631
+      WarriorVfx_DashStreak_02: -1285399815938611154
+      WarriorVfx_DashStreak_03: -2150590968533436929
+      WarriorVfx_DashStreak_04: -4743587652915472414
+      WarriorVfx_DashStreak_05: -8998559563890603215
+      WarriorVfx_DashStreak_06: 4247338807152944618
+      WarriorVfx_DashStreak_07: -2511227474534127055
+      WarriorVfx_ShieldBlockBarrier_00: 1203851057478628551
+      WarriorVfx_ShieldBlockBarrier_01: -7129544353561630611
+      WarriorVfx_ShieldBlockBarrier_02: 6471464084741849276
+      WarriorVfx_ShieldBlockBarrier_03: -1040653621766959273
+      WarriorVfx_ShieldBlockBarrier_04: -3482517344635649178
+      WarriorVfx_ShieldBlockBarrier_05: -4736912217004268959
+      WarriorVfx_ShieldBlockBarrier_06: 5504308642678316731
+      WarriorVfx_ShieldBlockBarrier_07: 1202786064403346732
+      WarriorVfx_WarCryShockwave_00: 6859775964784944094
+      WarriorVfx_WarCryShockwave_01: 5492207778343225372
+      WarriorVfx_WarCryShockwave_02: -7735537801668529150
+      WarriorVfx_WarCryShockwave_03: -2057740926253969332
+      WarriorVfx_WarCryShockwave_04: -6527581349243859491
+      WarriorVfx_WarCryShockwave_05: 4337356282297000453
+      WarriorVfx_WarCryShockwave_06: 5723662954711408230
+      WarriorVfx_WarCryShockwave_07: -3532193584863278259
+      WarriorVfx_WhirlwindSlash_00: 8205127792802104135
+      WarriorVfx_WhirlwindSlash_01: 3623606837328566508
+      WarriorVfx_WhirlwindSlash_02: -1185800983648002302
+      WarriorVfx_WhirlwindSlash_03: -6652729286384325963
+      WarriorVfx_WhirlwindSlash_04: -1633370767415625877
+      WarriorVfx_WhirlwindSlash_05: -2917200870311738924
+      WarriorVfx_WhirlwindSlash_06: 2988343083893174011
+      WarriorVfx_WhirlwindSlash_07: 679879169975831146
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

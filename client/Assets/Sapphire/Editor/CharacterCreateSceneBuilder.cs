@@ -93,13 +93,18 @@ namespace Sapphire.EditorTools
             Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/InputFieldFrame.png");
             InputField nameInput = BuildNameInput(canvasGo, inputFrame);
 
-            Sprite menuButton = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png");
-            Button createButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, menuButton, "CreateButton", new Vector2(0f, CreateButtonY), new Vector2(CreateButtonWidth, CreateButtonHeight), "생성", fontSize: 26);
+            // 2026-09-15 (gemless MapleStory-M rebuild): main action button
+            // ("생성") uses ButtonPrimary, the back/secondary button
+            // ("캐릭터 선택으로") uses ButtonSecondary - see
+            // HudArtImportConfigurator.ConfigureButtons.
+            Sprite primaryButtonSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/ButtonPrimary.png", "Normal");
+            Sprite secondaryButtonSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/ButtonSecondary.png", "Normal");
+            Button createButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, primaryButtonSprite, "CreateButton", new Vector2(0f, CreateButtonY), new Vector2(CreateButtonWidth, CreateButtonHeight), "생성", fontSize: 26);
 
             Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, ErrorTextY), new Vector2(600f, 32f), string.Empty, fontSize: 20);
             errorText.color = new Color(1f, 0.5f, 0.5f);
 
-            BuildBackButton(canvasGo, menuButton);
+            BuildBackButton(canvasGo, secondaryButtonSprite);
 
             VerifyNoOverlap(mageCenterX, warriorCenterX);
 

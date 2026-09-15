@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 300
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,10 +126,10 @@ TextureImporter:
       name: MovementStickGold_Base
       rect:
         serializedVersion: 2
-        x: 90
-        y: 97
-        width: 722
-        height: 708
+        x: 6
+        y: 6
+        width: 468
+        height: 468
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,10 +148,10 @@ TextureImporter:
       name: MovementStickGold_Knob
       rect:
         serializedVersion: 2
-        x: 1010
-        y: 263
-        width: 381
-        height: 376
+        x: 606
+        y: 149
+        width: 181
+        height: 181
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

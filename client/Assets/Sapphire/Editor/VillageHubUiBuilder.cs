@@ -267,17 +267,24 @@ namespace Sapphire.EditorTools
             // HudArtImportConfigurator.ConfigureGaugeFillMana), so the MP
             // gauge now renders with Image.color left white (no tint needed).
             Sprite mpFillSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/GaugeFillMana.png");
+            Sprite levelBadgeSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/LevelBadgeHex.png");
 
-            // barHeight/fill-anchor values re-verified (not re-derived - see
-            // ArtImportConfigurator.ConfigureHealthBarFrame's 2026-09-16 note,
-            // already measured against the Track sprite's own tight-cropped
-            // alpha bbox rather than the old naive half-cell split): Track tight
-            // crop is 1744x358 (aspect ~4.872), so barHeight = 260/4.872 ~= 53.4
-            // keeps Image.Type.Simple from squishing it. The interior navy
-            // window (where the Fill sits) measured at x=[0.096,0.901]
-            // y=[0.249,0.757] of that same tight crop.
+            // 2026-09-15 (gemless MapleStory-M rebuild): both Track/Fill cells
+            // are now a flat slim capsule whose native aspect (780:48 =
+            // 16.25:1) exactly matches its own target design size (260:16 =
+            // 16.25:1, see ArtImportConfigurator.ConfigureHealthBarFrame) -
+            // barHeight=16 needs no artificial recalibration the way the old
+            // ornate asset's mismatched aspect did. Fill inset re-measured
+            // with PIL (vertical color profile at the capsule's horizontal
+            // center): the translucent interior fill runs rows 3-44 of 48
+            // (the outer ~3px on each side is the capsule's own faint white
+            // outline/AA, per BAR_TRACK_LINE), so the Fill child sits inset
+            // ~7% vertically (fraction 3/48~0.0625, rounded to 0.07 for a
+            // hair of extra clearance) and a small 2% horizontal buffer so
+            // its own rounded left cap doesn't visually merge with the
+            // Track's.
             const float barWidth = 260f;
-            const float barHeight = 53.4f;
+            const float barHeight = 16f;
             const float gaugeGap = 6f; // vertical gap between the HP and MP bars
 
             GaugeView hpGauge = BuildGauge(canvasGo, "HealthBar", trackSprite, hpFillSprite,
@@ -288,7 +295,7 @@ namespace Sapphire.EditorTools
             _ = hpGauge;
             _ = mpGauge;
 
-            BuildLevelText(canvasGo, barWidth, barHeight, gaugeGap);
+            BuildLevelText(canvasGo, levelBadgeSprite, barWidth, barHeight, gaugeGap);
         }
 
         private static GaugeView BuildGauge(GameObject canvasGo, string name, Sprite trackSprite, Sprite fillSprite, Vector2 anchoredPosition, float barWidth, float barHeight, Color? fillColor = null)
@@ -308,8 +315,8 @@ namespace Sapphire.EditorTools
             var fillGo = new GameObject("Fill", typeof(Image));
             fillGo.transform.SetParent(barGo.transform, false);
             var fillRect = fillGo.GetComponent<RectTransform>();
-            fillRect.anchorMin = new Vector2(0.096f, 0.249f);
-            fillRect.anchorMax = new Vector2(0.901f, 0.757f);
+            fillRect.anchorMin = new Vector2(0.02f, 0.07f);
+            fillRect.anchorMax = new Vector2(0.98f, 0.93f);
             fillRect.offsetMin = Vector2.zero;
             fillRect.offsetMax = Vector2.zero;
             var fillImage = fillGo.GetComponent<Image>();
@@ -329,21 +336,40 @@ namespace Sapphire.EditorTools
             return gaugeView;
         }
 
-        private static void BuildLevelText(GameObject canvasGo, float barWidth, float barHeight, float gaugeGap)
+        // 2026-09-15 (gemless MapleStory-M rebuild): "Lv.1" now sits on top of
+        // a hexagon badge (LevelBadgeHex.png) instead of being bare text -
+        // badge sized to comfortably contain the gauges' full height
+        // (barHeight*2+gaugeGap), text centered on top of it.
+        private static void BuildLevelText(GameObject canvasGo, Sprite levelBadgeSprite, float barWidth, float barHeight, float gaugeGap)
         {
+            float badgeSize = barHeight * 2f + gaugeGap;
+
+            var badgeGo = new GameObject("LevelBadge", typeof(Image));
+            badgeGo.transform.SetParent(canvasGo.transform, false);
+            var badgeRect = badgeGo.GetComponent<RectTransform>();
+            badgeRect.anchorMin = new Vector2(0f, 1f);
+            badgeRect.anchorMax = new Vector2(0f, 1f);
+            badgeRect.pivot = new Vector2(0f, 1f);
+            badgeRect.sizeDelta = new Vector2(badgeSize, badgeSize);
+            badgeRect.anchoredPosition = new Vector2(20f + barWidth + 12f, -20f);
+            var badgeImage = badgeGo.GetComponent<Image>();
+            badgeImage.sprite = levelBadgeSprite;
+            badgeImage.type = Image.Type.Simple;
+            badgeImage.preserveAspect = true;
+            badgeImage.raycastTarget = false;
+
             var levelGo = new GameObject("LevelText", typeof(Text));
-            levelGo.transform.SetParent(canvasGo.transform, false);
+            levelGo.transform.SetParent(badgeGo.transform, false);
             var levelRect = levelGo.GetComponent<RectTransform>();
-            levelRect.anchorMin = new Vector2(0f, 1f);
-            levelRect.anchorMax = new Vector2(0f, 1f);
-            levelRect.pivot = new Vector2(0f, 1f);
-            levelRect.sizeDelta = new Vector2(80f, barHeight * 2f + gaugeGap);
-            levelRect.anchoredPosition = new Vector2(20f + barWidth + 12f, -20f);
+            levelRect.anchorMin = Vector2.zero;
+            levelRect.anchorMax = Vector2.one;
+            levelRect.offsetMin = Vector2.zero;
+            levelRect.offsetMax = Vector2.zero;
             var levelText = levelGo.GetComponent<Text>();
             levelText.font = LoadKoreanFont();
-            levelText.alignment = TextAnchor.MiddleLeft;
+            levelText.alignment = TextAnchor.MiddleCenter;
             levelText.color = Color.white;
-            levelText.fontSize = 26;
+            levelText.fontSize = 16;
             levelText.text = "Lv.1";
             levelText.raycastTarget = false;
         }
@@ -352,20 +378,21 @@ namespace Sapphire.EditorTools
         // reserves the SSOT's "지역/보스 HP" slot with the region name for now
         // (no boss-HP system exists yet).
 
+        // 2026-09-15 (gemless MapleStory-M rebuild): switched from the retired
+        // MenuSectionHeader.png gold banner to the dedicated RegionNameplate.png
+        // - a dark translucent capsule with a map-pin icon already baked into
+        // its left zone (see HudArtImportConfigurator.ConfigureRegionNameplate).
+        // bannerHeight is fixed at 32 (the asset's own native target height) -
+        // unlike the old banner, this capsule's rounded end caps WOULD visibly
+        // oval-ize if stretched taller/shorter than its native aspect, so this
+        // one dimension is not a free layout choice. Text is left-aligned in
+        // the space to the right of the pin (not centered across the whole
+        // capsule - centering would run the name text across the pin icon).
         private static void BuildRegionNameBanner(GameObject canvasGo)
         {
-            Sprite bannerSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionHeader.png", "MenuSectionHeader");
-            const float bannerWidth = 360f;
-            // bannerHeight is a layout choice, not an aspect-match requirement -
-            // Image.Type.Sliced below keeps the 9-slice border a fixed size in
-            // canvas units regardless of overall height, so no squishing occurs
-            // at any height. (Historical note: this comment previously cited a
-            // stale 2138x281 crop to justify aspect-matching; the actual crop
-            // as of 2026-09-15 is 2153x126 - see HudArtImportConfigurator.
-            // ConfigureMenuSectionHeader - but aspect-matching was never
-            // actually required for a Sliced sprite, so bannerHeight is left
-            // unchanged at the previously-tuned 47.3.)
-            const float bannerHeight = 47.3f;
+            Sprite bannerSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/RegionNameplate.png");
+            const float bannerWidth = 220f;
+            const float bannerHeight = 32f;
 
             var bannerGo = new GameObject("RegionNameBanner", typeof(Image));
             bannerGo.transform.SetParent(canvasGo.transform, false);
@@ -380,18 +407,21 @@ namespace Sapphire.EditorTools
             bannerImage.type = Image.Type.Sliced;
             bannerImage.raycastTarget = false;
 
+            // The pin icon occupies the banner's left zone (native x up to
+            // ~99 of 540, well inside the sprite's own left border - see
+            // ConfigureRegionNameplate) - text starts past it, not centered.
             var textGo = new GameObject("Text", typeof(Text));
             textGo.transform.SetParent(bannerGo.transform, false);
             var textRect = textGo.GetComponent<RectTransform>();
-            textRect.anchorMin = Vector2.zero;
-            textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = Vector2.zero;
-            textRect.offsetMax = Vector2.zero;
+            textRect.anchorMin = new Vector2(0f, 0f);
+            textRect.anchorMax = new Vector2(1f, 1f);
+            textRect.offsetMin = new Vector2(38f, 0f);
+            textRect.offsetMax = new Vector2(-10f, 0f);
             var text = textGo.GetComponent<Text>();
             text.font = LoadKoreanFont();
-            text.alignment = TextAnchor.MiddleCenter;
+            text.alignment = TextAnchor.MiddleLeft;
             text.color = Color.white;
-            text.fontSize = 22;
+            text.fontSize = 18;
             text.text = "사파이어 광장";
             text.raycastTarget = false;
         }

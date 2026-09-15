@@ -20,17 +20,22 @@ namespace Sapphire.EditorTools
     {
         internal const string TitleArtDir = "Assets/Sapphire/Art/UI/Title";
 
-        // 2026-09-15 실측 확정 (PIL, 골드프레임<->내부 navy 색상 전이 지점을
-        // 40%-70% 구간에서 여러 행/열 샘플링해 mode 산출, ArtImportConfigurator
-        // 관례와 동일 방법). CharacterSlotFrame.png(793x1983): fill 색상
-        // RGB(8,32,75) 기준 left=36 right=36 top=32 bottom=31, 9개 샘플 전부
-        // 편차 1px 이내로 매우 안정적. InputFieldFrame.png(2170x725): fill
-        // RGB(12,33,67) 기준 left=36 right=35 top=54(21개 샘플 전부 동일) bottom=60
-        // (일부 코너 장식 오염 샘플 제외 후 mode). 좌/하/우/상 순서는 이
-        // 코드베이스의 Vector4(left,bottom,right,top) 관례(ArtImportConfigurator.
-        // ConfigureUiFrames의 MessagePanelFrameGold 예시 참고)를 따른다.
-        private static readonly Vector4 CharacterSlotFrameBorder = new Vector4(36, 31, 36, 32);
-        private static readonly Vector4 InputFieldFrameBorder = new Vector4(36, 60, 35, 54);
+        // 2026-09-15 (gemless MapleStory-M rebuild) - both files replaced with
+        // build_ui_kit.py output, re-measured with PIL against the NEW art
+        // (old values above this comment described the retired gold-gem
+        // assets and no longer apply):
+        // CharacterSlotFrame.png (780x1950, build_beige_panel(260,650)*SCALE3):
+        // same double-line beige panel family as MenuPanelOdin/
+        // MessagePanelFrameGold (ArtImportConfigurator.ConfigureUiFrames) -
+        // inward-scan border settles at 32px on all 4 edges (decoration spans
+        // px 17-32 from every edge, confirmed via direct pixel dump at top/
+        // bottom/left/right, all symmetric).
+        // InputFieldFrame.png (1080x180, single flat-fill rounded rect, not the
+        // double-line family - build_input_field_frame draws it directly):
+        // inward-scan border settles at 22px on all 4 edges (single outline,
+        // no inner accent line to conflate with).
+        private static readonly Vector4 CharacterSlotFrameBorder = new Vector4(32, 32, 32, 32);
+        private static readonly Vector4 InputFieldFrameBorder = new Vector4(22, 22, 22, 22);
 
         // Target on-screen widths these two 9-sliced frames are actually
         // built at (see LoginUiBuilder/CharacterSelectUiBuilder/
