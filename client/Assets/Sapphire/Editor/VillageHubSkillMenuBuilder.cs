@@ -8,30 +8,19 @@ namespace Sapphire.EditorTools
 {
     /// <summary>
     /// Builds the right-side radial skill menu: a big center "기본공격"
-    /// button, a fan of exactly 4 skill buttons around it, and a 5th skill
-    /// button outside the fan to its left. Split out of
-    /// <see cref="VillageHubUiBuilder"/> (same "keep files under ~500 lines"
-    /// split this codebase already applies elsewhere) - this file owns only
-    /// the skill fan, the rest of the HUD stays in VillageHubUiBuilder.
+    /// button surrounded by a single tight fan of all 5 skill buttons. Split
+    /// out of <see cref="VillageHubUiBuilder"/> (same "keep files under ~500
+    /// lines" split this codebase already applies elsewhere) - this file owns
+    /// only the skill fan, the rest of the HUD stays in VillageHubUiBuilder.
     ///
-    /// 2026-09-16 (REMEDIATION_PLAN.md Phase 2 item 5, content-mismatch note):
-    /// the plan's "arcane bolt / frost wave / blink / shield" naming and a
-    /// literal movement-speed "dash" for the 5th slot describe an OLDER
-    /// SkillCatalog (docs/HANDOFF.md's most recent entries still reflect it)
-    /// that commit 9d2a71d ("Implement centered wizard skills and menu UI",
-    /// same day, earlier than this change) already replaced with 5
-    /// differently-named real spells (마력쉴드/텔레포트/낙뢰/고드름/번개창) and
-    /// no movement-speed skill at all - GridMoveAnimator.ActivateSpeedBoost/
-    /// IsSpeedBoosted are still present but have been orphaned (uncalled)
-    /// since that commit. Rather than resurrect a "dash" ability the current
-    /// design no longer has, or delete one of the 5 real, already-wired
-    /// spells to force-fit the plan's literal wording, this keeps all 5 real
-    /// spells reachable exactly as before (same key bindings 1-5, same
-    /// CastSkill(index) calls) and satisfies the plan's LAYOUT requirement
-    /// instead: SkillCatalog.All[0..3] sit in the verified 4-button fan, and
-    /// SkillCatalog.All[4] (번개창) takes the "outside the fan, to the left of
-    /// basic attack" slot the plan calls "Dash". See docs/DECISIONS.md for
-    /// the same note.
+    /// 2026-09-16 (F3 fix, orchestrator visual QA pass): the previous 4-fan +
+    /// 1-outside-button layout (radius 200, arc 100-190deg plus a lone button
+    /// at 220deg) spread the buttons across nearly half the screen height,
+    /// reading as scattered rather than a single compact control cluster.
+    /// Replaced with one 5-button fan, radius 172, spanning 80-200deg (120deg
+    /// total, 4 gaps of 30deg) so all 5 SkillCatalog entries sit at a uniform,
+    /// visibly tight distance from the basic-attack button - see the
+    /// coordinate-math verification block below for the exact numbers.
     /// </summary>
     internal static class VillageHubSkillMenuBuilder
     {
@@ -39,7 +28,7 @@ namespace Sapphire.EditorTools
         {
             if (SkillCatalog.All.Length != 5)
             {
-                throw new Exception($"VillageHubSkillMenuBuilder's fan geometry (4 fan slots + 1 outside slot) assumes exactly 5 SkillCatalog entries, found {SkillCatalog.All.Length}.");
+                throw new Exception($"VillageHubSkillMenuBuilder's fan geometry (5 fan slots) assumes exactly 5 SkillCatalog entries, found {SkillCatalog.All.Length}.");
             }
 
             Sprite skillFrameSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrameGold.png", "SkillButtonFrame_Skill");
@@ -52,14 +41,15 @@ namespace Sapphire.EditorTools
             rootRect.anchorMax = new Vector2(1f, 0f);
             rootRect.pivot = new Vector2(0.5f, 0.5f);
             rootRect.sizeDelta = Vector2.zero;
-            // Distance from the canvas's bottom-right corner - see the
-            // coordinate-math verification in this method's trailing comment
-            // block for why (-100, 200) keeps every button on-screen at the
-            // 1280x720 reference resolution.
-            rootRect.anchoredPosition = new Vector2(-100f, 200f);
+            // Distance from the canvas's bottom-right corner to the basic
+            // attack button's center - see the coordinate-math verification
+            // in this method's trailing comment block for why (-112, 118)
+            // keeps every button on-screen at the 1280x720 reference
+            // resolution.
+            rootRect.anchoredPosition = new Vector2(-112f, 118f);
 
-            const float basicAttackSize = 140f;
-            const float skillButtonSize = 96f;
+            const float basicAttackSize = 132f;
+            const float skillButtonSize = 80f;
 
             // Frame "opening" (inner navy interior, not the cell boundary) as a
             // fraction of each frame's own cell size - measured via PIL: the
@@ -74,21 +64,26 @@ namespace Sapphire.EditorTools
             // convention sized icons at 60% of the FULL button, spilling onto
             // the frame's own ring art).
             const float iconToOpeningRatio = 0.62f;
-            float skillIconSize = skillButtonSize * skillOpeningFraction * iconToOpeningRatio; // ~37.3
-            float basicAttackIconSize = basicAttackSize * basicAttackOpeningFraction * iconToOpeningRatio; // ~57.0
+            float skillIconSize = skillButtonSize * skillOpeningFraction * iconToOpeningRatio;
+            float basicAttackIconSize = basicAttackSize * basicAttackOpeningFraction * iconToOpeningRatio;
 
             Sprite attackIcon = LoadSkillIcon("SkillIcons_BasicAttack");
             Button attackButton = BuildRadialButton(rootGo, basicAttackFrameSprite, "AttackButton", Vector2.zero, basicAttackSize, attackIcon, basicAttackIconSize);
 
-            // Fan: exactly 4 buttons, radius 200, arc 100deg-190deg (90deg span,
-            // 3 gaps of 30deg). Adjacent center-to-center chord =
-            // 2*200*sin(15deg) = 103.53 units > 96-unit button diameter (the
-            // distance two same-size circles need to just touch) for every
-            // adjacent pair - verified below, not assumed.
-            const float skillRadius = 200f;
-            const float fanArcStartDeg = 100f;
-            const float fanArcEndDeg = 190f;
-            const int fanCount = 4;
+            // Fan: all 5 buttons, radius 172, arc 80deg-200deg (120deg span, 4
+            // gaps of 30deg each - 0deg = screen-right, angles increase
+            // counter-clockwise/upward). Adjacent center-to-center chord =
+            // 2*172*sin(15deg) = 88.98 units > the 80-unit button diameter
+            // (the distance two same-size circles need to just touch) for
+            // every adjacent pair, a ~9-unit clearance gap - verified below,
+            // not assumed. SkillCatalog.All[0] (마력쉴드) sits at 80deg (nearest
+            // the top of the fan) through SkillCatalog.All[4] (번개창) at
+            // 200deg (nearest the bottom), matching the 1-5 key bindings in
+            // RadialSkillMenu.Update in that same order.
+            const float skillRadius = 172f;
+            const float fanArcStartDeg = 80f;
+            const float fanArcEndDeg = 200f;
+            const int fanCount = 5;
             var skillButtons = new Button[SkillCatalog.All.Length];
             var buttonOffsets = new Vector2[SkillCatalog.All.Length];
 
@@ -104,24 +99,6 @@ namespace Sapphire.EditorTools
                 skillButtons[i] = BuildRadialButton(rootGo, skillFrameSprite, "SkillButton_" + i, offset, skillButtonSize, iconSprite, skillIconSize);
             }
 
-            // 5th slot, outside the fan (plan's "Dash" position - see the class-
-            // level note above for why SkillCatalog.All[4] sits here instead of
-            // a movement-speed ability): one more 30deg step past the fan's
-            // 190deg edge, same radius, so its distance to both the fan's
-            // nearest button (190deg) and to the basic-attack button stays
-            // provably non-overlapping using the exact same chord formula as
-            // the fan itself.
-            const float outsideAngleDeg = fanArcEndDeg + 30f; // 220deg
-            {
-                float angleRad = outsideAngleDeg * Mathf.Deg2Rad;
-                Vector2 offset = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * skillRadius;
-                buttonOffsets[4] = offset;
-
-                SkillDefinition skill = SkillCatalog.All[4];
-                Sprite iconSprite = LoadSkillIcon(skill.IconSpriteName);
-                skillButtons[4] = BuildRadialButton(rootGo, skillFrameSprite, "SkillButton_4", offset, skillButtonSize, iconSprite, skillIconSize);
-            }
-
             VerifyNoOverlap(buttonOffsets, skillButtonSize, basicAttackSize);
             VerifyOnScreen(rootRect.anchoredPosition, buttonOffsets, skillButtonSize, basicAttackSize);
 
@@ -130,11 +107,10 @@ namespace Sapphire.EditorTools
 
         // Coordinate-math verification (REMEDIATION_PLAN.md Phase 5 principle:
         // measure what actually renders, don't assume geometry is correct) -
-        // every adjacent pair (the 4 fan buttons in arc order, plus the outside
-        // 5th button as a 5th arc step) must be farther apart than the 96-unit
-        // touching distance for two same-size circles, and every button must be
-        // farther from the basic-attack center than half the sum of their
-        // diameters (118 units: 70 + 48).
+        // every adjacent pair of the 5 fan buttons must be farther apart than
+        // the 80-unit touching distance for two same-size circles, and every
+        // button must be farther from the basic-attack center than half the
+        // sum of their diameters (106 units: 66 + 40).
         private static void VerifyNoOverlap(Vector2[] offsets, float skillButtonSize, float basicAttackSize)
         {
             float minTouchingDistance = skillButtonSize; // two skillButtonSize-diameter circles
@@ -158,9 +134,9 @@ namespace Sapphire.EditorTools
             }
         }
 
-        // Every button (basic attack, the 4 fan buttons, the outside button)
-        // must stay fully inside the 1280x720 reference canvas given the root's
-        // bottom-right-corner anchoredPosition.
+        // Every button (basic attack + the 5 fan buttons) must stay fully
+        // inside the 1280x720 reference canvas given the root's bottom-right-
+        // corner anchoredPosition.
         private static void VerifyOnScreen(Vector2 rootAnchoredPosition, Vector2[] fanOffsets, float skillButtonSize, float basicAttackSize)
         {
             const float canvasWidth = 1280f;

@@ -244,7 +244,13 @@ namespace Sapphire.EditorTools
         {
             Sprite trackSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Track");
             Sprite hpFillSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Fill");
-            Sprite whiteSprite = LoadBuiltinWhiteSprite();
+            // 2026-09-16 (F7 fix): was the builtin flat-white sprite tinted
+            // sapphire via Image.color - looked visibly flatter/blurrier than
+            // the HP fill's painted gradient. GaugeFillMana.png is that same
+            // gradient, hue-rotated to blue (see
+            // HudArtImportConfigurator.ConfigureGaugeFillMana), so the MP
+            // gauge now renders with Image.color left white (no tint needed).
+            Sprite mpFillSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/GaugeFillMana.png");
 
             // barHeight/fill-anchor values re-verified (not re-derived - see
             // ArtImportConfigurator.ConfigureHealthBarFrame's 2026-09-16 note,
@@ -261,9 +267,8 @@ namespace Sapphire.EditorTools
             GaugeView hpGauge = BuildGauge(canvasGo, "HealthBar", trackSprite, hpFillSprite,
                 new Vector2(20f, -20f), barWidth, barHeight);
 
-            Color sapphire = new Color(0.20f, 0.45f, 0.95f, 1f);
-            GaugeView mpGauge = BuildGauge(canvasGo, "ManaBar", trackSprite, whiteSprite,
-                new Vector2(20f, -20f - barHeight - gaugeGap), barWidth, barHeight, sapphire);
+            GaugeView mpGauge = BuildGauge(canvasGo, "ManaBar", trackSprite, mpFillSprite,
+                new Vector2(20f, -20f - barHeight - gaugeGap), barWidth, barHeight);
             _ = hpGauge;
             _ = mpGauge;
 
@@ -396,22 +401,6 @@ namespace Sapphire.EditorTools
             }
 
             return koreanFont;
-        }
-
-        private static Sprite LoadBuiltinWhiteSprite()
-        {
-            // Used as the MP gauge's fill sprite (spec: "a plain white sprite
-            // sized to the same measured opening... with Image.color set to
-            // sapphire" - the crimson HP fill art can't be recolored blue via
-            // Image.color multiply since it's a painted gradient, not a flat
-            // tintable shape).
-            Sprite sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Background.psd");
-            if (sprite == null)
-            {
-                throw new Exception("Builtin white sprite (UI/Skin/Background.psd) not found");
-            }
-
-            return sprite;
         }
 
         // internal (not private): VillageHubMenuBuilder (split out of this

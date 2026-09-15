@@ -25,6 +25,29 @@ namespace Sapphire.EditorTools
             ConfigureMenuSectionHeader();
             ConfigureMenuIconsSet();
             ConfigureMenuLockBadge();
+            ConfigureGaugeFillMana();
+        }
+
+        private static void ConfigureGaugeFillMana()
+        {
+            // UI: MP gauge fill, 1665x213 (2026-09-16, F7 fix). Generated
+            // (not hand-drawn) from HealthBarFrameGold's own HP fill cell via
+            // a PIL hue-only rotation (crimson -> sapphire blue, hue set to
+            // 215deg; saturation/value/alpha untouched) so it keeps the exact
+            // same painted highlight/shading shape as the HP fill instead of
+            // being a flat tinted rectangle - the previous MP fill reused the
+            // builtin flat-white UI sprite with Image.color set to sapphire,
+            // which reads visibly flatter/blurrier next to the HP bar's
+            // painted gradient. Used with Image.Type.Filled (not Sliced), so
+            // no border/9-slice data is needed - only Single import mode with
+            // alphaIsTransparency, matching this file's other single-sprite
+            // calls.
+            ArtImportConfigurator.ConfigureSingleSprite(
+                SapphireSceneBuilder.UiArtDir + "/GaugeFillMana.png",
+                border: Vector4.zero,
+                filterMode: FilterMode.Bilinear,
+                mipmaps: false,
+                pixelsPerUnit: 100f);
         }
 
         private static void ConfigureMovementStick()
@@ -100,33 +123,46 @@ namespace Sapphire.EditorTools
 
         private static void ConfigureMenuSectionHeader()
         {
-            // UI: horizontal section-header banner, 2172x724 source canvas, but
-            // the actual art (decorated ends + flat navy middle) only occupies a
-            // 2138x281 sub-region (PIL alpha bbox x=[17,2155] y=[197,478]) - most
-            // of the 724-tall canvas is transparent margin above/below the thin
-            // banner shape. Sliced as SpriteImportMode.Multiple with a single
-            // tightly-cropped slice (the tight-crop convention this codebase
-            // already applies elsewhere, e.g. ArtImportConfigurator.
-            // ConfigureHealthBarFrame's 2026-09-16 fix) rather than importing
-            // the full canvas as a Single sprite, so Image.Type.Sliced doesn't
-            // stretch that transparent margin into visible empty space above/
-            // below the banner. Reused for two purposes: the top-center region
-            // name banner (VillageHubUiBuilder.BuildRegionNameBanner) AND each
-            // Odin-menu section header (VillageHubMenuBuilder).
+            // UI: horizontal section-header banner, 2172x724 source canvas.
             //
-            // Border measured within the cropped 2138x281 sprite: the flat-fill
-            // signature (a>200, r<20,g<35,b<55) gives a clean single longest run
-            // per edge - left/right from a horizontal scan at the crop's
-            // vertical center (flat x run [249,1923] in un-cropped coords ->
-            // relative to the crop's left edge at x=17: left=232, right=231),
-            // top/bottom from a vertical scan at 4 different x positions inside
-            // the flat band, all agreeing exactly (flat y run [296,398] in
-            // un-cropped coords -> relative to the crop's top edge at y=197:
-            // top=99, bottom=79).
+            // 2026-09-16 (F6.4 fix): the previous crop (17,246,2138,281 -
+            // comment above this history claimed alpha bbox y=[197,478]) was
+            // NOT tight to the actual visible band - it was tight only to the
+            // decorative end-gems' full vertical reach. Re-measured with PIL:
+            // at the crop's own horizontal center column, that 281-tall crop
+            // is fully transparent from row 0 to ~79 and again from ~221 to
+            // 280 (of 281) - i.e. ~76px of dead transparent margin above the
+            // band and ~60px below it, EVEN AFTER the "tight" crop. Because
+            // Text under this sprite is anchored to the FULL rect and
+            // vertical-centered, that dead margin is exactly what pushed the
+            // section title up against the visible band's top edge instead of
+            // sitting centered in it.
             //
-            // Used at a fixed width of 360 (see VillageHubUiBuilder's region-name
-            // banner), so pixelsPerUnit is calibrated against the cropped
-            // sprite's own width (2138/360), *100 per this convention.
+            // Correct crop: the row range where the band is dense across
+            // nearly the FULL width (row alpha-pixel-count > 90% of the
+            // sprite's own width, i.e. > 1924 of 2138) - PIL: rows 273-417
+            // (top-left origin) of the 724-tall source, a contiguous 145px
+            // band with no dead margin (96% of the cropped rect is opaque).
+            // x range unchanged (17-2154, still the widest opaque column
+            // range). Converted to Unity's bottom-up Rect: y = 724 - 418 =
+            // 306, height 145.
+            //
+            // Border re-measured within this NEW 2138x145 crop (PIL scan down
+            // its center column): gold trim occupies rows 0-25 (top, 26px)
+            // and 122-144 (bottom, 23px) with flat navy in between (26-121) -
+            // no more compressing a mostly-empty margin into the border.
+            // Left/right border unchanged (232/231 - horizontal gold-frame
+            // width doesn't depend on which vertical rows were kept, and was
+            // independently re-verified via the same navy-vs-gold color
+            // transition at this crop's center row).
+            //
+            // Reused for two purposes: the top-center region name banner
+            // (VillageHubUiBuilder.BuildRegionNameBanner) AND each Odin-menu
+            // section header (VillageHubMenuBuilder, now at OdinHeaderHeight
+            // 40 instead of 36 - see that class). Width is still the fixed
+            // dimension (2138, unchanged from before), so the existing
+            // pixelsPerUnit calibration (2138/360, *100 per this file's
+            // convention) is still valid.
             ArtImportConfigurator.ConfigureMultiSprite(
                 SapphireSceneBuilder.UiArtDir + "/MenuSectionHeader.png",
                 ppu: 100f * 2138f / 360f,
@@ -135,7 +171,7 @@ namespace Sapphire.EditorTools
                 maxSize: null,
                 slices: new[]
                 {
-                    ("MenuSectionHeader", new Rect(17, 246, 2138, 281), new Vector2(0.5f, 0.5f)),
+                    ("MenuSectionHeader", new Rect(17, 306, 2138, 145), new Vector2(0.5f, 0.5f)),
                 });
 
             // ConfigureMultiSprite's SpriteMetaData tuples (shared by every other
@@ -147,7 +183,7 @@ namespace Sapphire.EditorTools
             ApplySingleSliceBorder(
                 SapphireSceneBuilder.UiArtDir + "/MenuSectionHeader.png",
                 "MenuSectionHeader",
-                new Vector4(232, 79, 231, 99));
+                new Vector4(232, 23, 231, 26));
         }
 
         private static void ApplySingleSliceBorder(string path, string spriteName, Vector4 border)

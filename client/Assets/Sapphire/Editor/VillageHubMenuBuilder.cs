@@ -23,10 +23,23 @@ namespace Sapphire.EditorTools
     internal static class VillageHubMenuBuilder
     {
         private const float OdinPanelWidth = 400f;
-        private const float OdinPanelTopMargin = 24f;
-        private const float OdinPanelBottomMargin = 24f;
+        // 2026-09-16 (F6.1 fix): the MainMenuButton (see Build below) is
+        // anchored top-right, anchoredPosition (-20,-20), sizeDelta (150,72) -
+        // its bottom edge sits 20+72=92 units below the canvas top. The old
+        // 24-unit top margin put the panel's top edge well inside that
+        // button's rect, so the open panel visually covered/clipped the
+        // button's own "메뉴" label (confirmed in the orchestrator's
+        // reference screenshot). 92 + 12px clearance = 104.
+        private const float OdinPanelTopMargin = 104f;
+        private const float OdinPanelBottomMargin = 20f;
         private const float OdinContentMargin = 24f;
-        private const float OdinHeaderHeight = 36f;
+        // 2026-09-16 (F6.4 fix): raised from 36 to 40 alongside the
+        // MenuSectionHeader crop/border recompute in HudArtImportConfigurator
+        // (see that file's ConfigureMenuSectionHeader for the measurement) -
+        // headers now render with less border-eaten space so the section
+        // title text sits centered in the header band instead of overlapping
+        // its top edge.
+        private const float OdinHeaderHeight = 40f;
         private const float OdinHeaderToItemsGap = 12f;
         private const float OdinItemRowHeight = 104f;
         private const float OdinSectionGap = 22f;
@@ -60,8 +73,35 @@ namespace Sapphire.EditorTools
             openImage.type = Image.Type.Sliced;
             AddButtonLabel(openGo, "메뉴", 25);
 
+            // 2026-09-16 (F6.2 fix): full-screen dim backdrop + click-blocker,
+            // toggled together with the panel (both live under one
+            // "MenuOverlay" wrapper - see Configure below). Built BEFORE the
+            // panel so it sits earlier in sibling order and renders behind it,
+            // while still being the frontmost thing over the HUD/gameplay
+            // behind it (raycastTarget=true stops clicks from leaking through
+            // to the world/skill fan while the menu is open).
+            var overlayGo = new GameObject("MenuOverlay", typeof(RectTransform));
+            overlayGo.transform.SetParent(canvasGo.transform, false);
+            var overlayRect = overlayGo.GetComponent<RectTransform>();
+            overlayRect.anchorMin = Vector2.zero;
+            overlayRect.anchorMax = Vector2.one;
+            overlayRect.offsetMin = Vector2.zero;
+            overlayRect.offsetMax = Vector2.zero;
+
+            var backdropGo = new GameObject("MenuBackdrop", typeof(Image), typeof(Button));
+            backdropGo.transform.SetParent(overlayGo.transform, false);
+            var backdropRect = backdropGo.GetComponent<RectTransform>();
+            backdropRect.anchorMin = Vector2.zero;
+            backdropRect.anchorMax = Vector2.one;
+            backdropRect.offsetMin = Vector2.zero;
+            backdropRect.offsetMax = Vector2.zero;
+            var backdropImage = backdropGo.GetComponent<Image>();
+            backdropImage.color = new Color(0f, 0f, 0f, 0.45f);
+            backdropImage.raycastTarget = true;
+            Button backdropButton = backdropGo.GetComponent<Button>();
+
             var panelGo = new GameObject("MainMenuPanel", typeof(Image));
-            panelGo.transform.SetParent(canvasGo.transform, false);
+            panelGo.transform.SetParent(overlayGo.transform, false);
             var panelRect = panelGo.GetComponent<RectTransform>();
             panelRect.anchorMin = new Vector2(1f, 0f);
             panelRect.anchorMax = new Vector2(1f, 1f);
@@ -109,8 +149,9 @@ namespace Sapphire.EditorTools
             }
 
             var controller = canvasGo.AddComponent<MainMenuPanel>();
-            controller.Configure(panelGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), messagePanel);
-            panelGo.SetActive(false);
+            controller.Configure(overlayGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), messagePanel);
+            backdropButton.onClick.AddListener(controller.Close);
+            overlayGo.SetActive(false);
         }
 
         private static void BuildOdinSectionHeader(GameObject panelGo, Sprite headerSprite, string title, float topY, float contentWidth)
@@ -185,15 +226,23 @@ namespace Sapphire.EditorTools
             var labelGo = new GameObject("Label", typeof(Text));
             labelGo.transform.SetParent(itemGo.transform, false);
             var labelRect = labelGo.GetComponent<RectTransform>();
-            labelRect.anchorMin = new Vector2(0f, 1f);
-            labelRect.anchorMax = new Vector2(1f, 1f);
+            labelRect.anchorMin = new Vector2(0.5f, 1f);
+            labelRect.anchorMax = new Vector2(0.5f, 1f);
             labelRect.pivot = new Vector2(0.5f, 1f);
-            labelRect.sizeDelta = new Vector2(0f, 24f);
+            // 2026-09-16 (F6.5 fix): width explicitly cellWidth-4 (not a
+            // stretch anchor spanning the full cell) so resizeTextForBestFit
+            // has a known, slightly-inset box to shrink into instead of
+            // clipping against the cell's exact edge - "캐릭터정보" (the
+            // longest label in MenuCatalog) was overflowing its cell at the
+            // previous fixed fontSize=14.
+            labelRect.sizeDelta = new Vector2(cellWidth - 4f, 24f);
             labelRect.anchoredPosition = new Vector2(0f, -OdinIconSize - 4f);
             var label = labelGo.GetComponent<Text>();
             label.font = VillageHubUiBuilder.LoadKoreanFont();
             label.alignment = TextAnchor.MiddleCenter;
-            label.fontSize = 14;
+            label.resizeTextForBestFit = true;
+            label.resizeTextMinSize = 10;
+            label.resizeTextMaxSize = 14;
             label.text = item.Label;
             label.raycastTarget = false;
 

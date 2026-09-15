@@ -19,44 +19,12 @@ namespace Sapphire.Presentation.Movement
             "2026-09-14 재원복되어 탭/연속 구분 없이 항상 이 값을 쓴다(질주 스킬로 부스트 중일 때만 예외).")]
         [SerializeField] private float moveDuration = 0.32f;
 
-        [Tooltip("'질주' 공용 스킬(SkillCatalog의 skill.haste) 사용 중(IsSpeedBoosted=true) 10초간 적용되는 " +
-            "스텝당 소요 시간. 한때 연속 이동(꾹 누름) 전용 속도로 쓰였던 값을 그대로 재사용 - " +
-            "이제는 isContinuousHold 여부와 무관하게 부스트 상태에서만 적용된다. 2026-09-14 질주 스킬 추가.")]
-        [SerializeField] private float boostedMoveDuration = 0.22f;
-
         [Tooltip("새로 눌러서 시작된 첫 스텝 완료 직후에만 두는 짧은 정지 간격(칸 단위 리듬을 살리기 위함). " +
             "같은 방향키를 계속 누르고 있어서 이어지는 스텝(isContinuousHold=true)에는 적용하지 않는다 - " +
             "그래야 길게 누르고 있는 동안 매 칸마다 끊기지 않고 매끄럽게 이어진다. 2026-09-14 추가/조정.")]
         [SerializeField] private float stepPause = 0.04f;
 
         private Coroutine activeMove;
-        private Coroutine speedBoostRoutine;
-
-        /// <summary>True while the "질주" skill's 10-second speed boost is active.</summary>
-        public bool IsSpeedBoosted { get; private set; }
-
-        /// <summary>
-        /// Turns on the boosted move speed (boostedMoveDuration) for durationSeconds,
-        /// then automatically reverts to the normal moveDuration. Re-casting while
-        /// already boosted simply restarts the 10-second window.
-        /// </summary>
-        public void ActivateSpeedBoost(float durationSeconds)
-        {
-            if (speedBoostRoutine != null)
-            {
-                StopCoroutine(speedBoostRoutine);
-            }
-
-            IsSpeedBoosted = true;
-            speedBoostRoutine = StartCoroutine(SpeedBoostRoutine(durationSeconds));
-        }
-
-        private IEnumerator SpeedBoostRoutine(float durationSeconds)
-        {
-            yield return new WaitForSeconds(durationSeconds);
-            IsSpeedBoosted = false;
-            speedBoostRoutine = null;
-        }
 
         public void PlayMove(Transform target, WorldPoint from, WorldPoint to, bool isContinuousHold, Action onComplete)
         {
@@ -72,7 +40,7 @@ namespace Sapphire.Presentation.Movement
         {
             Vector3 start = new Vector3(from.X, from.Y, target.position.z);
             Vector3 end = new Vector3(to.X, to.Y, target.position.z);
-            float duration = IsSpeedBoosted ? boostedMoveDuration : moveDuration;
+            float duration = moveDuration;
             float elapsed = 0f;
 
             while (elapsed < duration)

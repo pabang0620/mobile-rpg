@@ -147,14 +147,25 @@ namespace Sapphire.EditorTools
         // neighbors, reintroducing visible seams; mirroring keeps every edge
         // matched against the same corresponding edge on its neighbor, just
         // read in reverse, which seamless tiling art tolerates.
+        //
+        // 2026-09-16 (F1 fix): no translation. Ground tile sprites are
+        // imported with a CENTER pivot (0.5, 0.5) - see
+        // ArtImportConfigurator.ConfigureGroundAtlas - so a -1 scale flip
+        // already mirrors the tile in place around its own center; the cell
+        // origin never moves. The previous `Matrix4x4.TRS(translate, ...)`
+        // with translate=(flipX?1:0, flipY?1:0, 0) assumed a CORNER pivot
+        // (where you must shift by +1 cell after negating a corner-anchored
+        // axis to keep the flipped quad in the same cell) - with a center
+        // pivot that extra +1 unit shove pushed every flipped tile into the
+        // adjacent cell, leaving its own cell showing bare skybox (the "바닥
+        // 구멍" bug) and shifting the dirt path into a zig-zag.
         private static Matrix4x4 GetFlipMatrix(uint hash)
         {
             uint flipState = (hash / 3) % 4;
             bool flipX = (flipState & 1) != 0;
             bool flipY = (flipState & 2) != 0;
             var scale = new Vector3(flipX ? -1f : 1f, flipY ? -1f : 1f, 1f);
-            var translate = new Vector3(flipX ? 1f : 0f, flipY ? 1f : 0f, 0f);
-            return Matrix4x4.TRS(translate, Quaternion.identity, scale);
+            return Matrix4x4.Scale(scale);
         }
 
         private static TilemapGridMapBuilder BuildGridMapBuilder(GameObject gridGo, Tilemap groundTilemap, Tilemap collisionTilemap)

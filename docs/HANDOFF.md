@@ -2,7 +2,48 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): REMEDIATION_PLAN.md Phase 2(HUD 재배선) + Phase 3(오딘식 메뉴) 완료
+## 2026-09-16 (최신): 오케스트레이터 시각 QA 불합격 항목 7건 수정
+
+`generated-images/diagnostics/final_1280_*.png` 스크린샷을 오케스트레이터(Opus)가 직접 보고
+불합격 판정한 항목을 전부 수정했다.
+
+1. **바닥 타일 구멍 (F1, 원인 확정)**: `VillageHubTerrainBuilder.GetFlipMatrix`가 스케일
+   -1 뒤집기에 `Matrix4x4.TRS(translate=(flipX?1:0,...), ...)`로 +1칸 이동을 더하고 있었다 -
+   지면 타일 스프라이트 pivot이 중앙(0.5,0.5)이라 이 이동이 불필요했고, 뒤집힌 타일이 옆
+   칸으로 밀려나면서 원래 칸이 비어(스카이박스 노출) 구멍처럼 보이고 흙길이 지그재그로
+   어긋났다. `Matrix4x4.Scale(scale)`로 이동 항을 제거해 제자리 뒤집기로 수정.
+2. **카메라 배경**: Main Camera에 `ClearFlags.SolidColor` + `(0.06,0.07,0.10)` 적용 -
+   스카이박스가 향후 유사한 구멍을 가리지 못하게.
+3. **스킬 부채꼴 (F3)**: `VillageHubSkillMenuBuilder`를 "4개 부채꼴 + 5번째 분리 배치"에서
+   "5개 전부 한 부채꼴"로 재작성 - 반지름 172, 각도 80°~200°(4×30° 간격), 기본공격 중심을
+   화면 우하단 코너에서 (-112,+118)로 재배치. 인접 버튼 중심거리 88.98 > 80(지름) 유지,
+   화면 이탈 없음(우측 여백 42.1, 하단 여백 19.2) - `VerifyNoOverlap`/`VerifyOnScreen`이
+   빌드 시점에 이 값을 재검증한다.
+4. **스킬 아이콘 매핑 (F4)**: `SkillCatalog.cs`에서 낙뢰=눈꽃, 고드름=크리스탈로 잘못
+   매핑돼 있던 것을 낙뢰→`SkillIcons_Haste`(번개), 고드름→`SkillIcons_FrostWave`(눈꽃),
+   번개창→`SkillIcons_ArcaneBolt`(크리스탈)로 정정. 스프라이트 이름 자체는 변경 없음.
+5. **죽은 코드 삭제 (F5)**: 카탈로그에서 이미 빠진 "질주" 스킬의 잔재 -
+   `GridMoveAnimator.ActivateSpeedBoost`/`IsSpeedBoosted`/`boostedMoveDuration`/관련 코루틴,
+   `SkillCatalog.HasteSkillId` 상수 제거 (grep으로 참조 0건 확인 후 삭제, 테스트 영향 없음).
+6. **메뉴 패널 (F6)**: (a) 메뉴 버튼이 열린 패널에 가려지던 문제 - 패널 top 오프셋을
+   24→104(버튼 하단 92 + 여유 12)로, bottom 여백을 24→20으로 조정. (b) 패널 뒤에 전체화면
+   반투명(alpha 0.45) 백드롭을 추가해 HUD 비침·클릭 새어나감을 차단, 백드롭 클릭 시 메뉴
+   닫힘, 패널과 하나의 `MenuOverlay` 루트로 함께 토글. (c) `MenuPanelOdin.png` 인테리어
+   알파를 200→238로 상향(원본은
+   `generated-images/menu-odin/MenuPanelOdin_alpha200_backup.png`에 백업). (d)
+   `MenuSectionHeader.png`의 스프라이트 rect가 장식 끝단의 전체 높이(197~477, 281px)에
+   맞춰져 있어 중앙부에서는 실제 밴드 앞뒤로 투명 여백이 76px/60px씩 남아 텍스트가 밴드
+   상단에 걸렸던 문제 - 폭 전체의 90% 이상이 불투명한 행 구간(273~417, 145px)으로 재크롭,
+   9-slice 보더도 그 안에서 재실측(232,23,231,26), 헤더 높이 36→40. (e) 메뉴 항목 라벨에
+   `resizeTextForBestFit`(10~14), 폭을 셀폭-4로 설정해 "캐릭터정보" 잘림 방지.
+7. **MP 게이지 (F7)**: 내장 흰 스프라이트 틴트 대신, `HealthBarFrameGold.png`의 HP 필 셀을
+   PIL로 잘라 색상(hue)만 빨강→사파이어 블루(215°)로 회전(명도·채도·알파 유지)한
+   `Art/UI/GaugeFillMana.png`를 생성해 MP 필로 교체 (`Image.color`는 흰색).
+
+전부 Unity CLI 컴파일 0에러 + EditMode 테스트 전체 PASS + `SapphireSceneBuilder.BuildAll`
+재실행(씬 YAML로 좌표 재검증) + `SapphireBuildPlayer.BuildWindows` 확인 후 커밋.
+
+## 2026-09-15: REMEDIATION_PLAN.md Phase 2(HUD 재배선) + Phase 3(오딘식 메뉴) 완료
 
 Phase 1(가로 1280x720 기준 정정, 아래 절 참고) 이후 Phase 2·3을 한 세션에서 연속 구현했다.
 측정은 전부 PIL/numpy로 알파/색상 전이 지점을 직접 스캔해 구했다(균등분할 가정 금지 원칙

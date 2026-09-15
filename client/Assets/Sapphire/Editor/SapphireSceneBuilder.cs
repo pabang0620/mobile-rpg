@@ -186,6 +186,13 @@ namespace Sapphire.EditorTools
             var cam = cameraGo.GetComponent<UnityEngine.Camera>();
             cam.orthographic = true;
             cam.orthographicSize = VerticalTilesVisible * 0.5f * GridWorldConversion.CellSize;
+            // 2026-09-16 (F2): solid dark background instead of the default
+            // skybox. A skybox visually papers over any ground-tile gap (see
+            // the F1 flip-matrix fix) by making the "hole" look like distant
+            // sky instead of an obvious rendering defect - this flat color
+            // makes any future hole immediately, unambiguously visible.
+            cam.clearFlags = UnityEngine.CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.06f, 0.07f, 0.10f);
             cameraGo.transform.position = playerPosition + new Vector3(0f, 0f, -10f);
 
             var followRig = cameraGo.AddComponent<CameraFollowRig>();
