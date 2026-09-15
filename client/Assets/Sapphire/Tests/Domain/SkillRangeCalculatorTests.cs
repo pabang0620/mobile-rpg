@@ -25,24 +25,6 @@ namespace Sapphire.Domain.Tests
         }
 
         [Test]
-        public void IsWithinRange_AtExactBoundary_ReturnsTrue()
-        {
-            var origin = new GridCoord(0, 0);
-            var target = new GridCoord(3, 0);
-
-            Assert.IsTrue(SkillRangeCalculator.IsWithinRange(origin, target, 3));
-        }
-
-        [Test]
-        public void IsWithinRange_JustBeyondBoundary_ReturnsFalse()
-        {
-            var origin = new GridCoord(0, 0);
-            var target = new GridCoord(4, 0);
-
-            Assert.IsFalse(SkillRangeCalculator.IsWithinRange(origin, target, 3));
-        }
-
-        [Test]
         public void TilesInLine_ZeroRange_ReturnsEmpty()
         {
             IReadOnlyList<GridCoord> tiles = SkillRangeCalculator.TilesInLine(new GridCoord(0, 0), GridDirection.Up, 0);

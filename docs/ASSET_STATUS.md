@@ -205,6 +205,57 @@ BuildWindows` 재빌드, 스크린샷 12장(`generated-images/diagnostics/final_
 완전한 원, 메뉴 구분선 꺾쇠 없이 페이딩 라인만, 6개 전사 스킬 VFX 전부
 실제 스프라이트로 렌더(placeholder 도형 아님).
 
+## 2026-09-15 갱신: 미사용 에셋/죽은 코드 정리 (전수 감사)
+
+`client/Assets/Sapphire/` 전체(Art/Editor/Presentation/Domain/Infrastructure/
+Composition) 대상 미사용 판정: 파일명 문자열 grep(Editor/Presentation/
+Composition C# 전체) + GUID 참조 grep(.unity/.prefab/.asset/.controller
+전체)를 모든 PNG 45개에 대해 이중 확인.
+
+**삭제(git rm, 확실히 미사용)**:
+- `Art/VFX/ManaShieldTransparent-v2.png`(+.meta) - 문서 어디에도 언급 없는
+  패딩 전 중간 산출물, 실제 사용 중인 `ManaShieldPadded.png`(패딩 후 최종본)
+  로 완전히 대체됨. 참조 0건.
+- `Art/WorldRegionVillageGrassland-v1.png`(+.meta) - 이전 세션에서 사용자가
+  직접 커밋했으나 채택 여부 미결정이었던 배경 원화. 참조 0건 확인, 대체
+  채택 결정도 없어 미사용 확정.
+
+**검토했으나 삭제하지 않음(기존 문서화된 "참고용 원본" 보존 결정을 존중,
+파괴적 작업이라 임의 번복하지 않음)**:
+- `Art/MageIdle.png`, `MagePortrait.png`, `MagePose02/06/09/14.png`,
+  `MageSDDirectional.png`, `MageSDDirectional-source.png`, `MageSkills.png`
+  - 위 "이 프로젝트의 현재 상태" 절이 "참고용 원본으로 유지, 이번 정리에서
+    손대지 않음"이라고 이미 명시한 파일들. 이번 감사에서도 grep 결과는
+    참조 0건(예상대로)이지만, 문서화된 기존 결정을 이번 청소 작업 범위에서
+    임의로 뒤집지 않았다. 재검토가 필요하면 별도 결정으로 다룰 것.
+- `Art/UI/InventoryShopIcons.png` - 2026-09-14 결정으로 "별도 용도, 이번
+  작업과 무관"이라 명시되어 유지된 파일. 현재 코드에 인벤토리/상점 시스템
+  자체가 전혀 없어(grep 0건) 완전히 미사용이지만, 향후 기능 대비 보존
+  결정이 있었으므로 이번에도 삭제하지 않았다 - 향후 인벤토리/상점 기능
+  착수가 확정되지 않으면 재검토 대상.
+
+**재확인(이미 삭제된 것으로 보고됐던 파일, 실제로 저장소에 없음을 재확인)**:
+`GroundTiles*.png`, `MenuSectionHeader.png`, `MenuPanelFrameGold.png` -
+`client/Assets/Sapphire/` 안에는 존재하지 않음(생성 스크립트 산출물 캐시인
+`generated-images/`에만 참고용으로 남아있으나 이건 게임 에셋이 아니라
+gitignore 대상 진단 폴더).
+
+**죽은 코드**: `Domain/Skills/SkillRangeCalculator.IsWithinRange` - 자기
+자신의 단위테스트 2건 외에 실제 프로덕션 호출부가 전혀 없어(쿨다운/범위
+검증 시스템 자체가 이 슬라이스에 없음) 메서드와 그 전용 테스트 2건을 함께
+제거(`SkillRangeCalculatorTests.cs`). EditMode 테스트 60→58건(정확히 이
+2건만큼 감소, 회귀 아님). `WarriorSkillVfxPlayer`/`SkillVfxPlayer`의
+프로시저럴 placeholder 잔재, `-sapphire-warrior-skill=` 디버그 훅은 재확인
+결과 이미 완전히 제거된 상태(이전 보고가 정확했음). `SkillCatalog`/
+`SkillRangeShape`/`SkillRangeCalculator`의 나머지 public 메서드·enum 값은
+전부 실제 프로덕션 호출부를 가짐(파일별 grep으로 개별 확인).
+
+**검증**: Unity 6000.5.9f1 batchmode 컴파일 0에러, EditMode 58/58 PASS,
+`SapphireSceneBuilder.BuildEverything` -> `SapphireBuildPlayer.BuildWindows`
+재빌드 성공, 스크린샷 4장(`generated-images/diagnostics/cleanup_*.png`:
+login/select/village_mage/village_warrior)을 직접 열어 확인 - 핑크 텍스처·
+빈 아이콘·깨진 캐릭터 없음.
+
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.

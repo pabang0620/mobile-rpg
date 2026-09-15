@@ -26,11 +26,6 @@ namespace Sapphire.Domain.Skills
             return Math.Max(dx, dy);
         }
 
-        public static bool IsWithinRange(GridCoord origin, GridCoord target, int rangeTiles)
-        {
-            return ChebyshevDistance(origin, target) <= rangeTiles;
-        }
-
         /// <summary>
         /// The tiles directly ahead of the caster along one direction, from
         /// 1 tile out up to and including rangeTiles. Excludes the origin

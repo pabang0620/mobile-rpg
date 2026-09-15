@@ -2,7 +2,39 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): 젬리스 메이플스토리M풍 UI 킷 배선 + 전사 VFX 실제 스프라이트 배선
+## 2026-09-15 (최신): 미사용 에셋/죽은 코드 정리
+
+`client/Assets/Sapphire/` 전체를 대상으로 미사용 PNG 45개 전수 grep 감사 +
+죽은 코드 감사를 수행했다. 상세 근거는 `docs/ASSET_STATUS.md` 같은 날짜
+항목 참고.
+
+**삭제**: `Art/VFX/ManaShieldTransparent-v2.png`, `Art/WorldRegionVillageGrassland-v1.png`
+(각 +.meta) - 코드/씬/프리팹 참조 0건 확인 후 `git rm`.
+`Domain/Skills/SkillRangeCalculator.IsWithinRange`(프로덕션 호출부 없음,
+자기 테스트만 존재) + 전용 테스트 2건 제거.
+
+**삭제하지 않음**(문서화된 기존 "참고용/향후 대비 보존" 결정 존중):
+`Art/MageIdle.png` 등 Mage 원화 7종, `Art/UI/InventoryShopIcons.png` - 전부
+grep상 미사용이지만 이전 세션이 이미 명시적으로 보존을 결정한 파일이라
+이번 청소에서 임의로 뒤집지 않았다.
+
+**검증**: 컴파일 0에러, EditMode 58/58(60에서 -2, IsWithinRange 테스트
+제거분만큼 정확히 감소 - 회귀 아님), `SapphireSceneBuilder.BuildEverything`
+-> `SapphireBuildPlayer.BuildWindows` 재빌드 성공, 스크린샷 4장
+(`generated-images/diagnostics/cleanup_{login,select,village_mage,
+village_warrior}.png`) 직접 확인 - 핑크 텍스처/빈 아이콘/깨진 캐릭터 없음.
+
+**빌드 인프라 관찰 (게임 코드 아님, 참고)**: 같은 프로젝트에 대해 EditMode
+테스트 실행 직후 곧바로(수 초 내) `-executeMethod`로 두 번째 batchmode
+인스턴스를 띄우면, 첫 인스턴스 종료 직후의 ArtifactDB 상태 때문인지
+Packages 전체(수천 개 파일)를 처음부터 다시 임포트하며 그 뒤로 아무 로그도
+남기지 않고 무한정 CPU를 소모하며 멈추는 현상이 1회 관찰됐다(약 15분
+대기 후 강제 종료). 동일 커맨드를 `-quit` 플래그를 명시하고 재시도하니
+정상적으로 1분 이내 완료됐다 - 원인은 특정하지 못했으나(우연히 재현 안 될
+수도 있음), batchmode 연속 실행 사이에 진행이 몇 분 이상 멈추면 프로세스를
+강제 종료하고 `-quit`를 명시해 재시도하는 편이 안전하다.
+
+## 2026-09-15: 젬리스 메이플스토리M풍 UI 킷 배선 + 전사 VFX 실제 스프라이트 배선
 
 두 묶음을 한 세션에서 끝까지 배선했다. 상세 실측값·좌표계 결정 근거는
 `docs/DECISIONS.md` 같은 날짜 항목, 에셋 목록·교체/신규/폐기 파일은
