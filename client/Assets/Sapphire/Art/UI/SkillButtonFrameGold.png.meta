@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 218242360393b8b42a1134398f5e601b
+guid: aae42f796a6d7f24ead776da052249a2
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: HealthBarFrame_Track
+      name: SkillButtonFrame_Skill
       rect:
         serializedVersion: 2
-        x: 0
-        y: 407
-        width: 1774
-        height: 480
+        x: 12
+        y: 181
+        width: 659
+        height: 665
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -138,20 +138,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5fbca90545a7624a0800000000000000
-      internalID: -6618468099826201611
+      spriteID: 4b5c3f6fa512fe3c0800000000000000
+      internalID: -4328204042305813068
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: HealthBarFrame_Fill
+      name: SkillButtonFrame_BasicAttack
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1774
-        height: 407
+        x: 711
+        y: 122
+        width: 824
+        height: 854
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,8 +160,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 52f6385a462e83050800000000000000
-      internalID: 5780619043631492901
+      spriteID: dfa0c9524144f5710800000000000000
+      internalID: 1684139638980872957
       vertices: []
       indices: 
       edges: []
@@ -180,8 +180,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      HealthBarFrame_Fill: 5780619043631492901
-      HealthBarFrame_Track: -6618468099826201611
+      SkillButtonFrame_BasicAttack: 1684139638980872957
+      SkillButtonFrame_Skill: -4328204042305813068
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

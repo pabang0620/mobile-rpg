@@ -58,6 +58,29 @@ UI 개편(좌측 가상패드 + 우측 원형 스킬메뉴, `docs/DECISIONS.md` 
 
 **알파 채널 실측 검증** (`docs/DECISIONS.md`의 과거 `MageDirectional.png` 알파 사고 재발 방지 원칙 적용): PIL로 원본 생성 이미지와 최종 크롭·리사이즈 후 시트 양쪽 모두 확인 - 네 모서리 픽셀이 `(0,0,0,0)`(완전 투명), 아이콘 내부 픽셀이 alpha 0~255 범위로 분포(안티에일리어싱 경계 포함)하는 실제 알파 채널임을 확인했다(`Read` 도구가 보여주는 흰 배경은 렌더링 관례일 뿐 실제 알파와 무관 - 눈으로만 보고 판단하지 않았다).
 
+## 2026-09-15 갱신: 골드 등급 UI 에셋 6종 배선 (2026-09-14 UI를 재교체)
+
+2026-09-14에 배선했던 UI 에셋(`SkillButtonFrame.png`/`HealthBarFrame.png`/`SkillIconsSet.png`/
+`MessagePanelFrame.png`/`WideButton.png`, 아래 절)을 신규 고퀄리티 골드 에셋 6종으로 전부
+교체했다 - `Art/UI/SkillButtonFrameGold.png`, `Art/UI/HealthBarFrameGold.png`,
+`Art/UI/SkillIconsSetGold.png`, `Art/UI/MessagePanelFrameGold.png`, `Art/UI/MenuButtonGold.png`
+(신규 - 닫기/메뉴 버튼 전용, `WideButton.png` 대체), `Art/UI/MenuPanelFrameGold.png`(신규 -
+메인 메뉴 패널 배경 전용, 기존에 `MessagePanelFrame.png`를 재사용하던 것을 분리). 배선 세부
+(재실측한 슬라이스 좌표·9-slice border·`pixelsPerUnit` 보정·원형 스킬버튼 정사각형 크롭 수정·
+반응형 anchor 수정)는 `docs/HANDOFF.md`의 같은 날짜 항목 참고.
+
+**삭제한 파일** (grep으로 새 배선 이후 참조가 전혀 없음을 확인 후 `git rm`): `Art/UI/SkillButtonFrame.png`,
+`Art/UI/HealthBarFrame.png`, `Art/UI/SkillIconsSet.png`, `Art/UI/MessagePanelFrame.png`,
+`Art/WideButton.png`.
+
+**MenuButtonGold.png/MenuPanelFrameGold.png 크롭 재실측**: 두 파일 모두 "20px 패딩으로 크롭됨"
+이라는 보고를 받았으나 그 수치를 신뢰하지 않고 PIL로 알파 바운딩박스를 다시 측정했다 -
+`MenuButtonGold`는 실제 알파 콘텐츠가 x[20,972] y[20,250](993x251 캔버스 기준)에서 시작하지만,
+9-slice border(테두리에서 남색 내부 채움까지의 거리)는 이와 별개로 색상 전이 지점에서 재실측해
+left 114/right 116/top 77/bottom 71px로 구했다(20px는 "그림이 시작하는 지점"이고 114px 등은
+"안쪽 채움이 시작하는 지점"이라 서로 다른 값인 게 정상 - 114 > 20이 이를 뒷받침한다).
+`MenuPanelFrameGold`도 동일한 방식으로 border left 87/right 88/top 92/bottom 90px을 구했다.
+
 ## 2026-09-14 갱신: UI 에셋 전면 교체 (기존 UI 전부 폐기) + HP 바 신규 추가
 
 사용자 지시("지금 있는 UI는 다 버려야해")로 신규 생성된 UI 에셋 4종(`Art/UI/SkillButtonFrame.png`, `Art/UI/HealthBarFrame.png`, `Art/UI/SkillIconsSet.png`, `Art/UI/MessagePanelFrame.png`)을 전부 배선하고 이전 UI 텍스처를 대체했다. 배선 세부는 `docs/HANDOFF.md`의 같은 날짜 "UI 에셋 전면 교체 + HP 바 신규 추가" 항목 참고.

@@ -46,8 +46,13 @@ namespace Sapphire.EditorTools
             BuildEventSystem();
             GameObject canvasGo = BuildCanvas();
 
-            Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MessagePanelFrame.png");
-            Sprite buttonSprite = LoadSingleSprite(SapphireSceneBuilder.RootArtDir + "/WideButton.png");
+            // 2026-09-15: gold-tier UI replacement - MessagePanelFrame.png ->
+            // MessagePanelFrameGold.png, and WideButton.png (RootArtDir) ->
+            // MenuButtonGold.png (UiArtDir) for every button that used to share
+            // WideButton (close button here, main menu button + list items in
+            // BuildMainMenu below).
+            Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MessagePanelFrameGold.png");
+            Sprite buttonSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png");
 
             SimpleMessagePanel messagePanel = BuildMessagePanel(canvasGo, panelSprite, buttonSprite);
 
@@ -231,8 +236,11 @@ namespace Sapphire.EditorTools
 
         private static void BuildRadialSkillMenu(GameObject canvasGo, PlayerGridController playerController, SkillCastFeedback castFeedback)
         {
-            Sprite skillFrameSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrame.png", "SkillButtonFrame_Skill");
-            Sprite basicAttackFrameSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrame.png", "SkillButtonFrame_BasicAttack");
+            // 2026-09-15: gold-tier UI replacement - SkillButtonFrame.png ->
+            // SkillButtonFrameGold.png. Sprite names unchanged (only the source
+            // texture moved, see ArtImportConfigurator.ConfigureSkillButtonFrame).
+            Sprite skillFrameSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrameGold.png", "SkillButtonFrame_Skill");
+            Sprite basicAttackFrameSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrameGold.png", "SkillButtonFrame_BasicAttack");
 
             var rootGo = new GameObject("RadialSkillMenu", typeof(RectTransform));
             rootGo.transform.SetParent(canvasGo.transform, false);
@@ -280,13 +288,13 @@ namespace Sapphire.EditorTools
             BuildSkillSystems(attackButton, skillButtons, playerController, castFeedback);
         }
 
-        // All 6 skill icons (basic attack + the 5 SkillCatalog entries) now live
-        // in the single SkillIconsSet.png sheet (2026-09-14 full UI asset
-        // replacement, see ArtImportConfigurator.ConfigureSkillIconsSet) -
-        // replaces the old 2-sheet SkillIcons.png/SkillIconsExtra.png fallback.
+        // All 6 skill icons (basic attack + the 5 SkillCatalog entries) live in
+        // the single SkillIconsSetGold.png sheet (2026-09-15 gold-tier
+        // replacement of SkillIconsSet.png, see
+        // ArtImportConfigurator.ConfigureSkillIconsSet) - sprite names unchanged.
         private static Sprite LoadSkillIcon(string spriteName)
         {
-            return LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIconsSet.png", spriteName);
+            return LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIconsSetGold.png", spriteName);
         }
 
         private static Button BuildRadialButton(GameObject parent, Sprite circleSprite, string name, Vector2 anchoredPosition, float size, Sprite iconSprite, string labelText, string keyHint)
@@ -377,11 +385,21 @@ namespace Sapphire.EditorTools
 
         private static void BuildHealthBar(GameObject canvasGo)
         {
-            Sprite trackSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrame.png", "HealthBarFrame_Track");
-            Sprite fillSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrame.png", "HealthBarFrame_Fill");
+            // 2026-09-15: gold-tier UI replacement - HealthBarFrame.png ->
+            // HealthBarFrameGold.png. Sprite names unchanged.
+            Sprite trackSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Track");
+            Sprite fillSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Fill");
 
+            // barHeight raised from the old 70 to 74: the Track image is
+            // rendered with Image.Type.Simple (no preserveAspect), so it
+            // stretches to fill barWidth x barHeight exactly - it must match the
+            // sprite's own aspect to avoid visible squish. The old value (260/70
+            // = 3.71 aspect) was tuned for the old Track cell (1774x480, aspect
+            // 3.70). The new Track cell measures 1774x504 (aspect 3.52,
+            // see ArtImportConfigurator.ConfigureHealthBarFrame) so barHeight
+            // must grow to 260/3.52 ~= 73.9 to keep the same close match.
             const float barWidth = 260f;
-            const float barHeight = 70f;
+            const float barHeight = 74f;
 
             var barGo = new GameObject("HealthBar", typeof(Image));
             barGo.transform.SetParent(canvasGo.transform, false);
@@ -398,8 +416,13 @@ namespace Sapphire.EditorTools
             var fillGo = new GameObject("Fill", typeof(Image));
             fillGo.transform.SetParent(barGo.transform, false);
             var fillRect = fillGo.GetComponent<RectTransform>();
-            fillRect.anchorMin = new Vector2(0.06f, 0.18f);
-            fillRect.anchorMax = new Vector2(0.94f, 0.82f);
+            // y-span widened from 0.18-0.82 (0.64) to 0.17-0.83 (0.66): the Fill
+            // sprite's own aspect is now 1774x383 = 4.63 (vs the old cell's 4.36)
+            // - at barWidth/barHeight=260/74 the inner rect's width is fixed by
+            // the x-span (0.88 * 260 = 228.8), so the y-span that keeps the
+            // inner rect's aspect close to 4.63 is 228.8/4.63/74 ~= 0.667.
+            fillRect.anchorMin = new Vector2(0.06f, 0.17f);
+            fillRect.anchorMax = new Vector2(0.94f, 0.83f);
             fillRect.offsetMin = Vector2.zero;
             fillRect.offsetMax = Vector2.zero;
             var fillImage = fillGo.GetComponent<Image>();
@@ -416,8 +439,12 @@ namespace Sapphire.EditorTools
 
         private static void BuildMainMenu(GameObject canvasGo, SimpleMessagePanel messagePanel)
         {
-            Sprite buttonSprite = LoadSingleSprite(SapphireSceneBuilder.RootArtDir + "/WideButton.png");
-            Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MessagePanelFrame.png");
+            // 2026-09-15: gold-tier UI replacement - WideButton.png (RootArtDir)
+            // -> MenuButtonGold.png (UiArtDir) for both the open button and the
+            // 7 list item buttons below, and MessagePanelFrame.png (which this
+            // panel used to reuse) -> its own dedicated MenuPanelFrameGold.png.
+            Sprite buttonSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png");
+            Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuPanelFrameGold.png");
 
             var openGo = new GameObject("MainMenuButton", typeof(Image), typeof(Button));
             openGo.transform.SetParent(canvasGo.transform, false);
@@ -429,13 +456,44 @@ namespace Sapphire.EditorTools
             var openImage = openGo.GetComponent<Image>();openImage.sprite = buttonSprite;openImage.type = Image.Type.Sliced;
             AddButtonLabel(openGo, "메뉴", 25);
 
+            // 2026-09-15 responsive fix: MainMenuPanel used to be a fixed
+            // 390x790 rect anchored to the top-right corner only (anchorMin ==
+            // anchorMax == (1,1)). Resolution simulation (7 stacked 91-unit-tall
+            // menu items need ~892 canvas units of vertical room including this
+            // panel's own top offset) showed that on any canvas shorter than
+            // ~892 units - which includes ordinary 16:9 landscape at the
+            // reference CanvasScaler settings (canvas height ~623-720 units,
+            // see BuildCanvas) - the fixed 790-tall panel would extend below
+            // y=0, i.e. its own bottom edge (and the last 1-2 menu items) render
+            // off-canvas. This is a landscape/PC-specific instance of the same
+            // "assumed canvas size" bug class the RadialSkillMenu comment above
+            // documents, just on the vertical axis instead of horizontal.
+            //
+            // Fix: anchor the panel to stretch the full canvas height
+            // (anchorMin.y=0, anchorMax.y=1) instead of a fixed sizeDelta.y, so
+            // its actual height is always (canvas height - topMargin -
+            // bottomMargin) and it can never extend past either edge. Width
+            // stays a fixed 390 units anchored to the right edge (anchorMin.x ==
+            // anchorMax.x == 1) exactly as before. The 7 menu item buttons below
+            // are still positioned via fixed anchoredPosition offsets from the
+            // panel's own top edge (anchor/pivot (0.5,1)), so they always start
+            // in the same place relative to the panel regardless of its
+            // stretched height; on canvases too short to fit all 7 (under ~723
+            // units of available panel height), the last item(s) may still spill
+            // past the panel's bottom edge - a residual layout constraint (would
+            // need a scroll view or per-resolution spacing to fully solve, out
+            // of this task's scope) but strictly better than the panel itself
+            // rendering off-canvas.
+            const float panelWidth = 390f;
+            const float panelTopMargin = 102f;
+            const float panelBottomMargin = 20f;
             var panelGo = new GameObject("MainMenuPanel", typeof(Image));
             panelGo.transform.SetParent(canvasGo.transform, false);
             var panelRect = panelGo.GetComponent<RectTransform>();
-            panelRect.anchorMin = panelRect.anchorMax = new Vector2(1f, 1f);
-            panelRect.pivot = new Vector2(1f, 1f);
-            panelRect.sizeDelta = new Vector2(390f, 790f);
-            panelRect.anchoredPosition = new Vector2(-20f, -102f);
+            panelRect.anchorMin = new Vector2(1f, 0f);
+            panelRect.anchorMax = new Vector2(1f, 1f);
+            panelRect.offsetMin = new Vector2(-20f - panelWidth, panelBottomMargin);
+            panelRect.offsetMax = new Vector2(-20f, -panelTopMargin);
             var panelImage = panelGo.GetComponent<Image>();panelImage.sprite = panelSprite;panelImage.type = Image.Type.Sliced;
 
             string[] names={"장비창","지도","상급던전","레이드","스킬","커뮤니티","길드"};

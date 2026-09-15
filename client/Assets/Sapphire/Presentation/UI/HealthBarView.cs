@@ -4,8 +4,8 @@ using UnityEngine.UI;
 namespace Sapphire.Presentation.UI
 {
     /// <summary>
-    /// Top-left HP bar (2026-09-14 full UI asset replacement, built from
-    /// HealthBarFrame.png's 2 cells - see VillageHubUiBuilder.BuildHealthBar).
+    /// Top-left HP bar (2026-09-15 gold-tier UI replacement, built from
+    /// HealthBarFrameGold.png's 2 cells - see VillageHubUiBuilder.BuildHealthBar).
     /// This slice has no combat/damage system and no HP resource on the player
     /// yet, so the bar is a visual scaffold only: it is shown fixed at 100%
     /// fill and nothing currently calls <see cref="SetFillAmount"/>. When a

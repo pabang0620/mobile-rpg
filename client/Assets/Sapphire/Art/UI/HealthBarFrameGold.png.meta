@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c44b01b3c942af9488097d2dcead3006
+guid: 159fa0a071ee3a349adafc8f2c345227
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SkillIcons_BasicAttack
+      name: HealthBarFrame_Track
       rect:
         serializedVersion: 2
         x: 0
-        y: 528
-        width: 519
-        height: 496
+        y: 383
+        width: 1774
+        height: 504
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -138,64 +138,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 39a06d1ee3e0864f0800000000000000
-      internalID: -835402067637564781
+      spriteID: 5fbca90545a7624a0800000000000000
+      internalID: -6618468099826201611
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SkillIcons_ArcaneBolt
-      rect:
-        serializedVersion: 2
-        x: 519
-        y: 528
-        width: 481
-        height: 496
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0fcc4cfcaabeb28c0800000000000000
-      internalID: -4022862723262657296
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SkillIcons_FrostWave
-      rect:
-        serializedVersion: 2
-        x: 1000
-        y: 528
-        width: 536
-        height: 496
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 00b8a91bfa0903f90800000000000000
-      internalID: -6975916738523526400
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SkillIcons_Blink
+      name: HealthBarFrame_Fill
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 519
-        height: 528
+        width: 1774
+        height: 383
       alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -204,52 +160,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cc630d1963e363ee0800000000000000
-      internalID: -1281768639844829492
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SkillIcons_Shield
-      rect:
-        serializedVersion: 2
-        x: 519
-        y: 0
-        width: 481
-        height: 528
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 22dd1aab191d4f2d0800000000000000
-      internalID: -3245739007595651806
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: SkillIcons_Haste
-      rect:
-        serializedVersion: 2
-        x: 1000
-        y: 0
-        width: 536
-        height: 528
-      alignment: 9
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: fe1e8b9d01c5c7f30800000000000000
-      internalID: 4574632548943585775
+      spriteID: 52f6385a462e83050800000000000000
+      internalID: 5780619043631492901
       vertices: []
       indices: 
       edges: []
@@ -268,12 +180,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      SkillIcons_ArcaneBolt: -4022862723262657296
-      SkillIcons_BasicAttack: -835402067637564781
-      SkillIcons_Blink: -1281768639844829492
-      SkillIcons_FrostWave: -6975916738523526400
-      SkillIcons_Haste: 4574632548943585775
-      SkillIcons_Shield: -3245739007595651806
+      HealthBarFrame_Fill: 5780619043631492901
+      HealthBarFrame_Track: -6618468099826201611
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

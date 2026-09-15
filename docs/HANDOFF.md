@@ -2,7 +2,89 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-14 (최신): UI 에셋 전면 교체 + HP 바 신규 추가 - 현재 상태
+## 2026-09-15 (최신): 골드 등급 UI 에셋 6종 배선 + 반응형 근본 수정 - 현재 상태
+
+2026-09-14에 배선한 UI(위 절)를 신규 고퀄리티 골드 에셋 6종으로 전면 교체하고, 사용자가 지적한
+"칸 안 맞고 이상하고 반응형이 안 돼서 뭉개진다"는 문제를 3갈래로 나눠 근본 원인을 찾아 고쳤다.
+
+**1. 에셋 교체** (`ArtImportConfigurator.cs`, `VillageHubUiBuilder.cs`): `SkillButtonFrame.png` →
+`SkillButtonFrameGold.png`, `HealthBarFrame.png` → `HealthBarFrameGold.png`, `SkillIconsSet.png` →
+`SkillIconsSetGold.png`, `MessagePanelFrame.png` → `MessagePanelFrameGold.png`, `WideButton.png`
+(닫기 버튼·메뉴 버튼·메뉴 목록 항목 7개 전부) → `MenuButtonGold.png`, 메인 메뉴 패널 배경(기존
+`MessagePanelFrame.png` 재사용) → 전용 `MenuPanelFrameGold.png`. 각 이미지는 PIL/numpy로 알파
+컬럼/로우 프로파일을 다시 실측했다(균등분할 가정 금지 원칙 재적용, 구 에셋과 그리드 구성이
+같아도 갭 위치·중점은 달랐다):
+- `SkillButtonFrameGold`: 2셀 경계 갭이 672-710(구 632-737)으로 이동, 중점 691.
+- `HealthBarFrameGold`: 2셀 경계 갭이 487-521(구 452-508)로 이동, 중점 504.
+- `SkillIconsSetGold`: 3x2 경계가 완전한 제로-알파 갭이 아니라 1-13px 노이즈가 섞인 갭(골드
+  연결 장식선 때문) - 갭 전체 구간의 중점(524, 1013)과 행 경계는 최소밀도 지점(502, 값 83 -
+  0이 아님)으로 잡았다. 아이콘 배치·순서는 이미지로 직접 재확인해 기존과 동일함을 검증했다
+  (기본공격/비전탄/서리파동 위 행, 점멸/보호막/질주 아래 행).
+- `MessagePanelFrameGold`/`MenuButtonGold`/`MenuPanelFrameGold`: 9-slice border를 골드 프레임과
+  남색 내부 채움 사이 색상 전이 지점으로 재측정(코너 곡선·중앙 다이아몬드 장식을 피한
+  40%-60% 구간 중앙값) - `MenuButtonGold`는 "20px 패딩 크롭"이라는 보고를 신뢰하지 않고
+  직접 재실측했다(border: left 114/right 116/top 77/bottom 71px).
+
+**2. 원 스킬 버튼 정사각형 크롭 수정** (근본 원인 발견): 기존 코드는 스킬 버튼 프레임을 "컬럼만
+자르고 전체 캔버스 높이(1024px) 그대로" 슬라이스했는데, 그 결과 셀 Rect가 정사각형이 아니었다
+(684x1024, 852x1024 - 종횡비 약 1:1.5). 정사각형 버튼(`sizeDelta.x==sizeDelta.y`,
+`Image.Type.Simple`, `preserveAspect` 미설정)에 이 비정사각형 스프라이트를 넣으면 원이 타원으로
+찌그러져 보인다 - "안 맞고 뭉개진다"는 사용자 불만의 실제 원인 중 하나로 강하게 의심된다. 각
+원의 알파 바운딩박스만 정확히 크롭해 거의 1:1 비율(Skill 659x665, BasicAttack 824x854)로
+바꿔 해결했다.
+
+**3. 9-slice `pixelsPerUnit` 보정**: 기존 코드는 단일 스프라이트(`ConfigureSingleSprite`)에
+`spritePixelsPerUnit`를 전혀 지정하지 않아 Unity 기본값(100)이 그대로 쓰이고 있었다. 이 신규
+골드 에셋들은 해상도가 매우 커서(1937x812, 993x251, 1007x1230) border 픽셀값도 크게 측정되는데,
+ppu=100으로 나누면 캔버스 단위로는 2 미만까지 줄어들어 화면에 그려지는 골드 테두리가 거의
+보이지 않을 정도로 얇아진다 - 이것이 "이상하다"는 불만의 또 다른 유력한 원인으로 판단했다.
+`ConfigureSingleSprite`에 `pixelsPerUnit` 파라미터를 추가하고 각 에셋의 `nativeWidth(또는
+Height)/sizeDelta` 비율로 명시 설정해(예: MessagePanelFrameGold 1937/560≈3.459) 테두리가
+원본 이미지가 실제로 그려진 비례를 유지하도록 했다.
+
+**4. 반응형/앵커 전수 점검**: `BuildCanvas`의 `CanvasScaler`(`ScaleWithScreenSize`,
+reference 720x1280, `matchWidthOrHeight=0.5`)는 이미 적절했다(변경 없음). `BuildVirtualMovementPad`
+(좌하단), `BuildRadialSkillMenu`(우하단, 2026-09-14에 이미 수정됨), `BuildHealthBar`(좌상단),
+`BuildMainMenu`의 열기 버튼(우상단)은 전부 코너 anchor + 그 코너 기준 오프셋 패턴을 이미
+올바르게 쓰고 있어 고정 720 폭을 가정하는 계산이 없었다. 단, `BuildMainMenu`의
+`MainMenuPanel`(390x790 고정, 우상단 anchor)은 실제 버그를 하나 발견했다 - 7개 메뉴 항목(91px
+간격) + 패널 상단 여백(102)까지 총 892 캔버스 유닛이 필요한데, 일반적인 16:9 가로(PC) 해상도의
+캔버스 높이는 위 CanvasScaler 설정 기준 약 623-720 유닛뿐이라 패널이 화면 아래로 172-268 유닛
+벗어난다(해상도 시뮬레이션으로 확인, 아래 참고). `anchorMin=(1,0)/anchorMax=(1,1)`로 세로
+스트레치하도록 고쳐 패널 자체가 항상 화면 안에 들어오게 했다(항목이 91px 간격으로 패널 상단
+기준 고정 배치라 아주 짧은 캔버스에서는 마지막 1-2개 항목이 패널 하단을 살짝 넘칠 수 있다는
+잔여 제약은 남지만, 패널 자체가 화면 밖으로 나가던 것보다는 명확히 개선됐다 - 스크롤뷰 등 완전
+해결은 이번 범위 밖).
+
+**5. 해상도 시뮬레이션 검증** (좌표 계산, 육안 아님): 720x1280(기준 세로)/1920x1080/1280x720(가로
+PC)/1080x2400(세로 폰)/2560x1080(울트라와이드) 5개 해상도에 대해 Python으로 CanvasScaler
+스케일팩터와 각 UI 요소의 실제 캔버스 좌표를 계산 - VirtualMovementPad·RadialSkillMenu·
+HealthBar·MainMenuButton 겹침 없음을 전 해상도에서 확인, MainMenuPanel은 스트레치 수정 후
+5개 해상도 모두에서 패널 자체가 화면 안에 들어옴을 확인(가장 짧은 1280x720/1920x1080 캔버스
+높이 720에서 패널 높이 598 - 화면 안, 단 7번째 항목 위치 -632가 패널 하단 -598보다 34유닛
+더 내려가 항목 자체는 일부 겹칠 수 있음, 위 4번 잔여 제약과 동일).
+
+**6. HP 바 종횡비 보정**: Track 셀 실측 종횡비가 구 자산(3.70)에서 3.52로 바뀌어
+`barHeight`를 70→74로(barWidth=260 고정) 올려 `Image.Type.Simple`의 비균일 스트레치를
+줄였다. Fill 안쪽 anchor y-span도 0.64→0.66으로 미세 조정.
+
+**검증**: Unity CLI(6000.5.9f1)로 컴파일 확인(경고 1건만 - 기존과 동일한
+`TextureImporter.spritesheet` obsolete 경고, 이번 변경과 무관), EditMode 테스트 33/33 통과,
+`SapphireSceneBuilder.BuildAll` 재실행 후 `VillageHub.unity`를 직접 파싱해 신규 골드 텍스처 6종의
+guid가 씬 전역에서 전부 참조되고(`SkillButtonFrameGold` 6회·`HealthBarFrameGold` 2회·
+`SkillIconsSetGold` 6회·`MessagePanelFrameGold` 1회·`MenuButtonGold` 9회·`MenuPanelFrameGold`
+1회) null(`fileID:0`) 스프라이트 참조가 전무함을 확인, `MainMenuPanel`/`HealthBar`/`Fill`의
+RectTransform 필드(anchorMin/Max, sizeDelta)가 의도한 값대로 반영됐음을 확인,
+`HealthBarView.fillImage`가 실제 Fill Image를 참조하고 `m_Type=3/m_FillMethod=0/m_FillAmount=1/
+m_FillOrigin=0`을 유지함을 확인. `SapphireBuildPlayer.BuildWindows` 재빌드(`Assembly-CSharp.dll`·
+`resources.assets` 타임스탬프가 빌드 시각과 일치) 후 새 실행 파일을 실행해 30초 이상 프로세스
+생존을 `tasklist`로 확인했다. 화면 렌더링·미학 판단은 하지 않았다 - 사용자 몫이다.
+
+**삭제한 파일** (grep으로 미참조 확인 후 `git rm`): `Art/UI/SkillButtonFrame.png`,
+`Art/UI/HealthBarFrame.png`, `Art/UI/SkillIconsSet.png`, `Art/UI/MessagePanelFrame.png`,
+`Art/WideButton.png` (각 `.meta` 포함).
+
+## 2026-09-14: UI 에셋 전면 교체 + HP 바 신규 추가 - 이전 상태
 
 사용자 지시("지금 있는 UI는 다 버려야해")로 신규 생성된 UI 에셋 4종을 전부 배선하고 기존 UI를 완전히 교체했다.
 

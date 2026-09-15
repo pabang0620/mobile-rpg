@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace Sapphire.Presentation.UI
 {
     /// <summary>
-    /// Minimal message panel built from MessagePanelFrame.png / WideButton.png.
+    /// Minimal message panel built from MessagePanelFrameGold.png / MenuButtonGold.png.
     /// SetText/Show/Close is the entire public contract.
     /// </summary>
     public class SimpleMessagePanel : MonoBehaviour

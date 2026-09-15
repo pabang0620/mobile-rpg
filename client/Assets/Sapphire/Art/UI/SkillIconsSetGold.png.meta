@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 72ce244aa75bbad439e8651782f660c5
+guid: a80f5793bf6572e4c814ad9ff846c231
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 271.5
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -95,10 +95,10 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Android
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -108,10 +108,10 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: WebGL
-    maxTextureSize: 4096
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -123,14 +123,80 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MageVfx_Shield_00
+      name: SkillIcons_BasicAttack
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 522
+        width: 524
+        height: 502
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39a06d1ee3e0864f0800000000000000
+      internalID: -835402067637564781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SkillIcons_ArcaneBolt
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 522
+        width: 489
+        height: 502
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fcc4cfcaabeb28c0800000000000000
+      internalID: -4022862723262657296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SkillIcons_FrostWave
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 522
+        width: 523
+        height: 502
+      alignment: 9
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00b8a91bfa0903f90800000000000000
+      internalID: -6975916738523526400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SkillIcons_Blink
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 272
-        height: 724
-      alignment: 0
+        width: 524
+        height: 522
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -138,21 +204,21 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1371a7f9ffcc42e30800000000000000
-      internalID: 4477929327777421105
+      spriteID: cc630d1963e363ee0800000000000000
+      internalID: -1281768639844829492
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MageVfx_Shield_01
+      name: SkillIcons_Shield
       rect:
         serializedVersion: 2
-        x: 272
+        x: 524
         y: 0
-        width: 271
-        height: 724
-      alignment: 0
+        width: 489
+        height: 522
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -160,21 +226,21 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 099d0da355bf62af0800000000000000
-      internalID: -421373171635005040
+      spriteID: 22dd1aab191d4f2d0800000000000000
+      internalID: -3245739007595651806
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MageVfx_Shield_02
+      name: SkillIcons_Haste
       rect:
         serializedVersion: 2
-        x: 543
+        x: 1013
         y: 0
-        width: 271
-        height: 724
-      alignment: 0
+        width: 523
+        height: 522
+      alignment: 9
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
@@ -182,118 +248,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0715fc75adb174200800000000000000
-      internalID: 164130536012337520
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: MageVfx_Shield_03
-      rect:
-        serializedVersion: 2
-        x: 814
-        y: 0
-        width: 272
-        height: 724
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5b1453e0f6f4d4680800000000000000
-      internalID: -8769265561022152267
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: MageVfx_Shield_04
-      rect:
-        serializedVersion: 2
-        x: 1086
-        y: 0
-        width: 272
-        height: 724
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5714d5a5f796d69a0800000000000000
-      internalID: -6238213913140444811
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: MageVfx_Shield_05
-      rect:
-        serializedVersion: 2
-        x: 1358
-        y: 0
-        width: 271
-        height: 724
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 272afbeb4f9558880800000000000000
-      internalID: -8609376204941712782
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: MageVfx_Shield_06
-      rect:
-        serializedVersion: 2
-        x: 1629
-        y: 0
-        width: 271
-        height: 724
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4a5caf82db32e3910800000000000000
-      internalID: 1818930594847573412
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: MageVfx_Shield_07
-      rect:
-        serializedVersion: 2
-        x: 1900
-        y: 0
-        width: 272
-        height: 724
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c055342c2fa76d4c0800000000000000
-      internalID: -4263084814199728884
+      spriteID: fe1e8b9d01c5c7f30800000000000000
+      internalID: 4574632548943585775
       vertices: []
       indices: 
       edges: []
@@ -312,14 +268,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      MageVfx_Shield_00: 4477929327777421105
-      MageVfx_Shield_01: -421373171635005040
-      MageVfx_Shield_02: 164130536012337520
-      MageVfx_Shield_03: -8769265561022152267
-      MageVfx_Shield_04: -6238213913140444811
-      MageVfx_Shield_05: -8609376204941712782
-      MageVfx_Shield_06: 1818930594847573412
-      MageVfx_Shield_07: -4263084814199728884
+      SkillIcons_ArcaneBolt: -4022862723262657296
+      SkillIcons_BasicAttack: -835402067637564781
+      SkillIcons_Blink: -1281768639844829492
+      SkillIcons_FrostWave: -6975916738523526400
+      SkillIcons_Haste: 4574632548943585775
+      SkillIcons_Shield: -3245739007595651806
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
