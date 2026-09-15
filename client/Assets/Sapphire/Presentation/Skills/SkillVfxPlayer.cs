@@ -6,7 +6,7 @@ using Sapphire.Domain.Grid;
 namespace Sapphire.Presentation.Skills
 {
     /// <summary>Generated atlas animation, independent of skill hit/damage rules.</summary>
-    public sealed class SkillVfxPlayer : MonoBehaviour
+    public sealed class SkillVfxPlayer : MonoBehaviour, ISkillVfxPlayer
     {
         private SkillVfxLibrary library;
         private GameObject shieldObject;

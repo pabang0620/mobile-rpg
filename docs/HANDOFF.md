@@ -2,7 +2,99 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): 잔여 2건 수정 - 바닥 타일 seam, 메뉴 그리드 여백/라벨 잘림
+## 2026-09-15 (최신): 캐릭터 플로우 실측 확정 + 씬 빌드 + 플레이어 빌드 + 스크린샷 검증
+
+이전 세션이 코드만 구현해두고(컴파일/EditMode만 확인) 아트가 없어 미룬 부분 -
+아트 도착 후 실측·빌드·스크린샷 검증까지 마무리했다.
+
+**실측 확정값** (전부 PIL/numpy, `Read`로 눈으로 보고 판단하지 않음 - 이 문서 상시 원칙):
+
+- `CharacterFlowArtImportConfigurator.cs`: `CharacterSlotFrame.png`(793x1983)
+  border 40%-70% 구간 mode 샘플링으로 `Vector4(36,31,36,32)`(9개 샘플 전부 1px
+  이내 안정). `InputFieldFrame.png`(2170x725) border `Vector4(36,60,35,54)`
+  (top은 21개 샘플 전부 54로 완전 안정, left/right는 코너 장식 오염 일부 샘플
+  제외 후 mode).
+- `WarriorArtImportConfigurator.cs` 행별 pivot: Mage와 동일한 방법(3포즈
+  alpha bbox 평균)으로 재측정 - Down(0.56,0.00) Left(0.55,0.02)
+  Right(0.48,0.00) Up(0.51,0.19). Mage와 달리 Left/Right를 강제로 같은 값으로
+  묶지 않음 - 워리어 원화 자체가 비대칭(Left 컨텐츠 h=351-354px로 셀 상단까지
+  닿음, Right는 h=328px+상단 여백 33px)이라 각 행 실측값을 그대로 쓰는 게 발
+  위치를 더 정확히 맞춘다.
+- `WarriorSkillIconsSetGold.png`(1536x1024, 3x2 그리드) 아이콘 6개를 등분할
+  512x512 셀에서 각 셀 자체 alpha bbox로 재크롭(예: BasicAttack
+  Rect(43,513,461,467), GroundSlam Rect(1033,53,476,459) 등, 상세는 코드
+  주석). 시각 확인 결과 대검베기=검베기 이펙트, 돌진=화살표, 회오리베기=쌍날,
+  방패막기=방패, 전쟁함성=포효하는 사자머리, 대지강타=바위 뚫는 건틀릿 - 라벨과
+  아트가 정확히 일치. 전부 게임 전체와 통일된 블루+골드 크리스탈 톤이라
+  스크린샷에서 "전사인데 얼음같다"로 오인하기 쉬우나 의도된 통일 아트 스타일이지
+  결함이 아니다.
+- `HudArtImportConfigurator.ConfigureMenuSectionHeader`: 기존 crop
+  `(17,306,2138,145)` / border `(232,23,231,26)`를 이 파일 자신이 명시한
+  측정법(행 alpha 밀도 90% 초과 구간)으로 재실측한 결과 실제와 불일치함을
+  발견 - 진짜 dense band는 rows 287-412(height 126, 기존은 273-418로 위 14px/
+  아래 6px 여백 포함), 진짜 x bbox는 [9,2161](width 2153, 기존 17-2154는 좌우
+  각 ~8px/~5px 잘림 - 작업 지시서가 예상한 "좌우 끝 9px 잘림"과 일치). Border는
+  40%-70% 구간 11샘플 median으로 `(53,23,52,23)` - 기존 232/231은 실제 골드
+  장식이 x=53-56에서 이미 flat navy로 안정되는데도 그 4배 이상 큰 값이었다
+  (400폭 호출부 기준 43%를 불필요하게 고정 영역으로 낭비). `MenuButtonGold.png`
+  border는 재실측(캡슐 양끝 라운드캡이 안정되는 x≈90-106) 결과 기존
+  `(114,71,116,77)`이 다소 보수적이지만 시각적 왜곡을 일으키는 방향(과소)이
+  아니라 안전한 방향(과대)이라 결함 아님 - 변경 안 함.
+- `VillageHubUiBuilder.BuildRegionNameBanner`의 `bannerHeight=47.3` 주석이
+  참조하던 crop(2138x281)은 실제로 존재한 적 없는 stale 값이었다 - 값 자체는
+  안 바꿈(Image.Type.Sliced라 종횡비 불일치가 찌그러짐을 유발하지 않음),
+  주석만 정정.
+
+**개발 인자 추가** (`LoginScreenController.cs`, Login이 항상 씬 인덱스 0이라
+플레이어 빌드의 커맨드라인 가로채기 지점): `-sapphire-scene=<SceneName>`
+(임의 씬으로 직행), `-sapphire-account=<id>`(세션에 계정 로그인 - 두 인자는
+조합 가능, 계정을 먼저 로그인시킨 뒤 씬 이동). 기존 `-sapphire-class`는
+그대로 유지.
+
+**씬 빌드 통합**: `SapphireSceneBuilder.BuildEverything()` 신설 - `BuildAll()`
+(VillageHub) 후 `CharacterFlowSceneBuilder.BuildAll()`(Login/CharacterSelect/
+CharacterCreate)을 이어 호출하고, `BuildSettingsSceneRegistrar.ReorderScenes`
+(신설)로 Build Settings 순서를 Login/CharacterSelect/CharacterCreate/
+VillageHub로 강제한다 - 기존 `Register`/`RegisterFirst`는 이미 리스트에 있는
+항목을 재정렬하지 않아 두 독립 빌더를 어떤 순서로 실행해도 이 정확한 순서가
+보장되지 않았다.
+
+**검증**: Unity 6000.5.9f1 batchmode, 컴파일 0에러, EditMode 59/59 PASS
+(`WarriorSkillRangeTests` 5건 포함 - Whirlwind의 `TilesInRing`/GroundSlam의
+`TilesInFrontCone`/Dash의 `GridMover.TryBlink` 전부 실제 도메인 함수를
+호출하는 것을 코드 추적으로 확인: `RadialSkillMenu.CastSkill` ->
+`WarriorSkillVfxPlayer.Play(row,...)` -> `PlayWhirlwind`/`PlayGroundSlam`가
+`SkillRangeCalculator`를 직접 호출 - 이 슬라이스엔 쿨다운 시스템 자체가 없어
+"쿨다운 호출" 검증은 해당 없음). `SapphireSceneBuilder.BuildEverything` ->
+`SapphireBuildPlayer.BuildWindows` 순으로 재빌드 성공.
+
+스크린샷 6장(`generated-images/diagnostics/flow_*.png`) 전부 오케스트레이터가
+PNG를 직접 열어 확인 - 핑크 텍스처·빈 화면·겹침·잘림·한글 깨짐 없음. 로그인
+배경/로고/입력창/버튼, 캐릭터선택 4슬롯(법사+전사 채움, 빈 슬롯 2개, "선택"/
+"삭제"/"+생성" 라벨 정상), 캐릭터생성(클래스 카드+이름입력+생성 버튼),
+마을(전사/법사 둘 다 발이 바닥 타일에 정확히 붙어 서있음 - 워리어 pivot
+재측정이 실제로 통함), 메뉴 패널(성장/모험/시스템 섹션 헤더 텍스트가 헤더
+띠 중앙에 위치 - MenuSectionHeader crop 수정이 실제로 통함, 4열 그리드에서
+"캐릭터정보" 라벨 안 잘림) 전부 육안 결함 없음.
+
+**스크린샷 캡처 도구 버그 수정** (`logs/tools/capture.ps1`, 이 레포 도구
+스크립트, 게임 코드 아님): 두 가지 결함을 고쳤다 -
+(1) `-ExeArgs ""` 빈 문자열을 그대로 `Start-Process -ArgumentList`에 넘기면
+PowerShell이 예외를 던지던 것을 빈 값이면 `-ArgumentList` 자체를 생략하도록
+가드. (2) 게임 창이 이전 세션에서 기억한 화면 밖(예: L=-1927, 주 모니터
+음수 좌표) 위치로 뜨는 경우 `CopyFromScreen`이 그 좌표의 실제 데스크톱 다른
+창(사용자가 쓰던 브라우저/메신저 등, 진단 스크린샷으로 확인)을 캡처해버리는
+결함 발견 - `SetForegroundWindow`가 Windows 포커스 도용 방지로 조용히
+실패(반환값 False)하는 것도 원인 중 하나였다. `SetWindowPos`로 z-order를
+`HWND_TOPMOST`로 강제한 뒤 캡처하고, 캡처 직후 `HWND_NOTOPMOST`로 되돌리는
+방식으로 해결(신설 `logs/tools/diag_capture.ps1`로 먼저 원인 진단).
+
+**테스트 계정 시드**: `%LocalAppData%Low\Sapphire Studio\Sapphire RPG\
+characters_sapphiretest.json`에 법사+전사 1개씩 수동 시드(실제 유저 데이터
+없음 확인 후 별도 id 사용) - `CharacterRosterFileRepository`가 읽는 그대로의
+포맷.
+
+## 2026-09-15: 잔여 2건 수정 - 바닥 타일 seam, 메뉴 그리드 여백/라벨 잘림
 
 `generated-images/diagnostics/final2_1280_*.png`를 오케스트레이터가 직접 검수해 남은 2건만 지정.
 

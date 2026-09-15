@@ -13,6 +13,9 @@ namespace Sapphire.Domain.Skills
         Line,
 
         /// <summary>A square area of tiles centered on the caster (Chebyshev radius).</summary>
-        Radius
+        Radius,
+
+        /// <summary>A widening fan of tiles directly ahead of the caster's facing direction (see SkillRangeCalculator.TilesInFrontCone).</summary>
+        Cone
     }
 }

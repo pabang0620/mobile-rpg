@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using Sapphire.Composition;
+using Sapphire.Domain.Character;
 using Sapphire.Domain.Grid;
 using Sapphire.Presentation.Camera;
 using Sapphire.Presentation.Movement;
@@ -75,6 +76,37 @@ namespace Sapphire.EditorTools
             }
         }
 
+        // 2026-09-15: single -executeMethod entry point that rebuilds every
+        // scene this project has (VillageHub via BuildAll, then
+        // Login/CharacterSelect/CharacterCreate via
+        // CharacterFlowSceneBuilder.BuildAll) - added so a full rebuild no
+        // longer needs two separate Unity CLI invocations. BuildAll() above
+        // is left untouched (still callable on its own, and still the one
+        // every existing doc/script references) - this just chains it with
+        // the character-flow builder. Order matters: VillageHub first, since
+        // CharacterFlowSceneBuilder's scenes reference
+        // SapphireSceneBuilder.UiArtDir sprites that ArtImportConfigurator
+        // (called from this BuildAll) configures.
+        public static void BuildEverything()
+        {
+            BuildAll();
+            CharacterFlowSceneBuilder.BuildAll();
+
+            // Register()/RegisterFirst() alone can't guarantee this exact
+            // final order across two independent builders re-run against a
+            // possibly-already-populated scene list - see
+            // BuildSettingsSceneRegistrar.ReorderScenes's doc comment. Order
+            // matches the task requirement: Login, CharacterSelect,
+            // CharacterCreate, VillageHub.
+            BuildSettingsSceneRegistrar.ReorderScenes(new[]
+            {
+                "Assets/Sapphire/Scenes/Login.unity",
+                "Assets/Sapphire/Scenes/CharacterSelect.unity",
+                "Assets/Sapphire/Scenes/CharacterCreate.unity",
+                ScenePath,
+            });
+        }
+
         // ------------------------------------------------------------
         // Scene construction
         // ------------------------------------------------------------
@@ -91,42 +123,68 @@ namespace Sapphire.EditorTools
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             TerrainBuildResult terrain = VillageHubTerrainBuilder.Build();
-            (PlayerGridController playerController, PlayerInputReader playerInputReader, SkillCastFeedback castFeedback) = BuildPlayer();
-            CameraFollowRig followRig = BuildCamera(playerController.transform.position, terrain.GroundTilemap);
-            UiBuildResult ui = VillageHubUiBuilder.Build(playerController, playerInputReader, castFeedback);
 
-            ComposeSceneRoot(terrain, playerController, playerInputReader, followRig, ui.MessagePanel);
+            // Both classes' full player rigs are baked into this one scene -
+            // see SceneComposer's class doc for why (Editor-only AssetDatabase
+            // sprite loading can't happen at runtime, so there is no way to
+            // swap a single rig's sprites post-build; instead both exist and
+            // SceneComposer activates exactly one at runtime).
+            (PlayerGridController mageController, PlayerInputReader mageInputReader, SkillCastFeedback mageCastFeedback) = BuildPlayer(CharacterClass.Mage);
+            (PlayerGridController warriorController, PlayerInputReader warriorInputReader, SkillCastFeedback warriorCastFeedback) = BuildPlayer(CharacterClass.Warrior);
+
+            CameraFollowRig followRig = BuildCamera(mageController.transform.position, terrain.GroundTilemap);
+            UiBuildResult ui = VillageHubUiBuilder.Build(
+                mageController, mageInputReader, mageCastFeedback,
+                warriorController, warriorInputReader, warriorCastFeedback);
+
+            ComposeSceneRoot(terrain, mageController, mageInputReader, ui.MageSkillMenuRoot, warriorController, warriorInputReader, ui.WarriorSkillMenuRoot, followRig, ui.MessagePanel);
 
             if (!EditorSceneManager.SaveScene(scene, ScenePath))
             {
                 throw new Exception("Scene save failed");
             }
 
-            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
+            // 2026-09 character-flow slice: was
+            // "EditorBuildSettings.scenes = new[] { thisOneScene }", which
+            // would erase Login/CharacterSelect/CharacterCreate from Build
+            // Settings every time BuildAll re-ran (see
+            // BuildSettingsSceneRegistrar's class doc). Registers/updates
+            // just this scene's entry instead.
+            BuildSettingsSceneRegistrar.Register(ScenePath);
             AssetDatabase.SaveAssets();
         }
 
         // --- Player ---
-        private static (PlayerGridController controller, PlayerInputReader inputReader, SkillCastFeedback castFeedback) BuildPlayer()
+        // 2026-09 character-flow slice: generalized from a Mage-only hardcoded
+        // sheet path/sprite-name prefix to any CharacterClass. Warrior's sheet
+        // (WarriorTopdownGridSheet.png) uses the exact same grid/cell layout
+        // and naming convention as Mage's (task spec: "동일한 격자/셀 크기/
+        // 행열 순서"), just with "Warrior_" instead of "Mage_" as the sprite
+        // name prefix - see WarriorArtImportConfigurator for the import side.
+        // Calling this with CharacterClass.Mage loads the exact same sheet/
+        // sprite names as before this method took a parameter, so Mage's
+        // built rig is byte-for-byte unchanged.
+        private static (PlayerGridController controller, PlayerInputReader inputReader, SkillCastFeedback castFeedback) BuildPlayer(CharacterClass characterClass)
         {
-            const string sheet = RootArtDir + "/MageTopdownGridSheet.png";
+            string className = characterClass.ToString();
+            string sheet = RootArtDir + "/" + className + "TopdownGridSheet.png";
 
-            Sprite idleUp = LoadNamedSprite(sheet, "Mage_Up_Idle");
-            Sprite idleDown = LoadNamedSprite(sheet, "Mage_Down_Idle");
-            Sprite idleLeft = LoadNamedSprite(sheet, "Mage_Left_Idle");
-            Sprite idleRight = LoadNamedSprite(sheet, "Mage_Right_Idle");
+            Sprite idleUp = LoadNamedSprite(sheet, className + "_Up_Idle");
+            Sprite idleDown = LoadNamedSprite(sheet, className + "_Down_Idle");
+            Sprite idleLeft = LoadNamedSprite(sheet, className + "_Left_Idle");
+            Sprite idleRight = LoadNamedSprite(sheet, className + "_Right_Idle");
 
-            Sprite walkAUp = LoadNamedSprite(sheet, "Mage_Up_WalkA");
-            Sprite walkADown = LoadNamedSprite(sheet, "Mage_Down_WalkA");
-            Sprite walkALeft = LoadNamedSprite(sheet, "Mage_Left_WalkA");
-            Sprite walkARight = LoadNamedSprite(sheet, "Mage_Right_WalkA");
+            Sprite walkAUp = LoadNamedSprite(sheet, className + "_Up_WalkA");
+            Sprite walkADown = LoadNamedSprite(sheet, className + "_Down_WalkA");
+            Sprite walkALeft = LoadNamedSprite(sheet, className + "_Left_WalkA");
+            Sprite walkARight = LoadNamedSprite(sheet, className + "_Right_WalkA");
 
-            Sprite walkBUp = LoadNamedSprite(sheet, "Mage_Up_WalkB");
-            Sprite walkBDown = LoadNamedSprite(sheet, "Mage_Down_WalkB");
-            Sprite walkBLeft = LoadNamedSprite(sheet, "Mage_Left_WalkB");
-            Sprite walkBRight = LoadNamedSprite(sheet, "Mage_Right_WalkB");
+            Sprite walkBUp = LoadNamedSprite(sheet, className + "_Up_WalkB");
+            Sprite walkBDown = LoadNamedSprite(sheet, className + "_Down_WalkB");
+            Sprite walkBLeft = LoadNamedSprite(sheet, className + "_Left_WalkB");
+            Sprite walkBRight = LoadNamedSprite(sheet, className + "_Right_WalkB");
 
-            var playerGo = new GameObject("Player", typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(PlayerGridController));
+            var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(PlayerGridController));
             playerGo.transform.position = CellCenter(SpawnX, SpawnY);
             playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
             playerGo.GetComponent<SpriteRenderer>().sortingOrder = 0;
@@ -203,8 +261,12 @@ namespace Sapphire.EditorTools
         // --- Composition root ---
         private static void ComposeSceneRoot(
             TerrainBuildResult terrain,
-            PlayerGridController playerController,
-            PlayerInputReader playerInputReader,
+            PlayerGridController mageController,
+            PlayerInputReader mageInputReader,
+            GameObject mageSkillMenuRoot,
+            PlayerGridController warriorController,
+            PlayerInputReader warriorInputReader,
+            GameObject warriorSkillMenuRoot,
             CameraFollowRig followRig,
             SimpleMessagePanel messagePanel)
         {
@@ -213,8 +275,12 @@ namespace Sapphire.EditorTools
             var sceneComposer = systemsGo.GetComponent<SceneComposer>();
 
             AssignField(sceneComposer, "gridMapBuilder", terrain.GridMapBuilder);
-            AssignField(sceneComposer, "playerController", playerController);
-            AssignField(sceneComposer, "playerInputReader", playerInputReader);
+            AssignField(sceneComposer, "mageController", mageController);
+            AssignField(sceneComposer, "mageInputReader", mageInputReader);
+            AssignField(sceneComposer, "mageSkillMenuRoot", mageSkillMenuRoot);
+            AssignField(sceneComposer, "warriorController", warriorController);
+            AssignField(sceneComposer, "warriorInputReader", warriorInputReader);
+            AssignField(sceneComposer, "warriorSkillMenuRoot", warriorSkillMenuRoot);
             AssignField(sceneComposer, "cameraFollowRig", followRig);
             AssignField(sceneComposer, "interactionTrigger", interactionTrigger);
             AssignField(sceneComposer, "messagePanel", messagePanel);

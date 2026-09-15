@@ -24,6 +24,7 @@ namespace Sapphire.EditorTools
             ConfigureHealthBarFrame();
             ConfigureSkillIconsSet();
             HudArtImportConfigurator.ConfigureAll();
+            WarriorArtImportConfigurator.ConfigureAll();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();

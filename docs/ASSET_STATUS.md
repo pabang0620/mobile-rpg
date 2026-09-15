@@ -111,6 +111,36 @@ left 114/right 116/top 77/bottom 71px로 구했다(20px는 "그림이 시작하�
 
 알파 채널·9-slice border·그리드 셀 경계는 전부 `Read`로 눈으로 보지 않고 PIL/numpy로 알파 컬럼/로우 카운트 프로파일을 직접 실측해 구했다(이 문서가 반복 강조하는 "측정하지 않고 균등분할을 가정하지 말 것" 원칙 재적용 - SkillButtonFrame/HealthBarFrame/SkillIconsSet 셋 다 실제로는 정확히 절반/균등 그리드가 아니었다). 컴파일·EditMode 테스트 30/30·씬 파일 파싱(스프라이트 참조 null 아님 확인)·플레이어 재빌드·35초 이상 프로세스 생존까지 확인했고, 화면 렌더링·미학 판단은 하지 않았다(사용자 몫).
 
+## 2026-09-15 갱신: 캐릭터 플로우 아트(Login/CharacterSelect/CharacterCreate) + 워리어 클래스 아트 실측 배선 완료
+
+이전 세션이 코드 골격만 만들어두고 미뤘던 부분 - 아트가 도착해 전부 배선하고
+실측을 확정했다.
+
+- `Art/UI/Title/TitleBackground.png`(1672x941), `TitleLogo.png`(1942x809,
+  Simple), `PortraitMage.png`/`PortraitWarrior.png`(1024x1536) - Simple
+  스프라이트, border 불필요.
+- `Art/UI/Title/CharacterSlotFrame.png`(793x1983, 9-slice) 실측 border
+  `(36,31,36,32)`, `InputFieldFrame.png`(2170x725, 9-slice) 실측 border
+  `(36,60,35,54)` - 둘 다 PIL로 골드프레임<->navy 내부색 전이 지점을
+  40%-70% 구간 다중 샘플 mode로 확정(`CharacterFlowArtImportConfigurator.cs`).
+- `Art/WarriorTopdownGridSheet.png`(1086x1448, 3x4 격자, Mage와 동일 셀크기/
+  PPU=302)의 행별 pivot을 Mage와 같은 방법(3포즈 alpha bbox 평균)으로 실측:
+  Down(0.56,0.00) Left(0.55,0.02) Right(0.48,0.00) Up(0.51,0.19) - Mage와
+  달리 Left/Right를 강제로 같은 값으로 묶지 않음(원화 자체가 비대칭, 근거는
+  `docs/DECISIONS.md` 2026-09-15 항목).
+- `Art/UI/WarriorSkillIconsSetGold.png`(1536x1024, 3x2)의 6개 아이콘을
+  등분할 512x512 셀 각각의 alpha bbox로 재크롭 - 라벨(대검베기/돌진/
+  회오리베기/방패막기/전쟁함성/대지강타)과 실제 그림(검베기 이펙트/화살표/
+  쌍날/방패/포효하는 사자머리/바위 뚫는 건틀릿)이 정확히 일치함을 육안
+  확인. 게임 전체와 통일된 블루+골드 크리스탈 톤(의도된 스타일, 결함 아님).
+
+**실사용 확인**: `SapphireSceneBuilder.BuildEverything()`(신설, VillageHub +
+Login/CharacterSelect/CharacterCreate 4개 씬 전부 재빌드) ->
+`SapphireBuildPlayer.BuildWindows` 재빌드 후 스크린샷 6장
+(`generated-images/diagnostics/flow_*.png`)을 오케스트레이터가 직접 열어
+확인 - 핑크 텍스처/빈 화면/겹침/잘림/한글 깨짐 없음, 워리어·법사 둘 다 발이
+바닥 타일에 정확히 붙어 서있음.
+
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.

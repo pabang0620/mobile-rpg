@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
+using Sapphire.Domain.Character;
 using Sapphire.Presentation.Movement;
 using Sapphire.Presentation.Skills;
 using Sapphire.Presentation.UI;
@@ -12,17 +13,23 @@ using Sapphire.Presentation.UI;
 namespace Sapphire.EditorTools
 {
     /// <summary>
-    /// Result of <see cref="VillageHubUiBuilder.Build"/>: the piece the scene
+    /// Result of <see cref="VillageHubUiBuilder.Build"/>: the pieces the scene
     /// orchestrator (<see cref="SapphireSceneBuilder"/>) needs to wire into the
-    /// composition root.
+    /// composition root. MageSkillMenuRoot/WarriorSkillMenuRoot are the two
+    /// per-class RadialSkillMenu roots (see VillageHubSkillMenuBuilder) -
+    /// SceneComposer activates exactly one of them at runtime.
     /// </summary>
     internal readonly struct UiBuildResult
     {
         internal readonly SimpleMessagePanel MessagePanel;
+        internal readonly GameObject MageSkillMenuRoot;
+        internal readonly GameObject WarriorSkillMenuRoot;
 
-        internal UiBuildResult(SimpleMessagePanel messagePanel)
+        internal UiBuildResult(SimpleMessagePanel messagePanel, GameObject mageSkillMenuRoot, GameObject warriorSkillMenuRoot)
         {
             MessagePanel = messagePanel;
+            MageSkillMenuRoot = mageSkillMenuRoot;
+            WarriorSkillMenuRoot = warriorSkillMenuRoot;
         }
     }
 
@@ -30,11 +37,12 @@ namespace Sapphire.EditorTools
     /// Builds the VillageHub scene's UI: EventSystem, Canvas, the message
     /// panel (with its close button), the bottom-left virtual movement pad,
     /// the bottom-right radial skill menu (basic attack + fan of skill
-    /// buttons + a 5th button outside the fan + range indicator/RadialSkillMenu
-    /// wiring), the top-left HP/MP gauges + level text, the top-center region
-    /// name banner, and the right-side Odin-style menu panel. Split out of
-    /// <see cref="SapphireSceneBuilder"/> (UI responsibility only - grid/tile/
-    /// fence generation lives in <see cref="VillageHubTerrainBuilder"/>).
+    /// buttons + range indicator/RadialSkillMenu wiring - now built TWICE,
+    /// once per character class, see VillageHubSkillMenuBuilder.Build and
+    /// SceneComposer), the top-left HP/MP gauges + level text, the top-center
+    /// region name banner, and the right-side Odin-style menu panel. Split
+    /// out of <see cref="SapphireSceneBuilder"/> (UI responsibility only -
+    /// grid/tile/fence generation lives in <see cref="VillageHubTerrainBuilder"/>).
     /// 2026-09-16 (REMEDIATION_PLAN.md Phase 2/3): reworked the skill fan
     /// geometry (exactly 4 fan buttons + 1 outside button, verified non-
     /// overlapping), added the MP gauge + level text + region banner, replaced
@@ -44,7 +52,9 @@ namespace Sapphire.EditorTools
     /// </summary>
     internal static class VillageHubUiBuilder
     {
-        internal static UiBuildResult Build(PlayerGridController playerController, PlayerInputReader playerInputReader, SkillCastFeedback castFeedback)
+        internal static UiBuildResult Build(
+            PlayerGridController mageController, PlayerInputReader mageInputReader, SkillCastFeedback mageCastFeedback,
+            PlayerGridController warriorController, PlayerInputReader warriorInputReader, SkillCastFeedback warriorCastFeedback)
         {
             BuildEventSystem();
             GameObject canvasGo = BuildCanvas();
@@ -54,13 +64,18 @@ namespace Sapphire.EditorTools
 
             SimpleMessagePanel messagePanel = BuildMessagePanel(canvasGo, panelSprite, buttonSprite);
 
-            BuildVirtualMovementPad(canvasGo, playerInputReader);
-            VillageHubSkillMenuBuilder.Build(canvasGo, playerController, castFeedback);
+            // The pad is assigned to BOTH input readers - harmless, since
+            // only the SceneComposer-activated rig's GameObject runs Update
+            // at all (see SceneComposer.ActivateSelectedClassRig), so only
+            // the active reader ever actually consumes it.
+            BuildVirtualMovementPad(canvasGo, mageInputReader, warriorInputReader);
+            GameObject mageSkillMenuRoot = VillageHubSkillMenuBuilder.Build(canvasGo, mageController, mageCastFeedback, CharacterClass.Mage, "SkillIconsSetGold.png");
+            GameObject warriorSkillMenuRoot = VillageHubSkillMenuBuilder.Build(canvasGo, warriorController, warriorCastFeedback, CharacterClass.Warrior, "WarriorSkillIconsSetGold.png");
             BuildGauges(canvasGo);
             BuildRegionNameBanner(canvasGo);
             VillageHubMenuBuilder.Build(canvasGo, messagePanel);
 
-            return new UiBuildResult(messagePanel);
+            return new UiBuildResult(messagePanel, mageSkillMenuRoot, warriorSkillMenuRoot);
         }
 
         // --- EventSystem + Canvas ---
@@ -196,7 +211,7 @@ namespace Sapphire.EditorTools
         // MovementStickGold.png's base ring/knob art - VirtualMovementPad's own
         // drag logic is untouched, only the sprites/sizes change here.
 
-        private static void BuildVirtualMovementPad(GameObject canvasGo, PlayerInputReader playerInputReader)
+        private static void BuildVirtualMovementPad(GameObject canvasGo, PlayerInputReader mageInputReader, PlayerInputReader warriorInputReader)
         {
             Sprite baseSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MovementStickGold.png", "MovementStickGold_Base");
             Sprite knobSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MovementStickGold.png", "MovementStickGold_Knob");
@@ -232,7 +247,8 @@ namespace Sapphire.EditorTools
             AssignField(pad, "background", padRect);
             AssignField(pad, "knob", knobRect);
 
-            AssignField(playerInputReader, "virtualPad", pad);
+            AssignField(mageInputReader, "virtualPad", pad);
+            AssignField(warriorInputReader, "virtualPad", pad);
         }
 
         // --- Top-left HP + MP gauges + level text (2026-09-16, Phase 2 items
@@ -340,9 +356,15 @@ namespace Sapphire.EditorTools
         {
             Sprite bannerSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionHeader.png", "MenuSectionHeader");
             const float bannerWidth = 360f;
-            // MenuSectionHeader's cropped sprite is 2138x281 (aspect ~7.61) -
-            // matching that aspect at bannerWidth=360 keeps the banner
-            // unsquished: 360/7.61 ~= 47.3.
+            // bannerHeight is a layout choice, not an aspect-match requirement -
+            // Image.Type.Sliced below keeps the 9-slice border a fixed size in
+            // canvas units regardless of overall height, so no squishing occurs
+            // at any height. (Historical note: this comment previously cited a
+            // stale 2138x281 crop to justify aspect-matching; the actual crop
+            // as of 2026-09-15 is 2153x126 - see HudArtImportConfigurator.
+            // ConfigureMenuSectionHeader - but aspect-matching was never
+            // actually required for a Sliced sprite, so bannerHeight is left
+            // unchanged at the previously-tuned 47.3.)
             const float bannerHeight = 47.3f;
 
             var bannerGo = new GameObject("RegionNameBanner", typeof(Image));

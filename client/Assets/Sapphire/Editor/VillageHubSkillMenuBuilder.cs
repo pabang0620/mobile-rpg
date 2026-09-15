@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Sapphire.Domain.Character;
 using Sapphire.Presentation.Movement;
 using Sapphire.Presentation.Skills;
 
@@ -21,20 +22,30 @@ namespace Sapphire.EditorTools
     /// total, 4 gaps of 30deg) so all 5 SkillCatalog entries sit at a uniform,
     /// visibly tight distance from the basic-attack button - see the
     /// coordinate-math verification block below for the exact numbers.
+    ///
+    /// Character-flow slice: this fan is now built once per character class
+    /// (Mage/Warrior), each with its own icon sheet and its own root
+    /// GameObject ("RadialSkillMenu_Mage"/"RadialSkillMenu_Warrior") so
+    /// SceneComposer can activate exactly one at runtime. The geometry
+    /// (radius/arc/sizes) is identical for both classes - only the icon
+    /// sheet path, SkillCatalog.ForClass selection and the built
+    /// RadialSkillMenu's characterClass field differ.
     /// </summary>
     internal static class VillageHubSkillMenuBuilder
     {
-        internal static void Build(GameObject canvasGo, PlayerGridController playerController, SkillCastFeedback castFeedback)
+        internal static GameObject Build(GameObject canvasGo, PlayerGridController playerController, SkillCastFeedback castFeedback, CharacterClass characterClass, string iconSheetFileName)
         {
-            if (SkillCatalog.All.Length != 5)
+            SkillDefinition[] skills = SkillCatalog.ForClass(characterClass);
+            if (skills.Length != 5)
             {
-                throw new Exception($"VillageHubSkillMenuBuilder's fan geometry (5 fan slots) assumes exactly 5 SkillCatalog entries, found {SkillCatalog.All.Length}.");
+                throw new Exception($"VillageHubSkillMenuBuilder's fan geometry (5 fan slots) assumes exactly 5 SkillCatalog entries, found {skills.Length} for {characterClass}.");
             }
 
             Sprite skillFrameSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrameGold.png", "SkillButtonFrame_Skill");
             Sprite basicAttackFrameSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrameGold.png", "SkillButtonFrame_BasicAttack");
+            string iconSheetPath = SapphireSceneBuilder.UiArtDir + "/" + iconSheetFileName;
 
-            var rootGo = new GameObject("RadialSkillMenu", typeof(RectTransform));
+            var rootGo = new GameObject("RadialSkillMenu_" + characterClass, typeof(RectTransform));
             rootGo.transform.SetParent(canvasGo.transform, false);
             var rootRect = rootGo.GetComponent<RectTransform>();
             rootRect.anchorMin = new Vector2(1f, 0f);
@@ -67,7 +78,7 @@ namespace Sapphire.EditorTools
             float skillIconSize = skillButtonSize * skillOpeningFraction * iconToOpeningRatio;
             float basicAttackIconSize = basicAttackSize * basicAttackOpeningFraction * iconToOpeningRatio;
 
-            Sprite attackIcon = LoadSkillIcon("SkillIcons_BasicAttack");
+            Sprite attackIcon = LoadSkillIcon(iconSheetPath, "SkillIcons_BasicAttack");
             Button attackButton = BuildRadialButton(rootGo, basicAttackFrameSprite, "AttackButton", Vector2.zero, basicAttackSize, attackIcon, basicAttackIconSize);
 
             // Fan: all 5 buttons, radius 172, arc 80deg-200deg (120deg span, 4
@@ -76,16 +87,15 @@ namespace Sapphire.EditorTools
             // 2*172*sin(15deg) = 88.98 units > the 80-unit button diameter
             // (the distance two same-size circles need to just touch) for
             // every adjacent pair, a ~9-unit clearance gap - verified below,
-            // not assumed. SkillCatalog.All[0] (마력쉴드) sits at 80deg (nearest
-            // the top of the fan) through SkillCatalog.All[4] (번개창) at
-            // 200deg (nearest the bottom), matching the 1-5 key bindings in
-            // RadialSkillMenu.Update in that same order.
+            // not assumed. skills[0] sits at 80deg (nearest the top of the
+            // fan) through skills[4] at 200deg (nearest the bottom), matching
+            // the 1-5 key bindings in RadialSkillMenu.Update in that same order.
             const float skillRadius = 172f;
             const float fanArcStartDeg = 80f;
             const float fanArcEndDeg = 200f;
             const int fanCount = 5;
-            var skillButtons = new Button[SkillCatalog.All.Length];
-            var buttonOffsets = new Vector2[SkillCatalog.All.Length];
+            var skillButtons = new Button[skills.Length];
+            var buttonOffsets = new Vector2[skills.Length];
 
             for (int i = 0; i < fanCount; i++)
             {
@@ -94,15 +104,17 @@ namespace Sapphire.EditorTools
                 Vector2 offset = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * skillRadius;
                 buttonOffsets[i] = offset;
 
-                SkillDefinition skill = SkillCatalog.All[i];
-                Sprite iconSprite = LoadSkillIcon(skill.IconSpriteName);
+                SkillDefinition skill = skills[i];
+                Sprite iconSprite = LoadSkillIcon(iconSheetPath, skill.IconSpriteName);
                 skillButtons[i] = BuildRadialButton(rootGo, skillFrameSprite, "SkillButton_" + i, offset, skillButtonSize, iconSprite, skillIconSize);
             }
 
             VerifyNoOverlap(buttonOffsets, skillButtonSize, basicAttackSize);
             VerifyOnScreen(rootRect.anchoredPosition, buttonOffsets, skillButtonSize, basicAttackSize);
 
-            BuildSkillSystems(attackButton, skillButtons, playerController, castFeedback);
+            BuildSkillSystems(attackButton, skillButtons, playerController, castFeedback, characterClass);
+
+            return rootGo;
         }
 
         // Coordinate-math verification (REMEDIATION_PLAN.md Phase 5 principle:
@@ -163,11 +175,12 @@ namespace Sapphire.EditorTools
         }
 
         // All 6 skill icons (basic attack + the 5 SkillCatalog entries) live in
-        // the single SkillIconsSetGold.png sheet - sprite names unchanged from
-        // previous passes.
-        private static Sprite LoadSkillIcon(string spriteName)
+        // a single 6-cell sheet, one sheet per class (SkillIconsSetGold.png
+        // for Mage, WarriorSkillIconsSetGold.png for Warrior) - see
+        // WarriorArtImportConfigurator for the warrior sheet's slice names.
+        private static Sprite LoadSkillIcon(string sheetPath, string spriteName)
         {
-            return VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIconsSetGold.png", spriteName);
+            return VillageHubUiBuilder.LoadNamedSprite(sheetPath, spriteName);
         }
 
         // 2026-09-16: keyHint parameter removed entirely (REMEDIATION_PLAN.md
@@ -210,9 +223,9 @@ namespace Sapphire.EditorTools
             return button;
         }
 
-        private static void BuildSkillSystems(Button attackButton, Button[] skillButtons, PlayerGridController playerController, SkillCastFeedback castFeedback)
+        private static void BuildSkillSystems(Button attackButton, Button[] skillButtons, PlayerGridController playerController, SkillCastFeedback castFeedback, CharacterClass characterClass)
         {
-            var skillSystemsGo = new GameObject("SkillSystems");
+            var skillSystemsGo = new GameObject("SkillSystems_" + characterClass);
             var rangeIndicator = skillSystemsGo.AddComponent<SkillRangeIndicator>();
             var radialSkillMenu = skillSystemsGo.AddComponent<RadialSkillMenu>();
             // Reuses VillageHubUiBuilder's AssignField (code-reviewer flagged
@@ -223,6 +236,7 @@ namespace Sapphire.EditorTools
             VillageHubUiBuilder.AssignField(radialSkillMenu, "player", playerController);
             VillageHubUiBuilder.AssignField(radialSkillMenu, "rangeIndicator", rangeIndicator);
             VillageHubUiBuilder.AssignField(radialSkillMenu, "castFeedback", castFeedback);
+            VillageHubUiBuilder.AssignField(radialSkillMenu, "characterClass", characterClass);
         }
     }
 }

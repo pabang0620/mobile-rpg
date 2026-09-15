@@ -125,53 +125,49 @@ namespace Sapphire.EditorTools
         {
             // UI: horizontal section-header banner, 2172x724 source canvas.
             //
-            // 2026-09-16 (F6.4 fix): the previous crop (17,246,2138,281 -
-            // comment above this history claimed alpha bbox y=[197,478]) was
-            // NOT tight to the actual visible band - it was tight only to the
-            // decorative end-gems' full vertical reach. Re-measured with PIL:
-            // at the crop's own horizontal center column, that 281-tall crop
-            // is fully transparent from row 0 to ~79 and again from ~221 to
-            // 280 (of 281) - i.e. ~76px of dead transparent margin above the
-            // band and ~60px below it, EVEN AFTER the "tight" crop. Because
-            // Text under this sprite is anchored to the FULL rect and
-            // vertical-centered, that dead margin is exactly what pushed the
-            // section title up against the visible band's top edge instead of
-            // sitting centered in it.
+            // 2026-09-15 re-measurement: the previous crop (17,306,2138,145)
+            // and border (232,23,231,26) were re-checked against the actual
+            // PNG with PIL/numpy and found NOT tight - re-deriving via this
+            // file's own stated method (row alpha-pixel-count > 90% of the
+            // CROPPED width, per the x-range below) gives a materially
+            // different, tighter band.
             //
-            // Correct crop: the row range where the band is dense across
-            // nearly the FULL width (row alpha-pixel-count > 90% of the
-            // sprite's own width, i.e. > 1924 of 2138) - PIL: rows 273-417
-            // (top-left origin) of the 724-tall source, a contiguous 145px
-            // band with no dead margin (96% of the cropped rect is opaque).
-            // x range unchanged (17-2154, still the widest opaque column
-            // range). Converted to Unity's bottom-up Rect: y = 724 - 418 =
-            // 306, height 145.
+            // x range: full alpha bbox (any alpha>8) is x=[9,2161] (width
+            // 2153) - the previous crop's x=[17,2154] clipped ~8px off the
+            // left end and ~5px off the right end (the "좌우 끝 잘림" defect).
+            // y range: row-density > 90% of the 2153-wide cropped width holds
+            // for rows 287-412 (top-left origin, height 126) - the previous
+            // crop's y=[273,418] included ~14px of near-empty margin above
+            // the dense band and ~6px below it (rows in that margin were only
+            // 4-8% dense, nowhere near the sprite's own >90% "dense" bar this
+            // file's convention uses). Converted to Unity's bottom-up Rect:
+            // y = 724 - 413 = 311, height 126.
             //
-            // Border re-measured within this NEW 2138x145 crop (PIL scan down
-            // its center column): gold trim occupies rows 0-25 (top, 26px)
-            // and 122-144 (bottom, 23px) with flat navy in between (26-121) -
-            // no more compressing a mostly-empty margin into the border.
-            // Left/right border unchanged (232/231 - horizontal gold-frame
-            // width doesn't depend on which vertical rows were kept, and was
-            // independently re-verified via the same navy-vs-gold color
-            // transition at this crop's center row).
+            // Border re-measured within this NEW 2153x126 crop: sampling the
+            // gold<->navy(fill RGB~(7,33,63)) transition at 11 rows/columns in
+            // the 40%-70% band (median, this file's usual convention) gives
+            // left=53 right=52 top=23 bottom=23 - top/bottom matches the old
+            // value closely, but left/right (232/231) was far too large. The
+            // asset has small decorative studs starting a few px inside the
+            // edge and settling into flat navy by ~x=53-56 on every sampled
+            // row (confirmed by direct pixel dump, not just the transition
+            // scan) - 232px would have consumed ~43% of a 400-wide call site's
+            // width as fixed non-stretch corner for no visual reason.
             //
             // Reused for two purposes: the top-center region name banner
             // (VillageHubUiBuilder.BuildRegionNameBanner) AND each Odin-menu
-            // section header (VillageHubMenuBuilder, now at OdinHeaderHeight
-            // 40 instead of 36 - see that class). Width is still the fixed
-            // dimension (2138, unchanged from before), so the existing
-            // pixelsPerUnit calibration (2138/360, *100 per this file's
-            // convention) is still valid.
+            // section header (VillageHubMenuBuilder, OdinHeaderHeight 40).
+            // Width is still the fixed dimension driving pixelsPerUnit, but
+            // now 2153 (not 2138) per the corrected crop above.
             ArtImportConfigurator.ConfigureMultiSprite(
                 SapphireSceneBuilder.UiArtDir + "/MenuSectionHeader.png",
-                ppu: 100f * 2138f / 360f,
+                ppu: 100f * 2153f / 360f,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
                 maxSize: null,
                 slices: new[]
                 {
-                    ("MenuSectionHeader", new Rect(17, 306, 2138, 145), new Vector2(0.5f, 0.5f)),
+                    ("MenuSectionHeader", new Rect(9, 311, 2153, 126), new Vector2(0.5f, 0.5f)),
                 });
 
             // ConfigureMultiSprite's SpriteMetaData tuples (shared by every other
@@ -183,7 +179,7 @@ namespace Sapphire.EditorTools
             ApplySingleSliceBorder(
                 SapphireSceneBuilder.UiArtDir + "/MenuSectionHeader.png",
                 "MenuSectionHeader",
-                new Vector4(232, 23, 231, 26));
+                new Vector4(53, 23, 52, 23));
         }
 
         private static void ApplySingleSliceBorder(string path, string spriteName, Vector4 border)

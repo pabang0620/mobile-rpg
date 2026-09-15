@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Sapphire.Domain.Character;
 using Sapphire.Domain.Grid;
 using Sapphire.Domain.Skills;
 using Sapphire.Presentation.Movement;
@@ -9,9 +10,14 @@ namespace Sapphire.Presentation.Skills
 {
     /// <summary>
     /// Right-side radial action menu: a center "기본공격"(basic attack) button
-    /// surrounded by skill buttons (SkillCatalog entries, currently 5:
-    /// 마력쉴드/텔레포트/낙뢰/고드름/번개창). Each button is clickable or
-    /// triggered by a key - J for the basic attack, 1-5 for the skills.
+    /// surrounded by skill buttons (SkillCatalog.ForClass(characterClass)
+    /// entries, 5 per class - mage: 마력쉴드/텔레포트/낙뢰/고드름/번개창;
+    /// warrior: 돌진/회오리베기/방패막기/전쟁함성/대지강타). One
+    /// RadialSkillMenu instance drives exactly one class (characterClass is
+    /// set once at scene-build time); the VillageHub scene builds one
+    /// instance per class and activates only the one matching the selected
+    /// character (see SceneComposer). Each button is clickable or triggered
+    /// by a key - J for the basic attack, 1-5 for the skills.
     /// Replaces the old bottom horizontal skill bar (2026-09-14 UI overhaul,
     /// see docs/DECISIONS.md) - button *layout* (2026-09-16: exactly 4 of the
     /// 5 buttons sit in a verified-non-overlapping fan, the 5th sits just
@@ -35,12 +41,24 @@ namespace Sapphire.Presentation.Skills
         [SerializeField] private PlayerGridController player;
         [SerializeField] private SkillRangeIndicator rangeIndicator;
         [SerializeField] private SkillCastFeedback castFeedback;
-        private SkillVfxPlayer skillVfx;
+        // Which class's SkillCatalog.ForClass(...) array + ISkillVfxPlayer
+        // implementation this fan drives. Set once at scene-build time
+        // (VillageHubSkillMenuBuilder.Build) via reflection, same convention
+        // every other field here uses - defaults to Mage so any pre-existing
+        // wiring that never sets this keeps behaving exactly as before this
+        // field was added.
+        [SerializeField] private CharacterClass characterClass = CharacterClass.Mage;
+        private ISkillVfxPlayer skillVfx;
+
+        private SkillDefinition[] Skills => SkillCatalog.ForClass(characterClass);
 
         private void Awake()
         {
             if (player != null)
-                skillVfx = player.GetComponent<SkillVfxPlayer>() ?? player.gameObject.AddComponent<SkillVfxPlayer>();
+            {
+                skillVfx = ResolveSkillVfx();
+            }
+
             if (basicAttackButton != null)
             {
                 basicAttackButton.onClick.AddListener(CastBasicAttack);
@@ -103,7 +121,8 @@ namespace Sapphire.Presentation.Skills
 
         public void CastSkill(int index)
         {
-            if (index < 0 || index >= SkillCatalog.All.Length)
+            SkillDefinition[] skills = Skills;
+            if (index < 0 || index >= skills.Length)
             {
                 return;
             }
@@ -113,21 +132,45 @@ namespace Sapphire.Presentation.Skills
                 return;
             }
 
-            SkillDefinition skill = SkillCatalog.All[index];
+            SkillDefinition skill = skills[index];
             GridCoord origin = player.Mover.Position;
             GridDirection facing = player.Mover.Facing;
 
-            if (skill.Id == SkillCatalog.BlinkSkillId && !player.TryBlink(skill.RangeTiles))
+            // Blink (mage) and Dash (warrior) both move the caster via the
+            // exact same GridMover.TryBlink mechanic before any VFX plays -
+            // see SkillVfxPlayer/WarriorSkillVfxPlayer's row-0/1 comments for
+            // how they reconstruct the departure point afterwards.
+            bool isMovementSkill = skill.Id == SkillCatalog.BlinkSkillId || skill.Id == SkillCatalog.DashSkillId;
+            if (isMovementSkill && !player.TryBlink(skill.RangeTiles))
             {
                 castFeedback?.PlayCast("이동할 공간이 없습니다");
                 return;
             }
 
-            if (skillVfx == null)
-                skillVfx = player.GetComponent<SkillVfxPlayer>() ?? player.gameObject.AddComponent<SkillVfxPlayer>();
+            skillVfx = ResolveSkillVfx();
             skillVfx.Play(index, origin, player.Mover.Position, facing);
 
             castFeedback?.PlayCast(skill.DisplayName);
+        }
+
+        private ISkillVfxPlayer ResolveSkillVfx()
+        {
+            if (skillVfx != null)
+            {
+                return skillVfx;
+            }
+
+            if (player == null)
+            {
+                return null;
+            }
+
+            if (characterClass == CharacterClass.Warrior)
+            {
+                return player.GetComponent<WarriorSkillVfxPlayer>() ?? player.gameObject.AddComponent<WarriorSkillVfxPlayer>();
+            }
+
+            return player.GetComponent<SkillVfxPlayer>() ?? player.gameObject.AddComponent<SkillVfxPlayer>();
         }
     }
 }

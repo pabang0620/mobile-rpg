@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Sapphire.Presentation.UI;
 
@@ -168,10 +169,38 @@ namespace Sapphire.EditorTools
                 cursorY -= rows * OdinItemRowHeight + OdinSectionGap;
             }
 
+            // Character-flow slice, task requirement: one return path from the
+            // village back to CharacterSelect, somewhere in the menu panel.
+            // A standalone footer button (not a MenuCatalog grid item) wired
+            // to load the scene directly, rather than routing through
+            // MainMenuPanel.Select's generic "coming soon" placeholder - so
+            // this doesn't touch MainMenuPanel.cs/MenuCatalog.cs or any of
+            // the existing 8 menu items' behavior at all.
+            BuildCharacterSelectButton(panelGo, openButtonSprite);
+
             var controller = canvasGo.AddComponent<MainMenuPanel>();
             controller.Configure(overlayGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), messagePanel);
             backdropButton.onClick.AddListener(controller.Close);
             overlayGo.SetActive(false);
+        }
+
+        private static void BuildCharacterSelectButton(GameObject panelGo, Sprite buttonSprite)
+        {
+            var buttonGo = new GameObject("CharacterSelectButton", typeof(Image), typeof(Button));
+            buttonGo.transform.SetParent(panelGo.transform, false);
+            var rect = buttonGo.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0f);
+            rect.anchorMax = new Vector2(0.5f, 0f);
+            rect.pivot = new Vector2(0.5f, 0f);
+            rect.sizeDelta = new Vector2(OdinPanelWidth - 2f * OdinContentMargin, 56f);
+            rect.anchoredPosition = new Vector2(0f, OdinContentMargin);
+            var image = buttonGo.GetComponent<Image>();
+            image.sprite = buttonSprite;
+            image.type = Image.Type.Sliced;
+            Button button = buttonGo.GetComponent<Button>();
+            button.onClick.AddListener(() => SceneManager.LoadScene("CharacterSelect"));
+
+            AddButtonLabel(buttonGo, "캐릭터 선택으로", 20);
         }
 
         private static void BuildOdinSectionHeader(GameObject panelGo, Sprite headerSprite, string title, float topY, float contentWidth)

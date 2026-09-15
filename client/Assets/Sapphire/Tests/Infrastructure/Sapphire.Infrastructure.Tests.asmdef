@@ -1,0 +1,25 @@
+{
+    "name": "Sapphire.Infrastructure.Tests",
+    "rootNamespace": "Sapphire.Infrastructure.Tests",
+    "references": [
+        "Sapphire.Domain",
+        "Sapphire.Infrastructure",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

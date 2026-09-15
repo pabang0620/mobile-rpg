@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -58,9 +59,24 @@ namespace Sapphire.EditorTools
             // a fresh launch honors the 1280x720 default above.
             PlayerSettings.defaultIsNativeResolution = false;
 
+            // 2026-09 character-flow slice: was a hardcoded single-scene array
+            // (VillageHub only). Now builds whatever EditorBuildSettings.scenes
+            // holds, in its registered order - BuildSettingsSceneRegistrar
+            // keeps Login at index 0 (docs/planning/01_PRODUCT.md's "첫 씬이
+            // 로그인"), so once both SapphireSceneBuilder.BuildAll and
+            // CharacterFlowSceneBuilder.BuildAll have run, this picks up all
+            // 4 scenes automatically with no scene list to keep in sync here.
+            string[] scenePaths = EditorBuildSettings.scenes.Select(s => s.path).ToArray();
+            if (scenePaths.Length == 0)
+            {
+                Debug.LogError("SAPPHIRE_PLAYER_BUILD FAILED: EditorBuildSettings.scenes is empty - run SapphireSceneBuilder.BuildAll (and CharacterFlowSceneBuilder.BuildAll) first.");
+                EditorApplication.Exit(1);
+                return;
+            }
+
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
-                scenes = new[] { "Assets/Sapphire/Scenes/VillageHub.unity" },
+                scenes = scenePaths,
                 locationPathName = output,
                 target = BuildTarget.StandaloneWindows64,
                 options = options
