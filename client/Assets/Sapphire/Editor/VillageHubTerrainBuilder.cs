@@ -57,14 +57,19 @@ namespace Sapphire.EditorTools
         {
             Tile blockerTile = CreateBlockerTile();
 
-            Tile grassTileA = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/GroundTiles.png", "GroundTiles_Grass_0", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_0.asset");
-            Tile grassTileB = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/GroundTiles.png", "GroundTiles_Grass_1", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_1.asset");
-            Tile grassTileC = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/GroundTiles.png", "GroundTiles_Grass_2", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_2.asset");
+            // 2026-09-15: each ground variant is now its own standalone
+            // Sprite/Single texture (Art/World/Ground/<Name>.png) instead of
+            // a named sub-sprite sliced out of one shared GroundTiles.png
+            // atlas - see ArtImportConfigurator.ConfigureGroundAtlas for why
+            // (atlas bleed was the source of the tile-boundary seam lines).
+            Tile grassTileA = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Grass_0.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_0.asset");
+            Tile grassTileB = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Grass_1.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_1.asset");
+            Tile grassTileC = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Grass_2.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_2.asset");
             Tile[] grassTiles = { grassTileA, grassTileB, grassTileC };
 
-            Tile dirtTileA = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/GroundTiles.png", "GroundTiles_Dirt_0", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_0.asset");
-            Tile dirtTileB = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/GroundTiles.png", "GroundTiles_Dirt_1", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_1.asset");
-            Tile dirtTileC = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/GroundTiles.png", "GroundTiles_Dirt_2", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_2.asset");
+            Tile dirtTileA = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Dirt_0.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_0.asset");
+            Tile dirtTileB = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Dirt_1.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_1.asset");
+            Tile dirtTileC = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Dirt_2.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_2.asset");
             Tile[] dirtTiles = { dirtTileA, dirtTileB, dirtTileC };
 
             AssetDatabase.SaveAssets();
@@ -260,10 +265,18 @@ namespace Sapphire.EditorTools
             return tile;
         }
 
-        private static Tile CreateGroundTile(string spritesheetPath, string spriteName, string assetPath)
+        // 2026-09-15: texturePath now points at a standalone Sprite/Single
+        // texture (one ground tile = one file, see CreateTiles above), so the
+        // sprite is loaded directly by asset path instead of by name inside a
+        // shared multi-sprite atlas.
+        private static Tile CreateGroundTile(string texturePath, string assetPath)
         {
             EnsureGeneratedDir();
-            Sprite sprite = LoadNamedSprite(spritesheetPath, spriteName);
+            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(texturePath);
+            if (sprite == null)
+            {
+                throw new Exception($"Sprite not found at {texturePath}");
+            }
 
             var existing = AssetDatabase.LoadAssetAtPath<Tile>(assetPath);
             if (existing != null)

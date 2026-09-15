@@ -29,44 +29,77 @@ namespace Sapphire.EditorTools
             AssetDatabase.Refresh();
         }
 
+        // 2026-09-15: one shared PPU for all 6 individually-imported ground
+        // tiles (see ConfigureGroundAtlas below for why this isn't 512).
+        private const float GroundTilePpu = 508f;
+
         private static void ConfigureGroundAtlas()
         {
-            // Ground atlas: 2026-09-14 regenerated from scratch (GroundTiles.png
-            // replaced, see docs/DECISIONS.md) after discovering the previous
-            // "hq" 1024x1024-cell atlas had each cell internally composed of four
-            // different 512x512 sub-images (real content difference, not a
-            // seam-only artifact - measured cross-quadrant mean abs RGB diff ~39-49
-            // on the old asset). The workaround of slicing only a 512x512 sub-rect
-            // per cell (kept in git history) avoided the symptom without fixing the
-            // source asset, and is no longer needed.
-            //
-            // New atlas: 1536x1024, 3x2 grid (3 grass + 3 dirt), each cell a true
-            // 512x512 whole tile generated as one continuous texture. Verified
-            // internally uniform (cross-quadrant mean abs diff ~17-25 on the final
-            // seamless-processed asset, in the same range as the known-good
-            // pre-regen reference asset ~25, well below the broken asset's ~39-49)
-            // and seamless when tiled (wrap-around edge-vs-interior-baseline ratio
-            // ~1.0-1.1x after the roll+blend seamless-ify pass, vs ~1.8-2.4x on the
-            // raw unprocessed generation). Whole-cell slicing restored - ppu=512
-            // (cell height/width) so each cell fills exactly 1 world unit, matching
-            // pre-bugfix behavior now that the source is actually correct.
-            var centerPivot = new Vector2(0.5f, 0.5f);
-            ConfigureMultiSprite(
-                SapphireSceneBuilder.WorldArtDir + "/GroundTiles.png",
-                ppu: 512,
-                filterMode: FilterMode.Bilinear,
-                mipmaps: true,
-                maxSize: 256,
-                slices: new[]
-                {
-                    // Top row = grass (y=512..1024), bottom row = dirt (y=0..512).
-                    ("GroundTiles_Grass_0", new Rect(0, 512, 512, 512), centerPivot),
-                    ("GroundTiles_Grass_1", new Rect(512, 512, 512, 512), centerPivot),
-                    ("GroundTiles_Grass_2", new Rect(1024, 512, 512, 512), centerPivot),
-                    ("GroundTiles_Dirt_0", new Rect(0, 0, 512, 512), centerPivot),
-                    ("GroundTiles_Dirt_1", new Rect(512, 0, 512, 512), centerPivot),
-                    ("GroundTiles_Dirt_2", new Rect(1024, 0, 512, 512), centerPivot),
-                });
+            // Ground tiles: 2026-09-15 split from one shared 1536x1024 3x2
+            // atlas (GroundTiles.png, kept in git history) into 6 standalone
+            // 512x512 textures under Art/World/Ground/. Root cause was two
+            // compounding artifacts that both showed up as a 1px dark seam at
+            // tile boundaries in the orchestrator's diagnostic screenshot
+            // (final2_1280_default.png, e.g. x~=207/527/447/687/1167/1247):
+            //  (a) atlas bleed - all 6 cells shared one texture with
+            //      bilinear filtering + Max Size 256 downscale, so a sprite's
+            //      edge texel sampled a neighboring cell's edge texel across
+            //      the shared atlas seam;
+            //  (b) sub-pixel gaps between adjacent tile quads letting the
+            //      camera background color show through at the seam.
+            // Splitting into 6 separate textures with wrapMode=Clamp kills
+            // (a) outright - there is no neighboring cell in the same texture
+            // to bleed from. (b) is closed by importing at PPU=508 instead of
+            // 512: each 512px-wide tile then renders as a 512/508 ~= 1.008
+            // unit quad, ~0.4% larger than the 1x1 grid cell it's placed in,
+            // so adjacent tiles overlap by that same ~0.4% and paper over any
+            // sub-pixel placement gap instead of leaving the background
+            // visible through it.
+            foreach (string tileName in new[] { "Grass_0", "Grass_1", "Grass_2", "Dirt_0", "Dirt_1", "Dirt_2" })
+            {
+                ConfigureGroundTileSprite(SapphireSceneBuilder.WorldArtDir + "/Ground/" + tileName + ".png");
+            }
+        }
+
+        // Standalone (non-atlas) sprite import for one ground tile texture:
+        // Sprite/Single, center pivot, Clamp wrap (no neighboring cell exists
+        // in the texture to bleed from), bilinear filtering, mipmaps off (a
+        // ground-plane tile is always viewed at ~1:1 scale, never minified
+        // enough to need mip levels - and mips would reintroduce the same
+        // edge-bleed artifact this split is meant to remove), Max Size 256,
+        // uncompressed, FullRect mesh (a plain rectangular tile doesn't need
+        // Tight's alpha-hull trim), PPU 508 (see ConfigureGroundAtlas above).
+        private static void ConfigureGroundTileSprite(string path)
+        {
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null)
+            {
+                throw new Exception("Texture not found or not a TextureImporter: " + path);
+            }
+
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spritePixelsPerUnit = GroundTilePpu;
+
+            // spriteAlignment/spriteMeshType/spritePivot are not direct
+            // TextureImporter properties (unlike spriteImportMode/
+            // spritePixelsPerUnit/spriteBorder) - they live on
+            // TextureImporterSettings and must be round-tripped via
+            // Read/SetTextureSettings.
+            var settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
+            settings.spriteAlignment = (int)SpriteAlignment.Center;
+            settings.spritePivot = new Vector2(0.5f, 0.5f);
+            settings.spriteMeshType = SpriteMeshType.FullRect;
+            importer.SetTextureSettings(settings);
+
+            importer.filterMode = FilterMode.Bilinear;
+            importer.mipmapEnabled = false;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.maxTextureSize = 256;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.alphaIsTransparency = importer.DoesSourceTextureHaveAlpha();
+            importer.SaveAndReimport();
         }
 
         private static void ConfigureVillagePropsAtlas()

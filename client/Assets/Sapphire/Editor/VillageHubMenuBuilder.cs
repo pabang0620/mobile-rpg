@@ -32,7 +32,6 @@ namespace Sapphire.EditorTools
         // reference screenshot). 92 + 12px clearance = 104.
         private const float OdinPanelTopMargin = 104f;
         private const float OdinPanelBottomMargin = 20f;
-        private const float OdinContentMargin = 24f;
         // 2026-09-16 (F6.4 fix): raised from 36 to 40 alongside the
         // MenuSectionHeader crop/border recompute in HudArtImportConfigurator
         // (see that file's ConfigureMenuSectionHeader for the measurement) -
@@ -44,6 +43,27 @@ namespace Sapphire.EditorTools
         private const float OdinItemRowHeight = 104f;
         private const float OdinSectionGap = 22f;
         private const float OdinIconSize = 56f;
+
+        // 2026-09-15 (S2 fix): the previous flat 24-unit OdinContentMargin
+        // put grid content inside the panel's own gold 9-slice border, so
+        // column 1 icons touched the left frame and the column 4 label
+        // ("캐릭터정보", the longest in MenuCatalog) clipped against the
+        // right frame (orchestrator screenshot final2_1280_menu.png).
+        // MenuPanelOdin's border must be converted from source-texture
+        // pixels to canvas units the same way Image.Type.Sliced does at
+        // runtime: Image.pixelsPerUnit = sprite.pixelsPerUnit /
+        // canvas.referencePixelsPerUnit (see the *100 note in
+        // ArtImportConfigurator.ConfigureUiFrames), so
+        // borderCanvasUnits = borderPx / (spritePixelsPerUnit / 100).
+        // Values below (border=84px, pixelsPerUnit=100*793/400) are the
+        // exact ones HudArtImportConfigurator.ConfigureMenuPanelOdin imports
+        // MenuPanelOdin.png with - kept in sync as named constants instead
+        // of a duplicated magic number.
+        private const float MenuPanelOdinLeftRightBorderPx = 84f;
+        private const float MenuPanelOdinSpritePixelsPerUnit = 100f * 793f / 400f;
+        private const float OdinContentMarginClearance = 14f;
+        private static readonly float OdinContentMargin =
+            MenuPanelOdinLeftRightBorderPx / (MenuPanelOdinSpritePixelsPerUnit / 100f) + OdinContentMarginClearance;
         // code-reviewer flagged a doc conflict: docs/REMEDIATION_PLAN.md line
         // 61 says "5열 아이콘 그리드" (5 columns), but the session's task
         // instructions explicitly specify "a 4-column grid of items (cell
@@ -235,14 +255,27 @@ namespace Sapphire.EditorTools
             // clipping against the cell's exact edge - "캐릭터정보" (the
             // longest label in MenuCatalog) was overflowing its cell at the
             // previous fixed fontSize=14.
-            labelRect.sizeDelta = new Vector2(cellWidth - 4f, 24f);
+            //
+            // 2026-09-15 (S2 fix): F6.5 above still clipped "캐릭터정보" in
+            // the orchestrator's screenshot (final2_1280_menu.png) because
+            // horizontalOverflow was left at its Text default
+            // (HorizontalWrapMode.Overflow) - resizeTextForBestFit does not
+            // shrink the font against a box whose horizontal overflow mode is
+            // Overflow, it only clamps vertically. Explicit Wrap horizontal +
+            // Truncate vertical gives BestFit an actual box to fit text into.
+            // Rect narrowed to cellWidth-6/height 18 (was -4/24) per this
+            // task's spec, min/max font size correspondingly reduced to keep
+            // that inset box from clipping.
+            labelRect.sizeDelta = new Vector2(cellWidth - 6f, 18f);
             labelRect.anchoredPosition = new Vector2(0f, -OdinIconSize - 4f);
             var label = labelGo.GetComponent<Text>();
             label.font = VillageHubUiBuilder.LoadKoreanFont();
             label.alignment = TextAnchor.MiddleCenter;
+            label.horizontalOverflow = HorizontalWrapMode.Wrap;
+            label.verticalOverflow = VerticalWrapMode.Truncate;
             label.resizeTextForBestFit = true;
-            label.resizeTextMinSize = 10;
-            label.resizeTextMaxSize = 14;
+            label.resizeTextMinSize = 9;
+            label.resizeTextMaxSize = 13;
             label.text = item.Label;
             label.raycastTarget = false;
 

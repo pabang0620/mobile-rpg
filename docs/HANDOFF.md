@@ -2,7 +2,39 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): 오케스트레이터 시각 QA 불합격 항목 7건 수정
+## 2026-09-15 (최신): 잔여 2건 수정 - 바닥 타일 seam, 메뉴 그리드 여백/라벨 잘림
+
+`generated-images/diagnostics/final2_1280_*.png`를 오케스트레이터가 직접 검수해 남은 2건만 지정.
+
+1. **바닥 타일 경계 1px 어두운 선 (S1)**: 원인은 6개 지면 셀이 `GroundTiles.png` 한 장의
+   아틀라스에서 bilinear + Max Size 256 다운스케일로 슬라이스되어, 셀 가장자리 샘플이
+   아틀라스 안의 인접 셀 텍스셀을 끌어오던 것(atlas bleed). PIL로 `GroundTiles.png`(1536x1024,
+   3x2)를 개별 512x512 텍스처 6장(`Art/World/Ground/{Grass,Dirt}_{0,1,2}.png`)으로 분리하고
+   각각 Sprite/Single + wrapMode Clamp(아틀라스가 없으므로 번질 인접 셀 자체가 없음) +
+   mipmap 끔 + Max Size 256 + FullRect 메시로 재수입, PPU를 512가 아니라 508로 설정해 타일이
+   1.008 unit로 살짝 커지게 해 타일 사이 미세 서브픽셀 틈도 함께 덮었다
+   (`ArtImportConfigurator.ConfigureGroundAtlas`/`ConfigureGroundTileSprite`).
+   `VillageHubTerrainBuilder.CreateGroundTile`은 이제 아틀라스 내 이름 검색 대신 표준
+   `AssetDatabase.LoadAssetAtPath<Sprite>`로 직접 로드한다. 기존 `GroundTiles.png`(+.meta)는
+   참조 0건 확인 후 `git rm`.
+2. **메뉴 그리드 여백/라벨 잘림 (S2)**: `VillageHubMenuBuilder`의 `OdinContentMargin`이 고정
+   24유닛이라 `MenuPanelOdin.png`의 실제 9-slice 좌우 보더(84px, PPU 100*793/400 환산 시 캔버스
+   ~42.37유닛)보다 좁아 1열 아이콘이 금테에 붙고 "캐릭터정보"가 4열에서 잘렸다.
+   `OdinContentMargin`을 상수가 아니라 `보더px / (spritePPU/100) + 14` 계산값(≈56.37)으로
+   변경 - 좌우 보더를 그대로 참조하되 14유닛 여유를 더함(HudArtImportConfigurator의 실제 import
+   값과 이름 상수로 동기화). 셀 폭은 (400-2*56.37)/4 ≈ 71.81로 재계산. 라벨 Text는
+   `horizontalOverflow=Wrap`(기존 기본값 Overflow였던 게 BestFit이 가로로 전혀 안 줄어들던
+   원인), `verticalOverflow=Truncate`, `resizeTextForBestFit`(9~13), rect 폭 cellWidth-6(≈65.81)/
+   높이 18로 재설정.
+
+전부 Unity CLI 컴파일 0에러, EditMode 테스트 33/33 PASS, `SapphireSceneBuilder.BuildAll` 재실행 후
+씬 YAML 직접 파싱(6개 Tile 에셋이 새 텍스처 GUID 6종만 참조, 라벨 Text의
+`m_HorizontalOverflow=0`/`m_VerticalOverflow=0`/`m_BestFit=1`/`m_MinSize=9`/`m_MaxSize=13`/
+`m_SizeDelta={65.81463, 18}` 확인, 1열 아이템 `m_AnchoredPosition.x=92.278`로 좌측 보더에서
+충분히 이격), `SapphireBuildPlayer.BuildWindows` 재빌드 후 스크린샷 재검증
+(`generated-images/diagnostics/final3_1280_{default,menu}.png`)까지 확인.
+
+## 2026-09-16: 오케스트레이터 시각 QA 불합격 항목 7건 수정
 
 `generated-images/diagnostics/final_1280_*.png` 스크린샷을 오케스트레이터(Opus)가 직접 보고
 불합격 판정한 항목을 전부 수정했다.
