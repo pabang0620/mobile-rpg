@@ -9,13 +9,16 @@ namespace Sapphire.Presentation.Skills
 {
     /// <summary>
     /// Right-side radial action menu: a center "기본공격"(basic attack) button
-    /// surrounded by an arc of skill buttons (SkillCatalog entries, currently
-    /// 5: arcane bolt / frost wave / blink / shield / 질주). Each button is
-    /// clickable or triggered by a key - J for the basic attack, 1-5 for the
-    /// skills. Replaces the old bottom horizontal skill bar (2026-09-14 UI
-    /// overhaul, see docs/DECISIONS.md) - button *layout* (the arc geometry)
-    /// is built in the Editor-only VillageHubUiBuilder, this component only
-    /// owns input wiring, same split as the old SkillBarController had.
+    /// surrounded by skill buttons (SkillCatalog entries, currently 5:
+    /// 마력쉴드/텔레포트/낙뢰/고드름/번개창). Each button is clickable or
+    /// triggered by a key - J for the basic attack, 1-5 for the skills.
+    /// Replaces the old bottom horizontal skill bar (2026-09-14 UI overhaul,
+    /// see docs/DECISIONS.md) - button *layout* (2026-09-16: exactly 4 of the
+    /// 5 buttons sit in a verified-non-overlapping fan, the 5th sits just
+    /// outside it - see VillageHubUiBuilder.BuildRadialSkillMenu for the
+    /// geometry and why) is built in the Editor-only VillageHubUiBuilder, this
+    /// component only owns input wiring, same split as the old
+    /// SkillBarController had.
     ///
     /// This slice has no MP/cooldown resource and no monsters to hit yet, so
     /// both the basic attack and every skill only show the tile range

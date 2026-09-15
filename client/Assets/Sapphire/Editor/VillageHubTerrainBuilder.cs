@@ -100,8 +100,19 @@ namespace Sapphire.EditorTools
                     bool isBorder = x == 0 || x == SapphireSceneBuilder.MapWidth - 1 || y == 0 || y == SapphireSceneBuilder.MapHeight - 1;
                     bool onPath = x == pathColumn && !isBorder;
 
-                    Tile tile = onPath ? dirtTiles[(x + y) % dirtTiles.Length] : grassTiles[(x + y) % grassTiles.Length];
+                    // 2026-09-16 (REMEDIATION_PLAN.md Phase 2 item 9): the old
+                    // `(x + y) % variants.Length` selection is a period-3
+                    // diagonal stripe pattern - with only 3 grass variants it
+                    // repeats visibly every 3 tiles regardless of how seamless
+                    // each individual tile is. Replaced with a deterministic
+                    // per-cell spatial hash that picks the variant AND one of 4
+                    // flip states independently (12 combinations total) - see
+                    // HashCell/GetFlipMatrix below.
+                    Tile[] variants = onPath ? dirtTiles : grassTiles;
+                    uint hash = HashCell(x, y);
+                    Tile tile = variants[(int)(hash % (uint)variants.Length)];
                     groundTilemap.SetTile(cell, tile);
+                    groundTilemap.SetTransformMatrix(cell, GetFlipMatrix(hash));
 
                     if (isBorder)
                     {
@@ -112,6 +123,38 @@ namespace Sapphire.EditorTools
 
             // Sign stands on its own cell - blocked so the player walks up to it instead of onto it.
             collisionTilemap.SetTile(new Vector3Int(SapphireSceneBuilder.SignX, SapphireSceneBuilder.SignY, 0), blockerTile);
+        }
+
+        // Spatial hash (not a per-tile RNG seeded by call order, so re-running
+        // BuildAll always reproduces the exact same layout - this method's
+        // "idempotent" class doc guarantee). Two independent bit-groups pulled
+        // from one hash: `hash % 3` picks the grass/dirt variant, `(hash / 3) %
+        // 4` (a disjoint slice of the same value, not a second hash) picks the
+        // flip state, keeping the two choices uncorrelated enough that no
+        // visible secondary pattern emerges from reusing one hash for both.
+        private static uint HashCell(int x, int y)
+        {
+            uint h = (uint)(x * 374761393 + y * 668265263);
+            h = (h ^ (h >> 13)) * 1274126177u;
+            h ^= h >> 16;
+            return h;
+        }
+
+        // 4 flip states: identity / horizontal / vertical / both. Deliberately
+        // NOT a 90-degree rotation - these tiles are seamless only along their
+        // left-right and top-bottom edges (by design, per the source art), and
+        // rotating a tile 90 degrees swaps which edges need to match which
+        // neighbors, reintroducing visible seams; mirroring keeps every edge
+        // matched against the same corresponding edge on its neighbor, just
+        // read in reverse, which seamless tiling art tolerates.
+        private static Matrix4x4 GetFlipMatrix(uint hash)
+        {
+            uint flipState = (hash / 3) % 4;
+            bool flipX = (flipState & 1) != 0;
+            bool flipY = (flipState & 2) != 0;
+            var scale = new Vector3(flipX ? -1f : 1f, flipY ? -1f : 1f, 1f);
+            var translate = new Vector3(flipX ? 1f : 0f, flipY ? 1f : 0f, 0f);
+            return Matrix4x4.TRS(translate, Quaternion.identity, scale);
         }
 
         private static TilemapGridMapBuilder BuildGridMapBuilder(GameObject gridGo, Tilemap groundTilemap, Tilemap collisionTilemap)

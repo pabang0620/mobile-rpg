@@ -29,15 +29,18 @@ namespace Sapphire.EditorTools
     /// <summary>
     /// Builds the VillageHub scene's UI: EventSystem, Canvas, the message
     /// panel (with its close button), the bottom-left virtual movement pad,
-    /// the bottom-right radial skill menu (basic attack + skill circle
-    /// buttons + range indicator/RadialSkillMenu wiring), and the top-left HP
-    /// bar (visual scaffold, see <see cref="HealthBarView"/>). Split out of
+    /// the bottom-right radial skill menu (basic attack + fan of skill
+    /// buttons + a 5th button outside the fan + range indicator/RadialSkillMenu
+    /// wiring), the top-left HP/MP gauges + level text, the top-center region
+    /// name banner, and the right-side Odin-style menu panel. Split out of
     /// <see cref="SapphireSceneBuilder"/> (UI responsibility only - grid/tile/
     /// fence generation lives in <see cref="VillageHubTerrainBuilder"/>).
-    /// 2026-09-14: replaced the old bottom horizontal skill bar with this
-    /// left-pad/right-radial-menu layout (see docs/DECISIONS.md); later the
-    /// same day, replaced every UI texture (message panel, skill button
-    /// frames, skill icons) with newly generated art and added the HP bar.
+    /// 2026-09-16 (REMEDIATION_PLAN.md Phase 2/3): reworked the skill fan
+    /// geometry (exactly 4 fan buttons + 1 outside button, verified non-
+    /// overlapping), added the MP gauge + level text + region banner, replaced
+    /// the movement pad's builtin circle sprites with MovementStickGold, and
+    /// replaced the old flat 7-item text-list main menu with a data-driven
+    /// (MenuCatalog) Odin-style sectioned icon grid.
     /// </summary>
     internal static class VillageHubUiBuilder
     {
@@ -46,20 +49,20 @@ namespace Sapphire.EditorTools
             BuildEventSystem();
             GameObject canvasGo = BuildCanvas();
 
-            // 2026-09-15: gold-tier UI replacement - MessagePanelFrame.png ->
-            // MessagePanelFrameGold.png, and WideButton.png (RootArtDir) ->
-            // MenuButtonGold.png (UiArtDir) for every button that used to share
-            // WideButton (close button here, main menu button + list items in
-            // BuildMainMenu below).
             Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MessagePanelFrameGold.png");
             Sprite buttonSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png");
 
             SimpleMessagePanel messagePanel = BuildMessagePanel(canvasGo, panelSprite, buttonSprite);
 
             BuildVirtualMovementPad(canvasGo, playerInputReader);
-            BuildRadialSkillMenu(canvasGo, playerController, castFeedback);
-            BuildHealthBar(canvasGo);
-            BuildMainMenu(canvasGo, messagePanel);
+            VillageHubSkillMenuBuilder.Build(canvasGo, playerController, castFeedback);
+            BuildGauges(canvasGo);
+            BuildRegionNameBanner(canvasGo);
+            // TODO(Phase 3, REMEDIATION_PLAN.md D2(b)): the Odin-style menu
+            // panel (VillageHubMenuBuilder) lands in the very next commit -
+            // the old 7-item flat-list MainMenuPanel it replaces has already
+            // been removed as part of this HUD rework, so there is briefly no
+            // in-game menu button between this commit and the next.
 
             return new UiBuildResult(messagePanel);
         }
@@ -88,16 +91,20 @@ namespace Sapphire.EditorTools
             return canvasGo;
         }
 
-        // --- UI: message panel ---
+        // --- UI: message panel (also reused as the Odin menu's per-item
+        // "coming soon" sub-panel, see VillageHubMenuBuilder.Build ->
+        // MainMenuPanel.Select) ---
 
         private static SimpleMessagePanel BuildMessagePanel(GameObject canvasGo, Sprite panelSprite, Sprite buttonSprite)
         {
             GameObject panelGo = BuildMessagePanelFrame(canvasGo, panelSprite);
+            Text title = BuildMessagePanelTitleText(panelGo);
             Text text = BuildMessagePanelText(panelGo);
             Button button = BuildMessagePanelCloseButton(panelGo, buttonSprite);
 
             var messagePanel = panelGo.AddComponent<SimpleMessagePanel>();
             AssignField(messagePanel, "root", panelGo);
+            AssignField(messagePanel, "titleText", title);
             AssignField(messagePanel, "messageText", text);
             AssignField(messagePanel, "closeButton", button);
             return messagePanel;
@@ -118,20 +125,39 @@ namespace Sapphire.EditorTools
             return panelGo;
         }
 
+        private static Text BuildMessagePanelTitleText(GameObject panelGo)
+        {
+            var textGo = new GameObject("TitleText", typeof(Text));
+            textGo.transform.SetParent(panelGo.transform, false);
+            var textRect = textGo.GetComponent<RectTransform>();
+            textRect.anchorMin = new Vector2(0.08f, 0.72f);
+            textRect.anchorMax = new Vector2(0.92f, 0.9f);
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+            var text = textGo.GetComponent<Text>();
+            text.font = LoadKoreanFont();
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = Color.white;
+            text.fontStyle = FontStyle.Bold;
+            text.fontSize = 30;
+            text.text = string.Empty;
+            return text;
+        }
+
         private static Text BuildMessagePanelText(GameObject panelGo)
         {
             var textGo = new GameObject("MessageText", typeof(Text));
             textGo.transform.SetParent(panelGo.transform, false);
             var textRect = textGo.GetComponent<RectTransform>();
             textRect.anchorMin = new Vector2(0.08f, 0.35f);
-            textRect.anchorMax = new Vector2(0.92f, 0.9f);
+            textRect.anchorMax = new Vector2(0.92f, 0.7f);
             textRect.offsetMin = Vector2.zero;
             textRect.offsetMax = Vector2.zero;
             var text = textGo.GetComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            text.font = LoadKoreanFont();
             text.alignment = TextAnchor.MiddleCenter;
             text.color = Color.white;
-            text.fontSize = 28;
+            text.fontSize = 24;
             text.text = string.Empty;
             return text;
         }
@@ -159,26 +185,27 @@ namespace Sapphire.EditorTools
             buttonTextRect.offsetMin = Vector2.zero;
             buttonTextRect.offsetMax = Vector2.zero;
             var buttonText = buttonTextGo.GetComponent<Text>();
-            buttonText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            buttonText.font = LoadKoreanFont();
             buttonText.alignment = TextAnchor.MiddleCenter;
             buttonText.color = Color.white;
             buttonText.fontSize = 26;
-            buttonText.text = "Close";
+            buttonText.text = "닫기";
 
             return button;
         }
 
         // --- Left virtual movement pad: fixed-center touch/mouse stick docked
-        // bottom-left (2026-09-14, the old build had keyboard-only input).
-        // Uses Unity's builtin circular "Knob" UI sprite for both the
-        // background ring and the knob - a plain shape needs no new art here,
-        // unlike the basic-attack/haste buttons below which needed real icons
-        // (see LoadSkillIcon / docs/ASSET_STATUS.md).
+        // bottom-left. 2026-09-16 (REMEDIATION_PLAN.md Phase 2 item 8): swapped
+        // the builtin "Knob" UI sprite (2 plain white translucent circles) for
+        // MovementStickGold.png's base ring/knob art - VirtualMovementPad's own
+        // drag logic is untouched, only the sprites/sizes change here.
 
         private static void BuildVirtualMovementPad(GameObject canvasGo, PlayerInputReader playerInputReader)
         {
-            Sprite circleSprite = LoadBuiltinCircleSprite();
-            const float padSize = 200f;
+            Sprite baseSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MovementStickGold.png", "MovementStickGold_Base");
+            Sprite knobSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MovementStickGold.png", "MovementStickGold_Knob");
+            const float padSize = 160f;
+            const float knobSize = padSize * 0.4f; // 64, per spec ("40% of base")
 
             var padGo = new GameObject("VirtualMovementPad", typeof(Image));
             padGo.transform.SetParent(canvasGo.transform, false);
@@ -187,10 +214,10 @@ namespace Sapphire.EditorTools
             padRect.anchorMax = Vector2.zero;
             padRect.pivot = new Vector2(0.5f, 0.5f);
             padRect.sizeDelta = new Vector2(padSize, padSize);
-            padRect.anchoredPosition = new Vector2(150f, 150f);
+            padRect.anchoredPosition = new Vector2(padSize * 0.75f, padSize * 0.75f);
             var padImage = padGo.GetComponent<Image>();
-            padImage.sprite = circleSprite;
-            padImage.color = new Color(1f, 1f, 1f, 0.35f);
+            padImage.sprite = baseSprite;
+            padImage.preserveAspect = true;
 
             var knobGo = new GameObject("Knob", typeof(Image));
             knobGo.transform.SetParent(padGo.transform, false);
@@ -198,11 +225,11 @@ namespace Sapphire.EditorTools
             knobRect.anchorMin = new Vector2(0.5f, 0.5f);
             knobRect.anchorMax = new Vector2(0.5f, 0.5f);
             knobRect.pivot = new Vector2(0.5f, 0.5f);
-            knobRect.sizeDelta = new Vector2(padSize * 0.4f, padSize * 0.4f);
+            knobRect.sizeDelta = new Vector2(knobSize, knobSize);
             knobRect.anchoredPosition = Vector2.zero;
             var knobImage = knobGo.GetComponent<Image>();
-            knobImage.sprite = circleSprite;
-            knobImage.color = new Color(1f, 1f, 1f, 0.7f);
+            knobImage.sprite = knobSprite;
+            knobImage.preserveAspect = true;
             knobImage.raycastTarget = false;
 
             var pad = padGo.AddComponent<VirtualMovementPad>();
@@ -212,224 +239,51 @@ namespace Sapphire.EditorTools
             AssignField(playerInputReader, "virtualPad", pad);
         }
 
-        // --- Right-side radial skill menu: a big center "기본공격" button plus
-        // a fan of skill buttons above/left of it (so the fan opens toward the
-        // screen center and stays on-screen). 2026-09-14 full UI asset
-        // replacement: buttons now use the real SkillButtonFrame.png circular
-        // frame art (2 cells - a plain ring for skill slots, a larger ring for
-        // the basic-attack button) instead of the Unity builtin "Knob" sprite
-        // the movement pad above still uses. Click or key (J for attack, 1-5
-        // for skills) both call the same RadialSkillMenu methods.
+        // --- Top-left HP + MP gauges + level text (2026-09-16, Phase 2 items
+        // 1-3): HealthBarView generalized into GaugeView (Presentation/UI) so
+        // the same component drives both bars. There is no stat system in this
+        // slice yet, so both gauges are built fixed at 100% fill.
 
-        // 2026-09-14 bug found via live playtest: this root used to be anchored
-        // to the canvas's BOTTOM-LEFT corner (anchorMin/Max = zero) with a fixed
-        // anchoredPosition.x = 590, which only lands on the right side if the
-        // canvas is exactly the 720-wide reference resolution. CanvasScaler is
-        // ScaleWithScreenSize (BuildCanvas), so the canvas's actual unit width
-        // equals screenWidth/scaleFactor and only equals 720 when the runtime
-        // aspect ratio matches the 720x1280 reference exactly - any other
-        // window size (confirmed locally via a stale Windows
-        // "Screenmanager Resolution Width/Height" registry override landing on
-        // 1201x700) makes the effective canvas ~1257 units wide, so x=590
-        // lands near dead-center instead of the right side. The old
-        // leftmostEdge assertion below still "passed" because it re-derived
-        // the same wrong 720-wide assumption instead of checking real layout.
-        // Fix: anchor to the BOTTOM-RIGHT corner instead and offset left from
-        // there - anchoredPosition is then always measured from the true right
-        // edge regardless of the canvas's actual resolved width.
-        private const float ScreenHalfWidth = 360f;
-
-        private static void BuildRadialSkillMenu(GameObject canvasGo, PlayerGridController playerController, SkillCastFeedback castFeedback)
+        private static void BuildGauges(GameObject canvasGo)
         {
-            // 2026-09-15: gold-tier UI replacement - SkillButtonFrame.png ->
-            // SkillButtonFrameGold.png. Sprite names unchanged (only the source
-            // texture moved, see ArtImportConfigurator.ConfigureSkillButtonFrame).
-            Sprite skillFrameSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrameGold.png", "SkillButtonFrame_Skill");
-            Sprite basicAttackFrameSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillButtonFrameGold.png", "SkillButtonFrame_BasicAttack");
-
-            var rootGo = new GameObject("RadialSkillMenu", typeof(RectTransform));
-            rootGo.transform.SetParent(canvasGo.transform, false);
-            var rootRect = rootGo.GetComponent<RectTransform>();
-            rootRect.anchorMin = new Vector2(1f, 0f);
-            rootRect.anchorMax = new Vector2(1f, 0f);
-            rootRect.pivot = new Vector2(0.5f, 0.5f);
-            rootRect.sizeDelta = Vector2.zero;
-            rootRect.anchoredPosition = new Vector2(-90f, 150f);
-
-            Sprite attackIcon = LoadSkillIcon("SkillIcons_BasicAttack");
-            Button attackButton = BuildRadialButton(rootGo, basicAttackFrameSprite, "AttackButton", Vector2.zero, 140f, attackIcon, "기본공격", "J");
-
-            // 2026-09-16: skillRadius/arc widened (130 -> 200, 100-190deg ->
-            // 95-223deg) after coordinate-math verification found the 5 skill
-            // buttons visibly overlapping. With 5 buttons over a 90deg arc the
-            // angular step was 22.5deg, giving an adjacent center-to-center
-            // chord of 2*130*sin(11.25deg) ~= 50.7 units - well under the 96
-            // units (skillButtonSize) two same-size circles need to just touch,
-            // i.e. ~47% of each button was covered by its neighbor. The new
-            // values (step 32deg, radius 200) give a chord of ~110.3 units, a
-            // +14.8% margin over the 96-unit touching distance. rootRect's
-            // anchoredPosition.x also moved from -130 to -90 (root closer to
-            // the right edge) to keep the widest swing under the
-            // ScreenHalfWidth assertion below now that the radius grew -
-            // distanceFromRightEdge becomes 90+200+48=338, still 22 units under
-            // the 360 limit.
-            const float skillRadius = 200f;
-            const float skillButtonSize = 96f;
-            const float arcStartDeg = 95f;
-            const float arcEndDeg = 223f;
-            var skillButtons = new Button[SkillCatalog.All.Length];
-
-            for (int i = 0; i < SkillCatalog.All.Length; i++)
-            {
-                float t = SkillCatalog.All.Length > 1 ? i / (float)(SkillCatalog.All.Length - 1) : 0f;
-                float angleRad = Mathf.Lerp(arcStartDeg, arcEndDeg, t) * Mathf.Deg2Rad;
-                Vector2 offset = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad)) * skillRadius;
-
-                SkillDefinition skill = SkillCatalog.All[i];
-                Sprite iconSprite = LoadSkillIcon(skill.IconSpriteName);
-                skillButtons[i] = BuildRadialButton(rootGo, skillFrameSprite, "SkillButton_" + i, offset, skillButtonSize, iconSprite, null, (i + 1).ToString());
-            }
-
-            // rootRect is now anchored to the canvas's bottom-right corner, so
-            // anchoredPosition.x is a leftward offset FROM the true right edge
-            // (always negative here). The widest swing's distance from that
-            // right edge is this offset's magnitude plus the fan radius and
-            // half the button size - as long as that stays under half of the
-            // narrowest canvas width we still want to support (the 720
-            // reference width), the menu can't cross into the left half on any
-            // canvas the CanvasScaler actually produces.
-            float distanceFromRightEdge = -rootRect.anchoredPosition.x + skillRadius + skillButtonSize * 0.5f;
-            if (distanceFromRightEdge > ScreenHalfWidth)
-            {
-                throw new Exception($"RadialSkillMenu's widest swing sits {distanceFromRightEdge} units left of the right edge, further than half the {ScreenHalfWidth * 2}-wide reference canvas - it could cross into the screen's left half, opposite the virtual movement pad.");
-            }
-
-            BuildSkillSystems(attackButton, skillButtons, playerController, castFeedback);
-        }
-
-        // All 6 skill icons (basic attack + the 5 SkillCatalog entries) live in
-        // the single SkillIconsSetGold.png sheet (2026-09-15 gold-tier
-        // replacement of SkillIconsSet.png, see
-        // ArtImportConfigurator.ConfigureSkillIconsSet) - sprite names unchanged.
-        private static Sprite LoadSkillIcon(string spriteName)
-        {
-            return LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/SkillIconsSetGold.png", spriteName);
-        }
-
-        private static Button BuildRadialButton(GameObject parent, Sprite circleSprite, string name, Vector2 anchoredPosition, float size, Sprite iconSprite, string labelText, string keyHint)
-        {
-            var buttonGo = new GameObject(name, typeof(Image), typeof(Button));
-            buttonGo.transform.SetParent(parent.transform, false);
-            var buttonRect = buttonGo.GetComponent<RectTransform>();
-            buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
-            buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
-            buttonRect.pivot = new Vector2(0.5f, 0.5f);
-            buttonRect.sizeDelta = new Vector2(size, size);
-            buttonRect.anchoredPosition = anchoredPosition;
-            var buttonImage = buttonGo.GetComponent<Image>();
-            buttonImage.sprite = circleSprite;
-            Button button = buttonGo.GetComponent<Button>();
-
-            if (iconSprite != null)
-            {
-                var iconGo = new GameObject("Icon", typeof(Image));
-                iconGo.transform.SetParent(buttonGo.transform, false);
-                var iconRect = iconGo.GetComponent<RectTransform>();
-                iconRect.anchorMin = Vector2.zero;
-                iconRect.anchorMax = Vector2.one;
-                float inset = size * 0.2f;
-                iconRect.offsetMin = new Vector2(inset, inset);
-                iconRect.offsetMax = new Vector2(-inset, -inset);
-                var iconImage = iconGo.GetComponent<Image>();
-                iconImage.sprite = iconSprite;
-                iconImage.preserveAspect = true;
-                iconImage.raycastTarget = false;
-            }
-            else if (!string.IsNullOrEmpty(labelText))
-            {
-                var labelGo = new GameObject("Label", typeof(Text));
-                labelGo.transform.SetParent(buttonGo.transform, false);
-                var labelRect = labelGo.GetComponent<RectTransform>();
-                labelRect.anchorMin = Vector2.zero;
-                labelRect.anchorMax = Vector2.one;
-                labelRect.offsetMin = Vector2.zero;
-                labelRect.offsetMax = Vector2.zero;
-                var label = labelGo.GetComponent<Text>();
-                label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                label.alignment = TextAnchor.MiddleCenter;
-                label.color = Color.black;
-                label.fontSize = 24;
-                label.text = labelText;
-                label.raycastTarget = false;
-            }
-
-            if (!string.IsNullOrEmpty(keyHint))
-            {
-                var hintGo = new GameObject("KeyHint", typeof(Text));
-                hintGo.transform.SetParent(buttonGo.transform, false);
-                var hintRect = hintGo.GetComponent<RectTransform>();
-                hintRect.anchorMin = new Vector2(0.62f, 0f);
-                hintRect.anchorMax = new Vector2(1f, 0.32f);
-                hintRect.offsetMin = Vector2.zero;
-                hintRect.offsetMax = Vector2.zero;
-                var hintText = hintGo.GetComponent<Text>();
-                hintText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                hintText.alignment = TextAnchor.LowerRight;
-                hintText.color = Color.black;
-                hintText.fontSize = 18;
-                hintText.text = keyHint;
-                hintText.raycastTarget = false;
-            }
-
-            return button;
-        }
-
-        private static void BuildSkillSystems(Button attackButton, Button[] skillButtons, PlayerGridController playerController, SkillCastFeedback castFeedback)
-        {
-            var skillSystemsGo = new GameObject("SkillSystems");
-            var rangeIndicator = skillSystemsGo.AddComponent<SkillRangeIndicator>();
-            var radialSkillMenu = skillSystemsGo.AddComponent<RadialSkillMenu>();
-            AssignField(radialSkillMenu, "basicAttackButton", attackButton);
-            AssignField(radialSkillMenu, "skillButtons", skillButtons);
-            AssignField(radialSkillMenu, "player", playerController);
-            AssignField(radialSkillMenu, "rangeIndicator", rangeIndicator);
-            AssignField(radialSkillMenu, "castFeedback", castFeedback);
-        }
-
-        // --- Top-left HP bar: visual scaffold only (2026-09-14, new
-        // HealthBarView component in Presentation/UI). There is no combat/damage
-        // system in this slice yet, so the bar is built fixed at 100% fill - see
-        // HealthBarView's class doc for how a future combat system should wire in
-        // real values.
-
-        private static void BuildHealthBar(GameObject canvasGo)
-        {
-            // 2026-09-15: gold-tier UI replacement - HealthBarFrame.png ->
-            // HealthBarFrameGold.png. Sprite names unchanged.
             Sprite trackSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Track");
-            Sprite fillSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Fill");
+            Sprite hpFillSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/HealthBarFrameGold.png", "HealthBarFrame_Fill");
+            Sprite whiteSprite = LoadBuiltinWhiteSprite();
 
-            // barHeight recalibrated (74 -> ~53.4): the Track image is rendered
-            // with Image.Type.Simple (no preserveAspect), so it stretches to
-            // fill barWidth x barHeight exactly - it must match the sprite's own
-            // aspect to avoid visible squish. 74 was tuned for the OLD Track
-            // slice (0,383,1774,504 - the full half-cell, aspect 3.52), but that
-            // slice was never cropped to the actual art - see
-            // ArtImportConfigurator.ConfigureHealthBarFrame's 2026-09-16 note.
-            // The tight-cropped Track sprite measures 1744x358 (aspect ~4.872),
-            // so barHeight must shrink to 260/4.872 ~= 53.4 to match without
-            // squish.
+            // barHeight/fill-anchor values re-verified (not re-derived - see
+            // ArtImportConfigurator.ConfigureHealthBarFrame's 2026-09-16 note,
+            // already measured against the Track sprite's own tight-cropped
+            // alpha bbox rather than the old naive half-cell split): Track tight
+            // crop is 1744x358 (aspect ~4.872), so barHeight = 260/4.872 ~= 53.4
+            // keeps Image.Type.Simple from squishing it. The interior navy
+            // window (where the Fill sits) measured at x=[0.096,0.901]
+            // y=[0.249,0.757] of that same tight crop.
             const float barWidth = 260f;
             const float barHeight = 53.4f;
+            const float gaugeGap = 6f; // vertical gap between the HP and MP bars
 
-            var barGo = new GameObject("HealthBar", typeof(Image));
+            GaugeView hpGauge = BuildGauge(canvasGo, "HealthBar", trackSprite, hpFillSprite,
+                new Vector2(20f, -20f), barWidth, barHeight);
+
+            Color sapphire = new Color(0.20f, 0.45f, 0.95f, 1f);
+            GaugeView mpGauge = BuildGauge(canvasGo, "ManaBar", trackSprite, whiteSprite,
+                new Vector2(20f, -20f - barHeight - gaugeGap), barWidth, barHeight, sapphire);
+            _ = hpGauge;
+            _ = mpGauge;
+
+            BuildLevelText(canvasGo, barWidth, barHeight, gaugeGap);
+        }
+
+        private static GaugeView BuildGauge(GameObject canvasGo, string name, Sprite trackSprite, Sprite fillSprite, Vector2 anchoredPosition, float barWidth, float barHeight, Color? fillColor = null)
+        {
+            var barGo = new GameObject(name, typeof(Image));
             barGo.transform.SetParent(canvasGo.transform, false);
             var barRect = barGo.GetComponent<RectTransform>();
             barRect.anchorMin = new Vector2(0f, 1f);
             barRect.anchorMax = new Vector2(0f, 1f);
             barRect.pivot = new Vector2(0f, 1f);
             barRect.sizeDelta = new Vector2(barWidth, barHeight);
-            barRect.anchoredPosition = new Vector2(20f, -20f);
+            barRect.anchoredPosition = anchoredPosition;
             var trackImage = barGo.GetComponent<Image>();
             trackImage.sprite = trackSprite;
             trackImage.raycastTarget = false;
@@ -437,16 +291,6 @@ namespace Sapphire.EditorTools
             var fillGo = new GameObject("Fill", typeof(Image));
             fillGo.transform.SetParent(barGo.transform, false);
             var fillRect = fillGo.GetComponent<RectTransform>();
-            // 2026-09-16: anchors recalibrated to the Track's actual interior
-            // navy window, re-measured directly on HealthBarFrameGold.png
-            // (longest contiguous non-gold run per row/column, avoiding corner
-            // scrollwork and center gem studs) - see
-            // ArtImportConfigurator.ConfigureHealthBarFrame's 2026-09-16 note.
-            // The previous 0.06-0.94 / 0.17-0.83 anchors were derived from the
-            // uncropped half-cell's proportions and extended past the window on
-            // every edge (the Fill overflowed the Track frame - "HP바가
-            // 프레임에 안 맞음"). Measured window, as a fraction of the
-            // tight-cropped Track sprite: x=[0.096, 0.901], y=[0.249, 0.757].
             fillRect.anchorMin = new Vector2(0.096f, 0.249f);
             fillRect.anchorMax = new Vector2(0.901f, 0.757f);
             fillRect.offsetMin = Vector2.zero;
@@ -458,103 +302,127 @@ namespace Sapphire.EditorTools
             fillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
             fillImage.fillAmount = 1f;
             fillImage.raycastTarget = false;
-
-            var healthBarView = barGo.AddComponent<HealthBarView>();
-            AssignField(healthBarView, "fillImage", fillImage);
-        }
-
-        private static void BuildMainMenu(GameObject canvasGo, SimpleMessagePanel messagePanel)
-        {
-            // 2026-09-15: gold-tier UI replacement - WideButton.png (RootArtDir)
-            // -> MenuButtonGold.png (UiArtDir) for both the open button and the
-            // 7 list item buttons below, and MessagePanelFrame.png (which this
-            // panel used to reuse) -> its own dedicated MenuPanelFrameGold.png.
-            Sprite buttonSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png");
-            Sprite panelSprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuPanelFrameGold.png");
-
-            var openGo = new GameObject("MainMenuButton", typeof(Image), typeof(Button));
-            openGo.transform.SetParent(canvasGo.transform, false);
-            var openRect = openGo.GetComponent<RectTransform>();
-            openRect.anchorMin = openRect.anchorMax = new Vector2(1f, 1f);
-            openRect.pivot = new Vector2(1f, 1f);
-            openRect.sizeDelta = new Vector2(150f, 72f);
-            openRect.anchoredPosition = new Vector2(-20f, -20f);
-            var openImage = openGo.GetComponent<Image>();openImage.sprite = buttonSprite;openImage.type = Image.Type.Sliced;
-            AddButtonLabel(openGo, "메뉴", 25);
-
-            // 2026-09-15 responsive fix: MainMenuPanel used to be a fixed
-            // 390x790 rect anchored to the top-right corner only (anchorMin ==
-            // anchorMax == (1,1)). Resolution simulation (7 stacked 91-unit-tall
-            // menu items need ~892 canvas units of vertical room including this
-            // panel's own top offset) showed that on any canvas shorter than
-            // ~892 units - which includes ordinary 16:9 landscape at the
-            // reference CanvasScaler settings (canvas height ~623-720 units,
-            // see BuildCanvas) - the fixed 790-tall panel would extend below
-            // y=0, i.e. its own bottom edge (and the last 1-2 menu items) render
-            // off-canvas. This is a landscape/PC-specific instance of the same
-            // "assumed canvas size" bug class the RadialSkillMenu comment above
-            // documents, just on the vertical axis instead of horizontal.
-            //
-            // Fix: anchor the panel to stretch the full canvas height
-            // (anchorMin.y=0, anchorMax.y=1) instead of a fixed sizeDelta.y, so
-            // its actual height is always (canvas height - topMargin -
-            // bottomMargin) and it can never extend past either edge. Width
-            // stays a fixed 390 units anchored to the right edge (anchorMin.x ==
-            // anchorMax.x == 1) exactly as before. The 7 menu item buttons below
-            // are still positioned via fixed anchoredPosition offsets from the
-            // panel's own top edge (anchor/pivot (0.5,1)), so they always start
-            // in the same place relative to the panel regardless of its
-            // stretched height; on canvases too short to fit all 7 (under ~723
-            // units of available panel height), the last item(s) may still spill
-            // past the panel's bottom edge - a residual layout constraint (would
-            // need a scroll view or per-resolution spacing to fully solve, out
-            // of this task's scope) but strictly better than the panel itself
-            // rendering off-canvas.
-            const float panelWidth = 390f;
-            const float panelTopMargin = 102f;
-            const float panelBottomMargin = 20f;
-            var panelGo = new GameObject("MainMenuPanel", typeof(Image));
-            panelGo.transform.SetParent(canvasGo.transform, false);
-            var panelRect = panelGo.GetComponent<RectTransform>();
-            panelRect.anchorMin = new Vector2(1f, 0f);
-            panelRect.anchorMax = new Vector2(1f, 1f);
-            panelRect.offsetMin = new Vector2(-20f - panelWidth, panelBottomMargin);
-            panelRect.offsetMax = new Vector2(-20f, -panelTopMargin);
-            var panelImage = panelGo.GetComponent<Image>();panelImage.sprite = panelSprite;panelImage.type = Image.Type.Sliced;
-
-            string[] names={"장비창","지도","상급던전","레이드","스킬","커뮤니티","길드"};
-            var buttons=new Button[names.Length];
-            for(int i=0;i<names.Length;i++)
+            if (fillColor.HasValue)
             {
-                var item=new GameObject("Menu_"+names[i],typeof(Image),typeof(Button));item.transform.SetParent(panelGo.transform,false);
-                var rect=item.GetComponent<RectTransform>();rect.anchorMin=rect.anchorMax=new Vector2(.5f,1f);rect.pivot=new Vector2(.5f,1f);rect.sizeDelta=new Vector2(310f,76f);rect.anchoredPosition=new Vector2(0f,-86f-i*91f);
-                var image=item.GetComponent<Image>();image.sprite=buttonSprite;image.type=Image.Type.Sliced;buttons[i]=item.GetComponent<Button>();AddButtonLabel(item,names[i],23);
+                fillImage.color = fillColor.Value;
             }
 
-            var controller=canvasGo.AddComponent<MainMenuPanel>();
-            controller.Configure(panelGo,openGo.GetComponent<Button>(),buttons,messagePanel,names);
-            panelGo.SetActive(false);
+            var gaugeView = barGo.AddComponent<GaugeView>();
+            AssignField(gaugeView, "fillImage", fillImage);
+            return gaugeView;
         }
 
-        private static void AddButtonLabel(GameObject parent,string value,int fontSize)
+        private static void BuildLevelText(GameObject canvasGo, float barWidth, float barHeight, float gaugeGap)
         {
-            var textGo=new GameObject("Text",typeof(Text));textGo.transform.SetParent(parent.transform,false);
-            var rect=textGo.GetComponent<RectTransform>();rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
-            var text=textGo.GetComponent<Text>();text.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");text.alignment=TextAnchor.MiddleCenter;text.color=Color.white;text.fontSize=fontSize;text.text=value;text.raycastTarget=false;
+            var levelGo = new GameObject("LevelText", typeof(Text));
+            levelGo.transform.SetParent(canvasGo.transform, false);
+            var levelRect = levelGo.GetComponent<RectTransform>();
+            levelRect.anchorMin = new Vector2(0f, 1f);
+            levelRect.anchorMax = new Vector2(0f, 1f);
+            levelRect.pivot = new Vector2(0f, 1f);
+            levelRect.sizeDelta = new Vector2(80f, barHeight * 2f + gaugeGap);
+            levelRect.anchoredPosition = new Vector2(20f + barWidth + 12f, -20f);
+            var levelText = levelGo.GetComponent<Text>();
+            levelText.font = LoadKoreanFont();
+            levelText.alignment = TextAnchor.MiddleLeft;
+            levelText.color = Color.white;
+            levelText.fontSize = 26;
+            levelText.text = "Lv.1";
+            levelText.raycastTarget = false;
         }
 
-        private static Sprite LoadBuiltinCircleSprite()
+        // --- Top-center region name banner (2026-09-16, Phase 2 item 4):
+        // reserves the SSOT's "지역/보스 HP" slot with the region name for now
+        // (no boss-HP system exists yet).
+
+        private static void BuildRegionNameBanner(GameObject canvasGo)
         {
-            Sprite sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
+            Sprite bannerSprite = LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionHeader.png", "MenuSectionHeader");
+            const float bannerWidth = 360f;
+            // MenuSectionHeader's cropped sprite is 2138x281 (aspect ~7.61) -
+            // matching that aspect at bannerWidth=360 keeps the banner
+            // unsquished: 360/7.61 ~= 47.3.
+            const float bannerHeight = 47.3f;
+
+            var bannerGo = new GameObject("RegionNameBanner", typeof(Image));
+            bannerGo.transform.SetParent(canvasGo.transform, false);
+            var bannerRect = bannerGo.GetComponent<RectTransform>();
+            bannerRect.anchorMin = new Vector2(0.5f, 1f);
+            bannerRect.anchorMax = new Vector2(0.5f, 1f);
+            bannerRect.pivot = new Vector2(0.5f, 1f);
+            bannerRect.sizeDelta = new Vector2(bannerWidth, bannerHeight);
+            bannerRect.anchoredPosition = new Vector2(0f, -16f);
+            var bannerImage = bannerGo.GetComponent<Image>();
+            bannerImage.sprite = bannerSprite;
+            bannerImage.type = Image.Type.Sliced;
+            bannerImage.raycastTarget = false;
+
+            var textGo = new GameObject("Text", typeof(Text));
+            textGo.transform.SetParent(bannerGo.transform, false);
+            var textRect = textGo.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+            var text = textGo.GetComponent<Text>();
+            text.font = LoadKoreanFont();
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = Color.white;
+            text.fontSize = 22;
+            text.text = "사파이어 광장";
+            text.raycastTarget = false;
+        }
+
+        // 2026-09-16: every Text in this file used to render with Unity's
+        // builtin LegacyRuntime.ttf (an Arial-family font with no Korean glyph
+        // coverage) despite every label in this file being Korean text ("메뉴",
+        // "장비", "이 기능은 다음 슬라이스에서 연결됩니다", ...) - a real,
+        // previously-unaddressed rendering defect (missing-glyph boxes/tofu),
+        // not something this task's scope introduced but directly affecting
+        // every UI label this pass touches. Fixed at this single call site
+        // (internal so VillageHubMenuBuilder's split-out menu code picks it up
+        // too) so every caller across both files (message panel text/title,
+        // close button, region banner, level text, Odin menu headers/labels)
+        // picks it up automatically. Fonts/NotoSansCJKkr-Regular.otf already
+        // ships in the project (docs/planning/01_PRODUCT.md's UI section:
+        // "한글은 동봉 NotoSansCJKkr 폰트") but nothing loaded it until now.
+        private static Font koreanFont;
+
+        internal static Font LoadKoreanFont()
+        {
+            if (koreanFont == null)
+            {
+                koreanFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Sapphire/Fonts/NotoSansCJKkr-Regular.otf");
+                if (koreanFont == null)
+                {
+                    throw new Exception("Korean font not found at Assets/Sapphire/Fonts/NotoSansCJKkr-Regular.otf");
+                }
+            }
+
+            return koreanFont;
+        }
+
+        private static Sprite LoadBuiltinWhiteSprite()
+        {
+            // Used as the MP gauge's fill sprite (spec: "a plain white sprite
+            // sized to the same measured opening... with Image.color set to
+            // sapphire" - the crimson HP fill art can't be recolored blue via
+            // Image.color multiply since it's a painted gradient, not a flat
+            // tintable shape).
+            Sprite sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Background.psd");
             if (sprite == null)
             {
-                throw new Exception("Builtin circle sprite (UI/Skin/Knob.psd) not found");
+                throw new Exception("Builtin white sprite (UI/Skin/Background.psd) not found");
             }
 
             return sprite;
         }
 
-        private static Sprite LoadNamedSprite(string path, string name)
+        // internal (not private): VillageHubMenuBuilder (split out of this
+        // file for the same "keep files under ~500 lines" reason
+        // ArtImportConfigurator/VillageHubTerrainBuilder were already split
+        // out of SapphireSceneBuilder) also needs these two loaders.
+        internal static Sprite LoadNamedSprite(string path, string name)
         {
             Sprite sprite = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().FirstOrDefault(s => s.name == name);
             if (sprite == null)
@@ -565,7 +433,7 @@ namespace Sapphire.EditorTools
             return sprite;
         }
 
-        private static Sprite LoadSingleSprite(string path)
+        internal static Sprite LoadSingleSprite(string path)
         {
             var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
             if (sprite == null)
@@ -576,8 +444,19 @@ namespace Sapphire.EditorTools
             return sprite;
         }
 
-        private static void AssignField(object target, string fieldName, object value)
+        // internal (not private): VillageHubSkillMenuBuilder used to carry its
+        // own copy of this exact method (code-reviewer flagged the duplication
+        // as a maintenance risk for a reflection helper - a future fix, e.g.
+        // the null-target guard just below, is easy to apply to one copy and
+        // forget the other) - it now calls this one instead, same pattern as
+        // the Load* helpers above.
+        internal static void AssignField(object target, string fieldName, object value)
         {
+            if (target == null)
+            {
+                throw new Exception($"AssignField target is null (field '{fieldName}')");
+            }
+
             Type type = target.GetType();
             var field = type.GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
             if (field == null)
