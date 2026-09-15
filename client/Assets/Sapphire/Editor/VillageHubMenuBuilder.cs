@@ -221,18 +221,16 @@ namespace Sapphire.EditorTools
                 for (int r = 0; r < rows; r++)
                 {
                     float rowY = cursorY - r * OdinItemRowHeight;
-                    for (int c = 0; c < OdinColumns; c++)
+                    int rowStartIndex = r * OdinColumns;
+                    int itemsInRow = Mathf.Min(OdinColumns, section.Items.Length - rowStartIndex);
+                    float columnPitch = cellWidth * OdinColumnPitchScale;
+                    float firstItemCenterX = OdinPanelWidth * 0.5f - (itemsInRow - 1) * columnPitch * 0.5f;
+                    for (int c = 0; c < itemsInRow; c++)
                     {
-                        int index = r * OdinColumns + c;
-                        if (index >= section.Items.Length)
-                        {
-                            break;
-                        }
+                        int index = rowStartIndex + c;
 
                         MenuItemDefinition item = section.Items[index];
-                        float baseCellCenterX = OdinContentMargin + c * cellWidth + cellWidth * 0.5f;
-                        float gridCenterX = OdinPanelWidth * 0.5f;
-                        float cellCenterX = gridCenterX + (baseCellCenterX - gridCenterX) * OdinColumnPitchScale;
+                        float cellCenterX = firstItemCenterX + c * columnPitch;
                         Button itemButton = BuildOdinMenuItem(panelGo, item, lockSprite, new Vector2(cellCenterX, rowY), cellWidth);
                         allButtons.Add(itemButton);
                         allLabels.Add(item.Label);

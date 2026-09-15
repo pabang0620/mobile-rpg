@@ -67,7 +67,7 @@ namespace Sapphire.EditorTools
                 SapphireSceneBuilder.RootArtDir + "/WarriorTopdownGridSheet.png",
                 ppu: 302,
                 filterMode: FilterMode.Bilinear,
-                mipmaps: true,
+                mipmaps: false,
                 maxSize: null,
                 slices: BuildTopdownGridSlices("Warrior", textureWidth, textureHeight, cellSize));
         }
