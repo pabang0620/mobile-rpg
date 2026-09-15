@@ -58,11 +58,7 @@ namespace Sapphire.EditorTools
             VillageHubSkillMenuBuilder.Build(canvasGo, playerController, castFeedback);
             BuildGauges(canvasGo);
             BuildRegionNameBanner(canvasGo);
-            // TODO(Phase 3, REMEDIATION_PLAN.md D2(b)): the Odin-style menu
-            // panel (VillageHubMenuBuilder) lands in the very next commit -
-            // the old 7-item flat-list MainMenuPanel it replaces has already
-            // been removed as part of this HUD rework, so there is briefly no
-            // in-game menu button between this commit and the next.
+            VillageHubMenuBuilder.Build(canvasGo, messagePanel);
 
             return new UiBuildResult(messagePanel);
         }

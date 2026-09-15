@@ -2,7 +2,151 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): REMEDIATION_PLAN.md Phase 1 완료 - 가로 1280x720 기준 정정 + Pixel Perfect Camera 제거 + 맵 경계 클램프
+## 2026-09-16 (최신): REMEDIATION_PLAN.md Phase 2(HUD 재배선) + Phase 3(오딘식 메뉴) 완료
+
+Phase 1(가로 1280x720 기준 정정, 아래 절 참고) 이후 Phase 2·3을 한 세션에서 연속 구현했다.
+측정은 전부 PIL/numpy로 알파/색상 전이 지점을 직접 스캔해 구했다(균등분할 가정 금지 원칙
+재적용) - 아래 각 항목의 실측값 참고.
+
+### Phase 2 - HUD 재배선
+
+**1. HP바 개구부**: 이전 세션(2026-09-16 새벽, 아래 "메뉴 버튼 배경 소실..." 절)에서 이미
+실측·수정된 상태였다 - Track 타이트크롭 1744x358, Fill 앵커 `(0.096,0.249)-(0.901,0.757)`.
+이번 세션에서 독립적으로 재실측(navy 인테리어 색상 스캔)해 대체로 일치함을 확인했고 재수정
+없이 유지했다(REMEDIATION_PLAN.md가 "고쳐야 한다"고 서술한 0.06-0.94/0.17-0.83 값은 이미
+과거 값이었다).
+
+**2. MP바 신규 추가**: `Presentation/UI/HealthBarView.cs` → `GaugeView.cs`로 일반화(HP/MP
+공용, `SetFillAmount(float)` 공개 메서드 유지). MP는 HP와 동일 프레임(`HealthBarFrameGold`
+Track) + Unity 내장 `UI/Skin/Background.psd`(흰 스프라이트)를 사파이어 블루
+`(0.20,0.45,0.95,1)`로 틴트해 채움. HP바 바로 아래 6유닛 간격.
+
+**3. 레벨 텍스트**: "Lv.1", HP/MP바 우측(x=20+260+12=292), `AddButtonLabel` 패턴과 동일하게
+`Fonts/NotoSansCJKkr-Regular.otf` 사용.
+
+**4. 지역명 배너**: `MenuSectionHeader.png`(아래 9-slice 실측값) 상단중앙(0.5,1) 배치, 폭
+360, "사파이어 광장" 텍스트.
+
+**5. 스킬 부채꼴 재배치 (핵심 수정)**: 반지름 200, 100°~190°(90° 폭, 4개 버튼, 칸당 30°) -
+인접 중심간 거리 `2*200*sin(15°)=103.53` > 96(버튼 지름) 검증 통과(코드 내 assertion
+`VerifyNoOverlap`/`VerifyOnScreen`로 빌드타임에도 재검증). 5번째 버튼("Dash" 슬롯, 부채꼴
+밖 220°)은 아래 "콘텐츠 불일치" 항목 참고. 루트 앵커 우하단(1,0), `anchoredPosition=(-100,200)`.
+전 버튼이 1280x720 캔버스 안에 있음(최소 여유 약 23유닛, 우측 버튼 우측edge 여유 30유닛).
+
+**콘텐츠 불일치 발견 및 해소**: REMEDIATION_PLAN.md와 이 작업 지시서가 서술하는
+"비전탄/서리파동/점멸/보호막 + 질주(대시)" 5스킬 모델은 이미 커밋 `9d2a71d`("Implement
+centered wizard skills and menu UI", 같은 날 더 이른 시점)에서 마력쉴드/텔레포트/낙뢰/고드름/
+번개창 5개의 실제 스펠로 전면 교체돼 있었다 - `docs/HANDOFF.md`의 과거 기록이 갱신되지
+않아서 생긴 문서 drift다. `GridMoveAnimator.ActivateSpeedBoost`/`IsSpeedBoosted`는 여전히
+코드에 남아있지만 그 커밋 이후로 호출하는 곳이 전혀 없다(고아 코드, 이번 세션에서 손대지
+않음). 스펠 5개를 전부 실제로 캐스트 가능하게 유지하되(1~5키, 클릭 전부 동일하게 동작)
+레이아웃만 지시서대로 맞췄다 - `SkillCatalog.All[0..3]`이 부채꼴 4개, `All[4]`(번개창)가
+부채꼴 밖 "Dash" 슬롯. 상세 근거는 `Editor/VillageHubSkillMenuBuilder.cs` 클래스 doc과
+`docs/DECISIONS.md` 참고.
+
+**6. 키 힌트 라벨 제거**: 스킬 버튼의 1~5/J 텍스트 GameObject 생성 코드 전체 삭제. 키보드
+단축키(`RadialSkillMenu.Update`)는 무변경.
+
+**7. 아이콘 중심/크기**: 프레임 "개구부"(내부 남색 영역, 셀 경계 아님)를 셀 중앙 부근 여러
+행의 최장 non-border 연속구간으로 실측 - Skill 셀(659x665) 개구부 폭 median 413px(=0.627),
+BasicAttack 셀(824x854) median 541px(=0.657). 아이콘 지름 = 개구부 지름의 62% →
+Skill ~37.3px, BasicAttack ~57.0px(기존 inset=size*0.2 방식은 버튼 전체의 60%로 프레임
+테두리를 침범하고 있었음). `SkillIconsSetGold.png`의 6개 아이콘 각각 알파 콘텐츠 중심을
+재실측했으나 셀 중심과의 편차가 -7~+9.5px(셀 크기 대비 <2%)로 무시할 수준 - 추가 오프셋
+없이 중앙정렬 유지.
+
+**8. 이동 스틱**: `MovementStickGold.png`(1438x902) 베이스(알파bbox 90,97-812,805, 지름
+~722) + 노브(1010,263-1391,639, 지름 ~381) - 둘 다 각자 셀 안에서 <1px 오차로 중앙정렬됨을
+확인. Base 160 / Knob 64(40%). `VirtualMovementPad`의 드래그 로직은 무변경.
+
+**9. 잔디/흙 반복 패턴 제거**: `(x+y)%3` 방식(주기 3의 대각선 줄무늬) → 셀 좌표 공간
+해시(`x*374761393 + y*668265263` 후 xorshift) 1회로 변종(`hash%3`)과 뒤집기 상태
+(`(hash/3)%4`) 독립 산출, `Tilemap.SetTransformMatrix`로 좌우/상하 뒤집기만 적용(90° 회전
+금지 - 이 타일들은 좌우/상하 변만 seamless하게 설계돼 회전하면 이음매가 다시 보임). 흙길에도
+동일 적용.
+
+**부수 수정**: `VillageHubUiBuilder.cs`의 모든 Text가 Unity 내장 `LegacyRuntime.ttf`(한글
+미지원)를 쓰고 있었다는 실제 결함을 발견해 `Fonts/NotoSansCJKkr-Regular.otf` 로더
+(`LoadKoreanFont()`, internal)로 일괄 수정 - 이번 작업이 만든 결함이 아니라 기존에 있던
+결함이지만, 이번에 손대는 모든 라벨에 직접 영향을 주므로 같은 파일 내에서 함께 고쳤다.
+
+**파일 분할**: `VillageHubUiBuilder.cs`가 800줄을 넘어가 이 코드베이스의 기존 관례(파일당
+~500줄, `ArtImportConfigurator`/`VillageHubTerrainBuilder`를 `SapphireSceneBuilder`에서
+분리한 것과 동일한 원칙)에 따라 `VillageHubSkillMenuBuilder.cs`(스킬 부채꼴)와
+`VillageHubMenuBuilder.cs`(Phase 3, 아래)로 분리했다.
+
+### Phase 3 - 오딘식 메뉴 (D2(b) 확정안)
+
+**1. 패널 배경**: `MenuPanelOdin.png`(793x1983) 9-slice, border 실측(색상 전이 지점,
+30%-70% 구간 5개 행/열 전부 동일값) left 84 / right 84 / top 85 / bottom 93px.
+우측(1,0)-(1,1) 세로 스트레치, 상하 margin 24, 폭 400. `pixelsPerUnit = 100*793/400`
+(고정 치수인 폭 기준 보정 - 세로는 스트레치되므로 폭을 기준 치수로 삼음).
+
+**2. `MenuCatalog.cs` 데이터소스 신설**: `MenuSectionDefinition{Title,Items}` +
+`MenuItemDefinition{Id,Label,IconSpriteName,IsAvailable}` 정적 배열. 성장(장비✅/가방✅/
+스킬북🔒/캐릭터정보🔒) · 모험(퀘스트✅/지도🔒/던전🔒) · 시스템(설정✅) - 실제 제공 4개
+(장비/가방/퀘스트/설정)가 정확히 SSOT(01_PRODUCT.md 52행)와 일치.
+
+**3. 레이아웃**: `MenuSectionHeader.png` 9-slice(border 실측 - 크롭된 2138x281 스프라이트
+기준 left 232 / right 231 / top 99 / bottom 79px, `pixelsPerUnit=100*2138/360`) + 섹션
+제목, 이어서 4열 그리드(cellWidth=(400-2*24)/4=88, 아이콘 56px, 라벨 14pt). 빌더
+(`VillageHubMenuBuilder.BuildOdinMenu`)는 `MenuCatalog.Sections`를 순회만 하므로 항목
+추가/삭제/재배열은 `MenuCatalog.cs`만 고치면 된다(빌더 코드 무변경).
+
+**4. 잠긴 항목**: 아이콘 `Image.color=(0.45,0.45,0.5,1)` 그레이 틴트 + `MenuLockBadge.png`
+(1278x1230, 알파bbox(239,52)-(1038,1230) 기준 799x1128 타이트크롭) 아이콘 우하단 오버레이
+(아이콘의 40% 크기) + `Button.interactable=false`.
+
+**5. 클릭 동작**: `MessagePanelFrameGold` 기반 서브패널을 재사용하되 새 `titleText` 필드
+추가(`SimpleMessagePanel.SetTitleAndBody(title,body)`) - 제목=항목 라벨, 본문="이 기능은
+다음 슬라이스에서 연결됩니다." 기존 토스트(제목 없이 라벨+문구 한 텍스트) 방식은 제거.
+`MainMenuPanel.cs`는 얇은 컨트롤러로 재작성(83줄) - 클릭 이벤트 바인딩과 토글/ESC/디버그
+훅만 담당, UI 생성 로직 없음.
+
+**6. 메뉴 토글/ESC**: 기존 동작 무변경(`Toggle()`, ESC 키).
+
+**7. 디버그 훅**: `-sapphire-open-menu` 커맨드라인 인자로 시작하면 `Awake()`에서 자동으로
+메뉴가 열림(`Environment.GetCommandLineArgs()` 순회, 5줄 이내).
+
+**폐기 자산**: `MenuPanelFrameGold.png`(세로 텍스트 목록용, 7개 항목 divider 6개) - 새 배선
+이후 참조가 전혀 없음을 grep으로 확인 후 `git rm`.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일, EditMode 테스트 33/33, `SapphireSceneBuilder.BuildAll`
+재실행(빌드타임 assertion 통과 포함) 후 `VillageHub.unity`를 Python으로 직접 파싱 -
+Image 컴포넌트 38개 전부 `m_Sprite` non-null, `MenuItem_*` GameObject 8개(장비/가방/퀘스트/
+설정=`m_Interactable:1`, 스킬북/캐릭터정보/지도/던전=`m_Interactable:0`, SSOT와 정확히
+일치), `KeyHint` GameObject 0개, 5개 스킬버튼 좌표·상호거리 표(전부 >96, 아래
+`DECISIONS.md`에 재수록). code-reviewer 스킬로 두 차례(Phase2/Phase3 각각) 리뷰 - Phase2에서
+`AssignField` 리플렉션 헬퍼 중복 + null-target 가드 누락 지적받아 즉시 수정 후 재검증,
+Phase3에서는 `docs/REMEDIATION_PLAN.md`의 "5열" 서술과 코드의 4열 구현이 어긋난다는 점과
+`MainMenuPanel.cs`의 디버그 훅 주석이 실재하지 않는 "Phase 3 item 7"을 인용한다는 점을
+지적받아 각각 코드 주석·`DECISIONS.md` 기록·주석 정정으로 대응했다(`ArtImportConfigurator.cs`가
+600줄을 넘어선 것도 함께 지적받아 `HudArtImportConfigurator.cs`로 분리).
+
+**최종 검증 (Phase 2·3 전체 완료 후 1회, 사용자 지시대로 여기서만 수행)**: `SapphireBuildPlayer.
+BuildWindows`로 비-개발 빌드 재생성(`builds/Windows/SapphireRPG.exe`, 빌드 로그에 에러 없음).
+기존 실행 중이던 프로세스 없음을 확인 후 PowerShell(`AttachThreadInput`+`ShowWindow`+
+`SetForegroundWindow`+`GetWindowRect`+`Graphics.CopyFromScreen` 절차)로 3개 시나리오를
+각각 실행→6초 대기→캡처→종료했다:
+- `final_1280_default.png`(1280x720 창모드, 기본 상태) - 상단 0-80px 밴드 빨간 픽셀 1305개.
+  실제로는 에러 배너가 아니라 좌상단 HP 게이지(진홍색, 프레임 크기상 y=20~73.4가 이 밴드 안에
+  들어옴) - 의도된 디자인 요소가 단순 색상 임계값 검사에 걸린 것으로 확인(육안 확인,
+  "Rendering at an odd..." 류 텍스트 없음). 한글 폰트 수정도 이 스크린샷에서 실제로 확인됨
+  ("사파이어 광장", "메뉴", "Lv.1" 전부 정상 렌더).
+- `final_1280_menu.png`(동일 해상도 + `-sapphire-open-menu`) - 밴드 빨간 픽셀 1305개(동일한
+  HP 게이지, 메뉴 패널 자체는 화면 우측이라 밴드에 영향 없음). 메뉴가 자동으로 열려
+  성장/모험/시스템 3섹션과 8개 항목이 스크린샷에서 육안으로도 확인됨(디버그 훅 정상 동작).
+- `final_1920_default.png`(1920x1080 창모드) - 밴드 빨간 픽셀 0개(HP 게이지가 이 해상도의
+  스케일에서는 y=20~약 90 근처로 밀려 0-80px 밴드를 살짝 벗어남). 캡처된 이미지 크기가
+  1936x1119로 창 크기보다 커 하단에 Windows 작업표시줄이 함께 잡혔다(로컬 디스플레이
+  해상도가 1920x1080 요청보다 낮아 생긴 캡처 아티팩트로 추정 - 게임 자체 렌더링 문제 아님,
+  이미지 상단 게임 영역은 정상 렌더됨).
+- 마지막으로 1280x720 창모드로 재실행해 종료하지 않고 그대로 남겨둠(PID 확인, 사용자
+  손테스트 대기 상태).
+- 화면의 미학적 판단(배치가 보기 좋은지 등)은 하지 않았다 - 위 수치·객체 유무 확인만
+  했고 이미지 파일 자체는 사용자가 직접 본다.
+
+## 2026-09-15: REMEDIATION_PLAN.md Phase 1 완료 - 가로 1280x720 기준 정정 + Pixel Perfect Camera 제거 + 맵 경계 클램프
 
 `docs/REMEDIATION_PLAN.md`(사용자가 실제 스크린샷을 보고 작성한 진단·계획 문서) Phase 1을 구현했다. 근본 원인은
 기준 해상도 방향이 SSOT(`docs/planning/01_PRODUCT.md` - 가로 1280x720)와 반대(세로 720x1280)로 구현돼

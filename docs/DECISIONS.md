@@ -2,6 +2,71 @@
 
 기술 방향 결정을 날짜순으로 남긴다(최신이 위). 기획 자체(무엇을 만들지)는 `docs/planning/*.md`가 SSOT이고 여기서는 다루지 않는다 - 여기는 "어떻게 구현할지"에 대한 결정만 남긴다.
 
+## 2026-09-16: REMEDIATION_PLAN.md Phase 2(HUD) + Phase 3(오딘식 메뉴) 구현 결정
+
+**결정 1 - 스킬 부채꼴 5번째 슬롯("Dash") 콘텐츠 불일치 해소**: REMEDIATION_PLAN.md와 이번
+작업 지시서는 "비전탄/서리파동/점멸/보호막 + 질주(이동속도 버프)"라는 옛 5스킬 모델을
+전제하지만, 실제 `SkillCatalog.cs`는 이미 같은 날 더 이른 커밋(`9d2a71d`)에서
+마력쉴드/텔레포트/낙뢰/고드름/번개창 5개의 실제 스펠로 전면 교체되어 있었고 이동속도 버프
+스킬(`skill.haste`)은 존재하지 않는다(`GridMoveAnimator.ActivateSpeedBoost`/
+`IsSpeedBoosted`는 코드에 남아있지만 그 커밋 이후 아무도 호출하지 않는 고아 코드).
+`docs/HANDOFF.md`가 그 커밋의 스킬 교체를 문서에 반영하지 않아 생긴 문서 drift다.
+
+**선택**: 5개 실스펠을 전부 그대로 유지(키 1-5, 클릭 전부 이전과 동일하게 동작)하면서
+지시서의 레이아웃 요구(부채꼴 4개+부채꼴 밖 1개)만 만족시킨다. `SkillCatalog.All[0..3]`이
+부채꼴 4개 슬롯, `All[4]`(번개창)가 "Dash" 자리(부채꼴 밖, 같은 반지름 200에서 30° 더 나간
+220°)를 차지한다. **기각한 대안**: (a) 고아 상태인 `ActivateSpeedBoost`를 되살려 5번째
+슬롯에서 호출 - 현재 게임 디자인에 더 이상 없는 능력을 되살리는 콘텐츠 결정이라 이번
+레이아웃 작업 범위를 벗어난다고 판단. (b) 실스펠 5개 중 1개를 UI에서 빼서 "진짜 5개"
+모델에 억지로 맞춤 - 이미 배선되어 작동하는 콘텐츠를 이유 없이 제거하는 것이라 기각.
+
+**결정 2 - 아이콘 크기: "프레임 전체의 62%"가 아니라 "개구부의 62%"**: 기존 코드는
+`inset=size*0.2`(버튼 전체 지름의 60%를 아이콘이 차지)였는데, 실측한 프레임 개구부(내부
+남색 영역, 셀 경계가 아님)는 버튼 지름의 62.7%(스킬)/65.7%(기본공격)뿐이었다 - 아이콘이
+개구부보다 커서 프레임 테두리를 침범하고 있었다. 지시서의 "개구부 지름의 62%"를 그대로
+적용해 스킬 아이콘 ~37.3px, 기본공격 아이콘 ~57.0px로 축소했다.
+
+**결정 1-1 - 메뉴 그리드 열 개수: 4열 (REMEDIATION_PLAN.md와의 실제 충돌)**:
+`docs/REMEDIATION_PLAN.md` 61행은 "5열 아이콘 그리드"라고 서술하지만, 이번 세션의 작업
+지시서는 명시적으로 "a 4-column grid of items (cell width = (400 - 2*margin) / 4 ...)"라고
+못박았다. 지시서 자체의 충돌 해소 규칙("문서와 지시서가 사실관계에서 충돌하면 더 최신·구체
+적인 지시서를 따르되 충돌을 보고할 것")에 따라 4열로 구현했다. 현재 카탈로그의 모든 섹션이
+4개 이하 항목이라 4열/5열 어느 쪽이든 화면상 줄바꿈이 발생하지 않아 시각적으로는 차이가
+드러나지 않지만, 향후 항목이 5개 이상인 섹션이 추가되면 줄바꿈 위치가 달라진다 - 그 시점에
+`REMEDIATION_PLAN.md`를 4로 정정할지, 코드를 5로 바꿀지 재확인이 필요하다(현재는 손대지
+않음, 코드 주석에도 동일 근거 기록).
+
+**결정 3 - 메뉴 구조를 데이터(MenuCatalog) + 빌더(VillageHubMenuBuilder) + 컨트롤러
+(MainMenuPanel)로 3분리**: 이전 `MainMenuPanel`은 UI 생성(레이아웃)과 클릭 이벤트 바인딩을
+한 클래스에 같이 두고 있었다. Phase 3 요구(항목 추가 시 빌더 코드 무변경)를 만족시키려면
+데이터를 별도 정적 클래스(`MenuCatalog`)로 빼고, 빌더는 그 데이터를 순회만 하고,
+`MainMenuPanel`은 완성된 버튼 배열을 받아 클릭 이벤트만 연결하는 얇은 컨트롤러로 남겨야
+한다고 판단해 3분리했다.
+
+**결정 4 - `VillageHubUiBuilder.cs` 파일 분할**: Phase 2+3을 모두 얹은 뒤 이 파일이
+800줄을 넘어섰다. 이 코드베이스가 이미 `SapphireSceneBuilder`에서 `ArtImportConfigurator`·
+`VillageHubTerrainBuilder`를 관심사별로 분리해둔 전례가 있어, 같은 원칙으로
+`VillageHubSkillMenuBuilder.cs`(스킬 부채꼴, Phase 2)와 `VillageHubMenuBuilder.cs`(오딘식
+메뉴, Phase 3)를 분리했다. 결과: `VillageHubUiBuilder.cs` 455줄, 나머지 두 파일 각각
+250·230줄 안팎.
+
+**결정 5 - 한글 폰트 버그 발견 시 수정 범위**: `VillageHubUiBuilder.cs`의 모든 Text가
+Unity 내장 `LegacyRuntime.ttf`(한글 미지원)를 쓰고 있어서 이 파일이 만드는 모든 한글
+라벨이 실제로는 글리프 누락으로 렌더될 것이라는 실제 결함을 발견했다. 이 작업이 만든
+결함은 아니지만(이전 세션부터 있었음) 이번에 손대는 모든 라벨(레벨 텍스트·지역명 배너·
+메뉴 섹션/항목·서브패널 제목 등)에 직접 영향을 주므로, 별도 작업으로 미루지 않고 같은
+diff 안에서 `LoadKoreanFont()` 헬퍼(`Fonts/NotoSansCJKkr-Regular.otf` 로드) 하나로
+일괄 수정했다 - `feedback_fix_defects_dont_ask` 원칙(발견한 결함은 물어보지 않고 고친다)
+적용.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일, EditMode 테스트 33/33,
+`SapphireSceneBuilder.BuildAll` 재실행(신규 빌드타임 assertion `VerifyNoOverlap`/
+`VerifyOnScreen` 통과 포함) 후 `VillageHub.unity`를 Python으로 직접 파싱해 스킬버튼 5개
+좌표·상호거리, 메뉴 항목 8개의 `m_Interactable` 값, Image 컴포넌트 38개의 `m_Sprite`
+non-null, `KeyHint` GameObject 0개를 재확인. code-reviewer 스킬로 Phase 2/3 각각 리뷰 -
+Phase 2에서 `AssignField` 리플렉션 헬퍼 중복 + null-target 가드 누락을 지적받아 즉시
+`VillageHubUiBuilder.AssignField`로 단일화하고 null 가드 추가.
+
 ## 2026-09-15: 기준해상도 세로 720x1280은 오류(SSOT 위반) → 가로 1280x720으로 정정, Pixel Perfect Camera 제거, 세로 9타일 고정 + 맵경계 클램프 (REMEDIATION_PLAN.md Phase 1)
 
 **버그 수정 기록**: `docs/planning/01_PRODUCT.md` 9행·52행은 "탑다운 2D, **가로 화면**", "**1280x720 기준** HUD 배치"를 명시하는데, 실제 구현(`VillageHubUiBuilder.BuildCanvas`의 `CanvasScaler.referenceResolution`, `SapphireSceneBuilder.BuildCamera`의 `PixelPerfectCamera.refResolutionX/Y`, `SapphireBuildPlayer`의 `PlayerSettings.defaultScreenWidth/Height`)는 전부 세로 720x1280이었다. 아래 "2026-09-14: 화면 스케일링은 Unity 2D Pixel Perfect Camera로 확정"과 "2026-09-14: 이동 속도·정지 간격, 카메라 PPU 최종값 확정" 두 항목이 이 세로값을 확정처럼 기록하고 있었으나, 이는 폐기된 별도 실험 프로젝트(`../topdown-asset-mvp/`)의 값을 그대로 가져온 것이었고 SSOT와 정면으로 어긋난다 - **아래 두 항목은 이 항목으로 대체되어 폐기됨(삭제하지 않고 보존, 각 항목에 폐기 표시함)**.

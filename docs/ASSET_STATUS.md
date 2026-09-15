@@ -81,6 +81,20 @@ left 114/right 116/top 77/bottom 71px로 구했다(20px는 "그림이 시작하�
 "안쪽 채움이 시작하는 지점"이라 서로 다른 값인 게 정상 - 114 > 20이 이를 뒷받침한다).
 `MenuPanelFrameGold`도 동일한 방식으로 border left 87/right 88/top 92/bottom 90px을 구했다.
 
+## 2026-09-16 갱신: HUD 신규 에셋 5종 배선 + MenuPanelFrameGold 폐기 (REMEDIATION_PLAN.md Phase 2/3)
+
+`Art/UI/MovementStickGold.png`(1438x902, 베이스 링+노브 2셀), `Art/UI/MenuPanelOdin.png`
+(793x1983, 오딘식 메뉴 세로 패널), `Art/UI/MenuSectionHeader.png`(2172x724, 가로 배너 -
+지역명 상단 배너와 메뉴 섹션 헤더 양쪽에 재사용), `Art/UI/MenuIconsSet.png`(1774x887,
+4x2=8칸 메뉴 아이콘), `Art/UI/MenuLockBadge.png`(1278x1230, 자물쇠 아이콘) 5종을 신규
+배선했다(이미 생성되어 있던 파일을 이번 세션에서 배선). 전부 PIL/numpy로 알파bbox·색상
+전이 지점을 직접 실측(균등분할 가정 금지 원칙 재적용) - 실측값은 `docs/HANDOFF.md`
+2026-09-16 항목과 `Editor/ArtImportConfigurator.cs`의 각 `Configure*` 메서드 주석 참고.
+
+**폐기**: `Art/UI/MenuPanelFrameGold.png`(세로 텍스트 목록 메뉴 배경, 7항목 divider 6개
+포함) - `MenuPanelOdin.png`로 완전히 대체되어 새 배선 이후 참조가 전혀 없음을 grep으로
+확인 후 `git rm`.
+
 ## 2026-09-14 갱신: UI 에셋 전면 교체 (기존 UI 전부 폐기) + HP 바 신규 추가
 
 사용자 지시("지금 있는 UI는 다 버려야해")로 신규 생성된 UI 에셋 4종(`Art/UI/SkillButtonFrame.png`, `Art/UI/HealthBarFrame.png`, `Art/UI/SkillIconsSet.png`, `Art/UI/MessagePanelFrame.png`)을 전부 배선하고 이전 UI 텍스처를 대체했다. 배선 세부는 `docs/HANDOFF.md`의 같은 날짜 "UI 에셋 전면 교체 + HP 바 신규 추가" 항목 참고.
