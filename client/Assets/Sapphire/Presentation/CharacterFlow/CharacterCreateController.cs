@@ -52,11 +52,42 @@ namespace Sapphire.Presentation.CharacterFlow
             SetError(string.Empty);
         }
 
+        // D2 fix (2026-09-15): selection used to be shown only by toggling
+        // the highlight glow GameObject's active state, leaving both cards
+        // at identical brightness/scale (orchestrator screenshot
+        // flow_create.png read as "unfinished" - a thick olive border was
+        // the only cue). Now the selected card also goes full brightness +
+        // a slight scale-up, the unselected one dims, matching
+        // CharacterCreateSceneBuilder.BuildClassCard's initial dim tint
+        // (same literals, duplicated here rather than shared across the
+        // Editor/Presentation assembly boundary - see that file's comment).
+        private static readonly Color SelectedCardTint = Color.white;
+        private static readonly Color UnselectedCardTint = new Color(0.6f, 0.6f, 0.6f, 1f);
+        private static readonly Vector3 SelectedCardScale = new Vector3(1.04f, 1.04f, 1f);
+
         private void SetSelectedClass(CharacterClass characterClass)
         {
             selectedClass = characterClass;
             if (mageSelectedHighlight != null) mageSelectedHighlight.SetActive(characterClass == CharacterClass.Mage);
             if (warriorSelectedHighlight != null) warriorSelectedHighlight.SetActive(characterClass == CharacterClass.Warrior);
+            ApplyCardSelectionVisual(mageCardButton, characterClass == CharacterClass.Mage);
+            ApplyCardSelectionVisual(warriorCardButton, characterClass == CharacterClass.Warrior);
+        }
+
+        private static void ApplyCardSelectionVisual(Button cardButton, bool selected)
+        {
+            if (cardButton == null)
+            {
+                return;
+            }
+
+            Image cardImage = cardButton.GetComponent<Image>();
+            if (cardImage != null)
+            {
+                cardImage.color = selected ? SelectedCardTint : UnselectedCardTint;
+            }
+
+            cardButton.transform.localScale = selected ? SelectedCardScale : Vector3.one;
         }
 
         private void HandleCreateClicked()

@@ -41,9 +41,38 @@ namespace Sapphire.EditorTools
         // its top edge.
         private const float OdinHeaderHeight = 40f;
         private const float OdinHeaderToItemsGap = 12f;
-        private const float OdinItemRowHeight = 104f;
-        private const float OdinSectionGap = 22f;
+        // 2026-09-15 (D1 fix): shrunk from 104 to the item's actual content
+        // height (icon 56 + 4 gap + label 18 = 78, see BuildOdinMenuItem) - at
+        // 104 every row reserved 26px of unused padding for a second grid row
+        // that MenuCatalog's current data never produces (every section is
+        // <=4 items, i.e. exactly one OdinColumns=4-wide row), and that slack
+        // was what let the grid's total content height run past the panel's
+        // actual available space and collide with the character-select
+        // footer button (see BuildCharacterSelectButton + the
+        // VerifyFooterClearance check at the end of Build below, which is
+        // what actually guards this now instead of eyeballing it again).
+        private const float OdinItemRowHeight = 78f;
+        // 2026-09-15 (D1 fix): 22 -> 8, same reason as OdinItemRowHeight - see
+        // VerifyFooterClearance for the arithmetic this is tuned against.
+        private const float OdinSectionGap = 8f;
         private const float OdinIconSize = 56f;
+        // 2026-09-15 (D1 fix): the footer button's own height, pulled out of
+        // BuildCharacterSelectButton as a named constant so
+        // VerifyFooterClearance (build-time overlap guard) can reference the
+        // exact same number instead of a duplicated magic 56.
+        private const float OdinFooterButtonHeight = 56f;
+        // Minimum clearance (canvas units) required between the last
+        // section's content (icon+label) and the footer button's top edge -
+        // task spec: "설정 아이콘+라벨과 footer 버튼 사이 최소 12px 간격".
+        private const float OdinFooterMinGap = 12f;
+        // Matches CharacterFlowUiScaffold/VillageHubUiBuilder's
+        // CanvasScaler.referenceResolution - VerifyFooterClearance works in
+        // these reference-resolution canvas units rather than reading a live
+        // RectTransform.rect, because batchmode scene builds run before any
+        // GameView/screen exists and RectTransform.rect can't be trusted yet
+        // (same reasoning LayoutOverlapGuard documents for CharacterCreate/
+        // CharacterSelect).
+        private const float ReferenceCanvasHeight = 720f;
 
         // 2026-09-15 (S2 fix): the previous flat 24-unit OdinContentMargin
         // put grid content inside the panel's own gold 9-slice border, so
@@ -139,6 +168,13 @@ namespace Sapphire.EditorTools
             float contentWidth = OdinPanelWidth - 2f * OdinContentMargin;
             float cellWidth = contentWidth / OdinColumns;
             float cursorY = -OdinContentMargin;
+            // Tracks the bottom edge (distance below panel top, negative) of
+            // the last section's item row - i.e. where the grid content
+            // actually ends, ignoring the trailing OdinSectionGap the loop
+            // below adds after every section (including the last one, where
+            // it's never used for anything). VerifyFooterClearance needs the
+            // real content-end, not that unused trailing gap.
+            float lastContentBottomY = cursorY;
 
             foreach (MenuSectionDefinition section in MenuCatalog.Sections)
             {
@@ -166,8 +202,11 @@ namespace Sapphire.EditorTools
                     }
                 }
 
-                cursorY -= rows * OdinItemRowHeight + OdinSectionGap;
+                lastContentBottomY = cursorY - rows * OdinItemRowHeight;
+                cursorY = lastContentBottomY - OdinSectionGap;
             }
+
+            VerifyFooterClearance(lastContentBottomY);
 
             // Character-flow slice, task requirement: one return path from the
             // village back to CharacterSelect, somewhere in the menu panel.
@@ -176,12 +215,45 @@ namespace Sapphire.EditorTools
             // MainMenuPanel.Select's generic "coming soon" placeholder - so
             // this doesn't touch MainMenuPanel.cs/MenuCatalog.cs or any of
             // the existing 8 menu items' behavior at all.
+            //
+            // 2026-09-15 (D1 fix): this used to be positioned purely by its
+            // own anchoredPosition (from-bottom) with zero awareness of where
+            // the grid content above ended (from-top) - the two coordinate
+            // systems never got compared, so nothing caught them overlapping
+            // (orchestrator screenshot flow_village_warrior_menu.png: this
+            // button visually covered the "시스템" section's 설정 icon
+            // label). VerifyFooterClearance above now throws at build time if
+            // they would.
             BuildCharacterSelectButton(panelGo, openButtonSprite);
 
             var controller = canvasGo.AddComponent<MainMenuPanel>();
             controller.Configure(overlayGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), messagePanel);
             backdropButton.onClick.AddListener(controller.Close);
             overlayGo.SetActive(false);
+        }
+
+        // Build-time overlap guard (D4 spec: "기존 VerifyNoOverlap류 빌드타임
+        // 검증이 있으면 footer까지 포함하도록 확장" - none existed for this
+        // panel yet, so this is the new one). Works in the same
+        // reference-resolution canvas units every position/margin constant
+        // above is defined in, not a live RectTransform.rect read - see
+        // ReferenceCanvasHeight's doc comment for why.
+        private static void VerifyFooterClearance(float lastContentBottomY)
+        {
+            float panelHeight = ReferenceCanvasHeight - OdinPanelTopMargin - OdinPanelBottomMargin;
+            float contentBottomFromPanelBottom = panelHeight - (-lastContentBottomY);
+            float footerTopFromPanelBottom = OdinContentMargin + OdinFooterButtonHeight;
+            float clearance = contentBottomFromPanelBottom - footerTopFromPanelBottom;
+
+            if (clearance < OdinFooterMinGap)
+            {
+                throw new System.Exception(
+                    $"VillageHub menu: only {clearance:F1}px clearance between the last section's " +
+                    $"content and the character-select footer button (need >= {OdinFooterMinGap}px). " +
+                    "MenuCatalog grew, or OdinItemRowHeight/OdinHeaderHeight/OdinSectionGap shrank the " +
+                    "available margin - reduce item count per section, shrink those constants further, " +
+                    "or reduce OdinPanelTopMargin/OdinPanelBottomMargin to grow the panel.");
+            }
         }
 
         private static void BuildCharacterSelectButton(GameObject panelGo, Sprite buttonSprite)
@@ -192,7 +264,7 @@ namespace Sapphire.EditorTools
             rect.anchorMin = new Vector2(0.5f, 0f);
             rect.anchorMax = new Vector2(0.5f, 0f);
             rect.pivot = new Vector2(0.5f, 0f);
-            rect.sizeDelta = new Vector2(OdinPanelWidth - 2f * OdinContentMargin, 56f);
+            rect.sizeDelta = new Vector2(OdinPanelWidth - 2f * OdinContentMargin, OdinFooterButtonHeight);
             rect.anchoredPosition = new Vector2(0f, OdinContentMargin);
             var image = buttonGo.GetComponent<Image>();
             image.sprite = buttonSprite;

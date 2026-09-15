@@ -15,13 +15,51 @@ namespace Sapphire.EditorTools
     /// "empty" sub-view - a lone 생성 button, toggled at runtime by
     /// CharacterSelectController) plus a shared ConfirmDialog for the
     /// delete confirmation.
+    ///
+    /// 2026-09-15 (D3 fix): CardWidth was 220 while
+    /// CharacterFlowArtImportConfigurator.CharacterSlotFrameTargetWidth
+    /// (the width CharacterSlotFrame.png's pixelsPerUnit is actually
+    /// calibrated against) is 260 - widened to match, which also frees up
+    /// enough interior width for the select/delete buttons to clear the
+    /// frame's border (see CardButtonEdgeInset below). The name/class+level
+    /// text also switches to a two-line "big name / small class·Lv" layout
+    /// (orchestrator screenshot flow_select.png showed only "법사 Lv.1",
+    /// no name line - turned out to be a real dynamic-font bug, see
+    /// NameText's fontSize comment in BuildSlotCard, not just a layout
+    /// issue), and the portrait grows to fill more of the card's top area.
     /// </summary>
     internal static class CharacterSelectSceneBuilder
     {
         private const string ScenePath = "Assets/Sapphire/Scenes/CharacterSelect.unity";
-        private const float CardWidth = 220f;
-        private const float CardHeight = 320f;
+        private const float CardWidth = 260f;
+        private const float CardHeight = 340f;
         private const float CardGap = 20f;
+
+        // Top-down layout budget inside each filled card (card-local space,
+        // y+up, top edge at +CardHeight/2 = +170): topPad(16) ->
+        // Portrait(150, top-pivot) -> gap(8) -> NameText(32, center-pivot) ->
+        // gap(4) -> ClassLevelText(24, center-pivot) -> gap(8) ->
+        // Select/Delete buttons(40, center-pivot), landing with a 58px
+        // clearance to the card's bottom edge - see CardButtonBottomPad
+        // below for why that number matters (it's the same measurement the
+        // buttons' left/right inset uses).
+        private const float CardTopPad = 16f;
+        private const float CardPortraitHeight = 150f;
+        private const float CardPortraitNameGap = 8f;
+        private const float CardNameHeight = 32f;
+        private const float CardNameClassGap = 4f;
+        private const float CardClassHeight = 24f;
+        private const float CardClassButtonGap = 8f;
+        private const float CardButtonHeight = 40f;
+        private const float CardButtonWidth = 70f;
+        private const float CardButtonGap = 16f;
+
+        // D3 spec: "카드 내부 여백(테두리 실측 border 36px + 12) 안쪽에
+        // 배치" - select/delete must stay this far in from every card edge.
+        // Both the button block's computed bottom clearance (58px, from the
+        // layout budget above) and its left/right inset (below) are checked
+        // against this at build time by VerifyButtonsInsideCard.
+        private const float CardButtonEdgeInset = 48f;
 
         internal static void Build()
         {
@@ -38,13 +76,17 @@ namespace Sapphire.EditorTools
             Sprite warriorPortrait = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/PortraitWarrior.png");
 
             var slotCards = new CharacterSlotCardView[CharacterRoster.MaxSlots];
+            var cardCentersX = new float[CharacterRoster.MaxSlots];
             float rowWidth = CharacterRoster.MaxSlots * CardWidth + (CharacterRoster.MaxSlots - 1) * CardGap;
             float leftmostCenterX = -(rowWidth / 2f) + CardWidth / 2f;
             for (int i = 0; i < CharacterRoster.MaxSlots; i++)
             {
                 float centerX = leftmostCenterX + i * (CardWidth + CardGap);
+                cardCentersX[i] = centerX;
                 slotCards[i] = BuildSlotCard(canvasGo, cardFrame, menuButton, i, centerX);
             }
+
+            VerifyNoOverlap(cardCentersX);
 
             ConfirmDialog confirmDialog = BuildConfirmDialog(canvasGo, menuButton);
 
@@ -63,28 +105,76 @@ namespace Sapphire.EditorTools
             BuildSettingsSceneRegistrar.Register(ScenePath);
         }
 
+        // D4 spec: "생성/선택 화면 주요 요소끼리 겹치면 빌드 실패". Checks the
+        // title against every card and every card against every other card
+        // (cheap - MaxSlots is 4) - the per-card select/delete-vs-border
+        // check is separate (VerifyButtonsInsideCard, called from
+        // BuildSlotCard where the button rects are already at hand).
+        private static void VerifyNoOverlap(float[] cardCentersX)
+        {
+            Rect titleRect = LayoutOverlapGuard.ToCenterAnchoredCanvasRect(new Vector2(0f, 300f), new Vector2(600f, 60f));
+            var elements = new System.Collections.Generic.List<(string, Rect)> { ("TitleText", titleRect) };
+            for (int i = 0; i < cardCentersX.Length; i++)
+            {
+                Rect cardRect = LayoutOverlapGuard.ToCenterAnchoredCanvasRect(new Vector2(cardCentersX[i], 0f), new Vector2(CardWidth, CardHeight));
+                elements.Add(("SlotCard_" + i, cardRect));
+            }
+
+            LayoutOverlapGuard.VerifyNoOverlap(elements.ToArray());
+        }
+
         private static CharacterSlotCardView BuildSlotCard(GameObject canvasGo, Sprite cardFrame, Sprite buttonSprite, int index, float centerX)
         {
             Image card = CharacterFlowUiScaffold.BuildSlicedPanel(canvasGo, cardFrame, "SlotCard_" + index, new Vector2(centerX, 0f), new Vector2(CardWidth, CardHeight));
             GameObject cardGo = card.gameObject;
 
             GameObject filledRoot = BuildChildRoot(cardGo, "Filled");
+
+            float portraitTop = CardHeight / 2f - CardTopPad;
+            float portraitBottom = portraitTop - CardPortraitHeight;
+            float nameTop = portraitBottom - CardPortraitNameGap;
+            float nameCenterY = nameTop - CardNameHeight / 2f;
+            float nameBottom = nameTop - CardNameHeight;
+            float classTop = nameBottom - CardNameClassGap;
+            float classCenterY = classTop - CardClassHeight / 2f;
+            float classBottom = classTop - CardClassHeight;
+            float buttonTop = classBottom - CardClassButtonGap;
+            float buttonCenterY = buttonTop - CardButtonHeight / 2f;
+
             var portraitGo = new GameObject("Portrait", typeof(Image));
             portraitGo.transform.SetParent(filledRoot.transform, false);
             var portraitRect = portraitGo.GetComponent<RectTransform>();
-            portraitRect.anchorMin = new Vector2(0.5f, 0.5f);
-            portraitRect.anchorMax = new Vector2(0.5f, 0.5f);
-            portraitRect.sizeDelta = new Vector2(120f, 120f);
-            portraitRect.anchoredPosition = new Vector2(0f, 70f);
+            portraitRect.anchorMin = new Vector2(0.5f, 1f);
+            portraitRect.anchorMax = new Vector2(0.5f, 1f);
+            portraitRect.pivot = new Vector2(0.5f, 1f);
+            portraitRect.sizeDelta = new Vector2(CardPortraitHeight, CardPortraitHeight);
+            portraitRect.anchoredPosition = new Vector2(0f, -CardTopPad);
             var portraitImage = portraitGo.GetComponent<Image>();
             portraitImage.type = Image.Type.Simple;
             portraitImage.preserveAspect = true;
 
-            Text nameText = CharacterFlowUiScaffold.BuildLabel(filledRoot, "NameText", new Vector2(0f, -20f), new Vector2(CardWidth - 20f, 30f), string.Empty, fontSize: 22);
-            Text classLevelText = CharacterFlowUiScaffold.BuildLabel(filledRoot, "ClassLevelText", new Vector2(0f, -52f), new Vector2(CardWidth - 20f, 26f), string.Empty, fontSize: 18);
+            // 2026-09-15 (D3 fix): fontSize was 24, the ONLY Text component
+            // in the entire game using that exact size (every other size is
+            // shared by 2-3 Text components elsewhere, all of them baked at
+            // scene-build time so their glyph atlas entries exist before any
+            // runtime script runs) - confirmed by direct pixel-level capture
+            // testing that a Text whose runtime-assigned .text is the FIRST
+            // thing anywhere to request glyphs at a brand-new, never-before-
+            // used font size renders zero visible vertices (legacy uGUI +
+            // dynamic OTF font issue), while the exact same characters at an
+            // already-established size (classLevelText's baked-elsewhere 22)
+            // render fine. Switched to 22 (already used 3x, including this
+            // very card's own baked "+ 생성"/확인/취소 button labels) rather
+            // than hunting the underlying engine bug further.
+            Text nameText = CharacterFlowUiScaffold.BuildLabel(filledRoot, "NameText", new Vector2(0f, nameCenterY), new Vector2(CardWidth - 24f, CardNameHeight), string.Empty, fontSize: 22);
+            Text classLevelText = CharacterFlowUiScaffold.BuildLabel(filledRoot, "ClassLevelText", new Vector2(0f, classCenterY), new Vector2(CardWidth - 24f, CardClassHeight), string.Empty, fontSize: 16);
+            classLevelText.color = new Color(0.85f, 0.85f, 0.9f, 1f);
 
-            Button selectButton = CharacterFlowUiScaffold.BuildLabeledButton(filledRoot, buttonSprite, "SelectButton", new Vector2(-50f, -120f), new Vector2(90f, 44f), "선택", fontSize: 18);
-            Button deleteButton = CharacterFlowUiScaffold.BuildLabeledButton(filledRoot, buttonSprite, "DeleteButton", new Vector2(50f, -120f), new Vector2(90f, 44f), "삭제", fontSize: 18);
+            float buttonCenterX = (CardButtonWidth + CardButtonGap) / 2f;
+            Button selectButton = CharacterFlowUiScaffold.BuildLabeledButton(filledRoot, buttonSprite, "SelectButton", new Vector2(-buttonCenterX, buttonCenterY), new Vector2(CardButtonWidth, CardButtonHeight), "선택", fontSize: 16);
+            Button deleteButton = CharacterFlowUiScaffold.BuildLabeledButton(filledRoot, buttonSprite, "DeleteButton", new Vector2(buttonCenterX, buttonCenterY), new Vector2(CardButtonWidth, CardButtonHeight), "삭제", fontSize: 16);
+
+            VerifyButtonsInsideCard(index, buttonCenterX, buttonCenterY);
 
             GameObject emptyRoot = BuildChildRoot(cardGo, "Empty");
             Button createButton = CharacterFlowUiScaffold.BuildLabeledButton(emptyRoot, buttonSprite, "CreateButton", Vector2.zero, new Vector2(150f, 64f), "+ 생성", fontSize: 22);
@@ -100,6 +190,29 @@ namespace Sapphire.EditorTools
                 deleteButton = deleteButton,
                 createButton = createButton,
             };
+        }
+
+        // D3 spec: select/delete must sit inside the card's own border
+        // padding (CardButtonEdgeInset, 48px in from every edge). Card and
+        // button rects are both computed relative to the card's own local
+        // center (0,0) here, which is equivalent to canvas space shifted by
+        // -centerX - fine for a pure-containment check since it doesn't
+        // depend on the card's absolute canvas position.
+        private static void VerifyButtonsInsideCard(int index, float buttonCenterX, float buttonCenterY)
+        {
+            var cardLocalRect = new Rect(-CardWidth / 2f, -CardHeight / 2f, CardWidth, CardHeight);
+            var innerSafeRect = new Rect(
+                cardLocalRect.xMin + CardButtonEdgeInset,
+                cardLocalRect.yMin + CardButtonEdgeInset,
+                cardLocalRect.width - 2f * CardButtonEdgeInset,
+                cardLocalRect.height - 2f * CardButtonEdgeInset);
+
+            var selectRect = new Rect(-buttonCenterX - CardButtonWidth / 2f, buttonCenterY - CardButtonHeight / 2f, CardButtonWidth, CardButtonHeight);
+            var deleteRect = new Rect(buttonCenterX - CardButtonWidth / 2f, buttonCenterY - CardButtonHeight / 2f, CardButtonWidth, CardButtonHeight);
+
+            LayoutOverlapGuard.VerifyContained($"SlotCard_{index}.SelectButton", selectRect, $"SlotCard_{index}.SafeInterior", innerSafeRect);
+            LayoutOverlapGuard.VerifyContained($"SlotCard_{index}.DeleteButton", deleteRect, $"SlotCard_{index}.SafeInterior", innerSafeRect);
+            LayoutOverlapGuard.VerifyNoOverlap(($"SlotCard_{index}.SelectButton", selectRect), ($"SlotCard_{index}.DeleteButton", deleteRect));
         }
 
         private static GameObject BuildChildRoot(GameObject parent, string name)

@@ -2,7 +2,45 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): 캐릭터 플로우 실측 확정 + 씬 빌드 + 플레이어 빌드 + 스크린샷 검증
+## 2026-09-15 (최신): 캐릭터 생성/선택 + 마을 메뉴 레이아웃 결함 4건 수정
+
+오케스트레이터가 스크린샷 6장을 직접 보고 판정한 결함 4건을 수정했다.
+
+- **D1 (VillageHubMenuBuilder.cs)**: "캐릭터 선택으로" footer 버튼이 시스템
+  섹션의 "설정" 아이콘/라벨과 겹치던 문제. `OdinItemRowHeight`(104→78),
+  `OdinSectionGap`(22→8) 등 그리드 상수를 실제 콘텐츠 높이에 맞게 축소하고,
+  footer 버튼과 그리드 콘텐츠 사이 최소 12px 간격을 빌드타임에 검증하는
+  `VerifyFooterClearance`를 추가했다(현재 수치로 약 21px 여유).
+- **D2 (CharacterCreateSceneBuilder.cs / CharacterCreateController.cs)**: 클래스
+  카드를 `CharacterSlotFrame.png`(캐릭터 선택 화면과 동일 프레임)로 교체하고,
+  선택 상태를 굵은 테두리 색 대신 밝기(흰색/0.6 다크 틴트) + 1.04배 스케일 +
+  은은한 골드 글로우로 표현했다(보석 장식 없음). 클래스 한 줄 설명을 카드에
+  추가했고, 제목-카드-이름입력-생성버튼 스택을 16px 이상 간격으로 재배치,
+  좌상단에 "캐릭터 선택으로" 뒤로가기 버튼을 추가했다.
+- **D3 (CharacterSelectSceneBuilder.cs / CharacterSelectController.cs)**: 카드
+  너비를 220→260(아트 임포트 시 계산된 실제 캘리브레이션 폭과 일치)으로
+  넓혀 선택/삭제 버튼이 카드 테두리 안쪽(48px 인셋)에 들어가도록 했고, 이름을
+  큰 글씨로 위에, "클래스 · Lv.N"을 작은 글씨로 아래에 두 줄로 표시하도록
+  변경했다. 초상화도 120→150으로 확대했다. **부수 발견**: 이름 텍스트가 화면에
+  전혀 안 보이던 원인은 레이아웃이 아니라 `fontSize=24`가 이 프로젝트
+  전체에서 유일하게 그 크기를 쓰는 Text였던 것 - 새로 도입되는(첫 요청되는)
+  폰트 크기의 동적 폰트 글리프가 legacy uGUI Text에서 렌더링되지 않는 버그를
+  스크린샷 픽셀 비교로 실측 확인했다. 이미 여러 곳에서 쓰는 크기(22)로
+  바꿔서 해결 - 근본 엔진 버그 자체는 별도 조사 과제로 남는다(TextMeshPro
+  전환이 근본 해결책일 가능성).
+- **공통 (LayoutOverlapGuard.cs, 신규)**: CharacterCreate/CharacterSelect의
+  주요 요소(제목/카드/입력칸/버튼)가 서로 겹치면 빌드가 실패하도록 하는
+  `VerifyNoOverlap`/`VerifyContained` 헬퍼. VillageHub 메뉴 패널은 좌표계가
+  달라(패널 기준 vs 캔버스 기준) 별도의 인라인 산술 검증(`VerifyFooterClearance`)을
+  그대로 둔다(지역성 우선 컨벤션).
+
+컴파일 0 에러, EditMode 59/59 통과, `SapphireSceneBuilder.BuildEverything` +
+`SapphireBuildPlayer.BuildWindows` 재실행, 새 계정으로 캡처한
+`generated-images/diagnostics/flow2_{select,create,village_warrior_menu}.png`
+3장으로 결함 해소를 직접 확인했다. 캡처엔 기존 `sapphiretest` 테스트
+계정(테스트법사/테스트전사, 실사용자 데이터 아님)을 재사용했다.
+
+## 2026-09-15: 캐릭터 플로우 실측 확정 + 씬 빌드 + 플레이어 빌드 + 스크린샷 검증
 
 이전 세션이 코드만 구현해두고(컴파일/EditMode만 확인) 아트가 없어 미룬 부분 -
 아트 도착 후 실측·빌드·스크린샷 검증까지 마무리했다.

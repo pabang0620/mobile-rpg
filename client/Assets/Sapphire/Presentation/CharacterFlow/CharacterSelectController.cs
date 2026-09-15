@@ -65,7 +65,7 @@ namespace Sapphire.Presentation.CharacterFlow
             if (card.filledRoot != null) card.filledRoot.SetActive(true);
             if (card.emptyRoot != null) card.emptyRoot.SetActive(false);
             if (card.nameText != null) card.nameText.text = slot.Name;
-            if (card.classLevelText != null) card.classLevelText.text = $"{ClassLabel(slot.Class)} Lv.{slot.Level}";
+            if (card.classLevelText != null) card.classLevelText.text = $"{ClassLabel(slot.Class)} · Lv.{slot.Level}";
             if (card.portraitImage != null) card.portraitImage.sprite = slot.Class == CharacterClass.Warrior ? warriorPortrait : magePortrait;
 
             if (card.selectButton != null)
