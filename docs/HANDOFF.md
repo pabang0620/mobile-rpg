@@ -79,7 +79,8 @@ whirlwind,shield,warcry,groundslam}.png`)을 오케스트레이터가 직접 PNG
 ButtonPrimary/Secondary는 이번에 지정된 4개 버튼에만 적용됐다 - 나머지
 버튼(선택/삭제/+생성/닫기/확인/취소/메뉴 그리드 항목)을 신규 스타일로
 통일할지는 후속 결정 필요. CharacterSelect 카드의 `Lv.1` 텍스트 저대비
-문제도 미해결.
+문제는 2026-09-15 후속 세션에서 해결(`classLevelText`/`descriptionText`
+색을 `#4a4038`로 변경, 아래 별도 항목 참고).
 
 ## 2026-09-15: 캐릭터 생성/선택 + 마을 메뉴 레이아웃 결함 4건 수정
 

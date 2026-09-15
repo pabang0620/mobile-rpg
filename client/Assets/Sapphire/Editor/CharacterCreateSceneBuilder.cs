@@ -257,7 +257,9 @@ namespace Sapphire.EditorTools
             CharacterFlowUiScaffold.BuildLabel(cardGo, "Label", new Vector2(0f, labelCenterY), new Vector2(CardWidth - 20f, CardLabelHeight), label, fontSize: 26);
 
             Text descriptionText = CharacterFlowUiScaffold.BuildLabel(cardGo, "Description", new Vector2(0f, descriptionCenterY), new Vector2(CardWidth - 24f, CardDescriptionHeight), description, fontSize: 14);
-            descriptionText.color = new Color(0.85f, 0.85f, 0.9f, 1f);
+            // Dark brownish-gray (matches ui_kit tokens.py PANEL_TITLE_TEXT #4a4038) so this
+            // reads against the beige ClassCard background instead of washing out.
+            descriptionText.color = new Color(0.2902f, 0.251f, 0.2196f, 1f);
             descriptionText.horizontalOverflow = HorizontalWrapMode.Wrap;
             descriptionText.verticalOverflow = VerticalWrapMode.Truncate;
             descriptionText.raycastTarget = false;

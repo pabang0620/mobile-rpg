@@ -168,7 +168,9 @@ namespace Sapphire.EditorTools
             // than hunting the underlying engine bug further.
             Text nameText = CharacterFlowUiScaffold.BuildLabel(filledRoot, "NameText", new Vector2(0f, nameCenterY), new Vector2(CardWidth - 24f, CardNameHeight), string.Empty, fontSize: 22);
             Text classLevelText = CharacterFlowUiScaffold.BuildLabel(filledRoot, "ClassLevelText", new Vector2(0f, classCenterY), new Vector2(CardWidth - 24f, CardClassHeight), string.Empty, fontSize: 16);
-            classLevelText.color = new Color(0.85f, 0.85f, 0.9f, 1f);
+            // Dark brownish-gray (matches ui_kit tokens.py PANEL_TITLE_TEXT #4a4038) so this
+            // reads against the beige CharacterSlotFrame background instead of washing out.
+            classLevelText.color = new Color(0.2902f, 0.251f, 0.2196f, 1f);
 
             float buttonCenterX = (CardButtonWidth + CardButtonGap) / 2f;
             Button selectButton = CharacterFlowUiScaffold.BuildLabeledButton(filledRoot, buttonSprite, "SelectButton", new Vector2(-buttonCenterX, buttonCenterY), new Vector2(CardButtonWidth, CardButtonHeight), "선택", fontSize: 16);
