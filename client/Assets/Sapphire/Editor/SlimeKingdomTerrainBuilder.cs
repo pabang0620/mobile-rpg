@@ -4,28 +4,32 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Sapphire.Domain.Grid;
 using Sapphire.Presentation.World;
 
 namespace Sapphire.EditorTools
 {
-    /// <summary>Builds the 32x24 Slime Kingdom exploration map.</summary>
     internal static class SlimeKingdomTerrainBuilder
     {
-        internal const int Width = 32;
-        internal const int Height = 24;
-        internal const int SpawnX = 15;
+        internal const int Width = 40;
+        internal const int Height = 30;
+        internal const int SpawnX = 19;
         internal const int SpawnY = 2;
 
-        private const string AtlasPath = "Assets/Sapphire/Art/World/SlimeKingdomAtlas.png";
+        private const string PrimaryAtlas = "Assets/Sapphire/Art/World/SlimeKingdomAtlas.png";
+        private const string PropsAtlas = "Assets/Sapphire/Art/World/SlimeKingdomProps2.png";
+        private const string SeamlessTileDir = "Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV4/";
 
         internal static TerrainBuildResult Build()
         {
             Tile blocker = CreateBlockerTile();
-            Tile grass = CreateTileFromTexture("Grass.png", "Tile_SlimeGrass.asset");
-            Tile road = CreateTileFromTexture("RoyalRoad.png", "Tile_SlimeRoad.asset");
-            Tile pool = CreateTileFromTexture("JellyPool.png", "Tile_SlimePool.asset");
-            Tile stone = CreateTileFromTexture("CastleStone.png", "Tile_SlimeStone.asset");
+            // Retain Tile asset paths/GUIDs while replacing shared atlas slices
+            // with standalone, edge-matched textures like the starting map.
+            Tile[] grass = CreateStandaloneTiles("Grass", 4, "Tile_SlimeV3_Grass_");
+            Tile[] road = CreateStandaloneTiles("Dirt", 4, "Tile_SlimeV3_Dirt_");
+            Tile[] water = CreateStandaloneTiles("Water", 4, "Tile_SlimeV3_Water_");
+            Tile[] stone = CreateStandaloneTiles("Stone", 4, "Tile_SlimeV3_Stone_");
+            // South, north, east, west land edges, then NW/NE/SW/SE water corners.
+            Tile[] shore = CreateStandaloneTiles("Shore", 32, "Tile_SlimeV3_Shore_");
 
             var gridGo = new GameObject("Grid", typeof(Grid));
             gridGo.GetComponent<Grid>().cellSize = Vector3.one;
@@ -37,9 +41,9 @@ namespace Sapphire.EditorTools
             collisionGo.transform.SetParent(gridGo.transform);
             var collision = collisionGo.GetComponent<Tilemap>();
 
-            PopulateTerrain(ground, collision, grass, road, pool, stone, blocker);
+            PopulateTerrain(ground, collision, grass, road, water, stone, shore, blocker);
             var zones = new List<InteractableZone>();
-            BuildWorldProps(collision, blocker, zones);
+            BuildLandmarks(collision, blocker, zones);
             ValidatePlayableLayout(collision, zones);
 
             var gridBuilder = gridGo.AddComponent<TilemapGridMapBuilder>();
@@ -49,227 +53,261 @@ namespace Sapphire.EditorTools
             AssignField(gridBuilder, "height", Height);
             AssignField(gridBuilder, "originCellX", 0);
             AssignField(gridBuilder, "originCellY", 0);
-
             AssetDatabase.SaveAssets();
             return new TerrainBuildResult(gridBuilder, zones.ToArray(), ground);
         }
 
-        private static void ValidatePlayableLayout(Tilemap collision, IEnumerable<InteractableZone> zones)
-        {
-            var reached = new HashSet<Vector2Int>();
-            var queue = new Queue<Vector2Int>();
-            var start = new Vector2Int(SpawnX, SpawnY);
-            reached.Add(start);
-            queue.Enqueue(start);
-            Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-
-            while (queue.Count > 0)
-            {
-                Vector2Int current = queue.Dequeue();
-                foreach (Vector2Int direction in directions)
-                {
-                    Vector2Int next = current + direction;
-                    if (next.x < 0 || next.x >= Width || next.y < 0 || next.y >= Height || reached.Contains(next)) continue;
-                    if (collision.HasTile(new Vector3Int(next.x, next.y, 0))) continue;
-                    reached.Add(next);
-                    queue.Enqueue(next);
-                }
-            }
-
-            foreach (InteractableZone zone in zones)
-            {
-                Vector2Int target = new Vector2Int(zone.Coord.X, zone.Coord.Y);
-                bool canApproach = directions.Any(direction => reached.Contains(target + direction));
-                if (!canApproach)
-                    throw new Exception($"Slime Kingdom interactable '{zone.InteractableIdValue}' cannot be reached from spawn.");
-            }
-
-            if (reached.Count < Width * Height / 2)
-                throw new Exception($"Slime Kingdom exploration area is too constrained: only {reached.Count} reachable cells.");
-        }
-
-        private static void PopulateTerrain(Tilemap ground, Tilemap collision, Tile grass, Tile road, Tile pool, Tile stone, Tile blocker)
+        private static void PopulateTerrain(Tilemap ground, Tilemap collision, Tile[] grass, Tile[] royalRoad, Tile[] water, Tile[] stone, Tile[] shore, Tile blocker)
         {
             for (int x = 0; x < Width; x++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int y = 0; y < Height; y++)
-                {
-                    var cell = new Vector3Int(x, y, 0);
-                    bool border = x == 0 || x == Width - 1 || y == 0 || y == Height - 1;
-                    int leftDx = x - 6;
-                    int leftDy = y - 9;
-                    int rightDx = x - 26;
-                    int rightDy = y - 10;
-                    bool leftPool = leftDx * leftDx * 4 + leftDy * leftDy * 5 <= 72 && y != 9;
-                    bool rightPool = rightDx * rightDx * 4 + rightDy * rightDy * 5 <= 72 && y != 10;
-                    bool royalRoad = Mathf.Abs(x - 15) <= 1
-                        || (y == 9 && x >= 2 && x <= 15)
-                        || (y == 10 && x >= 16 && x <= 29)
-                        || ((y == 13 || y == 16) && x >= 10 && x <= 21)
-                        || ((x == 10 || x == 21) && y >= 13 && y <= 16)
-                        || (y == 14 && x >= 5 && x <= 10)
-                        || (y == 15 && x >= 21 && x <= 27);
-                    bool castle = y >= 18;
-
-                    ground.SetTile(cell, castle ? stone : royalRoad ? road : leftPool || rightPool ? pool : grass);
-                    ground.SetTransformMatrix(cell, GetGroundTransform(x, y));
-                    if (border || leftPool || rightPool || (y == 17 && x != 14 && x != 15 && x != 16))
-                    {
-                        collision.SetTile(cell, blocker);
-                    }
-                }
+                var cell = new Vector3Int(x, y, 0);
+                bool border = x == 0 || x == Width - 1 || y == 0 || y == Height - 1;
+                bool liquid = IsLiquid(x, y);
+                bool bridge = IsBridge(x, y);
+                bool palace = y >= 24;
+                bool road = IsRoyalRoad(x, y);
+                // A bridge is a walkable overlay above water. Never replace its
+                // river/lake bed with a road tile or it visibly sits on dry land.
+                Tile chosen = palace ? SelectVariant(stone, x, y, 62, 82, 94)
+                    : liquid ? SelectWaterOrShore(water, shore, x, y)
+                    : road ? SelectVariant(royalRoad, x, y, 64, 82, 95)
+                    : SelectVariant(grass, x, y, 55, 78, 93);
+                ground.SetTile(cell, chosen);
+                if (border || (liquid && !bridge)) collision.SetTile(cell, blocker);
             }
         }
 
-        private static Matrix4x4 GetGroundTransform(int x, int y)
+        private static bool IsLiquid(int x, int y)
         {
-            uint hash = (uint)(x * 374761393 + y * 668265263);
-            hash = (hash ^ (hash >> 13)) * 1274126177u;
-            bool flipX = (hash & 1u) != 0;
-            bool flipY = (hash & 2u) != 0;
-            return Matrix4x4.Scale(new Vector3(flipX ? -1f : 1f, flipY ? -1f : 1f, 1f));
+            bool kingdomRiver = y >= 14 && y <= 16 && x >= 1 && x <= 38;
+            bool palaceMoat = y >= 22 && y <= 23 && x >= 5 && x <= 34;
+            return kingdomRiver || palaceMoat;
         }
 
-        private static void BuildWorldProps(Tilemap collision, Tile blocker, List<InteractableZone> zones)
+        private static bool IsBridge(int x, int y)
         {
-            var propsRoot = new GameObject("SlimeKingdomProps").transform;
+            bool riverBridges = y >= 14 && y <= 16 && ((x >= 7 && x <= 9) || (x >= 18 && x <= 20) || (x >= 30 && x <= 32));
+            bool palaceBridge = y >= 22 && y <= 23 && x >= 18 && x <= 20;
+            return riverBridges || palaceBridge;
+        }
 
-            PlaceBlockingSet(propsRoot, collision, blocker, "SlimeProp_Tree", new[]
-            {
-                new Vector2Int(2,3), new Vector2Int(5,4), new Vector2Int(9,3),
-                new Vector2Int(22,3), new Vector2Int(27,4), new Vector2Int(29,6),
-                new Vector2Int(3,15), new Vector2Int(7,16), new Vector2Int(25,15), new Vector2Int(29,17),
-                new Vector2Int(1,5), new Vector2Int(1,10), new Vector2Int(1,19),
-                new Vector2Int(30,3), new Vector2Int(30,11), new Vector2Int(30,20),
-            }, 1.55f);
-            PlaceBlockingSet(propsRoot, collision, blocker, "SlimeProp_Crystal", new[]
-            {
-                new Vector2Int(10,7), new Vector2Int(20,7), new Vector2Int(5,13),
-                new Vector2Int(26,14), new Vector2Int(10,16), new Vector2Int(21,16),
-                new Vector2Int(6,22), new Vector2Int(24,22),
-            }, 1.2f);
-            PlaceBlockingSet(propsRoot, collision, blocker, "SlimeProp_Mushroom", new[]
-            {
-                new Vector2Int(11,4), new Vector2Int(19,4), new Vector2Int(9,12),
-                new Vector2Int(21,13), new Vector2Int(4,18), new Vector2Int(27,19),
-                new Vector2Int(1,14), new Vector2Int(30,15),
-            }, 1.15f);
-            PlaceBlockingSet(propsRoot, collision, blocker, "SlimeProp_Statue", new[]
-            {
-                new Vector2Int(11,18), new Vector2Int(19,18),
-            }, 1.35f);
+        private static bool IsRoyalRoad(int x, int y)
+        {
+            bool main = x >= 18 && x <= 20 && y >= 1;
+            int dx = x - 19, dy = y - 9;
+            bool plaza = dx * dx + dy * dy <= 24;
+            bool west = x >= 7 && x <= 9 && y >= 3 && y <= 21;
+            bool east = x >= 30 && x <= 32 && y >= 5 && y <= 21;
+            bool lowerLoop = y >= 8 && y <= 10 && x >= 7 && x <= 32;
+            bool upperLoop = y >= 18 && y <= 20 && x >= 7 && x <= 32;
+            return main || plaza || west || east || lowerLoop || upperLoop;
+        }
 
-            BuildInteractable(propsRoot, collision, blocker, zones, "return_gate", "SlimeProp_Gate", 15, 0,
+        private static void BuildLandmarks(Tilemap collision, Tile blocker, List<InteractableZone> zones)
+        {
+            Transform root = new GameObject("SlimeKingdomLandmarks").transform;
+
+            PlaceVisual(root, PropsAtlas, "Slime2_Sign", 16, 4, 1.05f, "EntranceSign", 2);
+            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL", 1);
+            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR", 1);
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 17, 5, .9f, "EntranceLampL", 1);
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 21, 5, .9f, "EntranceLampR", 1);
+
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 12, 8, 1.8f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 26, 8, 1.8f, 1);
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_shop", "Slime2_Shop", 12, 12,
+                "젤리 상점이다. 왕국 주화로 회복 물약과 수정 조각을 교환할 수 있다.", null, 1.8f);
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_fountain", "Slime2_Fountain", 19, 9,
+                "왕국의 샘이 반짝인다. 잠시 쉬자 HP와 MP가 회복되는 듯하다.", null, 1.55f);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 8, 6, 1.5f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 30, 6, 1.5f, 1);
+
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "crystal_cave", "Slime2_Cave", 3, 21,
+                "수정 동굴은 차가운 마력으로 봉인되어 있다. 왕의 인장이 필요하다.", null, 2f);
+            BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "west_chest", "SlimeProp_Chest", 12, 19,
+                "젤리 습지의 보물상자에서 왕국 주화와 푸른 수정 조각을 발견했다!", null, 1.15f);
+            BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "east_chest", "SlimeProp_Chest", 27, 19,
+                "수정 정원의 보물상자에서 별빛 젤리와 마력석을 발견했다!", null, 1.15f);
+
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 8, 15, 3f, 3f, "WestRiverBridge", 2);
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 15, 3f, 3f, "CentralRiverBridge", 2);
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 31, 15, 3f, 3f, "EastRiverBridge", 2);
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 22, 3f, 2f, "PalaceBridge", 2);
+            PlaceBlockingSet(root, collision, blocker, PropsAtlas, "Slime2_Cliff", new[]
+            {
+                new Vector2Int(2,6), new Vector2Int(2,12), new Vector2Int(2,24), new Vector2Int(37,6),
+                new Vector2Int(37,13), new Vector2Int(37,24), new Vector2Int(7,26), new Vector2Int(31,26),
+            }, 1.65f);
+            PlaceBlockingSet(root, collision, blocker, PrimaryAtlas, "SlimeProp_Crystal", new[]
+            {
+                new Vector2Int(5,11), new Vector2Int(13,16), new Vector2Int(26,15),
+                new Vector2Int(34,12), new Vector2Int(8,24), new Vector2Int(30,24),
+            }, 1.1f);
+            PlaceBlockingSet(root, collision, blocker, PrimaryAtlas, "SlimeProp_Mushroom", new[]
+            {
+                new Vector2Int(6,5), new Vector2Int(32,5), new Vector2Int(5,20), new Vector2Int(34,20),
+            }, 1f);
+
+            PlaceVisual(root, PropsAtlas, "Slime2_PalaceArch", 19, 23, 2.45f, "PalaceArch", 3);
+            PlaceBlockingSet(root, collision, blocker, PrimaryAtlas, "SlimeProp_Statue", new[]
+            {
+                new Vector2Int(14,24), new Vector2Int(24,24),
+            }, 1.3f);
+            BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "slime_throne", "SlimeProp_Throne", 19, 28,
+                "슬라임 왕의 왕좌다. 왕국 곳곳의 시련을 마친 모험가를 기다리고 있다.", null, 2.5f);
+
+            BuildEncounter(root, collision, blocker, zones, 16, 13, "경비 슬라임 셋이 광장을 순찰하고 있다.");
+            BuildEncounter(root, collision, blocker, zones, 14, 18, "늪지 슬라임 무리가 다리에서 왕궁으로 가는 길을 지키고 있다.");
+            BuildEncounter(root, collision, blocker, zones, 25, 18, "수정 슬라임이 마력 결정을 흡수하고 있다.");
+            BuildEncounter(root, collision, blocker, zones, 19, 25, "왕실 근위 슬라임이 왕좌로 가는 길을 막고 있다.");
+            BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "return_gate", "SlimeProp_Gate", 19, 0,
                 "시작 마을로 돌아갑니다.", "VillageHub", 2.5f);
-            BuildInteractable(propsRoot, collision, blocker, zones, "royal_chest_west", "SlimeProp_Chest", 5, 14,
-                "왕국의 숨겨진 보물상자다. 푸른 젤리 조각을 발견했다!", null, 1.25f);
-            BuildInteractable(propsRoot, collision, blocker, zones, "bridge_chest", "SlimeProp_Chest", 4, 9,
-                "젤리 연못의 섬 상자다. 반짝이는 왕국 주화를 발견했다!", null, 1.15f);
-            BuildInteractable(propsRoot, collision, blocker, zones, "royal_chest_east", "SlimeProp_Chest", 27, 16,
-                "수정 숲의 보물상자다. 별빛 젤리 조각을 발견했다!", null, 1.25f);
-            BuildInteractable(propsRoot, collision, blocker, zones, "slime_throne", "SlimeProp_Throne", 15, 22,
-                "슬라임 왕의 왕좌다. 왕관의 빛이 다음 모험을 기다리고 있다.", null, 2.4f);
-
-            BuildEncounter(propsRoot, collision, blocker, zones, 12, 8, "정찰 슬라임이 길을 지키고 있다.");
-            BuildEncounter(propsRoot, collision, blocker, zones, 18, 11, "수정 슬라임이 마력을 모으고 있다.");
-            BuildEncounter(propsRoot, collision, blocker, zones, 13, 15, "근위 슬라임이 왕궁 입구를 지키고 있다.");
-            BuildEncounter(propsRoot, collision, blocker, zones, 20, 20, "왕실 슬라임이 왕좌를 순찰하고 있다.");
         }
 
         private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message)
         {
-            BuildInteractable(parent, collision, blocker, zones, $"slime_{x}_{y}", "SlimeProp_Slime", x, y, message, null, 0.85f);
+            BuildInteractable(parent, collision, blocker, zones, PrimaryAtlas, "slime_" + x + "_" + y, "SlimeProp_Slime", x, y, message, null, .82f);
         }
 
-        private static void PlaceBlockingSet(Transform parent, Tilemap collision, Tile blocker, string spriteName, IEnumerable<Vector2Int> coords, float scale)
+        private static void PlaceBlockingFootprint(Transform parent, Tilemap collision, Tile blocker, string atlas, string sprite, int x, int y, float scale, int radius)
+        {
+            PlaceVisual(parent, atlas, sprite, x, y, scale, sprite + "_" + x + "_" + y, 1);
+            for (int dx = -radius; dx <= radius; dx++)
+            for (int dy = -radius; dy <= radius; dy++) collision.SetTile(new Vector3Int(x + dx, y + dy, 0), blocker);
+        }
+
+        private static void PlaceBlockingSet(Transform parent, Tilemap collision, Tile blocker, string atlas, string sprite, IEnumerable<Vector2Int> coords, float scale)
         {
             foreach (Vector2Int coord in coords)
             {
-                PlaceProp(parent, spriteName, coord.x, coord.y, scale, spriteName + "_" + coord.x + "_" + coord.y);
+                PlaceVisual(parent, atlas, sprite, coord.x, coord.y, scale, sprite + "_" + coord.x + "_" + coord.y, 1);
                 collision.SetTile(new Vector3Int(coord.x, coord.y, 0), blocker);
             }
         }
 
         private static InteractableZone BuildInteractable(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones,
-            string id, string spriteName, int x, int y, string message, string destinationScene, float scale)
+            string atlas, string id, string sprite, int x, int y, string message, string destination, float scale)
         {
-            GameObject go = PlaceProp(parent, spriteName, x, y, scale, id);
+            GameObject go = PlaceVisual(parent, atlas, sprite, x, y, scale, id, 2);
             collision.SetTile(new Vector3Int(x, y, 0), blocker);
             var zone = go.AddComponent<InteractableZone>();
-            AssignField(zone, "interactableId", id);
-            AssignField(zone, "gridX", x);
-            AssignField(zone, "gridY", y);
-            AssignField(zone, "message", message);
-            AssignField(zone, "destinationScene", destinationScene);
-            zones.Add(zone);
+            AssignField(zone, "interactableId", id); AssignField(zone, "gridX", x); AssignField(zone, "gridY", y);
+            AssignField(zone, "message", message); AssignField(zone, "destinationScene", destination); zones.Add(zone);
             return zone;
         }
 
-        private static GameObject PlaceProp(Transform parent, string spriteName, int x, int y, float scale, string name)
+        private static GameObject PlaceVisual(Transform parent, string atlas, string sprite, int x, int y, float scale, string name, int order)
+        {
+            return PlaceVisualScaled(parent, atlas, sprite, x, y, scale, scale, name, order);
+        }
+
+        private static GameObject PlaceVisualScaled(Transform parent, string atlas, string sprite, int x, int y, float scaleX, float scaleY, string name, int order)
         {
             var go = new GameObject(name, typeof(SpriteRenderer));
-            go.transform.SetParent(parent);
-            go.transform.position = SapphireSceneBuilder.CellCenter(x, y);
-            go.transform.localScale = new Vector3(scale, scale, 1f);
-            var renderer = go.GetComponent<SpriteRenderer>();
-            renderer.sprite = LoadSprite(spriteName);
-            renderer.sortingOrder = 1;
+            go.transform.SetParent(parent); go.transform.position = SapphireSceneBuilder.CellCenter(x, y);
+            go.transform.localScale = new Vector3(scaleX, scaleY, 1f);
+            var renderer = go.GetComponent<SpriteRenderer>(); renderer.sprite = LoadSprite(atlas, sprite); renderer.sortingOrder = order;
             return go;
         }
 
-        private static Tile CreateTileFromTexture(string textureName, string fileName)
+        private static Tile SelectVariant(Tile[] variants, int x, int y, int firstCut, int secondCut, int thirdCut)
         {
-            EnsureGeneratedDir();
-            string path = SapphireSceneBuilder.GeneratedDir + "/" + fileName;
-            string texturePath = SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/Ground/" + textureName;
+            // Four adjacent crops of one continuous material, never shuffled.
+            return variants[(x & 1) + 2 * (y & 1)];
+        }
+
+        private static Tile SelectWaterOrShore(Tile[] water, Tile[] shore, int x, int y)
+        {
+            bool n = !IsLiquid(x, y + 1), s = !IsLiquid(x, y - 1), w = !IsLiquid(x - 1, y), e = !IsLiquid(x + 1, y);
+            int phase = 8 * ((x & 1) + 2 * (y & 1));
+            if (n && w) return shore[phase + 7];
+            if (n && e) return shore[phase + 6];
+            if (s && w) return shore[phase + 5];
+            if (s && e) return shore[phase + 4];
+            if (n) return shore[phase + 1];
+            if (s) return shore[phase];
+            if (w) return shore[phase + 3];
+            if (e) return shore[phase + 2];
+            return SelectVariant(water, x, y, 56, 78, 93);
+        }
+
+        private static void ValidatePlayableLayout(Tilemap collision, IEnumerable<InteractableZone> zones)
+        {
+            var reached = new HashSet<Vector2Int>(); var queue = new Queue<Vector2Int>();
+            Vector2Int start = new Vector2Int(SpawnX, SpawnY);
+            Vector2Int[] dirs = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+            reached.Add(start); queue.Enqueue(start);
+            while (queue.Count > 0)
+            {
+                Vector2Int current = queue.Dequeue();
+                foreach (Vector2Int direction in dirs)
+                {
+                    Vector2Int next = current + direction;
+                    if (next.x < 0 || next.x >= Width || next.y < 0 || next.y >= Height || reached.Contains(next)) continue;
+                    if (collision.HasTile(new Vector3Int(next.x, next.y, 0))) continue;
+                    reached.Add(next); queue.Enqueue(next);
+                }
+            }
+            foreach (InteractableZone zone in zones)
+            {
+                Vector2Int target = new Vector2Int(zone.Coord.X, zone.Coord.Y);
+                if (!dirs.Any(d => reached.Contains(target + d))) throw new Exception("Unreachable Slime Kingdom landmark: " + zone.InteractableIdValue);
+            }
+            if (reached.Count < Width * Height * 55 / 100) throw new Exception("Slime Kingdom reachable area is too small: " + reached.Count);
+        }
+
+        private static Tile CreateGroundTile(string textureName, string fileName)
+        {
+            EnsureGeneratedDir(); string texturePath = SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/Ground/" + textureName;
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(texturePath);
             if (sprite == null) throw new Exception("Ground sprite not found at " + texturePath);
-            Tile tile = AssetDatabase.LoadAssetAtPath<Tile>(path);
-            if (tile == null)
+            string path = SapphireSceneBuilder.GeneratedDir + "/" + fileName; Tile tile = AssetDatabase.LoadAssetAtPath<Tile>(path);
+            if (tile == null) { tile = ScriptableObject.CreateInstance<Tile>(); AssetDatabase.CreateAsset(tile, path); }
+            tile.sprite = sprite; tile.colliderType = Tile.ColliderType.None; EditorUtility.SetDirty(tile); return tile;
+        }
+
+        private static Tile[] CreateStandaloneTiles(string family, int count, string filePrefix)
+        {
+            EnsureGeneratedDir();
+            var tiles = new Tile[count];
+            for (int i = 0; i < count; i++)
             {
-                tile = ScriptableObject.CreateInstance<Tile>();
-                AssetDatabase.CreateAsset(tile, path);
+                string texturePath = SeamlessTileDir + family + i + ".png";
+                Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(texturePath);
+                if (sprite == null) throw new Exception("Seamless tile sprite not found at " + texturePath);
+                string path = SapphireSceneBuilder.GeneratedDir + "/" + filePrefix + i + ".asset";
+                Tile tile = AssetDatabase.LoadAssetAtPath<Tile>(path);
+                if (tile == null) { tile = ScriptableObject.CreateInstance<Tile>(); AssetDatabase.CreateAsset(tile, path); }
+                tile.sprite = sprite; tile.colliderType = Tile.ColliderType.None; EditorUtility.SetDirty(tile); tiles[i] = tile;
             }
-            tile.sprite = sprite;
-            tile.colliderType = Tile.ColliderType.None;
-            EditorUtility.SetDirty(tile);
-            return tile;
+            return tiles;
         }
 
         private static Tile CreateBlockerTile()
         {
-            EnsureGeneratedDir();
-            string path = SapphireSceneBuilder.GeneratedDir + "/Tile_SlimeBlocker.asset";
+            EnsureGeneratedDir(); string path = SapphireSceneBuilder.GeneratedDir + "/Tile_SlimeBlocker.asset";
             Tile tile = AssetDatabase.LoadAssetAtPath<Tile>(path);
-            if (tile == null)
-            {
-                tile = ScriptableObject.CreateInstance<Tile>();
-                AssetDatabase.CreateAsset(tile, path);
-            }
-            tile.sprite = null;
-            tile.colliderType = Tile.ColliderType.None;
-            EditorUtility.SetDirty(tile);
-            return tile;
+            if (tile == null) { tile = ScriptableObject.CreateInstance<Tile>(); AssetDatabase.CreateAsset(tile, path); }
+            tile.sprite = null; tile.colliderType = Tile.ColliderType.None; EditorUtility.SetDirty(tile); return tile;
         }
 
-        private static Sprite LoadSprite(string name)
+        private static Sprite LoadSprite(string atlas, string name)
         {
-            Sprite sprite = AssetDatabase.LoadAllAssetsAtPath(AtlasPath).OfType<Sprite>().FirstOrDefault(s => s.name == name);
-            if (sprite == null) throw new Exception($"Sprite '{name}' not found at {AtlasPath}");
-            return sprite;
+            Sprite sprite = AssetDatabase.LoadAllAssetsAtPath(atlas).OfType<Sprite>().FirstOrDefault(s => s.name == name);
+            if (sprite == null) throw new Exception("Sprite '" + name + "' not found at " + atlas); return sprite;
         }
 
         private static void EnsureGeneratedDir()
         {
-            if (!AssetDatabase.IsValidFolder(SapphireSceneBuilder.GeneratedDir))
-                AssetDatabase.CreateFolder("Assets/Sapphire", "Generated");
+            if (!AssetDatabase.IsValidFolder(SapphireSceneBuilder.GeneratedDir)) AssetDatabase.CreateFolder("Assets/Sapphire", "Generated");
         }
 
         private static void AssignField(object target, string fieldName, object value)
         {
             var field = target.GetType().GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
-            if (field == null) throw new Exception($"Field '{fieldName}' not found on {target.GetType().Name}");
-            field.SetValue(target, value);
+            if (field == null) throw new Exception("Field not found: " + fieldName); field.SetValue(target, value);
         }
     }
 }
