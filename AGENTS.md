@@ -6,17 +6,15 @@
 
 **`docs/planning/` 5개 파일과 `PLANNING_START_HERE.md`는 절대 수정하지 않는다.** 참고만 하고, 계획을 바꿔야 할 사유가 생기면 그 내용을 `docs/DECISIONS.md`에 새 결정으로 기록한다.
 
-## 개발 프로세스 (2026-09-14부터)
+## 개발 프로세스 (2026-09-16 갱신 - 실제 쓰는 방식으로 정정)
 
-이 프로젝트는 **Claude Code 세션 + `lh2d-*` 전용 에이전트**로 작업한다. 예전 `PARALLEL_CONTRACT.md`/`COMBAT_HANDOFF.md`가 설명하던 **Codex CLI 기반 병렬 에이전트 방식(combat/campaign/presentation 3개 에이전트가 `apply_patch`로 동시에 각자 모듈을 수정)은 더 이상 쓰지 않는다.** 그 두 문서는 내용이 `docs/HANDOFF.md`에 흡수되어 삭제되었다.
+`lh2d-*` 전용 에이전트 4종(module-planner/combat-implementer/asset-specialist/qa-verifier)은 **실제로 만들어진 적이 없다** - 이전 버전 문서가 예정만 해두고 실체가 없는 걸 그대로 적어둔 것이었다. 존재하지 않는 에이전트를 라우팅 대상으로 적어두지 않는다. 실제로 이 프로젝트에서 계속 쓰고 있는 것:
 
-새 작업 순서 (모듈 1개당):
+- **일반 구현·조사·배선**: `general-purpose` 에이전트(모델 sonnet). 스폰 프롬프트에 대상 파일 절대경로·관련 함수명·제약조건을 반드시 박아준다 - 에이전트는 이 대화 이력을 상속하지 않는다.
+- **이미지 에셋 생성**(캐릭터 시트, 아이콘, VFX, 배경 등): `game-asset-artist` 에이전트. gpt-image/codex 스킬 호출부터 알파 실측까지 담당, 씬 배선은 하지 않는다.
+- **단순 수치·문자열·픽셀 조정**(레이아웃 여백, 색상값, 속도 상수 등 로직 변경 없는 것)과 **커밋**은 에이전트에 위임하지 않고 오케스트레이터가 직접 처리한다 - `## 작업 속도 규칙` 절 참고.
 
-1. **lh2d-module-planner** - 모듈 설계·계약 고정 (상태 소유, 공개 시그니처, 입력/거절 조건)
-2. **lh2d-combat-implementer** 또는 **lh2d-asset-specialist** - 승인된 설계를 구현 (전투/게임플레이 코드는 전자, 에셋 임포트·배선은 후자)
-3. **lh2d-qa-verifier** - 독립 재검증 (구현자 본인이 아닌 별도 패스)
-
-이 4개 에이전트는 `project/.claude/agents/`에 심볼릭 링크로 연결되어 있어야 한다(원본은 이 레포의 `.claude/agents/`). **이 문서를 재작성한 시점에 확인한 결과, 실제로는 이 레포에 `.claude/agents/` 디렉토리 자체가 없고 `project/.claude/agents/`에도 `lh2d-*` 링크가 없다.** 이 상태를 고치는 것은 이번 문서 재작성 범위 밖이라 손대지 않았다 - 다음에 이 에이전트들을 실제로 쓰려면 먼저 파일과 링크를 만들어야 한다.
+예전 `PARALLEL_CONTRACT.md`/`COMBAT_HANDOFF.md`가 설명하던 Codex CLI 기반 병렬 에이전트 방식(combat/campaign/presentation 3개 에이전트가 `apply_patch`로 동시에 각자 모듈을 수정)도 더 이상 쓰지 않는다 - 내용은 `docs/HANDOFF.md`에 흡수되어 그 두 문서는 삭제됐다.
 
 ## 확정된 기술 방향 (요약, 상세는 `docs/DECISIONS.md`)
 
