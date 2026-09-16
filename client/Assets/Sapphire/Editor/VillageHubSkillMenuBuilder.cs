@@ -70,12 +70,14 @@ namespace Sapphire.EditorTools
             // (824x854): runs of 488-556px, median 541 -> 541/824 = 0.657.
             const float skillOpeningFraction = 0.627f;
             const float basicAttackOpeningFraction = 0.657f;
-            // 2026-09-16: user reported the icons inside the skill buttons
-            // read as too small - raised from 0.62 (62% of the frame's
-            // inner opening) to 0.88 so the icon nearly fills the opening
-            // while still leaving a sliver of the ring frame visible around
-            // it (not 1.0, which would touch/overlap the ring art itself).
-            const float iconToOpeningRatio = 0.88f;
+            // 2026-09-16: first pass raised this 0.62 -> 0.88 (icons nearly
+            // filling the opening). User then asked for the icons bigger
+            // again, "at least 30% bigger" than that already-live 0.88
+            // result, and explicitly said touching/spilling slightly onto
+            // the ring frame art is fine. 0.88 -> 1.15 gives skillIconSize
+            // 44.1 -> 57.7 (+31%) and basicAttackIconSize 76.4 -> 99.8
+            // (+31%), both past the requested +30% floor.
+            const float iconToOpeningRatio = 1.15f;
             float skillIconSize = skillButtonSize * skillOpeningFraction * iconToOpeningRatio;
             float basicAttackIconSize = basicAttackSize * basicAttackOpeningFraction * iconToOpeningRatio;
 
