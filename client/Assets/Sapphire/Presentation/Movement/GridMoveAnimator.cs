@@ -15,9 +15,12 @@ namespace Sapphire.Presentation.Movement
         [Tooltip("docs/DECISIONS.md의 0.08s는 topdown-asset-mvp 참고치였고, 0.16s로 1차 상향했으나 " +
             "여전히 자유이동처럼 보인다는 2026-09-14 사용자 피드백으로 한 칸 이동이 눈에 확실히 보이도록 " +
             "재상향(약 2.5배, 0.4s)했으나, 전체적으로 더 빠르게 해달라는 후속 피드백으로 1.25배 단축(0.32s)함. " +
+            "2026-09-16: 방향전환 연타 시 반응이 늦다는 재피드백 - 주 원인은 입력 버퍼링 부재였지만(PlayerGridController/" +
+            "GridMoveInputBuffer 참고), 이 값 자체도 태스크 지정 기준선(0.25s) 이상이라 완전 원복(0.16s 이하, " +
+            "'자유이동처럼 보임'으로 이미 기각된 구간)은 피하면서 적당히 추가 단축(0.24s, 0.32의 약 0.75배).  " +
             "탭 이동과 연속 이동(꾹 누름) 모두에 적용되는 기본 속도 - 연속 이동만 더 빠르게 하던 이전 시도는 " +
             "2026-09-14 재원복되어 탭/연속 구분 없이 항상 이 값을 쓴다(질주 스킬로 부스트 중일 때만 예외).")]
-        [SerializeField] private float moveDuration = 0.32f;
+        [SerializeField] private float moveDuration = 0.24f;
 
         [Tooltip("새로 눌러서 시작된 첫 스텝 완료 직후에만 두는 짧은 정지 간격(칸 단위 리듬을 살리기 위함). " +
             "같은 방향키를 계속 누르고 있어서 이어지는 스텝(isContinuousHold=true)에는 적용하지 않는다 - " +

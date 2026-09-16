@@ -29,6 +29,20 @@ namespace Sapphire.Presentation.UI
     /// git history of VillageHubMenuBuilder.BuildCharacterSelectButton) was
     /// already disconnected from Build() and had to be removed as dead code
     /// rather than reused as-is.
+    ///
+    /// 2026-09-16 (character_select click bug fix, docs/HANDOFF.md): the
+    /// wiring above (id-based dispatch in a real runtime Awake) was already
+    /// correct - the actual bug was one level down, in
+    /// VillageHubMenuBuilder.BuildOdinMenuItem: every menu item's root
+    /// GameObject had a Button but no Graphic of its own, and its Icon/Label
+    /// children both had raycastTarget=false, so UnityEngine.UI's
+    /// GraphicRaycaster had nothing to hit-test in that item's hierarchy at
+    /// all - clicks fell through to the panel's own background Image
+    /// instead, which has no click handler. That affected every item in the
+    /// grid, not just "character_select"/"quit" (those two just happened to
+    /// be the ones exercised right after this session's menu widen). Fixed
+    /// there by giving each item root its own invisible full-cell Image as a
+    /// raycast target; this class needed no change.
     /// </summary>
     public sealed class MainMenuPanel : MonoBehaviour
     {

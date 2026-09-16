@@ -29,16 +29,39 @@ namespace Sapphire.EditorTools
         private const float DividerWidth = 70f;
         private const float DividerHeight = 7f;
 
+        // 2026-09-16 (header overflow fix, docs/HANDOFF.md): measured the
+        // header block (divider+title row) against the panel's actual
+        // visible border - VillageHubMenuBuilder.OdinContentMargin (the
+        // inset this header used to be placed at) computes to
+        // borderCanvasUnits(17.33) + clearance(14) - OdinHorizontalPaddingReduction(20)
+        // = 11.33, i.e. 6px LESS than the border's own inner edge (17.33).
+        // The header - sized to exactly contentWidth, i.e. flush with that
+        // margin on both sides - therefore rendered starting 6px inside the
+        // visible frame on each side (12px total), overlapping the panel's
+        // decorative border instead of sitting inside it. Per this task's
+        // spec (reduce the header's own width by 20px per side, 40px total,
+        // recentered) rather than only patching the measured 6px: shrinking
+        // by 40 and re-centering within the same contentWidth span pulls the
+        // header 20px further in on each side, landing its edges 14px
+        // inside the border's inner edge (17.33 + 20 - 11.33 = 26 short of
+        // the panel edge on each side) - a comfortable margin, well past
+        // zero. Deliberately scoped to the header only (icon grid's
+        // cellWidth/columnPitch below still use the original contentWidth
+        // unchanged - the task only asked to narrow the header/divider row).
+        private const float HeaderWidthReduction = 40f;
+
         internal static void BuildOdinSectionHeader(GameObject panelGo, Sprite dividerLeftSprite, Sprite dividerRightSprite, string title, float topY, float contentWidth)
         {
+            float headerWidth = contentWidth - HeaderWidthReduction;
+
             var headerGo = new GameObject("Section_" + title, typeof(RectTransform));
             headerGo.transform.SetParent(panelGo.transform, false);
             var headerRect = headerGo.GetComponent<RectTransform>();
             headerRect.anchorMin = new Vector2(0f, 1f);
             headerRect.anchorMax = new Vector2(0f, 1f);
             headerRect.pivot = new Vector2(0f, 1f);
-            headerRect.sizeDelta = new Vector2(contentWidth, VillageHubMenuBuilder.OdinHeaderHeight);
-            headerRect.anchoredPosition = new Vector2(VillageHubMenuBuilder.OdinContentMargin, topY);
+            headerRect.sizeDelta = new Vector2(headerWidth, VillageHubMenuBuilder.OdinHeaderHeight);
+            headerRect.anchoredPosition = new Vector2(VillageHubMenuBuilder.OdinContentMargin + HeaderWidthReduction * 0.5f, topY);
 
             var textGo = new GameObject("Text", typeof(Text));
             textGo.transform.SetParent(headerGo.transform, false);
@@ -55,7 +78,7 @@ namespace Sapphire.EditorTools
             text.text = title;
             text.raycastTarget = false;
 
-            float halfLineWidth = contentWidth * 0.5f;
+            float halfLineWidth = headerWidth * 0.5f;
             BuildDividerHalf(headerGo, dividerLeftSprite, "UnderlineLeft", new Vector2(0f, 0f), halfLineWidth);
             BuildDividerHalf(headerGo, dividerRightSprite, "UnderlineRight", new Vector2(1f, 0f), halfLineWidth);
         }

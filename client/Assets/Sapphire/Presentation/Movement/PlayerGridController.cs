@@ -25,6 +25,13 @@ namespace Sapphire.Presentation.Movement
         // null means "no direction was held last frame".
         private GridDirection? previousHeldDirection;
 
+        // 2026-09-16 (movement responsiveness fix, docs/HANDOFF.md): remembers
+        // the last direction held while mover.IsMoving was blocking input, so
+        // a quick tap-then-release that happens entirely inside the current
+        // move's animation window still fires the instant that window clears
+        // instead of being silently dropped. See GridMoveInputBuffer's doc.
+        private GridDirection? bufferedDirection;
+
         public GridMover Mover => mover;
 
         /// <summary>Exposed so the skill bar can trigger the "질주" speed-boost skill directly.</summary>
@@ -56,6 +63,7 @@ namespace Sapphire.Presentation.Movement
             WorldPoint destination = GridWorldConversion.GridToWorld(mover.Position);
             transform.position = new Vector3(destination.X, destination.Y, transform.position.z);
             previousHeldDirection = null;
+            bufferedDirection = null;
             spriteAnimator?.SetMoving(false);
             return true;
         }
@@ -63,6 +71,13 @@ namespace Sapphire.Presentation.Movement
         private void Update()
         {
             bool isDirectionHeld = inputReader.TryGetHeldDirection(out GridDirection direction);
+
+            // Refresh the input buffer every frame, even while a move is in
+            // progress and everything below returns early - this is what
+            // lets a tap-then-release that happens entirely inside the
+            // current move's blocked window still register once that window
+            // clears (see GridMoveInputBuffer's doc for the full bug this fixes).
+            bufferedDirection = GridMoveInputBuffer.UpdateBuffer(bufferedDirection, isDirectionHeld, direction);
 
             // Same direction key held on both this frame and the previous one (tracked
             // unconditionally, so it still counts across the frames a move blocks input
@@ -78,13 +93,18 @@ namespace Sapphire.Presentation.Movement
                 return;
             }
 
-            if (!isDirectionHeld)
+            GridDirection? moveDirection = GridMoveInputBuffer.ResolveMoveDirection(isDirectionHeld, direction, bufferedDirection);
+            if (!moveDirection.HasValue)
             {
                 return;
             }
 
+            // Consume the buffer now - a queued tap fires exactly once, and a
+            // released key won't keep re-firing the same stale press forever.
+            bufferedDirection = null;
+
             GridCoord previousPosition = mover.Position;
-            MoveResult result = mover.TryBeginMove(direction, map);
+            MoveResult result = mover.TryBeginMove(moveDirection.Value, map);
 
             spriteAnimator?.SetFacing(mover.Facing);
 
@@ -93,7 +113,7 @@ namespace Sapphire.Presentation.Movement
                 return;
             }
 
-            GridCoord destination = previousPosition + direction.ToOffset();
+            GridCoord destination = previousPosition + moveDirection.Value.ToOffset();
             WorldPoint from = GridWorldConversion.GridToWorld(previousPosition);
             WorldPoint to = GridWorldConversion.GridToWorld(destination);
 

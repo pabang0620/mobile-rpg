@@ -97,6 +97,17 @@ namespace Sapphire.EditorTools
         private static readonly float OdinSectionsHeight = ComputeSectionsHeight();
         private static readonly float OdinContentPadding =
             (ReferenceCanvasHeight - OdinPanelTopMargin - OdinPanelBottomMargin - OdinSectionsHeight) / 2f;
+        // 2026-09-16 (menu polish task, docs/HANDOFF.md): OdinContentPadding
+        // above deliberately balances top padding == bottom padding (currently
+        // 128px each, see its own comment) - the user asked to move the whole
+        // grid (header+icons) up 15px specifically because that top band has
+        // visible spare room, which intentionally unbalances that pairing
+        // (top shrinks to 113px, bottom stays 128px) rather than recomputing
+        // both. VerifyPanelLayout below asserts the resulting top margin
+        // stays comfortably positive so this can never collapse the first
+        // header against the panel's own top edge if MenuCatalog grows later.
+        private const float ContentUpShift = 15f;
+        private const float MinTopMarginAfterShift = 8f;
         // 2026-09-16 (F6.4 fix): raised from 36 to 40 so the section title
         // text sits centered in the header band instead of overlapping its
         // top edge. 2026-09-15 (gemless MapleStory-M rebuild): the header no
@@ -232,6 +243,16 @@ namespace Sapphire.EditorTools
                     "MenuCatalog grew too large for the Odin panel's fixed footprint. Reduce item count " +
                     "per section or shrink OdinItemRowHeight/OdinHeaderHeight/OdinSectionGap.");
             }
+
+            float topMarginAfterShift = OdinContentPadding - ContentUpShift;
+            if (topMarginAfterShift < MinTopMarginAfterShift)
+            {
+                throw new System.Exception(
+                    $"VillageHub menu: ContentUpShift({ContentUpShift:F0}px) would leave only " +
+                    $"{topMarginAfterShift:F1}px between the panel's top edge and the first section header " +
+                    $"(minimum {MinTopMarginAfterShift:F0}px) - MenuCatalog grew too large to also afford the " +
+                    "15px up-shift. Reduce ContentUpShift or item count per section.");
+            }
         }
 
         internal static void Build(GameObject canvasGo, SimpleMessagePanel messagePanel)
@@ -301,7 +322,7 @@ namespace Sapphire.EditorTools
 
             float contentWidth = OdinPanelWidth - 2f * OdinContentMargin;
             float cellWidth = contentWidth / OdinColumns;
-            float cursorY = -OdinContentPadding;
+            float cursorY = -(OdinContentPadding - ContentUpShift);
 
             foreach (MenuSectionDefinition section in MenuCatalog.Sections)
             {
@@ -367,14 +388,23 @@ namespace Sapphire.EditorTools
         // click behavior.
         private static Button BuildOdinMenuItem(GameObject panelGo, MenuItemDefinition item, Sprite lockSprite, Vector2 anchoredPosition, float cellWidth)
         {
-            // RectTransform is explicit here (unlike buttons elsewhere in this
-            // codebase that get one implicitly via an Image's
-            // [RequireComponent(typeof(RectTransform))]) - this item root has
-            // no Image of its own (its Icon/Label children each have their
-            // own), so Button/Selectable alone would leave it with a plain
-            // Transform and crash the anchoredPosition/sizeDelta assignments
-            // below.
-            var itemGo = new GameObject("MenuItem_" + item.Id, typeof(RectTransform), typeof(Button));
+            // 2026-09-16 (character_select click bug fix, docs/HANDOFF.md):
+            // this root used to be typeof(RectTransform), typeof(Button) only
+            // - no Graphic of its own, and both children below (Icon/Label)
+            // explicitly set raycastTarget=false. UnityEngine.UI's
+            // GraphicRaycaster only ever considers Graphic components with
+            // raycastTarget=true as hit candidates; with none anywhere in
+            // this item's hierarchy, a click here always fell through to
+            // whatever Graphic sat behind it instead (panelGo's own
+            // background Image, which has no click handler) - so EVERY item
+            // in this grid was unclickable by mouse, not just the newly
+            // added "character_select"/"quit" ids (those two just happened
+            // to be the ones actually exercised after this session's menu
+            // widen, which is how the bug surfaced). Fix: give the item root
+            // its own full-cell Image as an invisible (alpha 0) raycast
+            // target, so the whole cell - not just the icon/label glyphs -
+            // is clickable and Button.onClick fires normally.
+            var itemGo = new GameObject("MenuItem_" + item.Id, typeof(RectTransform), typeof(Image), typeof(Button));
             itemGo.transform.SetParent(panelGo.transform, false);
             var itemRect = itemGo.GetComponent<RectTransform>();
             itemRect.anchorMin = new Vector2(0f, 1f);
@@ -382,6 +412,9 @@ namespace Sapphire.EditorTools
             itemRect.pivot = new Vector2(0.5f, 1f);
             itemRect.sizeDelta = new Vector2(cellWidth, OdinItemRowHeight);
             itemRect.anchoredPosition = anchoredPosition;
+            var itemHitArea = itemGo.GetComponent<Image>();
+            itemHitArea.color = new Color(1f, 1f, 1f, 0f);
+            itemHitArea.raycastTarget = true;
             var button = itemGo.GetComponent<Button>();
 
             // 2026-09-16 (widen menu task, part B): the 2 new system-section
