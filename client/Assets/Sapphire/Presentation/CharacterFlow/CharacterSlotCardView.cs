@@ -15,8 +15,17 @@ namespace Sapphire.Presentation.CharacterFlow
     [Serializable]
     public sealed class CharacterSlotCardView
     {
+        // 2026-09-16 (premium select/create/login rebuild): the card's own
+        // background Image must switch sprite between CharacterSlotFrameV2
+        // (filled - has the top badge notch + bottom divider baked in) and
+        // CharacterSlotFrameEmptyV2 (empty - plain dashed outline, no
+        // notch/divider) per-slot, not just toggle filledRoot/emptyRoot's
+        // children visibility as before (both variants used to share one
+        // beige CharacterSlotFrame.png background).
+        public Image cardBackground;
         public GameObject filledRoot;
         public GameObject emptyRoot;
+        public Image classBadgeImage;
         public Image portraitImage;
         public Text nameText;
         public Text classLevelText;

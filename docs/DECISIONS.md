@@ -2,6 +2,16 @@
 
 기술 방향 결정을 날짜순으로 남긴다(최신이 위). 기획 자체(무엇을 만들지)는 `docs/planning/*.md`가 SSOT이고 여기서는 다루지 않는다 - 여기는 "어떻게 구현할지"에 대한 결정만 남긴다.
 
+## 2026-09-16: 프리미엄 캐릭터선택/생성/로그인 UI - 9-slice 비대칭 border, 카드 레이아웃, 텍스트 truncate 버그
+
+**결정 1 - CharacterSlotFrameV2 9-slice border를 비대칭으로 확정**: 작업 지시서가 "select 카드 340/create 카드 250, 실측 후 스트레치 vs Simple+고정폭 중 판단"을 요구했다. `tools/ui_kit/build_title_kit_v2.py`의 `build_slot_frame` 소스를 직접 읽어 배지 노치(`BADGE_NOTCH_CY=34`+`FRAME_MARGIN=4`=38 target 중심, `BADGE_NOTCH_R=30` target 반경 → 바닥 엣지 ~69.5 target)와 구분선(`divider_y=FRAME_H(400)-NAMEPLATE_BAND_H(76)`=324 target, 바닥 기준 76 target)의 정확한 좌표를 계산했다 - "실측"을 스크린샷 눈대중이 아니라 생성 스크립트의 소스 상수를 직접 읽어 계산했다. Top border 72 target(216 native), Bottom border 90 target(270 native), Left/Right 16 target(48 native, 생성기 자체의 `FRAME_BORDER`)로 확정 - Unity Sliced Image는 native border를 통해서만 "고정 vs 스트레치" 경계를 정의하므로, 이 비대칭 값 하나로 카드 높이가 340이든 250이든 배지·구분선이 항상 같은 절대 거리(72/90 canvas 유닛, PPU=300=100×SCALE_V2(3) 덕분에 1 target px = 1 canvas 유닛)를 유지한다. **기각한 대안**: 카드마다 별도 9-slice 값을 쓰는 방안 - 관리 부담만 늘고 위 비대칭 값이 두 카드 높이 모두에서 이미 충분히 여유(select 340 middle-zone 178유닛, create 250 middle-zone 88유닛)를 확보해 불필요.
+
+**결정 2 - Select/Delete 버튼은 자산의 authored target 폭(96)을 그대로 쓰지 않고 기존 70 유지**: `ButtonSelectV2`/`ButtonDeleteV2`의 자체 authored 셀 크기는 96x40 target이지만, 카드 폭 260에 `CardButtonEdgeInset=48`(D3 스펙 잔존)을 적용하면 두 버튼(96 폭 + 16 간격)이 안전지대 밖으로 밀려난다 - 실측 계산으로 확인(선택 버튼 xMin=-104가 안전지대 xMin=-82를 벗어남) 후, 자산의 9-slice border(native 40, canvas 13.3 유닛)가 훨씬 작아 어떤 on-screen 폭에서도 안전하게 렌더된다는 점을 근거로 기존 D3 폭(70)을 그대로 유지했다. "자산의 authored 크기를 그대로 써야 진짜"라는 가정은 9-slice 자산에는 적용되지 않는다는 걸 재확인.
+
+**결정 3 - VerifyButtonsInsideCard의 Y축 안전지대를 대칭 48px inset에서 하단 고정 존(90유닛) 기준으로 재정의**: 첫 빌드가 `Layout containment violated`로 실패했다 - 원인은 D3 시절 체크가 "카드 4면 모두 48px 인셋"을 가정했는데, 새 레이아웃은 버튼을 의도적으로 카드 바닥 엣지에 딱 붙인다(9-slice 하단 고정 존 안이라 시각적으로 안전). X축은 기존 48px 인셋 의미(테두리 회피)가 여전히 유효해 유지하고, Y축만 "하단 고정 존 높이(90)" 기준으로 바꿨다 - 체크의 의도(9-slice 아트가 스트레치 없이 안전하게 보이는 영역인지 검증)에 맞게 재정의한 것이지 체크를 약화시킨 게 아니다.
+
+**결정 4 - 텍스트 truncate 버그: "폰트 크기" 이론이 아니라 "박스 높이" 실측으로 확정**: 스크린샷에서 이름/레벨/클래스 라벨이 완전히 안 보이는 걸 발견하고, 처음엔 2026-09-15 D3 fix가 남긴 "새 폰트 크기의 첫 렌더링 버그"를 의심했으나, 같은 화면에 이미 동일 크기(22/16/26)로 렌더 중인 다른 Text(선택/삭제/+생성 버튼 라벨)가 정상 표시되는 걸 보고 그 가설을 기각했다. 실제 원인은 `Text.verticalOverflow`의 기본값(Truncate)이 `sizeDelta.height`가 fontSize의 필요 줄높이(~1.2×fontSize)보다 작을 때 글자를 완전히 잘라내는 것 - 좁은 이름표 안에 이름+클래스Lv 두 줄을 욱여넣으려고 박스 높이를 20/16으로 줄인 게 원인이었다. 박스 높이를 fontSize 대비 안전하게 키우고(22→26, 16→20, 캐릭터생성 라벨 26→32) `verticalOverflow=Overflow`를 명시하는 것으로 해결 - 재캡처로 실제 렌더링 확인(이론만으로 판정하지 않음).
+
 ## 2026-09-15: UI 킷 배선 최종 라운드 - 버튼 적용 범위, PPU 통일, 전사 기본공격 사거리, VFX 좌표계 결정
 
 **결정 1 - PPU를 자산별 개별 공식에서 공용 상수(300)로 통일**: `tools/ui_kit/build_ui_kit.py`가 만드는 모든 9-slice 자산은 `SCALE=3`(native = target * 3) 고정이라, 어느 자산이든 `pixelsPerUnit = 100 * native/target = 300`이 항상 성립한다. 기존 관례(`ArtImportConfigurator.ConfigureUiFrames` 등)는 자산마다 `100*nativeWidth/targetWidth` 공식을 개별 계산했는데, v3 자산군에는 이 계산이 전부 300으로 수렴하므로 `ArtImportConfigurator.UiKitV3PixelsPerUnit` 상수 하나로 대체했다. `CharacterFlowArtImportConfigurator`의 두 자산(CharacterSlotFrame/InputFieldFrame)은 기존 방식(`GetSourceTextureWidthAndHeight` 기반 동적 계산)을 그대로 둬도 결과가 자동으로 300이 되므로 손대지 않았다(코드 변경 없이 값만 바뀜).

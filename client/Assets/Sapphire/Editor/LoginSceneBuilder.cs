@@ -19,6 +19,15 @@ namespace Sapphire.EditorTools
     {
         private const string ScenePath = "Assets/Sapphire/Scenes/Login.unity";
 
+        // Sized/centered to contain both AccountIdInput (anchoredPosition
+        // (0,-20), size (360,72), so its own top/bottom edges are at
+        // 16/-56) and StartButton (anchoredPosition (0,-140), size
+        // (280,90), top/bottom edges at -95/-185) with a comfortable margin
+        // on every side - matches LoginPortalFrame.png's own authored target
+        // size (400x260) exactly, so no unstretched-corner distortion.
+        private static readonly Vector2 PortalSize = new Vector2(400f, 260f);
+        private const float PortalCenterY = -85f;
+
         internal static void Build()
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -30,6 +39,15 @@ namespace Sapphire.EditorTools
 
             Sprite logo = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/TitleLogo.png");
             BuildLogo(canvasGo, logo);
+
+            // 2026-09-16 (premium select/create/login rebuild): wraps the ID
+            // input + start button in a single LoginPortalFrame.png backing
+            // panel - layout of the two controls themselves is unchanged
+            // (still anchoredPosition (0,-20)/(0,-140)), only a background
+            // frame is added behind them, sized/centered to contain both
+            // with room to spare (PortalCenterY/PortalSize below).
+            Sprite portalFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginPortalFrame.png");
+            CharacterFlowUiScaffold.BuildSlicedPanel(canvasGo, portalFrame, "LoginPortal", new Vector2(0f, PortalCenterY), PortalSize);
 
             Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/InputFieldFrame.png");
             InputField accountIdInput = BuildAccountIdInput(canvasGo, inputFrame);

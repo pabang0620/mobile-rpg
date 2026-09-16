@@ -2,7 +2,25 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): 캐릭터 접지 실측 재보정 + 스킬 이펙트 클리핑/알파결함 실측 + 스킬명 팝업 텍스트 제거
+## 2026-09-16 (최신): 법사 방향성 VFX 알파 배선 + 로그인/캐릭터선택/캐릭터생성 프리미엄 UI 전면 재배선
+
+두 묶음을 한 세션에서 끝까지 배선했다. 실측값·좌표계 결정 근거는 `docs/DECISIONS.md` 같은 날짜 항목, 에셋 목록은 `docs/ASSET_STATUS.md` 같은 날짜 항목 참고 - 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
+
+**(A) 법사 방향성 VFX 알파 배선**: `MageDirectionalPadded.png`(텔레포트/고드름/번개창 3스킬 담당, colortype=2 RGB·체커보드 배경 결함)를 `generated-images/mage-vfx-fix/MageDirectionalPadded_v2_noref.png`(2048x768, RGBA)로 교체했다. 기존 파일은 `generated-images/mage-vfx-fix-backup/MageDirectionalPadded_orig_backup.png`에 백업. 치수(2048x768)가 완전히 동일해 `SkillVfxImporter.ConfigureDirectionalTexture`의 그리드 상수(width/height 기반 슬라이스 계산)는 무변경 - Unity가 파일 내용 변경을 감지해 자동 재수입, `VfxFramePivotCalculator.ComputeContentPivot`이 이제 실제 alpha bbox로 pivot을 재계산한다(기존엔 알파가 없어 셀 전체를 콘텐츠로 오인).
+
+**(B) 로그인/캐릭터선택/캐릭터생성 프리미엄 UI**: `generated-images/title-kit-v2/`(`tools/ui_kit/build_title_kit_v2.py` 산출물) 11개를 `Art/UI/Title/`에 배선, 기존 베이지 `CharacterSlotFrame.png`(+.meta)는 참조 0건 확인 후 `git rm`.
+
+- `CharacterFlowArtImportConfigurator.cs`: 신규 자산 전부 `ArtImportConfigurator.UiKitV3PixelsPerUnit`(300, SCALE_V2=3 native=target*3 컨벤션) 적용. `CharacterSlotFrameV2`/`EmptyV2` border는 생성 스크립트의 badge-notch(top)·divider(bottom) 위치를 실측해 비대칭(`Vector4(48,270,48,216)` = left,bottom,right,top) 확정 - 카드 실제 높이(select 340/create 250)가 달라도 뱃지·구분선이 고정 위치를 유지한다. `ApplySingleSliceBorder`를 `HudArtImportConfigurator`에서 `ArtImportConfigurator`로 이동(공용 헬퍼, 신규 버튼 3종도 재사용).
+- `CharacterSelectSceneBuilder.cs`: 카드 배경이 `CharacterSlotFrameV2`(채움)/`CharacterSlotFrameEmptyV2`(빈 슬롯)로 상태별 스프라이트 교체(`CharacterSlotCardView.cardBackground` 신설), 클래스 배지(`ClassBadgeMage/Warrior`)를 노치에, `CharacterPedestal`을 발밑에, `NameplateBar` 위에 이름(큰 흰 글씨)+"클래스 · Lv.N"(밝은 사파이어톤, 기존 어두운 갈색 대비값 폐기), 선택/삭제는 `ButtonSelectV2`/`ButtonDeleteV2`, 빈 슬롯은 `ButtonCreateV2`(다크 브라운 텍스트로 대비 확보). `VerifyButtonsInsideCard`를 새 하단 고정 영역(90유닛) 기준으로 재정의(기존 48px 전방향 inset 가정이 새 레이아웃과 충돌해 최초 빌드가 예외로 실패 - 실측 후 고쳤다).
+- `CharacterCreateSceneBuilder.cs`: 클래스 카드도 동일 `CharacterSlotFrameV2` + 배지로 교체, 선택 글로우를 단색 사각형에서 `CharacterCreateSpotlight` 방사형 이미지로, "생성" 버튼을 `ButtonPrimary`에서 `ButtonCreateV2`로 교체. 카드 내부 레이아웃(포트레이트/라벨/설명)을 배지 존(72유닛)을 피해 재조정.
+- `LoginSceneBuilder.cs`: 아이디 입력+게임시작 버튼을 감싸는 `LoginPortalFrame` 배경 패널 신규 추가(레이아웃 자체는 무변경, 프레임만 씌움).
+- **실측으로 발견한 진짜 버그(이론이 아니라 스크린샷 확인)**: 캐릭터 선택 카드의 이름/클래스 텍스트, 캐릭터 생성 카드의 클래스 라벨이 전부 완전히 안 보였다 - 원인은 폰트 크기 문제가 아니라 Text의 `sizeDelta.height`가 fontSize가 필요로 하는 줄 높이보다 작아 기본 `verticalOverflow=Truncate`가 글자를 통째로 잘라낸 것(예: fontSize22에 height20). 해당 Text들의 box height를 fontSize의 약 1.2배 이상으로 키우고 `verticalOverflow=Overflow`로 명시 - 재캡처로 실제 렌더 확인.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 0에러, EditMode 69/69 PASS(기존 69 - 신규 테스트 추가 없음, 이번 작업은 UI 배선·에셋 교체라 도메인 테스트 대상 로직 없음). `SapphireSceneBuilder.BuildEverything`(4개 씬 전부) -> `SapphireBuildPlayer.BuildWindows` 재빌드 성공. 스크린샷(`generated-images/diagnostics/v2_*.png`, gitignore 대상) 전부 직접 확인 - 로그인 프레임 정상, 캐릭터선택 카드(채움 2+빈 슬롯 2) 이름/레벨 텍스트 정상 렌더, 캐릭터생성 마법사/전사 카드 선택 전환(밝기+스케일+글로우) 정상, 마법사 텔레포트/고드름/번개창 VFX 체커보드 완전 해소(투명 배경 확인). 스크린샷 검증에 쓴 임시 디버그 훅(`RadialSkillMenu`의 `-sapphire-cast-skill=<index>`, `CharacterCreateController`의 `-sapphire-create-select=warrior`)은 검증 후 완전히 제거하고 `git diff` 0 확인, 최종 재빌드까지 재확인했다(영구 훅인 `-sapphire-scene=`/`-sapphire-account=`/`-sapphire-class=`는 그대로 유지).
+
+**참고 (게임 코드 아님)**: 이번 세션에서 `SapphireSceneBuilder.BuildEverything()`이 VillageHub/SlimeKingdom 씬도 함께 재조립하면서 두 씬의 `.unity` 파일과 일부 미관련 텍스처 `.meta`(플랫폼별 오버라이드 스텁 자동 추가)가 큰 폭으로 diff에 포함됐다 - 이 프로젝트의 기존 관행(매 세션 전체 씬 재조립+커밋)과 일치하는 정상적인 부산물이다(과거 커밋 `ab85e1c`/`cc4b06d` 등도 동일 패턴).
+
+## 2026-09-16: 캐릭터 접지 실측 재보정 + 스킬 이펙트 클리핑/알파결함 실측 + 스킬명 팝업 텍스트 제거
 
 사용자 리포트 3건: (A) "캐릭터가 타일에 붙어있지 않고 공중에 떠 보인다 -
 특히 오른쪽을 볼 때 심하다", (B) "스킬들이 뭔가 잘린다" + "스킬 배경에

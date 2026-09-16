@@ -256,6 +256,14 @@ gitignore 대상 진단 폴더).
 login/select/village_mage/village_warrior)을 직접 열어 확인 - 핑크 텍스처·
 빈 아이콘·깨진 캐릭터 없음.
 
+## 2026-09-16 갱신: 마법사 방향성 VFX 알파 결함 해소 + 로그인/캐릭터선택/생성 프리미엄 UI 킷 11종 배선
+
+**VFX (`MageDirectionalPadded.png` 교체)**: 아래 항목이 "재생성 필요, 최우선"으로 남겼던 결함을 이번 세션에서 해소했다. 교체본은 `generated-images/mage-vfx-fix/MageDirectionalPadded_v2_noref.png`(2048x768, RGBA, 8x3 그리드, 셀 256x256) - 오케스트레이터가 PIL로 코너/경계 alpha 0~1 분포를 직접 실측 확인한 뒤 배선을 지시했다. 기존 파일(RGB, 체커보드 배경 결함)은 `generated-images/mage-vfx-fix-backup/MageDirectionalPadded_orig_backup.png`에 보존. 텔레포트/고드름/번개창 3개 스킬 VFX 전부 스크린샷으로 체커보드 완전 해소 확인(`generated-images/diagnostics/v2_mage_{teleport,icespike,lightningspear}.png`, gitignore 대상).
+
+**UI (`tools/ui_kit/build_title_kit_v2.py` 산출물 11종, `Art/UI/Title/`에 배선)**: `CharacterPedestal.png`(720x720), `CharacterSlotFrameV2.png`/`CharacterSlotFrameEmptyV2.png`(각 780x1200), `ClassBadgeMage.png`/`ClassBadgeWarrior.png`(각 216x216), `NameplateBar.png`(600x138), `ButtonSelectV2.png`/`ButtonDeleteV2.png`(각 648x120), `ButtonCreateV2.png`(1032x168), `CharacterCreateSpotlight.png`(1440x780), `LoginPortalFrame.png`(1200x780) - 전부 SCALE_V2=3(native=target*3) 컨벤션, 어두운 유리 패널+사파이어 발광 테두리+육각컷 버튼 스타일(젬리스, 금색 장식 없음). 배선 세부(9-slice border 실측값·좌표계 결정)는 `docs/DECISIONS.md` 같은 날짜 항목.
+
+**폐기**: `Art/UI/Title/CharacterSlotFrame.png`(+.meta) - 베이지 톤 구버전, `CharacterSlotFrameV2`/`EmptyV2` 배선 완료 후 참조 0건 확인(grep) 후 `git rm`.
+
 ## 2026-09-16 갱신: 캐릭터 접지(발 위치) 실측 재보정 + VFX 클리핑/알파 결함 전수 실측
 
 사용자 리포트 "캐릭터가 타일에 붙어있지 않고 떠 보인다(특히 오른쪽을 볼 때)" +
@@ -316,4 +324,4 @@ Clamp(wrapU/wrapV=1)로 기존 .meta에 저장돼 있었다(강제 재수입으�
 - `Art/` 폴더 전체 실사(파일 존재/해시/치수/알파/사용 여부) 및 상태 인벤토리 재구축.
 - ~~카메라 마이그레이션에 맞춰 타일 크기/PPU 기준으로 에셋 치수 재검토~~ - 2026-09-14 완료: 카메라 `assetsPPU=72`, 캐릭터 시트 `ppu=302`, 지형 아틀라스 `ppu=512`로 전부 확정(`docs/DECISIONS.md` 참고).
 - 몬스터 아트는 여전히 전무하다 - 신규 전투 콘텐츠 착수 시 하이브리드 전략에 따라 처음부터 제작 필요.
-- **VFX 재생성 필요 (2026-09-16 실측, 우선순위순)**: (1) `MageDirectionalPadded.png` - 알파 채널 없음, 최우선. (2) `MageSkillVfxAtlas.png` - 5개 행 전부 하드 클리핑. (3) `Warrior/WarriorSkillVfxAtlas.png` - 4개 행의 확산 절정 프레임 클리핑. gpt-image 재생성은 이번 세션 범위 밖 - `game-asset-artist` 에이전트에게 위임할 것.
+- **VFX 재생성 필요 (2026-09-16 실측, 우선순위순)**: ~~(1) `MageDirectionalPadded.png` - 알파 채널 없음~~ - 2026-09-16 후속 세션에서 해소(위 "마법사 방향성 VFX 알파 결함 해소" 항목 참고). 남은 것: (2) `MageSkillVfxAtlas.png` - 5개 행 전부 하드 클리핑. (3) `Warrior/WarriorSkillVfxAtlas.png` - 4개 행의 확산 절정 프레임 클리핑. gpt-image 재생성은 이번 세션 범위 밖 - `game-asset-artist` 에이전트에게 위임할 것.

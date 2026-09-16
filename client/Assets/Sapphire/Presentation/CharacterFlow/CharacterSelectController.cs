@@ -20,6 +20,14 @@ namespace Sapphire.Presentation.CharacterFlow
     {
         [SerializeField] private Sprite magePortrait;
         [SerializeField] private Sprite warriorPortrait;
+        // 2026-09-16 (premium rebuild): card background now switches sprite
+        // per-slot (filled vs empty use different frame art, see
+        // CharacterSlotCardView.cardBackground's doc comment) and filled
+        // slots show a class badge (mage/warrior) at the frame's top notch.
+        [SerializeField] private Sprite cardFrameFilled;
+        [SerializeField] private Sprite cardFrameEmpty;
+        [SerializeField] private Sprite mageBadge;
+        [SerializeField] private Sprite warriorBadge;
         [SerializeField] private CharacterSlotCardView[] slotCards = new CharacterSlotCardView[CharacterRoster.MaxSlots];
         [SerializeField] private ConfirmDialog confirmDialog;
 
@@ -62,8 +70,10 @@ namespace Sapphire.Presentation.CharacterFlow
 
         private void BindFilledCard(CharacterSlotCardView card, CharacterSlot slot)
         {
+            if (card.cardBackground != null) card.cardBackground.sprite = cardFrameFilled;
             if (card.filledRoot != null) card.filledRoot.SetActive(true);
             if (card.emptyRoot != null) card.emptyRoot.SetActive(false);
+            if (card.classBadgeImage != null) card.classBadgeImage.sprite = slot.Class == CharacterClass.Warrior ? warriorBadge : mageBadge;
             if (card.nameText != null) card.nameText.text = slot.Name;
             if (card.classLevelText != null) card.classLevelText.text = $"{ClassLabel(slot.Class)} · Lv.{slot.Level}";
             if (card.portraitImage != null) card.portraitImage.sprite = slot.Class == CharacterClass.Warrior ? warriorPortrait : magePortrait;
@@ -83,6 +93,7 @@ namespace Sapphire.Presentation.CharacterFlow
 
         private void BindEmptyCard(CharacterSlotCardView card)
         {
+            if (card.cardBackground != null) card.cardBackground.sprite = cardFrameEmpty;
             if (card.filledRoot != null) card.filledRoot.SetActive(false);
             if (card.emptyRoot != null) card.emptyRoot.SetActive(true);
 

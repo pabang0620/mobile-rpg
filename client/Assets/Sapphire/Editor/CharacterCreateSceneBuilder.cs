@@ -10,25 +10,31 @@ namespace Sapphire.EditorTools
 {
     /// <summary>
     /// Builds CharacterCreate.unity: a Mage/Warrior class card pair (each a
-    /// CharacterSlotFrame 9-sliced panel - same art as the CharacterSelect
-    /// cards, see CharacterSelectSceneBuilder - with a portrait, class label,
-    /// one-line class description, and a selection state driven by
+    /// CharacterSlotFrameV2 9-sliced panel - same dark-navy/sapphire-glow art
+    /// as the CharacterSelect cards' filled state, see
+    /// CharacterSelectSceneBuilder - with a class badge, portrait, class
+    /// label, one-line class description, and a selection state driven by
     /// brightness/scale/glow rather than a border-color swap), a name
     /// InputField, an error line, a 생성 button, and a top-left back button
     /// to CharacterSelect.
     ///
-    /// 2026-09-15 (D2 fix): the previous version used a flat untextured
-    /// gray Image for the cards (no dedicated art) and a single thick olive
-    /// border swap for the selected state - looked unfinished next to the
-    /// CharacterSelect screen's frame art (orchestrator screenshot
-    /// flow_create.png). It also stacked Title/Cards/NameInput/CreateButton
-    /// with no minimum gap, so the name input's top edge touched the cards'
-    /// bottom edge and the 생성 button overlapped the input field. This
-    /// version reuses CharacterSlotFrame.png for the cards and lays the
-    /// whole vertical stack out from named constants with an explicit
-    /// >=16px gap between each block (see the Card/Input/Button Y constants
-    /// below) - LayoutOverlapGuard.VerifyNoOverlap asserts this at build
-    /// time instead of relying on eyeballing a screenshot again.
+    /// 2026-09-16 (premium select/create/login rebuild): cards switch from
+    /// the flat beige CharacterSlotFrame.png to CharacterSlotFrameV2.png
+    /// (same asset CharacterSelectSceneBuilder's filled cards use - see that
+    /// file's class doc comment for the border math: top 72/bottom 90
+    /// canvas-unit fixed zones regardless of CardHeight, which is exactly
+    /// why the same asset works at both this screen's 250 and Select's 340).
+    /// The selected-card glow switches from a flat colored Image rect to the
+    /// dedicated CharacterCreateSpotlight.png radial glow, and both cards
+    /// gain a class badge at the frame's top notch. The "생성" button
+    /// switches from ButtonPrimary to the new ButtonCreateV2 (matching the
+    /// gold create-button used for empty slots on CharacterSelect).
+    ///
+    /// 2026-09-15 (D2 fix, still valid): stacks Title/Cards/NameInput/
+    /// CreateButton with an explicit >=16px gap between each block (see the
+    /// Card/Input/Button Y constants below) - LayoutOverlapGuard.VerifyNoOverlap
+    /// asserts this at build time instead of relying on eyeballing a
+    /// screenshot again.
     /// </summary>
     internal static class CharacterCreateSceneBuilder
     {
@@ -38,6 +44,14 @@ namespace Sapphire.EditorTools
         private const float CardHeight = 250f;
         private const float CardGap = 40f;
         private const float CardCenterY = 125f;
+
+        // Same fixed top-zone budget as CharacterSelectSceneBuilder's filled
+        // cards (CharacterSlotFrameV2's badge notch is baked at a fixed
+        // distance from the top edge regardless of CardHeight - see that
+        // file's class doc comment for the border math).
+        private const float BadgeCenterYFromTop = -38f;
+        private const float BadgeSize = 60f;
+        private const float CardTopZoneHeight = 72f;
 
         // Vertical stack, each gap >=16px per D2 spec ("제목 - 카드 -
         // 입력칸 - 버튼 순으로 최소 16px 간격"): Title[270,330] -> gap20 ->
@@ -62,15 +76,18 @@ namespace Sapphire.EditorTools
         private static readonly Vector2 BackButtonSize = new Vector2(200f, 56f);
 
         // Selected-card visual (D2 spec: brightness 100% + 1.04x scale + a
-        // soft gold glow behind the card, instead of a thick border-color
+        // soft glow behind the card, instead of a thick border-color
         // swap - "보석 장식 추가 금지"). Unselected cards get a 0.6 dark
         // tint applied here as the card's initial state; the runtime
         // brightness/scale toggle on selection change lives in
         // CharacterCreateController (Presentation assembly, can't reference
         // this Editor-only class) as its own matching literals - see
         // CharacterCreateController.ApplyCardSelectionVisual.
+        //
+        // 2026-09-16 (premium rebuild): the glow switched from a flat
+        // colored Image rect to the dedicated CharacterCreateSpotlight.png
+        // radial glow sprite (see BuildClassCard) - CardGlowColor is retired.
         private static readonly Color UnselectedCardTint = new Color(0.6f, 0.6f, 0.6f, 1f);
-        private static readonly Color CardGlowColor = new Color(1f, 0.85f, 0.3f, 0.25f);
 
         internal static void Build()
         {
@@ -81,25 +98,32 @@ namespace Sapphire.EditorTools
             CharacterFlowUiScaffold.BuildFullScreenBackground(canvasGo, background);
             CharacterFlowUiScaffold.BuildLabel(canvasGo, "TitleText", new Vector2(0f, TitleY), new Vector2(600f, TitleHeight), "캐릭터 생성", fontSize: 34);
 
-            Sprite cardFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/CharacterSlotFrame.png");
+            Sprite cardFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/CharacterSlotFrameV2.png");
+            Sprite mageBadge = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/ClassBadgeMage.png");
+            Sprite warriorBadge = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/ClassBadgeWarrior.png");
+            Sprite spotlight = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/CharacterCreateSpotlight.png");
             Sprite magePortrait = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/PortraitMage.png");
             Sprite warriorPortrait = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/PortraitWarrior.png");
 
             float mageCenterX = -(CardWidth + CardGap) / 2f;
             float warriorCenterX = (CardWidth + CardGap) / 2f;
-            (Button mageButton, GameObject mageGlow) = BuildClassCard(canvasGo, mageCenterX, cardFrame, magePortrait, "법사", "원거리 마법으로 적을 제압하는 마법사", "Mage");
-            (Button warriorButton, GameObject warriorGlow) = BuildClassCard(canvasGo, warriorCenterX, cardFrame, warriorPortrait, "전사", "검과 방패로 전선을 지키는 근접 전사", "Warrior");
+            (Button mageButton, GameObject mageGlow) = BuildClassCard(canvasGo, mageCenterX, cardFrame, mageBadge, spotlight, magePortrait, "법사", "원거리 마법으로 적을 제압하는 마법사", "Mage");
+            (Button warriorButton, GameObject warriorGlow) = BuildClassCard(canvasGo, warriorCenterX, cardFrame, warriorBadge, spotlight, warriorPortrait, "전사", "검과 방패로 전선을 지키는 근접 전사", "Warrior");
 
             Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/InputFieldFrame.png");
             InputField nameInput = BuildNameInput(canvasGo, inputFrame);
 
-            // 2026-09-15 (gemless MapleStory-M rebuild): main action button
-            // ("생성") uses ButtonPrimary, the back/secondary button
-            // ("캐릭터 선택으로") uses ButtonSecondary - see
-            // HudArtImportConfigurator.ConfigureButtons.
-            Sprite primaryButtonSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/ButtonPrimary.png", "Normal");
+            // 2026-09-16 (premium rebuild): main action button ("생성") now
+            // uses ButtonCreateV2 (matching CharacterSelect's empty-slot
+            // create button) instead of ButtonPrimary. The back/secondary
+            // button ("캐릭터 선택으로") is unaffected - still ButtonSecondary.
+            Sprite createButtonSprite = VillageHubUiBuilder.LoadNamedSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/ButtonCreateV2.png", "Normal");
             Sprite secondaryButtonSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/ButtonSecondary.png", "Normal");
-            Button createButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, primaryButtonSprite, "CreateButton", new Vector2(0f, CreateButtonY), new Vector2(CreateButtonWidth, CreateButtonHeight), "생성", fontSize: 26);
+            Button createButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, createButtonSprite, "CreateButton", new Vector2(0f, CreateButtonY), new Vector2(CreateButtonWidth, CreateButtonHeight), "생성", fontSize: 26);
+            // ButtonCreateV2's fill is light champagne-gold - see
+            // CharacterSelectSceneBuilder.BuildSlotCard's identical fix for
+            // the same asset.
+            createButton.GetComponentInChildren<Text>().color = new Color(0.157f, 0.125f, 0.063f, 1f);
 
             Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, ErrorTextY), new Vector2(600f, 32f), string.Empty, fontSize: 20);
             errorText.color = new Color(1f, 0.5f, 0.5f);
@@ -183,30 +207,40 @@ namespace Sapphire.EditorTools
         }
 
         // Top-down layout budget inside the card (card-local space, y+up,
-        // origin at card center, top edge at +CardHeight/2 = +125):
-        //   topPad(14) -> Portrait(130, top-pivot) -> gap(8) ->
-        //   ClassLabel(30, center-pivot) -> gap(6) -> Description(40,
+        // origin at card center, top edge at +CardHeight/2 = +125). 2026-09-16
+        // (premium rebuild): topPad grew from 14 to CardTopZoneHeight(72)+gap
+        // (6) = 78, to clear CharacterSlotFrameV2's fixed badge-notch zone
+        // (same 72-unit zone CharacterSelectSceneBuilder's filled cards use -
+        // see that file's class doc comment), so Portrait/Label/Description
+        // all shrank to keep the whole stack inside this card's shorter
+        // 250-tall budget:
+        //   topPad(78) -> Portrait(90, top-pivot) -> gap(8) ->
+        //   ClassLabel(24, center-pivot) -> gap(4) -> Description(28,
         //   center-pivot)
-        // landing at a bottom edge of -103, i.e. 22px inside the card's own
-        // bottom edge (-125) - comfortably clear of CharacterSlotFrame's
-        // border for this card size (see CharacterFlowArtImportConfigurator's
-        // border-measurement comment; ~12 canvas units at this target
-        // width). Portrait uses a top-pivot RectTransform so its
-        // anchoredPosition is directly "distance below the card's top edge";
-        // Label/Description come from CharacterFlowUiScaffold.BuildLabel,
+        // landing at a bottom edge of -107, comfortably inside the card's
+        // own bottom edge (-125). Portrait uses a top-pivot RectTransform so
+        // its anchoredPosition is directly "distance below the card's top
+        // edge"; Label/Description come from CharacterFlowUiScaffold.BuildLabel,
         // which is center-pivot, so their anchoredPosition.y must be the
         // element's own center-Y in this same card-local space, not a
         // top-edge offset - computed explicitly below instead of nesting
         // arithmetic expressions, after an earlier draft of this method got
         // exactly that conversion wrong.
-        private const float CardTopPad = 14f;
-        private const float CardPortraitHeight = 130f;
+        private const float CardTopPad = CardTopZoneHeight + 6f;
+        private const float CardPortraitHeight = 90f;
         private const float CardPortraitLabelGap = 8f;
-        private const float CardLabelHeight = 30f;
-        private const float CardLabelDescriptionGap = 6f;
-        private const float CardDescriptionHeight = 40f;
+        // 2026-09-16 (premium rebuild, real bug found via CharacterSelect
+        // screenshot QA - see CharacterSelectSceneBuilder.BuildSlotCard's
+        // identical fix comment): box height must exceed fontSize's own line
+        // height (~1.2x) or the default Text.verticalOverflow=Truncate clips
+        // glyphs to fully invisible, not just trims descenders. Label is
+        // fontSize 26 (needs ~31) - grown from 24 to 32. Description
+        // (fontSize 14, needs ~17) was already safely oversized at 28.
+        private const float CardLabelHeight = 32f;
+        private const float CardLabelDescriptionGap = 4f;
+        private const float CardDescriptionHeight = 28f;
 
-        private static (Button button, GameObject glow) BuildClassCard(GameObject canvasGo, float centerX, Sprite cardFrame, Sprite portrait, string label, string description, string debugName)
+        private static (Button button, GameObject glow) BuildClassCard(GameObject canvasGo, float centerX, Sprite cardFrame, Sprite badgeSprite, Sprite spotlightSprite, Sprite portrait, string label, string description, string debugName)
         {
             float portraitTop = CardHeight / 2f - CardTopPad;
             float portraitBottom = portraitTop - CardPortraitHeight;
@@ -216,15 +250,20 @@ namespace Sapphire.EditorTools
             float descriptionTop = labelBottom - CardLabelDescriptionGap;
             float descriptionCenterY = descriptionTop - CardDescriptionHeight / 2f;
 
+            // 2026-09-16 (premium rebuild): CharacterCreateSpotlight.png radial
+            // glow (Simple, preserveAspect) replaces the old flat-color Image
+            // rect - same "behind the card, toggled by SetActive" wiring.
             var glowGo = new GameObject("Glow_" + debugName, typeof(Image));
             glowGo.transform.SetParent(canvasGo.transform, false);
             var glowRect = glowGo.GetComponent<RectTransform>();
             glowRect.anchorMin = new Vector2(0.5f, 0.5f);
             glowRect.anchorMax = new Vector2(0.5f, 0.5f);
-            glowRect.sizeDelta = new Vector2(CardWidth + 28f, CardHeight + 28f);
+            glowRect.sizeDelta = new Vector2(CardWidth + 220f, CardHeight + 220f);
             glowRect.anchoredPosition = new Vector2(centerX, CardCenterY);
             var glowImage = glowGo.GetComponent<Image>();
-            glowImage.color = CardGlowColor;
+            glowImage.sprite = spotlightSprite;
+            glowImage.type = Image.Type.Simple;
+            glowImage.preserveAspect = true;
             glowImage.raycastTarget = false;
 
             var cardGo = new GameObject("ClassCard_" + debugName, typeof(Image), typeof(Button));
@@ -240,6 +279,20 @@ namespace Sapphire.EditorTools
             cardImage.color = UnselectedCardTint;
             Button cardButton = cardGo.GetComponent<Button>();
 
+            var badgeGo = new GameObject("ClassBadge", typeof(Image));
+            badgeGo.transform.SetParent(cardGo.transform, false);
+            var badgeRect = badgeGo.GetComponent<RectTransform>();
+            badgeRect.anchorMin = new Vector2(0.5f, 1f);
+            badgeRect.anchorMax = new Vector2(0.5f, 1f);
+            badgeRect.pivot = new Vector2(0.5f, 0.5f);
+            badgeRect.sizeDelta = new Vector2(BadgeSize, BadgeSize);
+            badgeRect.anchoredPosition = new Vector2(0f, BadgeCenterYFromTop);
+            var badgeImage = badgeGo.GetComponent<Image>();
+            badgeImage.sprite = badgeSprite;
+            badgeImage.type = Image.Type.Simple;
+            badgeImage.preserveAspect = true;
+            badgeImage.raycastTarget = false;
+
             var portraitGo = new GameObject("Portrait", typeof(Image));
             portraitGo.transform.SetParent(cardGo.transform, false);
             var portraitRect = portraitGo.GetComponent<RectTransform>();
@@ -254,14 +307,17 @@ namespace Sapphire.EditorTools
             portraitImage.preserveAspect = true;
             portraitImage.raycastTarget = false;
 
-            CharacterFlowUiScaffold.BuildLabel(cardGo, "Label", new Vector2(0f, labelCenterY), new Vector2(CardWidth - 20f, CardLabelHeight), label, fontSize: 26);
+            Text labelText = CharacterFlowUiScaffold.BuildLabel(cardGo, "Label", new Vector2(0f, labelCenterY), new Vector2(CardWidth - 20f, CardLabelHeight), label, fontSize: 26);
+            labelText.verticalOverflow = VerticalWrapMode.Overflow;
 
             Text descriptionText = CharacterFlowUiScaffold.BuildLabel(cardGo, "Description", new Vector2(0f, descriptionCenterY), new Vector2(CardWidth - 24f, CardDescriptionHeight), description, fontSize: 14);
-            // Dark brownish-gray (matches ui_kit tokens.py PANEL_TITLE_TEXT #4a4038) so this
-            // reads against the beige ClassCard background instead of washing out.
-            descriptionText.color = new Color(0.2902f, 0.251f, 0.2196f, 1f);
+            // 2026-09-16 (premium rebuild): background flipped from beige to
+            // dark navy - a light sapphire-tinted gray now (same family as
+            // CharacterSelectSceneBuilder's classLevelText color), not the
+            // old dark brownish-gray (#4a4038) tuned for the beige panel.
+            descriptionText.color = new Color(0.78f, 0.85f, 0.95f, 1f);
             descriptionText.horizontalOverflow = HorizontalWrapMode.Wrap;
-            descriptionText.verticalOverflow = VerticalWrapMode.Truncate;
+            descriptionText.verticalOverflow = VerticalWrapMode.Overflow;
             descriptionText.raycastTarget = false;
 
             return (cardButton, glowGo);

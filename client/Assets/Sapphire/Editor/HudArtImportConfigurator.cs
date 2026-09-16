@@ -1,4 +1,3 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -219,8 +218,8 @@ namespace Sapphire.EditorTools
                 });
 
             var border = new Vector4(53, 53, 53, 53);
-            ApplySingleSliceBorder(path, normalName, border);
-            ApplySingleSliceBorder(path, pressedName, border);
+            ArtImportConfigurator.ApplySingleSliceBorder(path, normalName, border);
+            ArtImportConfigurator.ApplySingleSliceBorder(path, pressedName, border);
         }
 
         private static void ConfigureMenuHamburgerIcon()
@@ -257,33 +256,8 @@ namespace Sapphire.EditorTools
                 pixelsPerUnit: ArtImportConfigurator.UiKitV3PixelsPerUnit);
         }
 
-        // ConfigureMultiSprite's SpriteMetaData tuples (shared by every other
-        // sheet) don't carry a per-slice border - most Multiple-mode sheets in
-        // this codebase are used as Image.Type.Simple, not Sliced. The two
-        // sheets that DO need 9-slice border data (ButtonSecondary/
-        // ButtonPrimary above) apply it as a small follow-up pass instead of
-        // widening that shared helper's signature for a minority of callers.
-        private static void ApplySingleSliceBorder(string path, string spriteName, Vector4 border)
-        {
-            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (importer == null)
-            {
-                throw new Exception("Texture not found or not a TextureImporter: " + path);
-            }
-
-            SpriteMetaData[] sheet = importer.spritesheet;
-            for (int i = 0; i < sheet.Length; i++)
-            {
-                if (sheet[i].name == spriteName)
-                {
-                    sheet[i].border = border;
-                }
-            }
-
-            importer.spritesheet = sheet;
-            importer.SaveAndReimport();
-        }
-
+        // ApplySingleSliceBorder moved to ArtImportConfigurator (2026-09-16) -
+        // CharacterFlowArtImportConfigurator's new button sheets need it too.
         private static void ConfigureMenuIconsSet()
         {
             // UI: menu grid icons, 1774x887, 4x2 grid (row1: equipment/bag/

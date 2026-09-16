@@ -444,5 +444,37 @@ namespace Sapphire.EditorTools
             importer.alphaIsTransparency = importer.DoesSourceTextureHaveAlpha();
             importer.SaveAndReimport();
         }
+
+        // internal (not private): moved here from HudArtImportConfigurator
+        // (2026-09-16) so CharacterFlowArtImportConfigurator's new
+        // ButtonSelectV2/ButtonDeleteV2/ButtonCreateV2 sheets can share it
+        // instead of a second private copy - same "single shared helper,
+        // multiple Configure* call sites" convention ConfigureMultiSprite/
+        // ConfigureSingleSprite themselves already follow. ConfigureMultiSprite's
+        // SpriteMetaData tuples don't carry a per-slice border (most
+        // Multiple-mode sheets in this codebase are used as Image.Type.Simple,
+        // not Sliced) - sheets that DO need 9-slice border data apply it as
+        // this small follow-up pass instead of widening that shared helper's
+        // signature for a minority of callers.
+        internal static void ApplySingleSliceBorder(string path, string spriteName, Vector4 border)
+        {
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null)
+            {
+                throw new Exception("Texture not found or not a TextureImporter: " + path);
+            }
+
+            SpriteMetaData[] sheet = importer.spritesheet;
+            for (int i = 0; i < sheet.Length; i++)
+            {
+                if (sheet[i].name == spriteName)
+                {
+                    sheet[i].border = border;
+                }
+            }
+
+            importer.spritesheet = sheet;
+            importer.SaveAndReimport();
+        }
     }
 }
