@@ -49,15 +49,38 @@ namespace Sapphire.EditorTools
             Sprite portalFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginPortalFrame.png");
             CharacterFlowUiScaffold.BuildSlicedPanel(canvasGo, portalFrame, "LoginPortal", new Vector2(0f, PortalCenterY), PortalSize);
 
-            Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/InputFieldFrame.png");
+            // 2026-09-16 (login input/button redesign task): swapped from the
+            // shared InputFieldFrame.png to a dedicated NicknameInputFieldV2.png
+            // (dark-navy glass panel with a blue neon glow border) - Character
+            // CreateSceneBuilder's own nickname field still uses
+            // InputFieldFrame.png unchanged (grep-confirmed before this
+            // swap), so that shared asset itself is untouched, only this one
+            // call site's sprite reference changed. Layout (position/size)
+            // below is unchanged - only the sprite differs.
+            Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/NicknameInputFieldV2.png");
             InputField accountIdInput = BuildAccountIdInput(canvasGo, inputFrame);
 
-            // 2026-09-15 (gemless MapleStory-M rebuild): the main action
-            // button ("게임 시작") now uses ButtonPrimary.png (warm brown
-            // hex-cut pill) instead of MenuButtonGold - see
-            // HudArtImportConfigurator.ConfigureButtons.
-            Sprite startButtonSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/ButtonPrimary.png", "Normal");
+            // 2026-09-16 (login input/button redesign task): swapped from
+            // ButtonPrimary.png (warm brown hex-cut pill, grep-confirmed used
+            // nowhere else so nothing else is affected) to the new
+            // LoginStartButtonV2.png (blue neon hexagon, Normal/Pressed 2-cell
+            // sheet - see HudArtImportConfigurator... actually
+            // CharacterFlowArtImportConfigurator.ConfigureTwoCellButton, same
+            // pattern as ButtonSelectV2/ButtonDeleteV2/ButtonCreateV2).
+            // Button.transition is switched from the Selectable default
+            // (ColorTint) to SpriteSwap so pressedSprite actually renders on
+            // press - the shared CharacterFlowUiScaffold.BuildLabeledButton
+            // helper doesn't wire SpriteSwap itself (every other screen using
+            // it is fine with the default color-tint feedback), so this is
+            // done locally here rather than changing that shared helper for
+            // every other button using it.
+            Sprite startButtonSprite = VillageHubUiBuilder.LoadNamedSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png", "Normal");
+            Sprite startButtonPressedSprite = VillageHubUiBuilder.LoadNamedSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png", "Pressed");
             Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, startButtonSprite, "StartButton", new Vector2(0f, -140f), new Vector2(280f, 90f), "게임 시작", fontSize: 28);
+            startButton.transition = Selectable.Transition.SpriteSwap;
+            SpriteState startButtonSpriteState = startButton.spriteState;
+            startButtonSpriteState.pressedSprite = startButtonPressedSprite;
+            startButton.spriteState = startButtonSpriteState;
 
             Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, -195f), new Vector2(500f, 32f), string.Empty, fontSize: 20);
             errorText.color = new Color(1f, 0.5f, 0.5f);

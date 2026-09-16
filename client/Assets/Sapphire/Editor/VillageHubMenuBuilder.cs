@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Sapphire.Presentation.CharacterFlow;
 using Sapphire.Presentation.UI;
 
 namespace Sapphire.EditorTools
@@ -23,64 +23,116 @@ namespace Sapphire.EditorTools
     /// </summary>
     internal static class VillageHubMenuBuilder
     {
-        private const float OdinPanelWidth = 400f;
-        // 2026-09-16 (F6.1 fix): the MainMenuButton (see Build below) is
-        // anchored top-right, anchoredPosition (-20,-20) - its bottom edge
-        // sits 20+buttonHeight units below the canvas top. The old 24-unit
-        // top margin put the panel's top edge well inside that button's
-        // rect, so the open panel visually covered/clipped the button's own
-        // "메뉴" label (confirmed in the orchestrator's reference
-        // screenshot). 2026-09-15 (gemless MapleStory-M rebuild): the button
-        // shrank from 150x72 (pill+label) to HamburgerButtonSize=56 (icon
-        // alone, no label) - margin recomputed the same way, 20+56+12=88.
+        // 2026-09-16 (widen menu task): 400 * 1.3 - the task spec asks for a
+        // panel "30% wider" verbatim. Every other horizontal number below
+        // that depends on width (contentWidth, cellWidth, columnPitch) is
+        // already computed FROM this constant rather than hardcoded, so
+        // widening it is the only edit needed to reflow the grid - see
+        // VerifyPanelLayout for the build-time sanity check this earns.
+        private const float OdinPanelWidth = 520f;
+        // 2026-09-16 (widen menu task, part A4) - OdinPanelTopMargin/
+        // OdinPanelBottomMargin (the panel's OUTER footprint against the
+        // canvas edges) are left at their original values (F6.1 fix's 0,
+        // D1 fix's 20). A first attempt made these two computed and equal
+        // (shrinking the panel to content height, margin = leftover/2) but
+        // that FAILED verification: it moved the panel's bottom edge up by
+        // ~78px, and VillageHubSkillMenuBuilder's warrior/mage skill fan
+        // (anchored to this exact same bottom-right corner, see that file -
+        // its outermost button's polar position lands as low as canvas
+        // y~19-99) is a SIBLING of this panel, not behind it - shrinking the
+        // panel's outer bottom margin past ~20 exposes that button peeking
+        // out from under the open menu (confirmed in
+        // generated-images/diagnostics/v3_menu.png during this task's own
+        // verification pass, then reverted - see docs/DECISIONS.md's
+        // 2026-09-16 "메뉴판 확장" entry). So the outer footprint is
+        // unchanged, and "상단 여백=하단 여백" is instead satisfied by
+        // OdinContentPadding below - the INNER gap from the panel's own top
+        // edge to the first section header, and from the last section's
+        // content to the panel's own bottom edge, made equal to each other
+        // instead. That fully addresses the actual complaint (the
+        // orchestrator's final_village_warrior_menu.png reference screenshot:
+        // a large empty band concentrated only under the last section) without
+        // touching the panel's outer size/position at all.
         private const float OdinPanelTopMargin = 0f;
+        // 2026-09-16 (widen menu task, part A4) - kept at its original value
+        // (D1 fix's 20), NOT enlarged. This task's own screenshot
+        // verification pass (generated-images/diagnostics/v3_menu.png) found
+        // VillageHubSkillMenuBuilder's warrior/mage skill fan peeking out
+        // from behind the panel's bottom-right corner - MenuPanelDark.png's
+        // border art has a decorative curved cutout at each corner
+        // (intentional, visible at all 4 corners) that exposes whatever
+        // sits directly behind it. A first instinct (raise this margin so
+        // the panel's bottom edge sits higher, "further from" the fan) was
+        // tried and made it strictly WORSE - raising the margin SHRINKS the
+        // panel, uncovering MORE of the fan below it, not less (verified by
+        // re-running the capture script: at margin 100 the entire basic-
+        // attack button rendered fully undimmed below the panel, worse than
+        // the small corner peek at margin 20). The correct direction to fully
+        // cover the fan would be LOWERING this margin toward 0, but that
+        // rabbit hole - reconciling an ornamental corner cutout's exact
+        // curve against the fan's exact polar coordinates - is out of this
+        // task's scope (widen the panel / equalize its own content padding /
+        // add system-section items), the fan's clicks are still correctly
+        // blocked by the full-screen backdrop Button regardless of this
+        // visual peek (no functional bug), and this exact peek is not new -
+        // it was already latent in the ORIGINAL unwidened panel at this same
+        // margin value, merely hidden by the CharacterSelectButton footer
+        // that used to render on top of that corner (now correctly removed
+        // per this task's part B - see docs/DECISIONS.md's 2026-09-16 entry).
+        // Left as a known, pre-existing, out-of-scope cosmetic issue rather
+        // than risking a worse regression chasing it further.
         private const float OdinPanelBottomMargin = 20f;
-        // Keep section titles below the panel's ornate top frame so 성장,
-        // 모험 and 시스템 always render inside the usable inner surface.
-        private const float OdinContentTopInset = 67f;
+        // 2026-09-16 (widen menu task, part A4): replaces the old separate
+        // OdinContentTopInset(67)/OdinBottomContentPadding(12) constants -
+        // computed from the panel's fixed height (see OdinPanelTopMargin's
+        // comment above) minus however tall 성장+모험+시스템's header/items/
+        // gaps actually are (ComputeSectionsHeight, a dry-run of Build's own
+        // per-section arithmetic below, kept as its own method for the same
+        // reason ComputePanelContentHeight originally was - it must run
+        // before Build creates any GameObjects), split evenly so the padding
+        // above the first header equals the padding below the last row by
+        // construction. static readonly (not const) because
+        // ComputeSectionsHeight reads MenuCatalog.Sections, not a
+        // compile-time constant.
+        private static readonly float OdinSectionsHeight = ComputeSectionsHeight();
+        private static readonly float OdinContentPadding =
+            (ReferenceCanvasHeight - OdinPanelTopMargin - OdinPanelBottomMargin - OdinSectionsHeight) / 2f;
         // 2026-09-16 (F6.4 fix): raised from 36 to 40 so the section title
         // text sits centered in the header band instead of overlapping its
         // top edge. 2026-09-15 (gemless MapleStory-M rebuild): the header no
         // longer has a banner backdrop at all (see BuildOdinSectionHeader) -
         // this height now just reserves vertical room for the divider+title
         // row, kept at 40 since that still comfortably fits both.
-        private const float OdinHeaderHeight = 40f;
+        // internal (not private): VillageHubMenuHeaderBuilder.BuildOdinSectionHeader
+        // (split out to keep this file under the ~500-line convention) needs it.
+        internal const float OdinHeaderHeight = 40f;
         private const float OdinHeaderToItemsGap = 12f;
         // 2026-09-15 (D1 fix): shrunk from 104 to the item's actual content
         // height (icon 56 + 4 gap + label 18 = 78, see BuildOdinMenuItem) - at
         // 104 every row reserved 26px of unused padding for a second grid row
         // that MenuCatalog's current data never produces (every section is
-        // <=4 items, i.e. exactly one OdinColumns=4-wide row), and that slack
-        // was what let the grid's total content height run past the panel's
-        // actual available space and collide with the character-select
-        // footer button (see BuildCharacterSelectButton + the
-        // VerifyFooterClearance check at the end of Build below, which is
-        // what actually guards this now instead of eyeballing it again).
+        // <=4 items, i.e. exactly one OdinColumns=3-wide row for every
+        // section except 성장's 2 rows). 2026-09-16: the old comment here
+        // referenced a "character-select footer button" clearance check
+        // (VerifyFooterClearance) - that footer button and its guard are both
+        // removed (see ComputeSectionsHeight/OdinContentPadding/
+        // VerifyPanelLayout below, which now size the top/bottom padding to
+        // content instead of guarding a fixed-height panel against one
+        // footer element).
         private const float OdinItemRowHeight = 70f;
-        // 2026-09-15 (D1 fix): 22 -> 8, same reason as OdinItemRowHeight - see
-        // VerifyFooterClearance for the arithmetic this is tuned against.
         private const float OdinSectionGap = 4f;
         // Tighter 3x3 presentation: the previous 56px icon left a visibly
         // large gap between neighboring cells.  Enlarging the icon while
         // keeping the same three-column centers reduces the perceived gap to
         // roughly half without changing the panel width or label alignment.
         private const float OdinIconSize = 54f;
-        // 2026-09-15 (D1 fix): the footer button's own height, pulled out of
-        // BuildCharacterSelectButton as a named constant so
-        // VerifyFooterClearance (build-time overlap guard) can reference the
-        // exact same number instead of a duplicated magic 56.
-        private const float OdinFooterButtonHeight = 56f;
-        // Minimum clearance (canvas units) required between the last
-        // section's content (icon+label) and the footer button's top edge -
-        // task spec: "설정 아이콘+라벨과 footer 버튼 사이 최소 12px 간격".
-        private const float OdinFooterMinGap = 12f;
         // Matches CharacterFlowUiScaffold/VillageHubUiBuilder's
-        // CanvasScaler.referenceResolution - VerifyFooterClearance works in
-        // these reference-resolution canvas units rather than reading a live
-        // RectTransform.rect, because batchmode scene builds run before any
-        // GameView/screen exists and RectTransform.rect can't be trusted yet
-        // (same reasoning LayoutOverlapGuard documents for CharacterCreate/
-        // CharacterSelect).
+        // CanvasScaler.referenceResolution - ComputeSectionsHeight/
+        // VerifyPanelLayout work in these reference-resolution canvas units
+        // rather than reading a live RectTransform.rect, because batchmode
+        // scene builds run before any GameView/screen exists and
+        // RectTransform.rect can't be trusted yet (same reasoning
+        // LayoutOverlapGuard documents for CharacterCreate/CharacterSelect).
         private const float ReferenceCanvasHeight = 720f;
 
         // 2026-09-15 (S2 fix): the previous flat 24-unit OdinContentMargin
@@ -106,10 +158,11 @@ namespace Sapphire.EditorTools
         private const float MenuPanelOdinSpritePixelsPerUnit = ArtImportConfigurator.UiKitV3PixelsPerUnit;
         private const float OdinContentMarginClearance = 14f;
         private const float OdinHorizontalPaddingReduction = 20f;
-        private static readonly float OdinContentMargin =
+        // internal (not private): VillageHubMenuHeaderBuilder.BuildOdinSectionHeader
+        // (split out to keep this file under the ~500-line convention) needs it.
+        internal static readonly float OdinContentMargin =
             MenuPanelOdinLeftRightBorderPx / (MenuPanelOdinSpritePixelsPerUnit / 100f)
             + OdinContentMarginClearance - OdinHorizontalPaddingReduction;
-        private const float OdinBottomContentPadding = 12f;
         // code-reviewer flagged a doc conflict: docs/REMEDIATION_PLAN.md line
         // 61 says "5열 아이콘 그리드" (5 columns), but the session's task
         // instructions explicitly specify "a 4-column grid of items (cell
@@ -132,8 +185,59 @@ namespace Sapphire.EditorTools
         // than the old 150x72 pill since there's no label to fit anymore.
         private const float HamburgerButtonSize = 56f;
 
+        // 2026-09-16 (widen menu task, part A4): sums exactly the same
+        // per-section block (header + header-to-items gap + rows*rowHeight)
+        // the Build loop below lays out, with OdinSectionGap between every
+        // pair of sections (MenuCatalog.Sections -1 gaps for N sections) -
+        // deliberately EXCLUDES the top inset/bottom padding (those are
+        // OdinContentPadding, derived FROM this method's result, see its own
+        // comment above) - i.e. this is a dry-run of just the header+items
+        // portion of Build's own vertical arithmetic, kept as its own method
+        // (rather than sharing a loop with Build) because Build also creates
+        // GameObjects and this needs to run once, before Build, purely to
+        // size the padding. Any future MenuCatalog change (more items/
+        // sections) automatically grows/shrinks both paddings in lockstep
+        // instead of needing a hand-tuned margin.
+        private static float ComputeSectionsHeight()
+        {
+            float height = 0f;
+            MenuSectionDefinition[] sections = MenuCatalog.Sections;
+            for (int i = 0; i < sections.Length; i++)
+            {
+                int rows = Mathf.CeilToInt(sections[i].Items.Length / (float)OdinColumns);
+                height += OdinHeaderHeight + OdinHeaderToItemsGap + rows * OdinItemRowHeight;
+                if (i < sections.Length - 1)
+                {
+                    height += OdinSectionGap;
+                }
+            }
+
+            return height;
+        }
+
+        // Build-time sanity check (replaces the old VerifyFooterClearance,
+        // which guarded one footer element against a fixed-height panel).
+        // OdinContentPadding going negative means MenuCatalog grew past what
+        // the fixed-size panel (OdinPanelTopMargin/BottomMargin, unchanged
+        // footprint) can fit at all - same failure mode VerifyFooterClearance
+        // used to catch, just measured against both paddings instead of one
+        // footer element.
+        private static void VerifyPanelLayout()
+        {
+            if (OdinContentPadding < 0f)
+            {
+                throw new System.Exception(
+                    $"VillageHub menu: sections need {OdinSectionsHeight:F1}px but the panel only has " +
+                    $"{ReferenceCanvasHeight - OdinPanelTopMargin - OdinPanelBottomMargin:F0}px to give - " +
+                    "MenuCatalog grew too large for the Odin panel's fixed footprint. Reduce item count " +
+                    "per section or shrink OdinItemRowHeight/OdinHeaderHeight/OdinSectionGap.");
+            }
+        }
+
         internal static void Build(GameObject canvasGo, SimpleMessagePanel messagePanel)
         {
+            VerifyPanelLayout();
+
             Sprite hamburgerSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuHamburgerIcon.png");
             Sprite panelSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuPanelDark.png");
             Sprite dividerLeftSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionDivider.png", "MenuSectionDivider_Left");
@@ -193,29 +297,35 @@ namespace Sapphire.EditorTools
             var allButtons = new System.Collections.Generic.List<Button>();
             var allLabels = new System.Collections.Generic.List<string>();
             var allAvailable = new System.Collections.Generic.List<bool>();
+            var allIds = new System.Collections.Generic.List<string>();
 
             float contentWidth = OdinPanelWidth - 2f * OdinContentMargin;
             float cellWidth = contentWidth / OdinColumns;
-            float cursorY = -OdinContentTopInset;
-            // Tracks the bottom edge (distance below panel top, negative) of
-            // the last section's item row - i.e. where the grid content
-            // actually ends, ignoring the trailing OdinSectionGap the loop
-            // below adds after every section (including the last one, where
-            // it's never used for anything). VerifyFooterClearance needs the
-            // real content-end, not that unused trailing gap.
-            float lastContentBottomY = cursorY;
+            float cursorY = -OdinContentPadding;
 
             foreach (MenuSectionDefinition section in MenuCatalog.Sections)
             {
                 int rows = Mathf.CeilToInt(section.Items.Length / (float)OdinColumns);
-                if (section.Title == "시스템")
-                {
-                    float panelHeight = ReferenceCanvasHeight - OdinPanelTopMargin - OdinPanelBottomMargin;
-                    cursorY = -panelHeight + OdinBottomContentPadding
-                        + OdinHeaderHeight + OdinHeaderToItemsGap + rows * OdinItemRowHeight;
-                }
 
-                BuildOdinSectionHeader(panelGo, dividerLeftSprite, dividerRightSprite, section.Title, cursorY, contentWidth);
+                // 2026-09-16 (widen menu task, part A4/A5): the old code
+                // force-jumped "시스템"'s cursorY to sit flush against the
+                // panel's bottom edge (reserving room for the now-removed
+                // footer button), which left a large dead gap between 모험's
+                // last row and 시스템's header (see OdinContentPadding's doc
+                // comment above for the exact number - the orchestrator's
+                // final_village_warrior_menu.png reference screenshot showed
+                // it). That jump is gone: 시스템 now flows straight through
+                // from 모험 with the same OdinSectionGap every other section
+                // transition already uses, collapsing that gap from ~180px
+                // down to 4px - far more than the 20px tightening this task
+                // separately asked for. Deliberately NOT stacking an
+                // additional -20 on top of this (docs/DECISIONS.md 2026-09-16
+                // entry): OdinSectionGap is already the same minimal 4px
+                // every other section boundary uses, and subtracting 20 more
+                // would push 시스템's header up into 모험's last icon row (the
+                // "겹침 검증 통과" requirement this same task item ends with
+                // would fail).
+                VillageHubMenuHeaderBuilder.BuildOdinSectionHeader(panelGo, dividerLeftSprite, dividerRightSprite, section.Title, cursorY, contentWidth);
                 cursorY -= OdinHeaderHeight + OdinHeaderToItemsGap;
 
                 for (int r = 0; r < rows; r++)
@@ -235,120 +345,19 @@ namespace Sapphire.EditorTools
                         allButtons.Add(itemButton);
                         allLabels.Add(item.Label);
                         allAvailable.Add(item.IsAvailable);
+                        allIds.Add(item.Id);
                     }
                 }
 
-                lastContentBottomY = cursorY - rows * OdinItemRowHeight;
-                cursorY = lastContentBottomY - OdinSectionGap;
+                cursorY = cursorY - rows * OdinItemRowHeight - OdinSectionGap;
             }
 
+            ConfirmDialog quitConfirmDialog = VillageHubMenuHeaderBuilder.BuildQuitConfirmDialog(canvasGo);
 
             var controller = canvasGo.AddComponent<MainMenuPanel>();
-            controller.Configure(overlayGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), messagePanel);
+            controller.Configure(overlayGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), allIds.ToArray(), messagePanel, quitConfirmDialog);
             backdropButton.onClick.AddListener(controller.Close);
             overlayGo.SetActive(false);
-        }
-
-        // Build-time overlap guard (D4 spec: "기존 VerifyNoOverlap류 빌드타임
-        // 검증이 있으면 footer까지 포함하도록 확장" - none existed for this
-        // panel yet, so this is the new one). Works in the same
-        // reference-resolution canvas units every position/margin constant
-        // above is defined in, not a live RectTransform.rect read - see
-        // ReferenceCanvasHeight's doc comment for why.
-        private static void VerifyFooterClearance(float lastContentBottomY)
-        {
-            float panelHeight = ReferenceCanvasHeight - OdinPanelTopMargin - OdinPanelBottomMargin;
-            float contentBottomFromPanelBottom = panelHeight - (-lastContentBottomY);
-            float footerTopFromPanelBottom = OdinContentMargin + OdinFooterButtonHeight;
-            float clearance = contentBottomFromPanelBottom - footerTopFromPanelBottom;
-
-            if (clearance < OdinFooterMinGap)
-            {
-                throw new System.Exception(
-                    $"VillageHub menu: only {clearance:F1}px clearance between the last section's " +
-                    $"content and the character-select footer button (need >= {OdinFooterMinGap}px). " +
-                    "MenuCatalog grew, or OdinItemRowHeight/OdinHeaderHeight/OdinSectionGap shrank the " +
-                    "available margin - reduce item count per section, shrink those constants further, " +
-                    "or reduce OdinPanelTopMargin/OdinPanelBottomMargin to grow the panel.");
-            }
-        }
-
-        private static void BuildCharacterSelectButton(GameObject panelGo, Sprite buttonSprite)
-        {
-            var buttonGo = new GameObject("CharacterSelectButton", typeof(Image), typeof(Button));
-            buttonGo.transform.SetParent(panelGo.transform, false);
-            var rect = buttonGo.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.5f, 0f);
-            rect.anchorMax = new Vector2(0.5f, 0f);
-            rect.pivot = new Vector2(0.5f, 0f);
-            rect.sizeDelta = new Vector2(OdinPanelWidth - 2f * OdinContentMargin, OdinFooterButtonHeight);
-            rect.anchoredPosition = new Vector2(0f, OdinContentMargin);
-            var image = buttonGo.GetComponent<Image>();
-            image.sprite = buttonSprite;
-            image.type = Image.Type.Sliced;
-            Button button = buttonGo.GetComponent<Button>();
-            button.onClick.AddListener(() => SceneManager.LoadScene("CharacterSelect"));
-
-            AddButtonLabel(buttonGo, "캐릭터 선택으로", 20);
-        }
-
-        // 2026-09-15 (gemless MapleStory-M rebuild): dropped the
-        // MenuSectionHeader.png banner backdrop entirely - a section header
-        // is now just a centered title with a short fading divider line on
-        // each side (MenuSectionDivider_Left/_Right), no gold plate. Divider
-        // width is a fixed on-screen size (not stretched - a fading line
-        // would break if 9-sliced/stretched), chosen so both dividers plus a
-        // generous center gap for the title fit inside contentWidth for
-        // every current section title (성장/모험/시스템, all short).
-        private const float DividerWidth = 70f;
-        private const float DividerHeight = 7f;
-
-        private static void BuildOdinSectionHeader(GameObject panelGo, Sprite dividerLeftSprite, Sprite dividerRightSprite, string title, float topY, float contentWidth)
-        {
-            var headerGo = new GameObject("Section_" + title, typeof(RectTransform));
-            headerGo.transform.SetParent(panelGo.transform, false);
-            var headerRect = headerGo.GetComponent<RectTransform>();
-            headerRect.anchorMin = new Vector2(0f, 1f);
-            headerRect.anchorMax = new Vector2(0f, 1f);
-            headerRect.pivot = new Vector2(0f, 1f);
-            headerRect.sizeDelta = new Vector2(contentWidth, OdinHeaderHeight);
-            headerRect.anchoredPosition = new Vector2(OdinContentMargin, topY);
-
-            var textGo = new GameObject("Text", typeof(Text));
-            textGo.transform.SetParent(headerGo.transform, false);
-            var textRect = textGo.GetComponent<RectTransform>();
-            textRect.anchorMin = new Vector2(0f, 0.25f);
-            textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = new Vector2(8f, 0f);
-            textRect.offsetMax = Vector2.zero;
-            var text = textGo.GetComponent<Text>();
-            text.font = VillageHubUiBuilder.LoadKoreanFont();
-            text.alignment = TextAnchor.MiddleLeft;
-            text.color = new Color(0.96f, 0.89f, 0.70f, 1f);
-            text.fontSize = 18;
-            text.text = title;
-            text.raycastTarget = false;
-
-            float halfLineWidth = contentWidth * 0.5f;
-            BuildDividerHalf(headerGo, dividerLeftSprite, "UnderlineLeft", new Vector2(0f, 0f), halfLineWidth);
-            BuildDividerHalf(headerGo, dividerRightSprite, "UnderlineRight", new Vector2(1f, 0f), halfLineWidth);
-        }
-
-        private static void BuildDividerHalf(GameObject headerGo, Sprite dividerSprite, string name, Vector2 anchor, float width)
-        {
-            var go = new GameObject(name, typeof(Image));
-            go.transform.SetParent(headerGo.transform, false);
-            var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = anchor;
-            rect.anchorMax = anchor;
-            rect.pivot = anchor;
-            rect.sizeDelta = new Vector2(width, DividerHeight);
-            rect.anchoredPosition = new Vector2(0f, 3f);
-            var image = go.GetComponent<Image>();
-            image.sprite = dividerSprite;
-            image.type = Image.Type.Simple;
-            image.preserveAspect = false;
-            image.raycastTarget = false;
         }
 
         // Locked items: gray-tinted icon + a MenuLockBadge overlay at the
@@ -375,7 +384,12 @@ namespace Sapphire.EditorTools
             itemRect.anchoredPosition = anchoredPosition;
             var button = itemGo.GetComponent<Button>();
 
-            Sprite iconSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuIconsSetDark.png", item.IconSpriteName);
+            // 2026-09-16 (widen menu task, part B): the 2 new system-section
+            // items (character_select/quit) are sliced from a dedicated
+            // MenuIconsSetExtra.png rather than the shared MenuIconsSetDark.png
+            // every other item uses - see MenuItemDefinition.IconSheetFileName.
+            string iconSheetFileName = string.IsNullOrEmpty(item.IconSheetFileName) ? "MenuIconsSetDark.png" : item.IconSheetFileName;
+            Sprite iconSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/" + iconSheetFileName, item.IconSpriteName);
             var iconGo = new GameObject("Icon", typeof(Image));
             iconGo.transform.SetParent(itemGo.transform, false);
             var iconRect = iconGo.GetComponent<RectTransform>();
@@ -454,21 +468,5 @@ namespace Sapphire.EditorTools
             return button;
         }
 
-        private static void AddButtonLabel(GameObject parent, string value, int fontSize)
-        {
-            var textGo = new GameObject("Text", typeof(Text));
-            textGo.transform.SetParent(parent.transform, false);
-            var rect = textGo.GetComponent<RectTransform>();
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = rect.offsetMax = Vector2.zero;
-            var text = textGo.GetComponent<Text>();
-            text.font = VillageHubUiBuilder.LoadKoreanFont();
-            text.alignment = TextAnchor.MiddleCenter;
-            text.color = Color.white;
-            text.fontSize = fontSize;
-            text.text = value;
-            text.raycastTarget = false;
-        }
     }
 }

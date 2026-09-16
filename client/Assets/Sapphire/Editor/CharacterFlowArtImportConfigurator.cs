@@ -87,6 +87,40 @@ namespace Sapphire.EditorTools
         // (56 target) * 0.30 = 16.8 target/50.4 native - 56 native buffers it.
         private static readonly Vector4 CreateButtonBorder = new Vector4(56, 56, 56, 56);
 
+        // 2026-09-16 (login input/button redesign task): NicknameInputFieldV2
+        // (2172x408, single rounded-pill frame with a soft blue neon glow
+        // outline, replaces InputFieldFrame.png at this one call site only -
+        // InputFieldFrame.png itself stays for CharacterCreateSceneBuilder's
+        // nickname field, still referenced there). PIL corner/glow scan (both
+        // a column scan fixing x and sweeping y, and a row scan fixing y and
+        // sweeping x) finds the rounded corner + its glow bleed fully
+        // resolving into the flat edge only by ~x=90-150px from each edge
+        // (softer/wider than a plain sharp rounded-rect corner because of the
+        // glow) - 130 native px on all 4 sides comfortably clears that
+        // measured range with a small buffer, reusing ConfigureSlicedSprite's
+        // existing native-width/targetWidth PPU formula (same one
+        // InputFieldFrame.png already uses) rather than a new one, and the
+        // same InputFieldFrameTargetWidth(360) so the on-screen control size
+        // LoginSceneBuilder builds it at is unchanged.
+        private static readonly Vector4 NicknameInputFieldV2Border = new Vector4(130, 130, 130, 130);
+
+        // 2026-09-16 (login input/button redesign task): LoginStartButtonV2
+        // (1580x250, 2 cells of 750x250 with an 80px gutter - Normal/Pressed,
+        // same sheet convention ConfigureTwoCellButton already handles for
+        // ButtonSelectV2/ButtonDeleteV2/ButtonCreateV2 above). This is a true
+        // pointed hexagon (not a rounded-rect-with-cut-corners like those
+        // three), so its border needs to clear the point apex rather than a
+        // small corner-cut: per-cell PIL scan for the leftmost/rightmost
+        // alpha column at every row finds the apex at local x=114/631 in the
+        // Normal cell (750-wide) and a wider x=75/674 in the (differently-
+        // padded) Pressed cell - 120 native px left/right clears both with a
+        // small buffer. Top/bottom is a flat, uncurved edge starting at
+        // y~47-51 in both cells (PIL column scan across the flat middle
+        // width), so the smaller 20px border the task recommended is safe
+        // there (that whole 20px band is transparent padding either way -
+        // stretching it changes nothing visible).
+        private static readonly Vector4 LoginStartButtonV2Border = new Vector4(120, 20, 120, 20);
+
         internal static void ConfigureAll()
         {
             ConfigureFullSprite(TitleArtDir + "/TitleBackground.png");
@@ -109,6 +143,9 @@ namespace Sapphire.EditorTools
             ConfigureTwoCellButton(TitleArtDir + "/ButtonSelectV2.png", 288, 120, 72, SelectDeleteButtonBorder);
             ConfigureTwoCellButton(TitleArtDir + "/ButtonDeleteV2.png", 288, 120, 72, SelectDeleteButtonBorder);
             ConfigureTwoCellButton(TitleArtDir + "/ButtonCreateV2.png", 480, 168, 72, CreateButtonBorder);
+
+            ConfigureSlicedSprite(TitleArtDir + "/NicknameInputFieldV2.png", NicknameInputFieldV2Border, InputFieldFrameTargetWidth);
+            ConfigureTwoCellButton(TitleArtDir + "/LoginStartButtonV2.png", 750, 250, 80, LoginStartButtonV2Border);
         }
 
         // Full-canvas Simple sprite for the new v2 title-kit assets - same

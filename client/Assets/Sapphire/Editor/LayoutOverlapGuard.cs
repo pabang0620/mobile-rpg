@@ -20,12 +20,15 @@ namespace Sapphire.EditorTools
     /// CharacterCreateSceneBuilder/CharacterSelectSceneBuilder check is
     /// anchored to a single point (card-center 0.5/0.5 or a corner), never a
     /// stretch anchor, so ToCanvasRect doesn't need to handle that case.
-    /// VillageHubMenuBuilder's own footer-vs-grid check is deliberately NOT
+    /// VillageHubMenuBuilder's own panel-height check is deliberately NOT
     /// routed through this helper - its elements are children of the menu
     /// panel (not the canvas), a different coordinate frame, and per this
     /// codebase's locality-over-DRY convention (see rules/coding-style.md)
     /// it keeps its own small inline arithmetic check instead
-    /// (VillageHubMenuBuilder.VerifyFooterClearance).
+    /// (VillageHubMenuBuilder.VerifyPanelLayout/ComputeSectionsHeight,
+    /// 2026-09-16 - the panel's own top/bottom padding is now sized to
+    /// content instead of the panel guarding one footer element that
+    /// method's predecessor, VerifyFooterClearance, used to check).
     /// </summary>
     internal static class LayoutOverlapGuard
     {

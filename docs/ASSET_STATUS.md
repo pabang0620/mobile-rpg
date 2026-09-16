@@ -256,6 +256,16 @@ gitignore 대상 진단 폴더).
 login/select/village_mage/village_warrior)을 직접 열어 확인 - 핑크 텍스처·
 빈 아이콘·깨진 캐릭터 없음.
 
+## 2026-09-16 갱신: 마을 메뉴판 신규 아이콘 시트 + 로그인 입력칸/버튼 신규 배선
+
+**신규 3파일** (전부 PIL 알파 bbox 재실측 후 정확한 슬라이스/border 값 확정 - `docs/DECISIONS.md`/`docs/HANDOFF.md` 같은 날짜 항목 참고):
+
+- `client/Assets/Sapphire/Art/UI/MenuIconsSetExtra.png`(980x460, 2셀 460x460, 거터 60px) - 셀1 "캐릭터 선택"(남녀 캐릭터 흉상), 셀2 "게임 종료"(전원 스위치 아이콘). `HudArtImportConfigurator.ConfigureMenuIconsSetExtra`가 `MenuIcons_CharacterSelect`/`MenuIcons_Quit`로 슬라이스(ppu=100, 기존 MenuIconsSet 계열과 동일 컨벤션).
+- `client/Assets/Sapphire/Art/UI/Title/NicknameInputFieldV2.png`(2172x408) - 어두운 유리 질감 + 파란 네온 발광 테두리 라운드 입력칸. `CharacterFlowArtImportConfigurator`에 border(130,130,130,130) 사방 균일로 등록(기존 `InputFieldFrameTargetWidth=360` 그대로 재사용해 온스크린 크기 무변경).
+- `client/Assets/Sapphire/Art/UI/Title/LoginStartButtonV2.png`(1580x250, Normal/Pressed 2셀 750x250, 거터 80px) - 파란 네온 육각(양끝 뾰족) 버튼. border(left/right 120, top/bottom 20) - 좌우는 육각 뾰족점 위치(Normal 셀 x=114/631, Pressed 셀 x=75/674 - 두 셀이 서로 다른 여백으로 생성됨, 더 넓은 쪽 기준으로 안전하게 120 확정) 실측 기반, 상하는 평평한 변이라 여유 있게 20.
+
+**교체 (참조 변경만, 원본 파일은 유지)**: `LoginSceneBuilder.cs`가 입력칸을 `InputFieldFrame.png`->`NicknameInputFieldV2.png`, 버튼을 `ButtonPrimary.png`->`LoginStartButtonV2.png`로 교체. `InputFieldFrame.png`는 `CharacterCreateSceneBuilder`가 계속 쓰고 있어 삭제하지 않음(grep 확인). `ButtonPrimary.png`는 로그인 전용이었으나 이번 작업 범위가 "참조만 교체"라 파일 자체는 남겨둠(다른 화면에서 필요해지면 재사용 가능).
+
 ## 2026-09-16 갱신: 마법사 방향성 VFX 알파 결함 해소 + 로그인/캐릭터선택/생성 프리미엄 UI 킷 11종 배선
 
 **VFX (`MageDirectionalPadded.png` 교체)**: 아래 항목이 "재생성 필요, 최우선"으로 남겼던 결함을 이번 세션에서 해소했다. 교체본은 `generated-images/mage-vfx-fix/MageDirectionalPadded_v2_noref.png`(2048x768, RGBA, 8x3 그리드, 셀 256x256) - 오케스트레이터가 PIL로 코너/경계 alpha 0~1 분포를 직접 실측 확인한 뒤 배선을 지시했다. 기존 파일(RGB, 체커보드 배경 결함)은 `generated-images/mage-vfx-fix-backup/MageDirectionalPadded_orig_backup.png`에 보존. 텔레포트/고드름/번개창 3개 스킬 VFX 전부 스크린샷으로 체커보드 완전 해소 확인(`generated-images/diagnostics/v2_mage_{teleport,icespike,lightningspear}.png`, gitignore 대상).

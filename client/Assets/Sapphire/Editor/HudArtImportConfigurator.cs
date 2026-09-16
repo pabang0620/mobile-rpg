@@ -32,6 +32,7 @@ namespace Sapphire.EditorTools
             ConfigureDarkMenuArt();
             ConfigureMenuLockBadge();
             ConfigureGaugeFillMana();
+            ConfigureMenuIconsSetExtra();
         }
 
         private static void ConfigureGaugeFillMana()
@@ -302,6 +303,37 @@ namespace Sapphire.EditorTools
             for (int i = 0; i < names.Length; i++)
                 slices[i] = (names[i], new Rect((i % 5) * 280.4f, (3 - i / 5) * 280.5f, 280.4f, 280.5f), center);
             ArtImportConfigurator.ConfigureMultiSprite(SapphireSceneBuilder.UiArtDir + "/MenuIconsSetDark.png", 100, FilterMode.Bilinear, false, null, slices);
+        }
+
+        // 2026-09-16 (widen menu task, part B): 980x460, 2 cells side by side
+        // (character-select busts / power-switch quit icon), 460x460 each,
+        // 60px gutter between - PIL alpha-bbox re-measurement (see task
+        // notes) confirms the source art matches this nominal grid exactly:
+        // a symmetric 23px content inset from every cell edge (left margin
+        // [0,23) mirrors cell1's own right-side gap before the gutter,
+        // gutter run measured at columns [437,542], and cell2's [543,957]
+        // content mirrors the same 23px inset on both its sides) - so unlike
+        // MenuIconsSet.png (whose icons have uneven per-icon padding and
+        // needed a gap-scan to find each cell's true boundary), this sheet's
+        // slices can just use the nominal 460-wide cells directly. ppu=100
+        // matches every sibling menu-icon sheet (MenuIconsSet/
+        // MenuIconsSetDark/MenuLockBadge) so the new icons render at the same
+        // visual weight as "설정" etc. when both are used at
+        // VillageHubMenuBuilder's OdinIconSize.
+        private static void ConfigureMenuIconsSetExtra()
+        {
+            var centerPivot = new Vector2(0.5f, 0.5f);
+            ArtImportConfigurator.ConfigureMultiSprite(
+                SapphireSceneBuilder.UiArtDir + "/MenuIconsSetExtra.png",
+                ppu: 100,
+                filterMode: FilterMode.Bilinear,
+                mipmaps: false,
+                maxSize: null,
+                slices: new[]
+                {
+                    ("MenuIcons_CharacterSelect", new Rect(0f, 0f, 460f, 460f), centerPivot),
+                    ("MenuIcons_Quit", new Rect(520f, 0f, 460f, 460f), centerPivot),
+                });
         }
 
         private static void ConfigureMenuLockBadge()

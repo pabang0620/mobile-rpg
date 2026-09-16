@@ -2,7 +2,21 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): 법사 방향성 VFX 알파 배선 + 로그인/캐릭터선택/캐릭터생성 프리미엄 UI 전면 재배선
+## 2026-09-16 (최신): 마을 메뉴판 확장 + 시스템 섹션(캐릭터선택/게임종료) 추가 + 로그인 입력칸/버튼 재배선
+
+**(A) VillageHubMenuBuilder 메뉴판 레이아웃**: 패널 너비 400->520(1.3배, `OdinPanelWidth`), 4열이 아니라 기존부터 3열(`OdinColumns=3`)이던 그리드 그대로 폭만 넓어져 셀 너비 125.78->165.78, 컬럼 피치 94.33->124.33(같은 0.75 압축비 유지, 아이콘 크기 54는 무변경 - 스크린샷상 균형 양호해 추가 조정 안 함). 우측 정렬(anchorMin/Max=(1,y))이라 패널이 넓어져도 오른쪽 화면 밖으로 안 나가고 왼쪽으로만 확장됨(우측 640px 여백 유지 확인).
+
+패널 "높이 위아래 여백 안 맞음" 문제(스크린샷 `final_village_warrior_menu.png`의 하단 큰 빈 공간)는 처음엔 패널 자체 높이를 콘텐츠 기준으로 줄이고 외곽 top/bottom 마진을 동일하게 계산하는 방식으로 시도했으나(마진 각 98.5px), 이 방식이 그 자리에 함께 있는 `VillageHubSkillMenuBuilder`의 전사/마법사 스킬부채꼴(같은 우하단 코너에 앵커)을 가리지 못해 메뉴 열림 상태에서 스킬버튼이 비쳐 보이는 회귀를 일으켰다(스크린샷으로 발견, 사유는 `docs/DECISIONS.md` 참고). **최종안**: 패널 자체의 바깥 top/bottom 마진(`OdinPanelTopMargin=0`/`OdinPanelBottomMargin=20`)은 원래 값 그대로 유지하고, 대신 패널 "안쪽" 첫 섹션 위 공백과 마지막 섹션 아래 공백(`OdinContentPadding`, 신설)을 `(패널높이 - 콘텐츠높이)/2`로 계산해 서로 같아지도록 했다 - 콘텐츠높이는 `ComputeSectionsHeight()`가 MenuCatalog 데이터로 동적 계산(현재 444px), 패딩은 각 128px로 나옴. 기존에 있던 "시스템 섹션을 패널 바닥에 강제로 붙이는" 특수분기(풋터 버튼 자리 확보용)는 제거 - 이제 시스템도 다른 섹션과 똑같이 `OdinSectionGap=4`로 자연스럽게 흘러간다(모험-시스템 간격이 기존 ~180px에서 4px로 줄어 사용자가 요청한 "20px 위로"보다 훨씬 크게 줄었으므로 별도 -20 추가 적용은 안 함, 사유는 코드 주석+DECISIONS.md).
+
+**(B) 시스템 섹션에 캐릭터선택/게임종료 추가**: `MenuCatalog.cs`에 두 항목 추가(`IsAvailable=true`, 잠금뱃지 없음). 아이콘은 신규 `MenuIconsSetExtra.png`(980x460, 2셀 460x460, PIL 알파 실측으로 셀 경계가 나비스펙 그대로 정확함을 확인)에서 `HudArtImportConfigurator.ConfigureMenuIconsSetExtra`로 슬라이스. 클릭 동작은 `MainMenuPanel`이 id 기반으로 분기(`character_select`->`SceneManager.LoadScene("CharacterSelect")`, `quit`->기존 `ConfirmDialog` 재사용해 확인창 후 `Application.Quit()`/에디터에서는 `EditorApplication.isPlaying=false`) - 기존에 있던 "캐릭터 선택으로" 별도 footer 버튼 코드(`BuildCharacterSelectButton`)는 실제로는 Build()에서 호출되지 않는 죽은 코드였다(Editor 빌드 스크립트에서 직접 AddListener한 리스너는 비영속이라 씬 저장/재로드에서 사라지는 구조적 버그 - 그래서 죽어 있었음) - 삭제하고 동일 기능을 `MainMenuPanel.Awake()`의 런타임 리스너로 재구현(이건 씬 재로드/플레이어 빌드에서도 정상 동작).
+
+**(C) 로그인 입력칸/버튼 신규 에셋**: `NicknameInputFieldV2.png`(2172x408, border 130 사방, PIL 실측 - 발광 테두리+라운드코너 전체가 border 안에 들어옴), `LoginStartButtonV2.png`(1580x250, Normal/Pressed 2셀 750x250, border left/right 120·top/bottom 20 - 핵사곤 뾰족한 끝점이 750셀 기준 x=75~114에서 시작하는 걸 PIL로 실측해 120으로 확정)를 `Art/UI/Title/`에 추가하고 `CharacterFlowArtImportConfigurator`에 등록. `LoginSceneBuilder`가 기존 `InputFieldFrame.png`/`ButtonPrimary.png` 참조를 이 두 파일로 교체(레이아웃 크기·위치는 무변경, 두 파일 다 다른 화면에서도 쓰이는지 grep 확인 후 무영향 확인 - `InputFieldFrame`은 CharacterCreate가 계속 씀, `ButtonPrimary`는 로그인 전용이었음). 버튼은 `Selectable.Transition.SpriteSwap`으로 전환해 Pressed 스프라이트가 실제로 배선됨(기존엔 ColorTint만 있었음).
+
+**파일 분할**: `VillageHubMenuBuilder.cs`가 555줄로 500줄 규칙을 넘어서 `VillageHubMenuHeaderBuilder.cs`(섹션 헤더/디바이더 + 게임종료 확인 다이얼로그, 108줄)로 분리 - 472줄로 복귀.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 0에러, EditMode 69/69 PASS(회귀 없음, 신규 도메인 로직 없어 테스트 추가 없음). `SapphireSceneBuilder.BuildEverything()`(4개 씬) -> `SapphireBuildPlayer.BuildWindows` 재빌드 성공. 스크린샷(`generated-images/diagnostics/v3_menu.png`/`v3_menu_quit_confirm.png`/`v3_login.png`) 직접 확인 - 패널 화면 밖으로 안 나감, 시스템 섹션 3항목(설정/캐릭터 선택/게임 종료) 겹침 없이 정렬, 게임종료 확인창 정상 표시, 로그인 화면 신규 입력칸/버튼 정상 렌더, "게임 시작"/"아이디 입력" 텍스트 전부 프레임 경계 안에 들어옴(줌 크롭으로 픽셀 단위 확인). 스크린샷 검증용 임시 디버그 훅(`MainMenuPanel`의 `-sapphire-open-quit-confirm`)은 검증 후 완전히 제거하고 재빌드로 재확인(영구 훅 `-sapphire-open-menu`/`-sapphire-class=`/`-sapphire-scene=`은 유지). 패널 우하단 코너 장식 컷아웃 뒤로 스킬부채꼴 버튼 일부가 살짝 비치는 현상은 기존(풋터 버튼이 죽은 코드가 되기 전)부터 잠재해 있던 것으로 이번 작업 범위 밖 - `docs/DECISIONS.md` 참고.
+
+## 2026-09-16: 법사 방향성 VFX 알파 배선 + 로그인/캐릭터선택/캐릭터생성 프리미엄 UI 전면 재배선
 
 두 묶음을 한 세션에서 끝까지 배선했다. 실측값·좌표계 결정 근거는 `docs/DECISIONS.md` 같은 날짜 항목, 에셋 목록은 `docs/ASSET_STATUS.md` 같은 날짜 항목 참고 - 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
