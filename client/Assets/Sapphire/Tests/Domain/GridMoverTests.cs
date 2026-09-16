@@ -91,5 +91,30 @@ namespace Sapphire.Domain.Tests
             Assert.AreEqual(new GridCoord(1, 1), mover.Position);
             Assert.IsFalse(mover.IsMoving);
         }
+
+        [Test]
+        public void TurnToFace_ChangesFacingOnly_PositionAndIsMovingUnchanged()
+        {
+            var mover = new GridMover(new GridCoord(2, 2), startFacing: GridDirection.Down);
+
+            mover.TurnToFace(GridDirection.Right);
+
+            Assert.AreEqual(GridDirection.Right, mover.Facing);
+            Assert.AreEqual(new GridCoord(2, 2), mover.Position);
+            Assert.IsFalse(mover.IsMoving);
+        }
+
+        [Test]
+        public void TurnToFace_WhileAlreadyMoving_IsNoOp()
+        {
+            var map = CreateOpenMap();
+            var mover = new GridMover(new GridCoord(2, 2), startFacing: GridDirection.Down);
+            mover.TryBeginMove(GridDirection.Up, map);
+
+            mover.TurnToFace(GridDirection.Right);
+
+            Assert.AreEqual(GridDirection.Up, mover.Facing, "turn must not steal facing away from an in-flight move");
+            Assert.IsTrue(mover.IsMoving);
+        }
     }
 }

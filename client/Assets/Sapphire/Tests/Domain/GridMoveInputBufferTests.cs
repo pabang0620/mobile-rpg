@@ -171,5 +171,67 @@ namespace Sapphire.Domain.Tests
 
             Assert.IsNull(GridMoveInputBuffer.TopDirection(stack), "no extra move should start once the key was released before the current move finished");
         }
+
+        // --- 2026-09-16, turn-before-move -----------------------------------
+        // Pure judgment used by PlayerGridController: does a resolved input
+        // direction move the actor this step, or only turn it in place?
+
+        [Test]
+        public void ResolveStepAction_DirectionMatchesFacing_ReturnsMove()
+        {
+            StepAction action = GridMoveInputBuffer.ResolveStepAction(GridDirection.Down, GridDirection.Down);
+
+            Assert.AreEqual(StepAction.Move, action);
+        }
+
+        [Test]
+        public void ResolveStepAction_DirectionDiffersFromFacing_ReturnsTurnOnly()
+        {
+            StepAction action = GridMoveInputBuffer.ResolveStepAction(GridDirection.Right, GridDirection.Down);
+
+            Assert.AreEqual(StepAction.TurnOnly, action);
+        }
+
+        [Test]
+        public void ResolveStepAction_FullScenario_TapRightWhileFacingDown_ThenHoldRight_MovesOnSecondStep()
+        {
+            // Facing=Down, input=Down -> Move (matches user's spec: same-direction
+            // input while already facing that way moves immediately).
+            Assert.AreEqual(StepAction.Move, GridMoveInputBuffer.ResolveStepAction(GridDirection.Down, GridDirection.Down));
+
+            // Facing=Down, input=Right -> TurnOnly. Caller is expected to call
+            // GridMover.TurnToFace(Right) here instead of TryBeginMove, so facing
+            // becomes Right and position does not change.
+            GridDirection facing = GridDirection.Down;
+            Assert.AreEqual(StepAction.TurnOnly, GridMoveInputBuffer.ResolveStepAction(GridDirection.Right, facing));
+            facing = GridDirection.Right; // what TurnToFace would have applied
+
+            // Same input (Right) held on the next step, facing has caught up ->
+            // now it resolves to Move.
+            Assert.AreEqual(StepAction.Move, GridMoveInputBuffer.ResolveStepAction(GridDirection.Right, facing));
+        }
+
+        [Test]
+        public void ResolveStepAction_FullScenario_HoldDownTapRightReleaseRight_MatchesUserWalkthrough()
+        {
+            // Reproduces the user's exact walkthrough: holding Down (facing already
+            // Down, so it has been moving), tap Right, release Right, Down still
+            // held.
+            GridDirection facing = GridDirection.Down;
+
+            // Right tapped while facing Down -> TurnOnly (turn to Right, no move).
+            Assert.AreEqual(StepAction.TurnOnly, GridMoveInputBuffer.ResolveStepAction(GridDirection.Right, facing));
+            facing = GridDirection.Right;
+
+            // Right released, Down is top-priority again (still held) -> facing is
+            // now Right, so Down differs -> TurnOnly again (turn back to Down, no
+            // move) - this is the step the user described as "또 회전만".
+            Assert.AreEqual(StepAction.TurnOnly, GridMoveInputBuffer.ResolveStepAction(GridDirection.Down, facing));
+            facing = GridDirection.Down;
+
+            // Down still held on the following step, facing has caught up to Down
+            // -> now it moves.
+            Assert.AreEqual(StepAction.Move, GridMoveInputBuffer.ResolveStepAction(GridDirection.Down, facing));
+        }
     }
 }

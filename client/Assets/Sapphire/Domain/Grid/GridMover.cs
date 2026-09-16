@@ -47,6 +47,24 @@ namespace Sapphire.Domain.Grid
             return MoveResult.Started;
         }
 
+        /// <summary>
+        /// Rotates facing only - no position change, no IsMoving. Used for the
+        /// turn-in-place step (see GridMoveInputBuffer.ResolveStepAction) when the
+        /// resolved input direction differs from the current facing: that step
+        /// turns instead of moving, and only a subsequent step whose direction
+        /// already matches the (now updated) facing actually calls TryBeginMove.
+        /// No-op while a move is in progress, matching TryBeginMove's own guard.
+        /// </summary>
+        public void TurnToFace(GridDirection direction)
+        {
+            if (IsMoving)
+            {
+                return;
+            }
+
+            Facing = direction;
+        }
+
         /// <summary>Instant step-by-step blink; obstacles and bounds stop the path.</summary>
         public MoveResult TryBlink(int rangeTiles, GridMap map)
         {

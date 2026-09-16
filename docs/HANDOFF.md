@@ -2,7 +2,15 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): 그리드 이동 - 방향 우선순위 고정 if/else 버그 수정 + 이동완료 시점 재판정으로 릴리즈 경합 완화
+## 2026-09-16 (최신): 그리드 이동 - 방향 전환 시 첫 스텝은 회전만(포켓몬류 표준 동작)
+
+사용자 요청: 방향키를 누르면 즉시 그 방향으로 "회전+1칸 이동"이 한번에 처리되던 것을, 눌린 방향이 현재 Facing과 같으면 그대로 이동하되 **다르면 이번 스텝은 회전만 하고 이동은 하지 않도록** 변경 - 방향을 바꾼 첫 입력은 제자리 회전으로 소비되고, 그 다음(같은 방향이 계속 눌려 있거나 다시 눌렸을 때, 이제 Facing과 일치하므로) 스텝부터 실제로 이동한다.
+
+**구현**: 판정 자체는 순수 Domain 함수로 분리 - `GridMoveInputBuffer.ResolveStepAction(GridDirection inputDirection, GridDirection currentFacing) : StepAction`(신규 enum, `Move`/`TurnOnly`) - 입력 방향이 현재 Facing과 같으면 `Move`, 다르면 `TurnOnly`. `GridMover`에는 위치/`IsMoving`은 건드리지 않고 `Facing`만 바꾸는 `TurnToFace(GridDirection)`를 추가(이동 중에는 no-op, `TryBeginMove`의 가드와 동일 원칙) - 기존 `TryBeginMove`는 완전히 무변경이라 `GridMoverTests`의 기존 시나리오는 그대로 유지된다. `PlayerGridController.Update()`에서 우선순위 스택 최상위 방향을 뽑은 직후 `ResolveStepAction(direction, mover.Facing)`이 `TurnOnly`면 `mover.TurnToFace(direction)` + `spriteAnimator.SetFacing(...)`만 하고 즉시 `return`(이동 시퀀스·애니메이션 시작 안 함, 딜레이 없이 스프라이트만 즉시 전환) - `Move`일 때만 기존 `TryBeginMove` 경로로 진행한다. 직전 세션에 고정한 "눌린 순서 우선순위 스택"과 "키 떼면 즉시 정지" 동작은 이 판정 앞뒤로 무변경.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 0에러, EditMode 87/87 PASS(순증 6 - `GridMoveInputBufferTests`에 `ResolveStepAction` 단위 테스트 2개 + 사용자 시나리오(탭 후 재입력, "아래 누른 채 오른쪽 탭 -> 회전만 -> 오른쪽 뗌 -> 아래로 회전만 -> 계속 누르면 이동") end-to-end 테스트 2개, `GridMoverTests`에 `TurnToFace` 단위 테스트 2개). `SapphireSceneBuilder.BuildEverything()`(4개 씬) -> `SapphireBuildPlayer.BuildWindows` 재빌드 성공(`SAPPHIRE_PLAYER_BUILD SUCCESS`). 판정 로직은 EditMode 테스트로 이미 검증됐으므로 화면은 "명백히 깨지지 않았는지"만 스크린샷 1장(`generated-images/diagnostics/turnfix_login.png`)으로 확인(로그인 화면 정상 렌더, 에러 배너 없음) - 반복 재조정은 하지 않음(AGENTS.md 작업 속도 규칙). 최종적으로 빌드된 `SapphireRPG.exe`를 개발 인자 없이 실행해 로그인 화면(1280x720 창모드)이 뜬 상태로 유지.
+
+## 2026-09-16: 그리드 이동 - 방향 우선순위 고정 if/else 버그 수정 + 이동완료 시점 재판정으로 릴리즈 경합 완화
 
 사용자 재보고 2건: (1) 아래를 누른 채 오른쪽을 탭하면 오른쪽 이동이 대부분 무시되고 가끔만 반영됨. (2) 꾹 눌렀다 떼면 멈춰야 하는데 가끔 1칸 더 감(직전 세션 `UpdateBuffer` 수정으로 대부분 해소됐으나 완전히는 아니었음).
 
