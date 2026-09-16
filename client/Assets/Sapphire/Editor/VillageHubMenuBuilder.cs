@@ -146,33 +146,32 @@ namespace Sapphire.EditorTools
         // LayoutOverlapGuard documents for CharacterCreate/CharacterSelect).
         private const float ReferenceCanvasHeight = 720f;
 
-        // 2026-09-15 (S2 fix): the previous flat 24-unit OdinContentMargin
-        // put grid content inside the panel's own gold 9-slice border, so
-        // column 1 icons touched the left frame and the column 4 label
-        // ("캐릭터정보", the longest in MenuCatalog) clipped against the
-        // right frame (orchestrator screenshot final2_1280_menu.png).
-        // MenuPanelOdin's border must be converted from source-texture
-        // pixels to canvas units the same way Image.Type.Sliced does at
-        // runtime: Image.pixelsPerUnit = sprite.pixelsPerUnit /
-        // canvas.referencePixelsPerUnit, so
-        // borderCanvasUnits = borderPx / (spritePixelsPerUnit / 100).
-        // Values below are the exact ones
-        // HudArtImportConfigurator.ConfigureMenuPanelOdin imports
-        // MenuPanelOdin.png with - kept in sync as named constants instead
-        // of a duplicated magic number. 2026-09-15 (gemless MapleStory-M
-        // rebuild): border dropped from 84 to 32 (new asset's actual
-        // double-line decoration thickness, see that method's comment) and
-        // pixelsPerUnit switched from the old per-asset 793/400 formula to
-        // the shared ArtImportConfigurator.UiKitV3PixelsPerUnit (300, every
-        // v3 asset's fixed native/target ratio - see that constant's doc).
-        private const float MenuPanelOdinLeftRightBorderPx = 52f;
-        private const float MenuPanelOdinSpritePixelsPerUnit = ArtImportConfigurator.UiKitV3PixelsPerUnit;
+        // 2026-09-16 (header/content overflow fix, docs/HANDOFF.md): this
+        // margin had been computed against MenuPanelOdin.png's border
+        // (17.33 canvas units at the v3 kit's 300 ppu), but the panel
+        // sprite this builder actually draws is MenuPanelDark.png (line
+        // ~263, swapped in by the 2026-09-16 external SlimeKingdom pull) -
+        // imported by HudArtImportConfigurator.ConfigureMenuPanelDark with
+        // border (52,52,52,52) at an EXPLICIT pixelsPerUnit=100, not the v3
+        // kit's 300. Canvas units the same way Image.Type.Sliced computes
+        // them at runtime (Image.pixelsPerUnit = sprite.pixelsPerUnit /
+        // canvas.referencePixelsPerUnit): borderCanvasUnits =
+        // borderPx / (spritePixelsPerUnit / 100) = 52 / (100/100) = 52 -
+        // three times the 17.33 this margin was tuned for. Content (grid
+        // AND section headers) was rendering ~35 units past the panel's
+        // real left/right border into the game world - exactly the
+        // "글자가 메뉴판 밖에 나와있어" the user kept reporting after two
+        // prior header-only patches (VillageHubMenuHeaderBuilder's since-
+        // removed HeaderWidthReduction) that narrowed the header without
+        // fixing this shared root value. Fixed at the source instead.
+        private const float MenuPanelDarkBorderPx = 52f;
+        private const float MenuPanelDarkSpritePixelsPerUnit = 100f;
         private const float OdinContentMarginClearance = 14f;
         private const float OdinHorizontalPaddingReduction = 20f;
         // internal (not private): VillageHubMenuHeaderBuilder.BuildOdinSectionHeader
         // (split out to keep this file under the ~500-line convention) needs it.
         internal static readonly float OdinContentMargin =
-            MenuPanelOdinLeftRightBorderPx / (MenuPanelOdinSpritePixelsPerUnit / 100f)
+            MenuPanelDarkBorderPx / (MenuPanelDarkSpritePixelsPerUnit / 100f)
             + OdinContentMarginClearance - OdinHorizontalPaddingReduction;
         // code-reviewer flagged a doc conflict: docs/REMEDIATION_PLAN.md line
         // 61 says "5열 아이콘 그리드" (5 columns), but the session's task

@@ -2,7 +2,17 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): 그리드 이동 - 키 뗀 뒤 추가 이동 버그 수정 + 이동속도 70%로 하향
+## 2026-09-16 (최신): 마을 메뉴 헤더/그리드가 패널 밖으로 나오던 근본 원인 수정
+
+사용자가 "성장/모험/시스템 글자가 메뉴판 밖에 나와있다"고 두 번째로 지적. 이전 수정(`HeaderWidthReduction` -20px씩)은 헤더에만 적용된 땜질이었고 근본 원인이 아니었다.
+
+**원인**: `VillageHubMenuBuilder.OdinContentMargin`이 `MenuPanelOdin.png`(v3 베이지 에셋, border 52px @ ppu 300 -> 캔버스 17.33유닛)의 테두리를 기준으로 계산돼 있었는데, 실제로 패널에 그려지는 스프라이트는 이번 세션 밖에서 들어온 커밋(`ab85e1c`)이 바꿔치기한 `MenuPanelDark.png`(border 52px @ ppu **100** -> 캔버스 **52**유닛, 3배)였다. 헤더뿐 아니라 이 마진을 공유하는 아이콘 그리드 전체가 실제 테두리보다 훨씬 안쪽 여백만 확보한 채 배치되고 있었다.
+
+**수정**: `MenuPanelOdinLeftRightBorderPx`/`MenuPanelOdinSpritePixelsPerUnit`를 `MenuPanelDark.png`의 실제 임포트값(52px, ppu 100)으로 교체 - `OdinContentMargin` 11.33 -> 46으로 정정. 헤더 전용 `HeaderWidthReduction`(-40) 땜질은 제거 - 이제 헤더가 그리드와 같은 `contentWidth`를 그대로 쓴다.
+
+**검증**: 컴파일 성공(`SapphireSceneBuilder.BuildEverything`), 플레이어 빌드 성공(`SapphireBuildPlayer.BuildWindows`). 라이브 스크린샷 픽셀 실측: 수정 전 헤더 텍스트 첫 픽셀 x=798(패널 왼쪽 테두리 x=833보다 35px 왼쪽, 게임 배경 위에 렌더) -> 수정 후 x=835(테두리 안쪽, 정상). 단순 마진 상수 조정이라 EditMode 테스트는 재실행하지 않았다(`AGENTS.md` 작업 속도 규칙 4번). 오케스트레이터가 직접 Edit로 수정하고 직접 빌드/커밋했다(에이전트 미사용).
+
+## 2026-09-16: 그리드 이동 - 키 뗀 뒤 추가 이동 버그 수정 + 이동속도 70%로 하향
 
 **(A) 방향키를 떼도 ~0.5초(1~2칸) 더 가던 버그 - 원인은 직전 세션에 도입한 입력 버퍼**: `GridMoveInputBuffer.UpdateBuffer`가 `isDirectionHeld ? heldDirection : currentBuffer`로 구현돼 있어, 키가 올라간 프레임에도 이전에 버퍼된 방향을 그대로 유지하고 있었다. 문제는 이 버퍼가 "이동이 막힌 창 안에서 탭했다가 놓은 것"과 "계속 누르고 있다가 애니메이션 도중 그냥 놓은 것"을 구분하지 못한다는 점 - 후자(사용자가 실제로 겪은 케이스: 꾹 눌러 이동하다 떼는 순간)에도 버퍼에 마지막 방향이 그대로 남아 있다가, `mover.IsMoving`이 풀리는 순간 `ResolveMoveDirection`이 그 스테일 값을 채택해 원치 않는 추가 이동 1회를 시작시켰다(이동시간+`stepPause`만큼, 사용자가 느낀 "~0.5초 더 감"과 일치). **수정**: `UpdateBuffer`를 `isDirectionHeld ? heldDirection : null`로 변경 - 버퍼는 이제 "이번 프레임에 실제로 눌려 있는 방향"만 반영하고 키가 올라간 즉시(그 프레임에) 비워진다. 트레이드오프: 이동 애니메이션 도중 탭했다가 창이 끝나기 전에 놓은 입력을 창이 끝나는 순간 자동으로 이어서 처리해주던 반응성 기능은 이번 수정으로 사실상 무력화됨(놓은 키는 더 이상 다음 이동을 예약하지 않음) - "떼면 즉시 멈춘다"는 사용자 요구가 그 반응성 기능과 근본적으로 충돌해 우선순위를 명시적으로 정지 쪽에 둔 것(둘 다 프레임 단위 상태만으로는 구분 불가능한 동일 패턴이라 절충 불가). `ResolveMoveDirection` 자체(현재 눌림 우선, 아니면 버퍼 fallback)는 변경하지 않음 - 순수 함수 규칙은 여전히 유효하고, 실제로 스테일 버퍼가 발생하지 않게 된 것은 `UpdateBuffer` 쪽 수정 때문. **회귀 테스트**: 기존 6개 중 버그를 그대로 고정하던 `UpdateBuffer_NotHeld_KeepsPreviousBufferedValue`를 `UpdateBuffer_NotHeld_ClearsBufferImmediately`(반환값 null 검증)로 교체, 사용자가 겪은 정확한 시나리오(누름→이동 도중 뗌→몇 프레임 뒤 mover 해제→추가 이동 없음)를 end-to-end로 검증하는 `PressedThenReleasedBeforeMoveEnds_NoExtraMoveWhenMoverFrees` 신규 추가(총 7개).
 
