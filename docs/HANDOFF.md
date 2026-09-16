@@ -2,7 +2,17 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): 마을 메뉴 헤더/그리드가 패널 밖으로 나오던 근본 원인 수정
+## 2026-09-16 (최신): 그리드 이동 - 방향 우선순위 고정 if/else 버그 수정 + 이동완료 시점 재판정으로 릴리즈 경합 완화
+
+사용자 재보고 2건: (1) 아래를 누른 채 오른쪽을 탭하면 오른쪽 이동이 대부분 무시되고 가끔만 반영됨. (2) 꾹 눌렀다 떼면 멈춰야 하는데 가끔 1칸 더 감(직전 세션 `UpdateBuffer` 수정으로 대부분 해소됐으나 완전히는 아니었음).
+
+**(1) 방향 우선순위 - 원인**: `PlayerInputReader.TryGetHeldDirection`이 4방향을 매 프레임 **고정된 if/else 순서**(항상 Up -> Down -> Left -> Right)로 검사해 첫 번째로 걸리는 방향 하나만 반환하고 있었다. Down을 누르고 있으면 그 아래 순번인 Right는 Down이 떨어지기 전까지 검사조차 되지 않으므로, "가장 최근에 눌린 키"가 아니라 "if/else에서 먼저 오는 키"가 항상 이겼다 - 이것이 "오른쪽 탭이 대부분 무시되고 가끔만 반영"의 정확한 메커니즘(가끔 반영되는 건 Down이 그 폴링 프레임에 우연히 안 잡힌 입력 타이밍 우연일 뿐, 우선순위 로직과는 무관). **수정**: `PlayerInputReader.TryGetHeldDirection(out GridDirection)`을 제거하고 4방향 각각의 raw held 상태를 그대로 노출하는 `GetHeldDirections() : HeldDirections`(신규 구조체, Domain)로 교체. `GridMoveInputBuffer`(Domain)를 단일 버퍼(`GridDirection?`)에서 **눌린 순서 우선순위 스택**(`List<GridDirection>`, index 0=최우선)으로 재설계 - 매 프레임 (a) 더 이상 눌려있지 않은 방향은 스택 어디에 있든 제거하고 (b) 이번 프레임에 새로 눌린 방향(직전 스택에 없던 것)은 무조건 맨 앞에 삽입한다. `PlayerGridController`는 이 스택의 맨 앞(`TopDirection`)을 그대로 이동 방향으로 쓴다 - 어느 물리 키든 가장 최근에 눌린 것이 항상 최우선.
+
+**(2) 릴리즈 후 가끔 1칸 더 감 - 원인**: `isContinuousHold`(연속 홀드 여부 - true면 스텝 사이 정지 간격 `stepPause` 생략)가 이동 **시작 시점**에 캡처된 `bool` 값으로 코루틴에 그대로 박혀 있었다. 즉 이동이 시작될 때 키가 눌려 있었다는 사실 하나만으로 그 이동이 끝날 때까지 "연속 홀드"로 취급됐고, 이동 애니메이션 도중(0.343s 사이) 키를 놓아도 이 값은 갱신되지 않아 `stepPause`(0.04s) 없이 곧바로 `mover.CompleteMove()`가 불렸다 - 신선한 탭이나 릴리즈 직후에는 원래 있어야 할 40ms 안전 여유가 사라진 채 mover가 즉시 풀리는 구조였다. 순수 Update()/코루틴 실행 순서만으로는 매 프레임 입력이 항상 그 프레임 기준으로 정확하므로 이 자체가 결정론적 버그를 일으키진 않지만, 입력 폴링에 실제로 있는 미세한 프레임 단위 지연(가끔만 재현되는 것과 부합)이 끼어들 여유(cushion)를 이 생략이 없애버린 것으로 판단. **수정**: `GridMoveAnimator.PlayMove`의 `isContinuousHold` 파라미터를 `bool`에서 `Func<bool>`로 바꿔, 이동 **완료 시점**(코루틴이 stepPause 여부를 판단하는 바로 그 순간)에 `PlayerInputReader.GetHeldDirections()`를 다시 호출해 "그 방향키가 지금도 눌려있는가"를 재확인하도록 변경 - 시작 시점에 눌려 있었는지(`wasAlreadyHeldLastFrame`)와 완료 시점에도 여전히 눌려 있는지를 모두 만족해야 `stepPause`를 생략한다. 키가 도중에 떨어지면 자동으로 40ms 안전 여유가 다시 적용된다.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 0에러, EditMode 81/81 PASS(`GridMoveInputBufferTests` 12개로 전면 재작성 - 우선순위 스택 단위 테스트 + 버그 리포트 시나리오 end-to-end 테스트 포함, 기존 7개 대비 순증 5). `SapphireSceneBuilder.BuildEverything()`(4개 씬) -> `SapphireBuildPlayer.BuildWindows` 재빌드 성공. 로그인 화면 스크린샷 1장(`generated-images/diagnostics/smoke_20260916_login.png`)으로 정상 렌더 확인(에러 배너 없음) - 실제 키 입력 우선순위 반응은 EditMode 테스트로 검증했고 반복 스크린샷 재조정은 하지 않음(AGENTS.md 작업 속도 규칙). 최종적으로 빌드된 `SapphireRPG.exe`를 개발 인자 없이 실행해 로그인 화면(1280x720 창모드)이 뜬 상태로 유지.
+
+## 2026-09-16: 마을 메뉴 헤더/그리드가 패널 밖으로 나오던 근본 원인 수정
 
 사용자가 "성장/모험/시스템 글자가 메뉴판 밖에 나와있다"고 두 번째로 지적. 이전 수정(`HeaderWidthReduction` -20px씩)은 헤더에만 적용된 땜질이었고 근본 원인이 아니었다.
 

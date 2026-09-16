@@ -26,12 +26,15 @@ namespace Sapphire.Presentation.Movement
 
         [Tooltip("새로 눌러서 시작된 첫 스텝 완료 직후에만 두는 짧은 정지 간격(칸 단위 리듬을 살리기 위함). " +
             "같은 방향키를 계속 누르고 있어서 이어지는 스텝(isContinuousHold=true)에는 적용하지 않는다 - " +
-            "그래야 길게 누르고 있는 동안 매 칸마다 끊기지 않고 매끄럽게 이어진다. 2026-09-14 추가/조정.")]
+            "그래야 길게 누르고 있는 동안 매 칸마다 끊기지 않고 매끄럽게 이어진다. 2026-09-14 추가/조정. " +
+            "2026-09-16: isContinuousHold를 이동 '시작 시점'에 캡처한 bool 대신 완료 시점에 다시 평가하는 " +
+            "Func<bool>로 바꿈 - 이동 도중 키를 뗐는데도 시작 시점 값(연속유지=true)이 그대로 굳어 있어서 " +
+            "stepPause 없이 즉시 mover가 풀리던 경합을 막기 위함(docs/HANDOFF.md 참고).")]
         [SerializeField] private float stepPause = 0.04f;
 
         private Coroutine activeMove;
 
-        public void PlayMove(Transform target, WorldPoint from, WorldPoint to, bool isContinuousHold, Action onComplete)
+        public void PlayMove(Transform target, WorldPoint from, WorldPoint to, Func<bool> isContinuousHold, Action onComplete)
         {
             if (activeMove != null)
             {
@@ -41,7 +44,7 @@ namespace Sapphire.Presentation.Movement
             activeMove = StartCoroutine(MoveRoutine(target, from, to, isContinuousHold, onComplete));
         }
 
-        private IEnumerator MoveRoutine(Transform target, WorldPoint from, WorldPoint to, bool isContinuousHold, Action onComplete)
+        private IEnumerator MoveRoutine(Transform target, WorldPoint from, WorldPoint to, Func<bool> isContinuousHold, Action onComplete)
         {
             Vector3 start = new Vector3(from.X, from.Y, target.position.z);
             Vector3 end = new Vector3(to.X, to.Y, target.position.z);
@@ -58,13 +61,18 @@ namespace Sapphire.Presentation.Movement
 
             target.position = end;
 
-            if (!isContinuousHold && stepPause > 0f)
+            // isContinuousHold is invoked HERE (move-completion time), not captured
+            // as a plain bool back when PlayMove was called (move-start time). If the
+            // key was released at any point during the tween, this now correctly
+            // reports false and applies the settle pause below instead of freeing the
+            // mover immediately with no cushion - see the field's tooltip above.
+            if (!isContinuousHold() && stepPause > 0f)
             {
                 // Domain stays IsMoving==true through this wait (onComplete, which calls
                 // GridMover.CompleteMove(), fires only after it) - this is what blocks the
-                // next TryBeginMove. Only a freshly-pressed step pauses here; a step that is
-                // itself a continuation of a held key (isContinuousHold) skips this entirely
-                // so held movement chains straight into the next step with no stutter.
+                // next TryBeginMove. Only a freshly-pressed step (or one released mid-flight)
+                // pauses here; a step that is still an actively-held continuation skips this
+                // entirely so held movement chains straight into the next step with no stutter.
                 yield return new WaitForSeconds(stepPause);
             }
 

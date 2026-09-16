@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Sapphire.Domain.Grid;
 
@@ -19,19 +20,15 @@ namespace Sapphire.Presentation.Movement
         private GridMover mover;
         private GridMap map;
 
-        // Tracks the held direction from the previous frame, updated every frame
-        // (even while a move is in progress and Update returns early below) so that
-        // continuity survives the frames where mover.IsMoving blocks input handling.
-        // null means "no direction was held last frame".
-        private GridDirection? previousHeldDirection;
-
-        // 2026-09-16 (movement responsiveness fix, later corrected same day -
-        // see GridMoveInputBuffer's doc): only ever holds the direction held
-        // on the CURRENT frame, null the instant the key is released, so
-        // releasing a key while a move is still animating stops the next
-        // move from starting instead of letting a stale direction fire once
-        // more when the mover frees up.
-        private GridDirection? bufferedDirection;
+        // Priority stack of currently-held directions, most-recently-pressed first
+        // (index 0). Updated every frame, even while a move is in progress and
+        // Update returns early below, so the stack accurately reflects press order
+        // the instant the mover frees up. See GridMoveInputBuffer's doc (2026-09-16,
+        // 3rd revision) for why a stack replaced the single-direction buffer: a
+        // fixed if/else priority chain (the previous PlayerInputReader) meant a
+        // direction held first always won, so tapping a new direction while another
+        // was already held could be silently ignored.
+        private List<GridDirection> directionStack = new List<GridDirection>();
 
         public GridMover Mover => mover;
 
@@ -63,49 +60,48 @@ namespace Sapphire.Presentation.Movement
             if (mover == null || map == null || mover.TryBlink(rangeTiles, map) != MoveResult.Started) return false;
             WorldPoint destination = GridWorldConversion.GridToWorld(mover.Position);
             transform.position = new Vector3(destination.X, destination.Y, transform.position.z);
-            previousHeldDirection = null;
-            bufferedDirection = null;
+            directionStack = new List<GridDirection>();
             spriteAnimator?.SetMoving(false);
             return true;
         }
 
         private void Update()
         {
-            bool isDirectionHeld = inputReader.TryGetHeldDirection(out GridDirection direction);
+            HeldDirections held = inputReader.GetHeldDirections();
 
-            // Refresh the input buffer every frame, even while a move is in
-            // progress and everything below returns early - this is what
-            // lets a tap-then-release that happens entirely inside the
-            // current move's blocked window still register once that window
-            // clears (see GridMoveInputBuffer's doc for the full bug this fixes).
-            bufferedDirection = GridMoveInputBuffer.UpdateBuffer(bufferedDirection, isDirectionHeld, direction);
+            // Snapshot the stack as it was BEFORE this frame's update, so we can
+            // tell below whether the resolved direction is a brand new press or a
+            // continuation of a hold that already existed last frame.
+            List<GridDirection> stackBeforeThisFrame = directionStack;
 
-            // Same direction key held on both this frame and the previous one (tracked
-            // unconditionally, so it still counts across the frames a move blocks input
-            // handling below) means this is a continuous hold, not a fresh key press.
-            bool isContinuousHold = isDirectionHeld
-                && previousHeldDirection.HasValue
-                && previousHeldDirection.Value == direction;
-
-            previousHeldDirection = isDirectionHeld ? direction : (GridDirection?)null;
+            // Refresh the priority stack every frame, even while a move is in
+            // progress and everything below returns early - this is what lets a
+            // fresh tap on a different direction immediately outrank an
+            // already-held one the instant the mover frees up (see
+            // GridMoveInputBuffer's doc for the priority bug this fixes).
+            directionStack = GridMoveInputBuffer.UpdatePriorityStack(directionStack, held);
 
             if (mover == null || map == null || mover.IsMoving)
             {
                 return;
             }
 
-            GridDirection? moveDirection = GridMoveInputBuffer.ResolveMoveDirection(isDirectionHeld, direction, bufferedDirection);
+            GridDirection? moveDirection = GridMoveInputBuffer.TopDirection(directionStack);
             if (!moveDirection.HasValue)
             {
                 return;
             }
 
-            // Consume the buffer now - a queued tap fires exactly once, and a
-            // released key won't keep re-firing the same stale press forever.
-            bufferedDirection = null;
+            GridDirection direction = moveDirection.Value;
+
+            // Was this direction already the (or a) held direction last frame? If
+            // so this move continues an existing hold; if not, it is a freshly
+            // pressed tap (even if some OTHER direction was held before) and gets
+            // the step-pause cadence below instead of chaining seamlessly.
+            bool wasAlreadyHeldLastFrame = stackBeforeThisFrame.Contains(direction);
 
             GridCoord previousPosition = mover.Position;
-            MoveResult result = mover.TryBeginMove(moveDirection.Value, map);
+            MoveResult result = mover.TryBeginMove(direction, map);
 
             spriteAnimator?.SetFacing(mover.Facing);
 
@@ -114,12 +110,22 @@ namespace Sapphire.Presentation.Movement
                 return;
             }
 
-            GridCoord destination = previousPosition + moveDirection.Value.ToOffset();
+            GridCoord destination = previousPosition + direction.ToOffset();
             WorldPoint from = GridWorldConversion.GridToWorld(previousPosition);
             WorldPoint to = GridWorldConversion.GridToWorld(destination);
 
             spriteAnimator?.SetMoving(true);
-            moveAnimator.PlayMove(transform, from, to, isContinuousHold, OnMoveAnimationComplete);
+
+            // isContinuousHold is re-evaluated at move-COMPLETION time (see
+            // GridMoveAnimator), not captured once here at move-start - this closes
+            // the race where a key released mid-animation still had its start-time
+            // "continuous" flag baked in, skipping the settle pause and letting the
+            // mover free up with no cushion right as an occasional extra tile could
+            // slip in (docs/HANDOFF.md 2026-09-16 entry).
+            moveAnimator.PlayMove(
+                transform, from, to,
+                isContinuousHold: () => wasAlreadyHeldLastFrame && inputReader.GetHeldDirections().IsHeld(direction),
+                onComplete: OnMoveAnimationComplete);
         }
 
         private void OnMoveAnimationComplete()
