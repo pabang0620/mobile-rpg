@@ -35,11 +35,21 @@ namespace Sapphire.EditorTools
         private static readonly string[] ColNames = { "Idle", "WalkA", "WalkB" };
 
         internal static IEnumerable<(string name, Rect rect, Vector2 pivot)> BuildGridSlices(
-            string assetPath, string namePrefix, int textureWidth, int textureHeight, int cellSize)
+            string assetPath, string namePrefix, int textureWidth, int textureHeight, int cellSize, string[] colNames = null)
         {
-            if (textureWidth != cellSize * ColNames.Length || textureHeight != cellSize * RowNames.Length)
+            // colNames defaults to the walk-sheet's Idle/WalkA/WalkB columns so
+            // every pre-existing call site (Mage/Warrior *TopdownGridSheet.png)
+            // is unaffected. The 2026-09-16 *AttackGridSheet.png sheets pass
+            // { "Windup", "Apex", "Recovery" } explicitly - same 3-column x
+            // 4-row / 362px-cell layout and the identical per-frame foot-pivot
+            // measurement, just a different column meaning (see
+            // ArtImportConfigurator.ConfigureMageAttackSheet /
+            // WarriorArtImportConfigurator.ConfigureWarriorAttackSheet).
+            colNames ??= ColNames;
+
+            if (textureWidth != cellSize * colNames.Length || textureHeight != cellSize * RowNames.Length)
             {
-                throw new Exception($"{namePrefix}TopdownGridSheet grid size mismatch: expected {cellSize * ColNames.Length}x{cellSize * RowNames.Length}, got {textureWidth}x{textureHeight}");
+                throw new Exception($"{namePrefix} grid size mismatch: expected {cellSize * colNames.Length}x{cellSize * RowNames.Length}, got {textureWidth}x{textureHeight}");
             }
 
             byte[] alpha = ReadAlphaBytes(assetPath);
@@ -49,12 +59,12 @@ namespace Sapphire.EditorTools
                 // Unity rects are bottom-up; row 0 (Down) is the topmost row in the image.
                 int yBottom = textureHeight - (r + 1) * cellSize;
 
-                for (int c = 0; c < ColNames.Length; c++)
+                for (int c = 0; c < colNames.Length; c++)
                 {
                     int xLeft = c * cellSize;
                     (float pivotX, float pivotY) = CharacterFootPivotCalculator.ComputeFootPivot(
                         alpha, textureWidth, xLeft, yBottom, cellSize, cellSize);
-                    string name = $"{namePrefix}_{RowNames[r]}_{ColNames[c]}";
+                    string name = $"{namePrefix}_{RowNames[r]}_{colNames[c]}";
                     result.Add((name, new Rect(xLeft, yBottom, cellSize, cellSize), new Vector2(pivotX, pivotY)));
                 }
             }

@@ -31,6 +31,7 @@ namespace Sapphire.EditorTools
             ConfigureSlimeKingdomAtlas();
             ConfigureSlimeKingdomGroundTiles();
             ConfigureCharacterSheets();
+            ConfigureMageAttackSheet();
             ConfigureUiFrames();
             ConfigureSkillButtonFrame();
             ConfigureHealthBarFrame();
@@ -217,6 +218,33 @@ namespace Sapphire.EditorTools
                 mipmaps: true,
                 maxSize: null,
                 slices: CharacterGridSheetImporter.BuildGridSlices(mageSheetPath, "Mage", 1086, 1448, cellSize: 362));
+        }
+
+        // 2026-09-16 (attack-motion slice): MageAttackGridSheet.png, same
+        // 1086x1448 / 3-column x 4-row / 362px-cell layout as
+        // MageTopdownGridSheet.png above, but the 3 columns are a
+        // Windup/Apex/Recovery swing pose sequence instead of
+        // Idle/WalkA/WalkB - see CharacterGridSheetImporter.BuildGridSlices'
+        // colNames parameter and SkillMotionPlayer, which plays these three
+        // frames back on a basic attack / skill cast. Same PPU (302) and
+        // mipmaps setting as the walk sheet so the swing renders at the exact
+        // same in-world scale, and reuses the identical per-frame
+        // alpha-measured foot pivot (CharacterFootPivotCalculator) - foot
+        // placement was independently re-measured (see the task spec's 0-9px
+        // deviation note) and this calculator re-derives it per frame anyway,
+        // so no separate pivot table is needed.
+        private static void ConfigureMageAttackSheet()
+        {
+            string mageAttackSheetPath = SapphireSceneBuilder.RootArtDir + "/MageAttackGridSheet.png";
+            ConfigureMultiSprite(
+                mageAttackSheetPath,
+                ppu: 302,
+                filterMode: FilterMode.Bilinear,
+                mipmaps: true,
+                maxSize: null,
+                slices: CharacterGridSheetImporter.BuildGridSlices(
+                    mageAttackSheetPath, "Mage", 1086, 1448, cellSize: 362,
+                    colNames: new[] { "Windup", "Apex", "Recovery" }));
         }
 
         private static void ConfigureUiFrames()

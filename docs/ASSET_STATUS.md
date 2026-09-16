@@ -326,6 +326,16 @@ Clamp(wrapU/wrapV=1)로 기존 .meta에 저장돼 있었다(강제 재수입으�
 `TextureWrapMode.Clamp`를 추가하긴 했으나 기존 동작을 바꾸지 않는 방어적
 변경이라 실제 클리핑의 원인은 아니었다.
 
+## 2026-09-16 갱신: 공격 모션 시트(MageAttackGridSheet.png/WarriorAttackGridSheet.png) 배선 완료
+
+기본공격/스킬 캐스트 시 캐릭터가 정적으로 서 있던 것을 실제 스윙 모션으로 개선 - 이미 도착해 있던 두 시트를 배선했다.
+
+- `Art/MageAttackGridSheet.png`, `Art/WarriorAttackGridSheet.png` (둘 다 1086x1448, 3열(Windup/Apex/Recovery) x 4행(Down/Left/Right/Up), 셀 362x362 - 각 클래스의 `*TopdownGridSheet.png`와 정확히 동일 그리드/셀 크기). 임포트는 `CharacterGridSheetImporter.BuildGridSlices`에 `colNames` 파라미터를 추가해 재사용(`ArtImportConfigurator.ConfigureMageAttackSheet`/`WarriorArtImportConfigurator.ConfigureWarriorAttackSheet`) - 걷기 시트와 동일한 프레임별 alpha 기준 foot pivot 자동 계산(`CharacterFootPivotCalculator`)이 그대로 적용된다.
+- 신규 컴포넌트 `Presentation/Movement/SkillMotionPlayer.cs` - 캐스트 시 `SpriteRenderer`를 Windup->Apex->Recovery 3프레임으로 짧게(0.35s, 워리어 기본공격 VFX와 동일 지속시간) 재생한 뒤 `DirectionalSpriteAnimator.ForceRefresh()`로 idle/walk 프레임으로 복귀. `SapphireSceneBuilder.BuildPlayer`가 마법사/전사 두 리그 모두에 컴포넌트를 추가하고 12개(4방향 x 3프레임) 스프라이트 필드를 배선한다. `RadialSkillMenu.CastBasicAttack()`/`CastSkill()` 양쪽에서 호출 - 기본공격뿐 아니라 스킬 캐스트에도 동일하게 재생된다.
+- 발 위치 실측: 대부분 방향 0-3px 오차, Right 방향만 7-9px(무기 겨냥 자세로 인한 자연스러운 무게중심 이동, 시트 경계 안) - 별도 조치 없이 기존 foot-pivot 계산기가 프레임별로 알아서 재보정.
+
+**실사용 확인**: `SapphireSceneBuilder.BuildEverything()` -> `SapphireBuildPlayer.BuildWindows` 재빌드 성공. 임시 디버그 훅(`RadialSkillMenu`의 `-sapphire-repeat-cast-basic`, 기본공격을 0.3초 간격으로 재발동해 화면 캡처가 스윙 프레임을 확실히 잡도록 함)으로 캡처한 스크린샷(`generated-images/diagnostics/attackmotion_mage.png`/`attackmotion_warrior.png`)을 직접 확인 - 워리어는 검을 앞으로 내지르는 Apex 포즈 + 슬래시 VFX가 함께 렌더, 마법사는 연속 캡처 비교로 Recovery(스태프 지팡이 자세)와 Apex(수정 발광) 포즈가 실제로 교차 전환됨을 확인. 디버그 훅은 검증 후 완전히 제거하고 `git diff`로 잔여 없음을 확인한 뒤 최종 재빌드까지 재확인했다.
+
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.

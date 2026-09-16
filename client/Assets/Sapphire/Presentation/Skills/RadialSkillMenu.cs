@@ -49,6 +49,14 @@ namespace Sapphire.Presentation.Skills
         // field was added.
         [SerializeField] private CharacterClass characterClass = CharacterClass.Mage;
         private ISkillVfxPlayer skillVfx;
+        // 2026-09-16 (attack-motion slice): resolved once from `player`
+        // (SapphireSceneBuilder.BuildPlayer adds one SkillMotionPlayer per
+        // player rig, sprites pre-wired from that class's *AttackGridSheet.png)
+        // rather than serialized here - same reasoning ResolveSkillVfx uses
+        // AddComponent/GetComponent lazily instead of a wired field, except
+        // this one always exists on the player rig so a plain GetComponent in
+        // Awake is enough.
+        private SkillMotionPlayer motionPlayer;
 
         private SkillDefinition[] Skills => SkillCatalog.ForClass(characterClass);
 
@@ -57,6 +65,7 @@ namespace Sapphire.Presentation.Skills
             if (player != null)
             {
                 skillVfx = ResolveSkillVfx();
+                motionPlayer = player.GetComponent<SkillMotionPlayer>();
             }
 
             if (basicAttackButton != null)
@@ -124,6 +133,7 @@ namespace Sapphire.Presentation.Skills
             {
                 skillVfx = ResolveSkillVfx();
                 (skillVfx as WarriorSkillVfxPlayer)?.PlayBasicAttack(player.Mover.Facing);
+                motionPlayer?.PlayAttack(player.Mover.Facing);
             }
 
             castFeedback?.PlayCast(BasicAttackDisplayName);
@@ -159,6 +169,7 @@ namespace Sapphire.Presentation.Skills
 
             skillVfx = ResolveSkillVfx();
             skillVfx.Play(index, origin, player.Mover.Position, facing);
+            motionPlayer?.PlayAttack(facing);
 
             castFeedback?.PlayCast(skill.DisplayName);
         }

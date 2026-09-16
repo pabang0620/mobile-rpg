@@ -2,7 +2,15 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): 그리드 이동 - 방향 전환 시 첫 스텝은 회전만(포켓몬류 표준 동작)
+## 2026-09-16 (최신): 기본공격/스킬 캐스트에 실제 공격 모션 추가 (Windup/Apex/Recovery)
+
+사용자 요청: 기본공격이나 스킬을 쓸 때 캐릭터가 그 자리에 가만히 서 있던 것을, 전사는 칼을 휘두르는 식으로 실제 모션이 나오게 개선.
+
+**구현**: 이미 도착해 있던 `Art/MageAttackGridSheet.png`/`Art/WarriorAttackGridSheet.png`(둘 다 걷기 시트와 동일한 1086x1448, 3열x4행, 362px 셀 - 컬럼만 Idle/WalkA/WalkB 대신 Windup/Apex/Recovery)를 배선했다. `CharacterGridSheetImporter.BuildGridSlices`에 `colNames` 옵션 파라미터를 추가(기본값은 기존 Idle/WalkA/WalkB라 걷기 시트 호출부는 완전히 무변경)해 `ArtImportConfigurator.ConfigureMageAttackSheet`/`WarriorArtImportConfigurator.ConfigureWarriorAttackSheet`에서 재사용 - 걷기 시트와 동일한 프레임별 alpha 기반 foot pivot(`CharacterFootPivotCalculator`)이 그대로 적용된다. 신규 컴포넌트 `Presentation/Movement/SkillMotionPlayer.cs`가 캐스트 시 `SpriteRenderer`를 현재 Facing 방향의 Windup->Apex->Recovery 3프레임으로 0.35초(워리어 기본공격 VFX와 동일 지속시간) 재생한 뒤 `DirectionalSpriteAnimator.ForceRefresh()`(신규 공개 메서드, 그냥 `ApplyFrame()` 재호출)로 idle/walk 프레임으로 복귀시킨다. `SapphireSceneBuilder.BuildPlayer`가 마법사/전사 두 리그 모두에 이 컴포넌트를 추가하고 스프라이트 12개(4방향 x 3프레임)를 배선하며, `RadialSkillMenu`는 `Awake`에서 `player.GetComponent<SkillMotionPlayer>()`로 참조를 얻어 `CastBasicAttack()`과 `CastSkill()` 양쪽에서 호출한다(기본공격뿐 아니라 스킬 캐스트에도 동일 모션이 재생됨). 이동 입력은 잠그지 않았다(요청에 없었고, 기본공격은 어차피 이동 중엔 캐스트 자체가 막혀 있어 경합 여지가 거의 없음).
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 0에러(첫 시도에서 `RootArtDir` 네임스페이스 누락 CS0103 1건 발생, `SapphireSceneBuilder.RootArtDir`로 즉시 수정). 씬 도메인 로직 변경이 아니라 애니메이션 재생 컴포넌트라 EditMode 테스트는 추가하지 않았다(AGENTS.md 검증 관행 - 로직/상태 배선 버그가 아닌 신규 프레젠테이션 기능). `SapphireSceneBuilder.BuildEverything()`(4개 씬) -> `SapphireBuildPlayer.BuildWindows` 재빌드 성공. 씬 YAML을 직접 파싱해 마법사/전사 두 `SkillMotionPlayer` 컴포넌트의 windup/apex/recovery 12개 필드 전부가 null이 아닌 실제 스프라이트 guid를 가리키는지 확인했다. 임시 디버그 훅(`RadialSkillMenu`에 `-sapphire-repeat-cast-basic` - 기본공격을 0.3초 간격으로 재발동해 화면 캡처가 스윙 프레임을 확실히 잡도록 함, `capture_burst_vfxfix.ps1`과 동일한 SetForegroundWindow+CopyFromScreen 캡처 방식 재사용)으로 캡처한 스크린샷을 직접 확인 - 워리어(`generated-images/diagnostics/attackmotion_warrior.png`)는 검을 앞으로 내지르는 Apex 포즈와 슬래시 VFX가 함께 렌더됨을 확인, 마법사(`attackmotion_mage.png` + 4연속 버스트 크롭)는 idle과 거의 같아 보이는 Recovery 포즈와 수정이 발광하는 Apex 포즈가 실제로 프레임마다 교차 전환되는 것을 연속 캡처 비교로 확인(단일 스크린샷만으로는 mage 쪽이 육안 구분이 어려워 추가로 4연속 캡처했다). 디버그 훅은 검증 직후 완전히 제거하고 `grep`으로 코드베이스에 잔여 0건 확인한 뒤 최종 재빌드까지 재확인했다(영구 훅인 `-sapphire-class=`/`-sapphire-scene=`/`-sapphire-account=`/`-sapphire-open-menu`는 그대로 유지). 최종적으로 빌드된 `SapphireRPG.exe`를 개발 인자 없이 실행해 로그인 화면(1280x720 창모드)이 뜬 상태로 유지.
+
+## 2026-09-16: 그리드 이동 - 방향 전환 시 첫 스텝은 회전만(포켓몬류 표준 동작)
 
 사용자 요청: 방향키를 누르면 즉시 그 방향으로 "회전+1칸 이동"이 한번에 처리되던 것을, 눌린 방향이 현재 Facing과 같으면 그대로 이동하되 **다르면 이번 스텝은 회전만 하고 이동은 하지 않도록** 변경 - 방향을 바꾼 첫 입력은 제자리 회전으로 소비되고, 그 다음(같은 방향이 계속 눌려 있거나 다시 눌렸을 때, 이제 Facing과 일치하므로) 스텝부터 실제로 이동한다.
 

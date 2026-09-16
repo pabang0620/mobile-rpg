@@ -87,6 +87,18 @@ namespace Sapphire.Presentation.Movement
             ApplyFrame();
         }
 
+        /// <summary>
+        /// Re-applies the current facing/moving frame. Called by
+        /// SkillMotionPlayer once its Windup/Apex/Recovery attack sequence
+        /// finishes, so the sprite snaps back to whatever idle/walk frame
+        /// this animator already owns instead of freezing on the last attack
+        /// frame.
+        /// </summary>
+        public void ForceRefresh()
+        {
+            ApplyFrame();
+        }
+
         public void SetMoving(bool moving)
         {
             if (isMoving == moving)

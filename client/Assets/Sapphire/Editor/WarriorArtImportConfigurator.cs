@@ -26,6 +26,7 @@ namespace Sapphire.EditorTools
         internal static void ConfigureAll()
         {
             ConfigureWarriorCharacterSheet();
+            ConfigureWarriorAttackSheet();
             ConfigureWarriorSkillIconsSet();
         }
 
@@ -61,6 +62,34 @@ namespace Sapphire.EditorTools
                 mipmaps: false,
                 maxSize: null,
                 slices: CharacterGridSheetImporter.BuildGridSlices(path, "Warrior", textureWidth, textureHeight, cellSize));
+        }
+
+        // 2026-09-16 (attack-motion slice): WarriorAttackGridSheet.png, same
+        // 1086x1448 / 3-column x 4-row / 362px-cell layout as
+        // WarriorTopdownGridSheet.png above, but the columns are a
+        // Windup/Apex/Recovery sword-swing pose sequence instead of
+        // Idle/WalkA/WalkB - see ArtImportConfigurator.ConfigureMageAttackSheet's
+        // doc comment (mirrors it exactly, mage vs warrior) and
+        // SkillMotionPlayer, which plays these frames back on cast. mipmaps
+        // false, matching this class's own ConfigureWarriorCharacterSheet
+        // (not Mage's mipmaps=true) so the warrior swing renders at the exact
+        // same fidelity as the warrior's own walk cycle.
+        private static void ConfigureWarriorAttackSheet()
+        {
+            const int textureWidth = 1086;
+            const int textureHeight = 1448;
+            const int cellSize = 362;
+            string path = SapphireSceneBuilder.RootArtDir + "/WarriorAttackGridSheet.png";
+
+            ArtImportConfigurator.ConfigureMultiSprite(
+                path,
+                ppu: 302,
+                filterMode: FilterMode.Bilinear,
+                mipmaps: false,
+                maxSize: null,
+                slices: CharacterGridSheetImporter.BuildGridSlices(
+                    path, "Warrior", textureWidth, textureHeight, cellSize,
+                    colNames: new[] { "Windup", "Apex", "Recovery" }));
         }
 
         // 1536x1024, 3x2 equal-grid CELLS (512x512, matches the commissioned

@@ -217,7 +217,27 @@ namespace Sapphire.EditorTools
             Sprite walkBLeft = LoadNamedSprite(sheet, className + "_Left_WalkB");
             Sprite walkBRight = LoadNamedSprite(sheet, className + "_Right_WalkB");
 
-            var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(PlayerGridController));
+            // 2026-09-16 (attack-motion slice): *AttackGridSheet.png, same
+            // grid/naming convention as the walk sheet above but Windup/Apex/
+            // Recovery columns (see ArtImportConfigurator.ConfigureMageAttackSheet /
+            // WarriorArtImportConfigurator.ConfigureWarriorAttackSheet).
+            string attackSheet = RootArtDir + "/" + className + "AttackGridSheet.png";
+            Sprite windupUp = LoadNamedSprite(attackSheet, className + "_Up_Windup");
+            Sprite windupDown = LoadNamedSprite(attackSheet, className + "_Down_Windup");
+            Sprite windupLeft = LoadNamedSprite(attackSheet, className + "_Left_Windup");
+            Sprite windupRight = LoadNamedSprite(attackSheet, className + "_Right_Windup");
+
+            Sprite apexUp = LoadNamedSprite(attackSheet, className + "_Up_Apex");
+            Sprite apexDown = LoadNamedSprite(attackSheet, className + "_Down_Apex");
+            Sprite apexLeft = LoadNamedSprite(attackSheet, className + "_Left_Apex");
+            Sprite apexRight = LoadNamedSprite(attackSheet, className + "_Right_Apex");
+
+            Sprite recoveryUp = LoadNamedSprite(attackSheet, className + "_Up_Recovery");
+            Sprite recoveryDown = LoadNamedSprite(attackSheet, className + "_Down_Recovery");
+            Sprite recoveryLeft = LoadNamedSprite(attackSheet, className + "_Left_Recovery");
+            Sprite recoveryRight = LoadNamedSprite(attackSheet, className + "_Right_Recovery");
+
+            var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(SkillMotionPlayer), typeof(PlayerGridController));
             playerGo.transform.position = CellCenter(spawnX, spawnY);
             playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
             playerGo.GetComponent<SpriteRenderer>().sortingOrder = 0;
@@ -235,6 +255,21 @@ namespace Sapphire.EditorTools
             AssignField(spriteAnimator, "walkBDown", walkBDown);
             AssignField(spriteAnimator, "walkBLeft", walkBLeft);
             AssignField(spriteAnimator, "walkBRight", walkBRight);
+
+            var motionPlayer = playerGo.GetComponent<SkillMotionPlayer>();
+            AssignField(motionPlayer, "windupUp", windupUp);
+            AssignField(motionPlayer, "windupDown", windupDown);
+            AssignField(motionPlayer, "windupLeft", windupLeft);
+            AssignField(motionPlayer, "windupRight", windupRight);
+            AssignField(motionPlayer, "apexUp", apexUp);
+            AssignField(motionPlayer, "apexDown", apexDown);
+            AssignField(motionPlayer, "apexLeft", apexLeft);
+            AssignField(motionPlayer, "apexRight", apexRight);
+            AssignField(motionPlayer, "recoveryUp", recoveryUp);
+            AssignField(motionPlayer, "recoveryDown", recoveryDown);
+            AssignField(motionPlayer, "recoveryLeft", recoveryLeft);
+            AssignField(motionPlayer, "recoveryRight", recoveryRight);
+            AssignField(motionPlayer, "spriteAnimator", spriteAnimator);
 
             var playerController = playerGo.GetComponent<PlayerGridController>();
             AssignField(playerController, "moveAnimator", playerGo.GetComponent<GridMoveAnimator>());
