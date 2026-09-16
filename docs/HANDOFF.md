@@ -2,7 +2,15 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-16 (최신): 기본공격/스킬 캐스트에 실제 공격 모션 추가 (Windup/Apex/Recovery)
+## 2026-09-16 (최신): 워리어 공격모션 시트 최종본 교체 + 스킬 VFX 중심 보정
+
+사용자 지적 2건: (1) 전사 기본공격 Right 방향 포즈가 삐뚤어져 보임. (2) 스킬 이펙트가 캐릭터 중심에서 왼쪽아래로 살짝 치우쳐 보임.
+
+**구현**: `Art/WarriorAttackGridSheet.png`를 새 시트로 교체 - 최종본은 Left 방향의 점 결함을 제거하고 Right는 더 이상 개별 AI 생성이 아니라 정리된 Left를 좌우반전해서 만듦(Down/Up 행 무변경). `SkillVfxPlayer.cs`/`WarriorSkillVfxPlayer.cs`의 공유 `ActorCenter()`에 월드 오프셋 `VfxCenteringOffset=(0.05, 0.075, 0)`(우측 4px/상단 6px)을 추가해 모든 스킬/기본공격 VFX 앵커를 한 곳에서 보정. 상세 alpha bbox 실측치·알려진 오차는 `docs/ASSET_STATUS.md` 해당 날짜 절 참고.
+
+**검증**: 컴파일 0에러, `BuildEverything`(SceneOnly, 배치당 1회) -> `BuildWindows`(배치당 1회) 재빌드 성공. 사용자가 "왜 자꾸 켰다껐다하냐, 내가 확인할테니 수정만 하면 된다"고 지적해, 화면 캡처 반복 루프를 중단하고 이후 근거는 PIL alpha bbox 수치 측정으로 대체했다(공격시트 vs 이동시트의 방향별 footY 비교, `docs/ASSET_STATUS.md` 참고) - 실제 화면 판단은 사용자 손테스트 몫. 검증에 썼던 임시 디버그 훅(`RadialSkillMenu`의 `-sapphire-debug-face=`/`-sapphire-debug-cast=`)은 `git checkout`으로 완전히 원복, `git diff` 잔여 0건 확인 후 최종 재빌드까지 재확인했다. 최종적으로 빌드된 `SapphireRPG.exe`를 개발 인자 없이 1회만 실행해 로그인 화면(1280x720 창모드)이 뜬 상태로 유지.
+
+## 2026-09-16: 기본공격/스킬 캐스트에 실제 공격 모션 추가 (Windup/Apex/Recovery)
 
 사용자 요청: 기본공격이나 스킬을 쓸 때 캐릭터가 그 자리에 가만히 서 있던 것을, 전사는 칼을 휘두르는 식으로 실제 모션이 나오게 개선.
 

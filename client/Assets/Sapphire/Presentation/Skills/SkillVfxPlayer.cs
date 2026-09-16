@@ -74,10 +74,20 @@ namespace Sapphire.Presentation.Skills
         }
         private static Vector3 Point(GridCoord cell)
         { WorldPoint p = GridWorldConversion.GridToWorld(cell); return new Vector3(p.X, p.Y, 0); }
+        // 2026-09-16: user reported every skill VFX reads as sitting slightly
+        // down-left of the character and asked for +4px right / +6px up.
+        // Camera is a fixed orthographic 9 vertical tiles over a 720px-tall
+        // window (docs/DECISIONS.md), so 1px = 9/720 = 0.0125 world units:
+        // 4px -> 0.05, 6px -> 0.075. Applied once here (not per-VFX-row)
+        // since every row anchors off this same ActorCenter() (mirrors the
+        // identical fix in WarriorSkillVfxPlayer.ActorCenter()).
+        private static readonly Vector3 VfxCenteringOffset = new Vector3(0.05f, 0.075f, 0f);
+
         private Vector3 ActorCenter()
         {
             SpriteRenderer actor = GetComponent<SpriteRenderer>();
-            return actor != null ? actor.bounds.center : transform.position;
+            Vector3 center = actor != null ? actor.bounds.center : transform.position;
+            return center + VfxCenteringOffset;
         }
         private GameObject Create(string name, Vector3 position, float size, float rotation)
         {

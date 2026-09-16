@@ -336,6 +336,21 @@ Clamp(wrapU/wrapV=1)로 기존 .meta에 저장돼 있었다(강제 재수입으�
 
 **실사용 확인**: `SapphireSceneBuilder.BuildEverything()` -> `SapphireBuildPlayer.BuildWindows` 재빌드 성공. 임시 디버그 훅(`RadialSkillMenu`의 `-sapphire-repeat-cast-basic`, 기본공격을 0.3초 간격으로 재발동해 화면 캡처가 스윙 프레임을 확실히 잡도록 함)으로 캡처한 스크린샷(`generated-images/diagnostics/attackmotion_mage.png`/`attackmotion_warrior.png`)을 직접 확인 - 워리어는 검을 앞으로 내지르는 Apex 포즈 + 슬래시 VFX가 함께 렌더, 마법사는 연속 캡처 비교로 Recovery(스태프 지팡이 자세)와 Apex(수정 발광) 포즈가 실제로 교차 전환됨을 확인. 디버그 훅은 검증 후 완전히 제거하고 `git diff`로 잔여 없음을 확인한 뒤 최종 재빌드까지 재확인했다.
 
+## 2026-09-16 갱신: 워리어 공격 모션 시트 최종본으로 교체(Left 점 결함 제거 + Right는 Left 좌우반전) + 스킬 VFX 중심 보정
+
+사용자가 워리어 기본공격의 Right 방향 포즈가 "삐뚤어져 보인다"고 지적, 이어서 스킬 이펙트가 캐릭터 중심에서 왼쪽아래로 살짝 치우쳐 보인다고 지적.
+
+- `Art/WarriorAttackGridSheet.png`를 새 시트로 교체(1086x1448, RGBA, 기존과 동일 그리드/셀 크기라 임포트 설정 재사용). 이 세션 안에서 두 차례 개정됐다: 1차는 검 궤적을 몸에 붙여 짧고 좁게 만든 개정판, 최종본은 Left 방향의 점 결함(픽셀 아티팩트)을 제거하고 **Right 방향은 더 이상 개별 AI 생성이 아니라 정리된 Left 프레임을 좌우반전해서 만든 것**(Down/Up 행은 최종 개정에서 변경 없음). 기존 v1은 `generated-images/attack-motion-backup/`에 백업(gitignore 대상, 리포에는 교체된 PNG만 커밋).
+- **최종본 alpha bbox 실측** (PIL, `client/Assets/Sapphire/Art/WarriorAttackGridSheet.png` 기준, 이동 시트 `WarriorTopdownGridSheet.png`와 셀 내 발/밑단 최하단 y좌표(footY) 비교):
+  - Down: 공격시트 footY≈361 vs 이동시트≈361 - 거의 완전히 일치.
+  - Left: 공격시트 footY≈346 vs 이동시트≈353 - 약 7px 위(이동시트보다 약간 높음).
+  - Right: 공격시트 footY≈346(=Left와 동일값, 좌우반전이라 수직 위치가 Left와 완전히 같음) vs 이동시트≈321 - 약 26px 낮음. Right가 Left를 반전해서 만들어진 결과, Right 고유의 이동시트 자세(원래 Left보다 32px 더 높게 선 자세)와는 더 벌어졌다.
+  - Up: 공격시트 footY≈317-351(프레임별 34px 편차) vs 이동시트≈292 - 약 25-59px 낮음(생성 에이전트가 보고한 "56-63px" 범위와 대체로 부합, Apex 프레임만 편차가 작음).
+  - 해석: 이 편차들은 스프라이트 내부 여백 차이일 뿐이고 `CharacterFootPivotCalculator`가 프레임별 알파 bbox를 기준으로 pivot을 다시 계산해 타일 그리드에 맞춰 보정하므로, 이론적으로는 화면에서 발 위치가 흔들리지 않아야 한다 - 이번 세션에서는 스크린샷으로 재검증하지 않았다(아래 검증 방법 참고). 특히 Right(26px)와 Up(최대 59px)은 다른 방향보다 보정폭이 커서, 추후 이상 소견이 나오면 이 두 방향이 1차 용의선상이다.
+- VFX 중심 보정: `Presentation/Skills/SkillVfxPlayer.cs`/`WarriorSkillVfxPlayer.cs`의 `ActorCenter()`에 월드 오프셋 `VfxCenteringOffset = (0.05, 0.075, 0)`(우측 4px/상단 6px, 카메라가 세로 9타일/720px 고정이라 1px=0.0125월드유닛) 추가 - 모든 스킬/기본공격 VFX가 이 메서드를 공유해서 앵커링하므로 한 곳 수정으로 전부 적용됨.
+
+**검증 방법 (2026-09-16 재지시로 변경)**: 반복 스크린샷 캡처(exe 재기동 루프)가 "왜 자꾸 켰다껐다하냐"는 사용자 지적으로 중단됐다 - 이후 검증은 화면 캡처 대신 PIL alpha 실측(위 bbox 수치)으로만 근거를 남겼다. 컴파일 0에러, `SapphireSceneBuilder.BuildEverything()`(SceneOnly, 텍스처 재임포트 로그로 신규 PNG 반영 확인) -> `SapphireBuildPlayer.BuildWindows` 재빌드 성공, 둘 다 배치당 1회만 실행. 검증 과정에서 `RadialSkillMenu`에 임시 디버그 훅(`-sapphire-debug-face=`/`-sapphire-debug-cast=` - 실제 키보드 입력 주입(keybd_event/SendInput 둘 다 시도)이 이 빌드의 Input System에 닿지 않아 명령줄 인자로 방향 강제+반복 캐스트하도록 대체)을 추가해 몇 차례 화면 캡처를 시도했으나, 이 방식(exe 반복 종료/재기동)이 사용자 작업 방식과 맞지 않아 중단하고 디버그 훅은 `git checkout`으로 완전히 원복, `git diff`로 잔여 0건 확인 후 최종 재빌드까지 재확인했다(영구 훅인 `-sapphire-class=`/`-sapphire-scene=`/`-sapphire-account=`/`-sapphire-open-menu`는 무관, 그대로 유지). 실제 화면에서의 최종 판단은 사용자 손테스트 몫.
+
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.
