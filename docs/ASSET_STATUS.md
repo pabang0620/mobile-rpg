@@ -256,6 +256,58 @@ gitignore 대상 진단 폴더).
 login/select/village_mage/village_warrior)을 직접 열어 확인 - 핑크 텍스처·
 빈 아이콘·깨진 캐릭터 없음.
 
+## 2026-09-16 갱신: 캐릭터 접지(발 위치) 실측 재보정 + VFX 클리핑/알파 결함 전수 실측
+
+사용자 리포트 "캐릭터가 타일에 붙어있지 않고 떠 보인다(특히 오른쪽을 볼 때)" +
+"스킬이 잘린다" + "스킬 배경에 눈금판(체커보드)이 같이 보인다" 3건을 PIL/scipy
+실측으로 조사했다. 상세 원인·수정 내역은 `docs/HANDOFF.md` 같은 날짜 항목,
+실측 스크립트는 `tools/art_qa/measure_character_feet.py` +
+`tools/art_qa/clean_character_sheets.py` 참고.
+
+**캐릭터 시트 정리**: `MageTopdownGridSheet.png`/`WarriorTopdownGridSheet.png`
+각 12셀(4방향x3프레임)에서 인접 셀(주로 Up 행의 후드/머리카락) 아트가 셀 경계를
+살짝 넘어 그려진 파편이 발견됐다(연결요소 분석으로 검출 - 가장 큰 alpha
+연결요소만 남기고 제거, mage 911px·warrior 1879px 제거). 이 파편이 Right 행의
+naive alpha bbox를 셀 맨 아래까지 늘려 pivot을 잘못 계산하게 만든 원인이었다.
+정리 후에도 캐릭터 본체 픽셀은 전혀 건드리지 않았다(연결요소 크기 상 파편은
+전부 200-350px 수준의 작은 조각, 본체는 38,000-44,000px).
+
+**VFX 아틀라스 클리핑 실측 (재생성 필요, 이번엔 미수정)**:
+- `MageSkillVfxAtlas.png`(8x5): Shield/Teleport/Thunder/IceSpike/LightningSpear
+  5개 행 전부, alpha>120(명백히 보이는 콘텐츠) 기준으로도 40/40 프레임이
+  셀 경계에 닿거나 넘어감 - IceSpike/Teleport 등 여러 프레임에서 실제로
+  뾰족한 얼음창·번개 문양이 수평선으로 뭉텅 잘린 모습을 크롭 확대로 직접
+  확인(하드 컷, 옅은 잔광 번짐이 아님). 소스에 남은 픽셀이 없어 패딩으로
+  복구 불가 - 재생성 필요.
+- `Warrior/WarriorSkillVfxAtlas.png`(8x5): 같은 기준으로 14/40 프레임 클리핑
+  (WhirlwindSlash/WarCryShockwave/ShieldBlockBarrier/DashStreak의 "확산
+  절정" 프레임 2-5번대에 집중). 재생성 필요.
+- `ManaShieldPadded.png`/`ThunderFieldPadded.png`/`Warrior/WarriorGroundSlamPadded.png`:
+  같은 기준 각 0-2/8 프레임만 1-2px 수준으로 경계에 닿음(육안 크롭 확인 결과
+  옅은 글로우 번짐 정도로 링/이펙트 본체는 완전한 형태) - 사용상 문제로 보기
+  어려워 이번엔 그대로 둠.
+
+**`MageDirectionalPadded.png` - 알파 채널 자체가 없는 별도 결함 (클리핑보다 심각)**:
+PNG 자체가 colortype=2(RGB, 알파 없음)로 저장돼 있고, 배경이 진짜 투명이
+아니라 회색/흰색 체커보드 무늬가 RGB로 그대로 구워져 있다(전체 배경 코너
+샘플 96/96 지점이 alpha=255). 스크린샷(`generated-images/diagnostics/
+vfx_mage_icespike.png`, `vfx_mage_lightningspear.png`)으로 실제 게임에서
+이 체커보드 사각형이 그대로 렌더링되는 것을 확인했다 - 사용자가 말한 "스킬
+배경에 눈금판이 같이 나온다"가 바로 이 파일이다. 이 파일이 담당하는 마법사
+스킬 3종(텔레포트/블링크, 고드름, 번개창 - `SkillVfxImporter.ConfigureLibrary`의
+frames[8..15]/[24..31]/[32..39] 매핑)이 전부 영향을 받는다. 알파 데이터
+자체가 없어 크롭/패딩으로 복구 불가 - **재생성 필요, 6개 파일 중 우선순위
+최상위**(다른 5개는 알파는 정상이고 클리핑만 있음).
+`MageSkillVfxAtlas.png`/`ManaShieldPadded.png`/`ThunderFieldPadded.png`/
+`WarriorSkillVfxAtlas.png`/`WarriorGroundSlamPadded.png` 5개는 전부
+colortype=6(RGBA)에 배경 알파도 정상(0에 가까움) - 이 결함은 `MageDirectionalPadded.png` 1개 파일에만 있다.
+
+**건드리지 않은 것 확인**: `importer.wrapMode`는 6개 VFX 텍스처 전부 이미
+Clamp(wrapU/wrapV=1)로 기존 .meta에 저장돼 있었다(강제 재수입으로 직접 확인) -
+"레포 wrapMode 미설정→Repeat 기본값" 가설은 기각, 코드에 명시적으로
+`TextureWrapMode.Clamp`를 추가하긴 했으나 기존 동작을 바꾸지 않는 방어적
+변경이라 실제 클리핑의 원인은 아니었다.
+
 ## 다음 작업 (TBD/후속)
 
 - 지형/배경용 무료 팩 선정(라이선스 확인 포함) 및 이 프로젝트에 도입.
@@ -264,3 +316,4 @@ login/select/village_mage/village_warrior)을 직접 열어 확인 - 핑크 텍�
 - `Art/` 폴더 전체 실사(파일 존재/해시/치수/알파/사용 여부) 및 상태 인벤토리 재구축.
 - ~~카메라 마이그레이션에 맞춰 타일 크기/PPU 기준으로 에셋 치수 재검토~~ - 2026-09-14 완료: 카메라 `assetsPPU=72`, 캐릭터 시트 `ppu=302`, 지형 아틀라스 `ppu=512`로 전부 확정(`docs/DECISIONS.md` 참고).
 - 몬스터 아트는 여전히 전무하다 - 신규 전투 콘텐츠 착수 시 하이브리드 전략에 따라 처음부터 제작 필요.
+- **VFX 재생성 필요 (2026-09-16 실측, 우선순위순)**: (1) `MageDirectionalPadded.png` - 알파 채널 없음, 최우선. (2) `MageSkillVfxAtlas.png` - 5개 행 전부 하드 클리핑. (3) `Warrior/WarriorSkillVfxAtlas.png` - 4개 행의 확산 절정 프레임 클리핑. gpt-image 재생성은 이번 세션 범위 밖 - `game-asset-artist` 에이전트에게 위임할 것.

@@ -199,21 +199,24 @@ namespace Sapphire.EditorTools
             //
             // 2026-09-14 (later same day): swapped in the v4 body-stable
             // walk-cycle artwork (same 1086x1448 / 362px-cell layout, no grid
-            // change needed). Re-measured per-cell alpha bounding box (center-x,
-            // bottom-y) across all 12 cells and re-checked the previous grouping
-            // assumption: idle/walkA/walkB no longer differ meaningfully within a
-            // direction (within-row spread across the 3 poses is only 0.14-0.55
-            // percentage points on both axes - noise, not a real walkB offset).
-            // Each direction now gets exactly one pivot shared by all 3 poses in
-            // that row - 4 pivots total, one per row, instead of the previous
-            // approach of crossing 2 Y groups x 2 X groups. See BuildMageGridSlices.
+            // change needed).
+            //
+            // 2026-09-16 (character-floating-above-tile bug, docs/HANDOFF.md):
+            // replaced the hand-picked per-row pivot dictionary with per-frame
+            // pivots computed straight from each cell's own (cleaned) alpha
+            // content via CharacterGridSheetImporter/CharacterFootPivotCalculator
+            // - see those classes' doc comments for why the old dictionary's
+            // "Right" row pivot was wrong (corrupted by a cross-cell bleed
+            // artifact from the "Up" row) and why per-frame beats
+            // per-row-average.
+            string mageSheetPath = SapphireSceneBuilder.RootArtDir + "/MageTopdownGridSheet.png";
             ConfigureMultiSprite(
-                SapphireSceneBuilder.RootArtDir + "/MageTopdownGridSheet.png",
+                mageSheetPath,
                 ppu: 302,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: true,
                 maxSize: null,
-                slices: BuildMageGridSlices(1086, 1448, cellSize: 362));
+                slices: CharacterGridSheetImporter.BuildGridSlices(mageSheetPath, "Mage", 1086, 1448, cellSize: 362));
         }
 
         private static void ConfigureUiFrames()
@@ -377,54 +380,6 @@ namespace Sapphire.EditorTools
                     ("SkillIcons_Shield", new Rect(524, 0, 489, 522), centerPivot),
                     ("SkillIcons_Haste", new Rect(1013, 0, 523, 522), centerPivot),
                 });
-        }
-
-        private static IEnumerable<(string name, Rect rect, Vector2 pivot)> BuildMageGridSlices(
-            int textureWidth, int textureHeight, int cellSize)
-        {
-            // Row order top-to-bottom in the source image: Down, Left, Right, Up.
-            // Column order left-to-right: idle, walkA, walkB.
-            string[] rowNames = { "Down", "Left", "Right", "Up" };
-            string[] colNames = { "Idle", "WalkA", "WalkB" };
-
-            // One pivot per direction, shared by all 3 poses in that row -
-            // measured as the average alpha-bounding-box center-x/bottom-y across
-            // idle/walkA/walkB (see ConfigureCharacterSheets for why no per-pose
-            // split is needed with the v4 artwork). Pivot is Unity's bottom-up
-            // normalized coordinate, so a value closer to 0 sits closer to the
-            // cell's bottom edge.
-            var pivotByRow = new Dictionary<string, Vector2>
-            {
-                ["Down"] = new Vector2(0.57f, 0.01f),
-                ["Left"] = new Vector2(0.59f, 0.08f),
-                // Side-view feet must share the same baseline.  The previous
-                // zero Y pivot left the Right row's transparent bottom margin
-                // above the grid centre, making rightward steps look airborne.
-                ["Right"] = new Vector2(0.59f, 0.00f),
-                ["Up"] = new Vector2(0.57f, 0.22f),
-            };
-
-            if (textureWidth != cellSize * colNames.Length || textureHeight != cellSize * rowNames.Length)
-            {
-                throw new Exception($"MageTopdownGridSheet grid size mismatch: expected {cellSize * colNames.Length}x{cellSize * rowNames.Length}, got {textureWidth}x{textureHeight}");
-            }
-
-            var result = new List<(string, Rect, Vector2)>();
-            for (int r = 0; r < rowNames.Length; r++)
-            {
-                Vector2 pivot = pivotByRow[rowNames[r]];
-                // Unity rects are bottom-up; row 0 (Down) is the topmost row in the image.
-                float yBottom = textureHeight - (r + 1) * cellSize;
-
-                for (int c = 0; c < colNames.Length; c++)
-                {
-                    float xLeft = c * cellSize;
-                    string name = $"Mage_{rowNames[r]}_{colNames[c]}";
-                    result.Add((name, new Rect(xLeft, yBottom, cellSize, cellSize), pivot));
-                }
-            }
-
-            return result;
         }
 
         // internal (not private): HudArtImportConfigurator (split out of this

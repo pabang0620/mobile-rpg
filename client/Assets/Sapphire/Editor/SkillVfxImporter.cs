@@ -42,6 +42,14 @@ namespace Sapphire.EditorTools
             importer.mipmapEnabled = false;
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
+            // 2026-09-16 (skill VFX clipping investigation, docs/HANDOFF.md): explicit
+            // Clamp - this atlas never set wrapMode before, defaulting to Unity's
+            // Repeat, which lets bilinear filtering sample across the zero-gutter
+            // boundary between adjacent frames packed edge-to-edge in the same
+            // texture (the same class of bug ArtImportConfigurator.ConfigureGroundAtlas
+            // already documented and fixed for the ground tile atlas). Matches every
+            // other texture importer in this codebase, which already sets Clamp.
+            importer.wrapMode = TextureWrapMode.Clamp;
             importer.maxTextureSize = 4096;
             importer.GetSourceTextureWidthAndHeight(out int width, out int height);
             importer.spritePixelsPerUnit = width / 8f;
@@ -99,6 +107,14 @@ namespace Sapphire.EditorTools
             importer.mipmapEnabled = false;
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
+            // 2026-09-16 (skill VFX clipping investigation, docs/HANDOFF.md): explicit
+            // Clamp - this atlas never set wrapMode before, defaulting to Unity's
+            // Repeat, which lets bilinear filtering sample across the zero-gutter
+            // boundary between adjacent frames packed edge-to-edge in the same
+            // texture (the same class of bug ArtImportConfigurator.ConfigureGroundAtlas
+            // already documented and fixed for the ground tile atlas). Matches every
+            // other texture importer in this codebase, which already sets Clamp.
+            importer.wrapMode = TextureWrapMode.Clamp;
             importer.maxTextureSize = 4096;
             importer.GetSourceTextureWidthAndHeight(out int width, out int height);
             importer.spritePixelsPerUnit = width / 8f;
@@ -134,6 +150,14 @@ namespace Sapphire.EditorTools
             importer.mipmapEnabled = false;
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
+            // 2026-09-16 (skill VFX clipping investigation, docs/HANDOFF.md): explicit
+            // Clamp - this atlas never set wrapMode before, defaulting to Unity's
+            // Repeat, which lets bilinear filtering sample across the zero-gutter
+            // boundary between adjacent frames packed edge-to-edge in the same
+            // texture (the same class of bug ArtImportConfigurator.ConfigureGroundAtlas
+            // already documented and fixed for the ground tile atlas). Matches every
+            // other texture importer in this codebase, which already sets Clamp.
+            importer.wrapMode = TextureWrapMode.Clamp;
             importer.maxTextureSize = 4096;
             importer.GetSourceTextureWidthAndHeight(out int width, out int height);
             importer.spritePixelsPerUnit = width / 8f;

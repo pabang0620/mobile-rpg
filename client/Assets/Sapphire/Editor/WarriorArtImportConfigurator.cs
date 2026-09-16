@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -40,78 +38,29 @@ namespace Sapphire.EditorTools
         // read as "about the same size" character, no per-class size tuning
         // requested).
         //
-        // Per-row pivots (feet position) - 2026-09-15 re-measured with PIL
-        // against the actual WarriorTopdownGridSheet.png art (same method as
-        // Mage's BuildMageGridSlices: average alpha-bounding-box center-x/
-        // bottom-y across idle/walkA/walkB, one pivot per direction). Unlike
-        // Mage's art, warrior Left/Right are NOT forced to share one pivot -
-        // the source art itself is asymmetric (Left content bbox h=351-354px
-        // reaching the cell's top edge; Right content bbox h=328px with a
-        // 33px top margin), so using each row's own measured foot-y keeps
-        // both rows' feet planted on the ground tile instead of forcing an
-        // artificial match. Measured per-cell bbox (cellSize=362):
-        // Down (Idle/WalkA/WalkB) foot_norm=0.0028/0.0028/0.0028, cx_norm=
-        // 0.554/0.553/0.570 -> avg (0.559, 0.003); Left foot_norm=0.022/0.030/
-        // 0.022, cx_norm=0.547/0.559/0.547 -> avg (0.551, 0.025); Right
-        // foot_norm=0.0028 (all 3), cx_norm=0.483/0.471/0.471 -> avg (0.475,
-        // 0.003); Up foot_norm=0.204/0.188/0.185, cx_norm=0.500/0.506/0.511 ->
-        // avg (0.506, 0.192). Rounded to 2 decimals below, same precision
-        // Mage's own pivots use.
+        // 2026-09-16 (character-floating-above-tile bug, docs/HANDOFF.md):
+        // replaced the hand-picked per-row pivot dictionary (and the
+        // Mage-specific duplicate grid-slicing logic this method used to
+        // keep separate "to guarantee zero behavior change for Mage") with
+        // the shared CharacterGridSheetImporter.BuildGridSlices, now that
+        // both classes need the exact same per-frame-measured-pivot
+        // algorithm - see CharacterFootPivotCalculator's doc comment for why
+        // the old "Right" row pivot (0.48, 0.00) was wrong (corrupted by a
+        // cross-cell bleed artifact from the "Up" row's own art).
         private static void ConfigureWarriorCharacterSheet()
         {
             const int textureWidth = 1086;
             const int textureHeight = 1448;
             const int cellSize = 362;
+            string path = SapphireSceneBuilder.RootArtDir + "/WarriorTopdownGridSheet.png";
 
             ArtImportConfigurator.ConfigureMultiSprite(
-                SapphireSceneBuilder.RootArtDir + "/WarriorTopdownGridSheet.png",
+                path,
                 ppu: 302,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
                 maxSize: null,
-                slices: BuildTopdownGridSlices("Warrior", textureWidth, textureHeight, cellSize));
-        }
-
-        // Shared by BuildWarriorCharacterSheet; the equivalent Mage-only
-        // logic in ArtImportConfigurator.ConfigureCharacterSheets keeps its
-        // own private copy (unchanged, to guarantee zero behavior change for
-        // Mage) rather than being generalized to call this - see this
-        // method's own doc for why the two independently reaching the same
-        // pivot values is intentional, not risky duplication.
-        internal static IEnumerable<(string name, Rect rect, Vector2 pivot)> BuildTopdownGridSlices(
-            string classNamePrefix, int textureWidth, int textureHeight, int cellSize)
-        {
-            string[] rowNames = { "Down", "Left", "Right", "Up" };
-            string[] colNames = { "Idle", "WalkA", "WalkB" };
-
-            var pivotByRow = new Dictionary<string, Vector2>
-            {
-                ["Down"] = new Vector2(0.56f, 0.00f),
-                ["Left"] = new Vector2(0.55f, 0.02f),
-                ["Right"] = new Vector2(0.48f, 0.00f),
-                ["Up"] = new Vector2(0.51f, 0.19f),
-            };
-
-            if (textureWidth != cellSize * colNames.Length || textureHeight != cellSize * rowNames.Length)
-            {
-                throw new Exception($"{classNamePrefix}TopdownGridSheet grid size mismatch: expected {cellSize * colNames.Length}x{cellSize * rowNames.Length}, got {textureWidth}x{textureHeight}");
-            }
-
-            var result = new List<(string, Rect, Vector2)>();
-            for (int r = 0; r < rowNames.Length; r++)
-            {
-                Vector2 pivot = pivotByRow[rowNames[r]];
-                float yBottom = textureHeight - (r + 1) * cellSize;
-
-                for (int c = 0; c < colNames.Length; c++)
-                {
-                    float xLeft = c * cellSize;
-                    string name = $"{classNamePrefix}_{rowNames[r]}_{colNames[c]}";
-                    result.Add((name, new Rect(xLeft, yBottom, cellSize, cellSize), pivot));
-                }
-            }
-
-            return result;
+                slices: CharacterGridSheetImporter.BuildGridSlices(path, "Warrior", textureWidth, textureHeight, cellSize));
         }
 
         // 1536x1024, 3x2 equal-grid CELLS (512x512, matches the commissioned

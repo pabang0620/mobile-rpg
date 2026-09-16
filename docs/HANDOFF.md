@@ -2,7 +2,97 @@
 
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향). 상세 근거는 `docs/DECISIONS.md` 참고, 여기는 "지금 코드가 실제로 어떤 상태인가"만 요약한다.
 
-## 2026-09-15 (최신): 스킬 캐스트 중 "캐릭터가 흔들린다" 버그 - 원인은 VFX 아틀라스 프레임별 알파 중심 불일치
+## 2026-09-16 (최신): 캐릭터 접지 실측 재보정 + 스킬 이펙트 클리핑/알파결함 실측 + 스킬명 팝업 텍스트 제거
+
+사용자 리포트 3건: (A) "캐릭터가 타일에 붙어있지 않고 공중에 떠 보인다 -
+특히 오른쪽을 볼 때 심하다", (B) "스킬들이 뭔가 잘린다" + "스킬 배경에
+눈금판(체커보드)이 같이 나온다", (C) "스킬 쓸 때 캐릭터 머리 위에 텍스트
+나오는 것도 없애줘". 전부 PIL/scipy 실측(`tools/art_qa/`) 기반으로 조사·
+수정했다. 근거·산출물 상세는 `docs/ASSET_STATUS.md` 2026-09-16 항목.
+
+**(A) 원인**: `ArtImportConfigurator.BuildMageGridSlices`/
+`WarriorArtImportConfigurator.BuildTopdownGridSlices`가 방향(행)마다 하나의
+손으로 고른 pivot 상수를 12개 셀(4방향x3프레임) 전체에 똑같이 적용하고
+있었다. 그 상수 자체가 예전에 한 번 측정한 naive alpha bbox 기반이었는데,
+Right(오른쪽) 행의 bbox가 바로 아래 Up(위쪽) 행의 후드/머리카락 아트가 셀
+경계를 살짝 넘어 그려진 파편(연결요소 분석으로 확인 - mage 229-334px,
+warrior 175-203px, 본체 38,000-44,000px에 비하면 아주 작음)까지 포함해
+측정됐던 것 - 그래서 "발 위치"가 실제보다 셀 맨 아래(0.00)로 잘못 계산돼
+있었다(실제 발 위치는 mage 0.17, warrior 0.11 정도 위). 캐릭터는 항상 타일
+CENTER에 배치되므로(`GridWorldConversion.GridToWorld`), pivot이 실제 발
+위치보다 아래로 잡혀 있으면 렌더링된 발이 타일 중심보다 그만큼 위에
+떠 보인다 - 사용자가 "오른쪽 볼 때 특히 심하다"고 한 것과 정확히 일치.
+
+**(A) 수정**: ① 원본 PNG 정리 - `tools/art_qa/clean_character_sheets.py`로
+각 셀의 가장 큰 alpha 연결요소만 남기고 나머지(인접 셀 침범 파편)를
+투명 처리(mage 911px, warrior 1879px 제거, 본체 픽셀은 무변경). ②
+`Domain/Character/CharacterFootPivotCalculator.cs`(신설, `VfxFramePivotCalculator`
+패턴 참고하되 "발 위치"(alpha bbox 최하단) 기준으로 다르게 계산, 순수 C#이라
+단위테스트 가능) + `Editor/CharacterGridSheetImporter.cs`(신설, mage/warrior
+공용 - 이전엔 Mage `BuildMageGridSlices`와 Warrior `BuildTopdownGridSlices`가
+거의 동일한 로직을 각자 유지하고 있던 것을 하나로 통합) - 12셀 전부 **프레임별
+개별** pivot을 실제 정리된 PNG에서 직접 계산해 대입(행 단위 평균이 아니라
+idle/walkA/walkB 각자 - 걷기 프레임끼리 발 위치가 흔들리면 애니메이션 중
+들썩임으로 보일 수 있어서). 실측 결과 프레임 간 spread는 최대 0.83
+percentage point로 무시할 수준(들썩임 없음 확인).
+
+**(B) VFX 클리핑 실측**: `MageSkillVfxAtlas.png`(8x5, 5개 행 전부) +
+`Warrior/WarriorSkillVfxAtlas.png`(8x5, 4개 행) - alpha>120(명백한 콘텐츠)
+기준으로도 각각 40/40, 14/40 프레임이 셀 경계에 닿거나 넘어감. 확대
+크롭으로 직접 확인한 결과 얼음창·번개 문양이 수평선으로 뭉텅 잘리는 등
+하드 컷(옅은 잔광 번짐이 아님) - 소스에 남은 픽셀이 없어 패딩으로 복구 불가,
+**재생성 필요** (이번엔 건드리지 않음, 상세는 ASSET_STATUS.md). 반면
+`ManaShieldPadded.png`/`ThunderFieldPadded.png`/`Warrior/WarriorGroundSlamPadded.png`는
+같은 기준 0-2/8 프레임만 1-2px 수준 - 크롭 확인 결과 이펙트 본체는 완전한
+형태(옅은 글로우 번짐만 경계에 닿음)라 방치.
+
+**(B) 알파채널 결함 (클리핑보다 심각, 확정)**: `MageDirectionalPadded.png`는
+PNG 자체가 colortype=2(RGB, 알파 없음)이고 배경이 회색/흰색 체커보드
+무늬로 그대로 구워져 있다(전체 배경 96/96 코너 샘플이 alpha=255 - 나머지
+5개 VFX 텍스처는 전부 colortype=6(RGBA)에 배경 알파도 0에 가까워 정상).
+실제 게임 스크린샷(`vfx_mage_icespike.png`, `vfx_mage_lightningspear.png`)으로
+이 체커보드 사각형이 스킬 이펙트 배경에 그대로 렌더링되는 것을 확인 -
+사용자가 말한 "스킬 배경에 눈금판이 같이 나온다"가 바로 이것이다. 이
+파일이 텔레포트/블링크·고드름·번개창 3개 스킬의 VFX를 담당한다
+(`SkillVfxImporter.ConfigureLibrary`의 frames[8..15]/[24..31]/[32..39]).
+알파 데이터 자체가 없어 크롭/패딩으로 복구 불가 - **재생성 필요, 최우선**.
+`wrapMode`(Clamp 여부)는 6개 텍스처 전부 강제 재수입으로 직접 확인한 결과
+이미 기존 .meta에 Clamp로 저장돼 있어 클리핑의 원인이 아니었다 - 그래도
+`SkillVfxImporter.cs`/`WarriorSkillVfxImporter.cs`에 `importer.wrapMode =
+TextureWrapMode.Clamp`를 명시적으로 추가는 해뒀다(기존 동작 무변경, 방어적
+개선).
+
+**(C) 수정**: `SkillCastFeedback.cs`의 `SpawnLabel`/`RiseAndFade`(TextMesh로
+캐릭터 머리 위에 스킬 이름을 띄우고 위로 상승·페이드시키던 로직) 완전
+제거. 스프라이트 색상 플래시 피드백은 그대로 유지(사용자는 텍스트만
+지적함). `PlayCast(skillName)`의 `skillName` 매개변수는 호출부
+(`RadialSkillMenu`) 수정을 피하려 시그니처만 유지하고 내부에서 미사용.
+
+**검증**: Unity CLI(6000.5.9f1) 컴파일 0에러, EditMode 69/69 PASS(기존 64 +
+`CharacterFootPivotCalculatorTests` 신규 5건). `SapphireSceneBuilder.BuildEverything`
+-> `SapphireBuildPlayer.BuildWindows` 재빌드 성공. 임시 디버그 훅
+(`PlayerGridController.DebugForceFacing/DebugForceWalking`,
+`SceneComposer.ApplyDebugScreenshotArgs`가 파싱하는 `-sapphire-face=<dir>`/
+`-sapphire-walk=<dir>`/`-sapphire-cast-skill=<index>`/`-sapphire-cast-basic`
+커맨드라인 인자 - SendKeys 없이 스크린샷 검증용, LoginScreenController의
+기존 `-sapphire-class=` 컨벤션과 동일한 패턴)으로 아래 스크린샷을 찍은 뒤
+`git diff` 0 확인하고 완전히 제거(`SceneComposer.cs`/`PlayerGridController.cs`는
+최종적으로 이 세션 시작 시점과 동일):
+- `generated-images/diagnostics/ground_{mage,warrior}_{down,left,right,up}.png`
+  (8장) - 4방향 전부 발이 타일 중앙(길 텍스처 중심)에 안정적으로 붙어있음을
+  직접 눈으로 확인, 특히 right 방향이 다른 방향과 동일한 높이로 개선됨.
+- `walk_mage_right_2.png`, `walk_warrior_right_1.png` - 걷기 애니메이션 중
+  들썩임 없음 확인(PIL 프레임별 spread 실측과 일치).
+- `vfx_warrior_whirlwind*.png`/`vfx_warrior_shieldblock.png`/
+  `vfx_warrior_groundslam*.png`/`vfx_mage_icespike.png`/
+  `vfx_mage_lightningspear.png` - warrior 3종은 클리핑이 뚜렷이 보이지
+  않는 축소 렌더 크기에서도 정상 재생 확인(원본 픽셀 결함은 실측 수치가
+  근거), mage IceSpike/LightningSpear 2종은 체커보드 배경 결함이 실제
+  게임 화면에 그대로 나타나는 것을 확인(재생성 전까지는 계속 보임).
+- `vfx_warrior_groundslam_notext.png`, `vfx_mage_shield_notext.png` -
+  텍스트 팝업 제거 후 재확인, 스킬 이름 텍스트 더 이상 나타나지 않음.
+
+## 2026-09-15: 스킬 캐스트 중 "캐릭터가 흔들린다" 버그 - 원인은 VFX 아틀라스 프레임별 알파 중심 불일치
 
 사용자 리포트: "스킬들이 법사도 그렇고 전사도 그렇고 캐릭터가 정가운데 있어야하는데 엄청 흔들린다".
 
