@@ -70,27 +70,34 @@ namespace Sapphire.EditorTools
             // (824x854): runs of 488-556px, median 541 -> 541/824 = 0.657.
             const float skillOpeningFraction = 0.627f;
             const float basicAttackOpeningFraction = 0.657f;
-            // Spec: icon diameter ~= 62% of the frame's inner opening diameter
-            // (not 62% of the full button - the previous inset=size*0.2
-            // convention sized icons at 60% of the FULL button, spilling onto
-            // the frame's own ring art).
-            const float iconToOpeningRatio = 0.62f;
+            // 2026-09-16: user reported the icons inside the skill buttons
+            // read as too small - raised from 0.62 (62% of the frame's
+            // inner opening) to 0.88 so the icon nearly fills the opening
+            // while still leaving a sliver of the ring frame visible around
+            // it (not 1.0, which would touch/overlap the ring art itself).
+            const float iconToOpeningRatio = 0.88f;
             float skillIconSize = skillButtonSize * skillOpeningFraction * iconToOpeningRatio;
             float basicAttackIconSize = basicAttackSize * basicAttackOpeningFraction * iconToOpeningRatio;
 
             Sprite attackIcon = LoadSkillIcon(iconSheetPath, "SkillIcons_BasicAttack");
             Button attackButton = BuildRadialButton(rootGo, basicAttackFrameSprite, "AttackButton", Vector2.zero, basicAttackSize, attackIcon, basicAttackIconSize);
 
-            // Fan: all 5 buttons, radius 172, arc 80deg-200deg (120deg span, 4
-            // gaps of 30deg each - 0deg = screen-right, angles increase
-            // counter-clockwise/upward). Adjacent center-to-center chord =
-            // 2*172*sin(15deg) = 88.98 units > the 80-unit button diameter
-            // (the distance two same-size circles need to just touch) for
-            // every adjacent pair, a ~9-unit clearance gap - verified below,
-            // not assumed. skills[0] sits at 80deg (nearest the top of the
-            // fan) through skills[4] at 200deg (nearest the bottom), matching
-            // the 1-5 key bindings in RadialSkillMenu.Update in that same order.
-            const float skillRadius = 172f;
+            // Fan: all 5 buttons, radius 163 (2026-09-16: brought in from 172
+            // per user report "기본공격과 스킬들 사이에 간격이 너무 멀어" -
+            // 163 is close to the geometric floor for this arc: any smaller
+            // and adjacent skill buttons start touching, see below), arc
+            // 80deg-200deg (120deg span, 4 gaps of 30deg each - 0deg =
+            // screen-right, angles increase counter-clockwise/upward).
+            // Adjacent center-to-center chord = 2*163*sin(15deg) = 84.37
+            // units > the 80-unit button diameter (the distance two same-
+            // size circles need to just touch) for every adjacent pair, a
+            // ~4.4-unit clearance gap - verified below, not assumed (this is
+            // tighter than the old 172's ~9-unit clearance, deliberately,
+            // to close the gap as much as the geometry allows). skills[0]
+            // sits at 80deg (nearest the top of the fan) through skills[4]
+            // at 200deg (nearest the bottom), matching the 1-5 key bindings
+            // in RadialSkillMenu.Update in that same order.
+            const float skillRadius = 163f;
             const float fanArcStartDeg = 80f;
             const float fanArcEndDeg = 200f;
             const int fanCount = 5;

@@ -59,9 +59,12 @@ namespace Sapphire.EditorTools
             var textGo = new GameObject("Text", typeof(Text));
             textGo.transform.SetParent(headerGo.transform, false);
             var textRect = textGo.GetComponent<RectTransform>();
+            // 2026-09-16: user asked the title text specifically (not the
+            // underline) to sit ~30px further right to line up with the
+            // icon grid's column start below it - offsetMin.x 8 -> 38.
             textRect.anchorMin = new Vector2(0f, 0.25f);
             textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = new Vector2(8f, 0f);
+            textRect.offsetMin = new Vector2(38f, 0f);
             textRect.offsetMax = Vector2.zero;
             var text = textGo.GetComponent<Text>();
             text.font = VillageHubUiBuilder.LoadKoreanFont();
