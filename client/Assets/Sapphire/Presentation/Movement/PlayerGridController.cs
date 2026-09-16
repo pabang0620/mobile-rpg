@@ -25,11 +25,12 @@ namespace Sapphire.Presentation.Movement
         // null means "no direction was held last frame".
         private GridDirection? previousHeldDirection;
 
-        // 2026-09-16 (movement responsiveness fix, docs/HANDOFF.md): remembers
-        // the last direction held while mover.IsMoving was blocking input, so
-        // a quick tap-then-release that happens entirely inside the current
-        // move's animation window still fires the instant that window clears
-        // instead of being silently dropped. See GridMoveInputBuffer's doc.
+        // 2026-09-16 (movement responsiveness fix, later corrected same day -
+        // see GridMoveInputBuffer's doc): only ever holds the direction held
+        // on the CURRENT frame, null the instant the key is released, so
+        // releasing a key while a move is still animating stops the next
+        // move from starting instead of letting a stale direction fire once
+        // more when the mover frees up.
         private GridDirection? bufferedDirection;
 
         public GridMover Mover => mover;

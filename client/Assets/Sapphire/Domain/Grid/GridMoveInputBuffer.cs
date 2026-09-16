@@ -6,36 +6,42 @@ namespace Sapphire.Domain.Grid
     /// unit-testable without a MonoBehaviour/Keyboard dependency
     /// (2026-09-16, movement responsiveness fix, docs/HANDOFF.md).
     ///
-    /// Bug this fixes: while GridMover.IsMoving is true, PlayerGridController
-    /// still polls input every frame but previously discarded it entirely -
-    /// a direction key tapped and released wholly inside the current move's
-    /// blocked window (~move duration + step pause) was silently lost,
-    /// because by the time Update finally acted on input again (the frame
-    /// IsMoving turns false), the key was already back up. Rapid alternating
-    /// taps ("옆 아래 옆 아래") felt unresponsive as a result - the player had
-    /// to keep a key held down until that exact frame for the next step to
-    /// register.
+    /// Bug this originally fixed: while GridMover.IsMoving is true,
+    /// PlayerGridController still polls input every frame but previously
+    /// discarded it entirely - a direction key tapped and released wholly
+    /// inside the current move's blocked window (~move duration + step
+    /// pause) was silently lost. Rapid alternating taps ("옆 아래 옆 아래")
+    /// felt unresponsive as a result.
     ///
-    /// Fix: remember the most recently held direction every frame
-    /// (<see cref="UpdateBuffer"/>), and once the mover is free again, prefer
-    /// whatever is held RIGHT NOW but fall back to that remembered value
-    /// (<see cref="ResolveMoveDirection"/>) instead of requiring the key to
-    /// still be down at that exact frame - the standard input-buffer pattern
-    /// grid-snap movement games (Pokemon-style) use.
+    /// 2026-09-16 correction: the first version of <see cref="UpdateBuffer"/>
+    /// kept the last held direction alive across every frame where no key was
+    /// held, instead of clearing it the instant the key came up. That meant a
+    /// player who simply held a direction and released it WHILE the current
+    /// move's animation was still playing (the completely normal "release to
+    /// stop" case, not a deliberate queued tap) had that stale direction sit
+    /// in the buffer and fire one extra move the moment the mover became free
+    /// - visible as ~0.5s / 1-2 extra tiles of movement after release. Because
+    /// nothing in the per-frame state can distinguish "a fresh tap queued
+    /// during the blocked window" from "was held since before, then released
+    /// mid-window", the buffer no longer remembers anything past release: it
+    /// only ever reflects the direction held on the current frame (see
+    /// <see cref="UpdateBuffer"/>), so releasing a key stops the next move
+    /// from starting immediately, at the cost of no longer catching taps that
+    /// happen to end inside the blocked window.
     /// </summary>
     public static class GridMoveInputBuffer
     {
         /// <summary>
         /// Call once per frame, every frame (including frames where the mover
         /// is still busy), with this frame's held state. Returns the value the
-        /// buffer should hold going into next frame: the freshly held
-        /// direction while a key is down, otherwise whatever was already
-        /// buffered (unchanged - a buffered press survives frames with no key
-        /// held until it gets consumed by <see cref="ResolveMoveDirection"/>).
+        /// buffer should hold going into next frame: the currently held
+        /// direction while a key is down, otherwise null - the buffer never
+        /// outlives the frame a key was released on, so <paramref
+        /// name="currentBuffer"/> is intentionally ignored once the key is up.
         /// </summary>
         public static GridDirection? UpdateBuffer(GridDirection? currentBuffer, bool isDirectionHeld, GridDirection heldDirection)
         {
-            return isDirectionHeld ? heldDirection : currentBuffer;
+            return isDirectionHeld ? heldDirection : null;
         }
 
         /// <summary>
