@@ -23,7 +23,7 @@ namespace Sapphire.EditorTools
         {
             ConfigureMovementStick();
             ConfigureMenuPanelOdin();
-            ConfigureMenuSectionDivider();
+            ConfigureMenuSectionDividerSingle();
             ConfigureRegionNameplate();
             ConfigureButtons();
             ConfigureMenuHamburgerIcon();
@@ -125,30 +125,29 @@ namespace Sapphire.EditorTools
         // ConfigureRegionNameplate below). Old asset + .meta removed via git rm
         // once both call sites were confirmed switched over (grep for zero
         // remaining references).
-        private static void ConfigureMenuSectionDivider()
+        // 2026-09-16: replaced the two-piece fading-line-plus-dot divider
+        // (MenuSectionDivider.png, left/right halves flanking the title) with
+        // a single continuous line - user found the two-piece version
+        // confusing ("선이 왜 좌우 나뉘어져있냐") and reported it extending
+        // past the panel. New asset (procedural PIL, not AI-generated - a
+        // tapering line doesn't need painterly detail and this avoids the
+        // asymmetry AI generation kept introducing on straight UI elements)
+        // is one uninterrupted stroke, thin at both ends and thickest at
+        // the horizontal center - see VillageHubMenuHeaderBuilder for how it
+        // now sits, full contentWidth, with the title text overlaid on top.
+        private static void ConfigureMenuSectionDividerSingle()
         {
-            // UI: section-header divider, 1200x60, 2 equal cells side by side
-            // (build_ui_kit.py's build_menu_section_divider: target_cell_w=200,
-            // target_strip_h=20, * SCALE(3) native = 600x60 per cell - an exact
-            // generator-parameter match, no measurement ambiguity). Left cell
-            // fades in from the outer edge and ends in a small dot near the
-            // panel's center gap; right cell mirrors it. Both
-            // Image.Type.Simple (no 9-slice - a fading line can't be
-            // meaningfully stretched without breaking the fade), used flanking
-            // a centered section-title Text (see
-            // VillageHubMenuBuilder.BuildOdinSectionHeader).
-            var centerPivot = new Vector2(0.5f, 0.5f);
-            ArtImportConfigurator.ConfigureMultiSprite(
-                SapphireSceneBuilder.UiArtDir + "/MenuSectionDivider.png",
-                ppu: ArtImportConfigurator.UiKitV3PixelsPerUnit,
+            // 1200x60 canvas, single continuous horizontal stroke tapering
+            // from ~1px at both ends to ~9px at the center; alpha also fades
+            // to 0 at the very ends. Image.Type.Simple (no 9-slice - the
+            // taper/fade profile isn't something a 9-slice stretch can
+            // preserve), stretched non-uniformly to contentWidth at runtime.
+            ArtImportConfigurator.ConfigureSingleSprite(
+                SapphireSceneBuilder.UiArtDir + "/MenuSectionDividerSingle.png",
+                border: Vector4.zero,
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
-                maxSize: null,
-                slices: new[]
-                {
-                    ("MenuSectionDivider_Left", new Rect(0, 0, 600, 60), centerPivot),
-                    ("MenuSectionDivider_Right", new Rect(600, 0, 600, 60), centerPivot),
-                });
+                pixelsPerUnit: ArtImportConfigurator.UiKitV3PixelsPerUnit);
         }
 
         private static void ConfigureRegionNameplate()

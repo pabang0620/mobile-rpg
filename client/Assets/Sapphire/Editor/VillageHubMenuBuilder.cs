@@ -260,8 +260,7 @@ namespace Sapphire.EditorTools
 
             Sprite hamburgerSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuHamburgerIcon.png");
             Sprite panelSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuPanelDark.png");
-            Sprite dividerLeftSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionDivider.png", "MenuSectionDivider_Left");
-            Sprite dividerRightSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionDivider.png", "MenuSectionDivider_Right");
+            Sprite dividerSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/MenuSectionDividerSingle.png");
             Sprite lockSprite = VillageHubUiBuilder.LoadNamedSprite(SapphireSceneBuilder.UiArtDir + "/MenuLockBadge.png", "MenuLockBadge");
 
             var openGo = new GameObject("MainMenuButton", typeof(Image), typeof(Button));
@@ -345,7 +344,7 @@ namespace Sapphire.EditorTools
                 // would push 시스템's header up into 모험's last icon row (the
                 // "겹침 검증 통과" requirement this same task item ends with
                 // would fail).
-                VillageHubMenuHeaderBuilder.BuildOdinSectionHeader(panelGo, dividerLeftSprite, dividerRightSprite, section.Title, cursorY, contentWidth);
+                VillageHubMenuHeaderBuilder.BuildOdinSectionHeader(panelGo, dividerSprite, section.Title, cursorY, contentWidth);
                 cursorY -= OdinHeaderHeight + OdinHeaderToItemsGap;
 
                 for (int r = 0; r < rows; r++)

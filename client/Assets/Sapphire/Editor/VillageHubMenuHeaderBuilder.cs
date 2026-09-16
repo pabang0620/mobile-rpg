@@ -20,14 +20,19 @@ namespace Sapphire.EditorTools
     {
         // 2026-09-15 (gemless MapleStory-M rebuild): dropped the
         // MenuSectionHeader.png banner backdrop entirely - a section header
-        // is now just a centered title with a short fading divider line on
-        // each side (MenuSectionDivider_Left/_Right), no gold plate. Divider
-        // width is a fixed on-screen size (not stretched - a fading line
-        // would break if 9-sliced/stretched), chosen so both dividers plus a
-        // generous center gap for the title fit inside contentWidth for
-        // every current section title (성장/모험/시스템, all short).
-        private const float DividerWidth = 70f;
-        private const float DividerHeight = 7f;
+        // is now just a centered title with a divider line underneath, no
+        // gold plate.
+        //
+        // 2026-09-16: that divider was originally two separate fading-line-
+        // plus-dot sprite halves flanking the title (MenuSectionDivider_Left/
+        // _Right). User found the two-piece split confusing ("선이 왜 좌우
+        // 나뉘어져있냐") and reported it reading as extending past the
+        // panel, and asked for one connected line, thicker toward the
+        // middle. Replaced with MenuSectionDividerSingle.png - one
+        // continuous stroke spanning the full header width, tapering from
+        // ~1px at both ends to ~9px at the horizontal center - rendered
+        // full-width underneath the title instead of two halves flanking it.
+        private const float DividerHeight = 10f;
 
         // 2026-09-16 (header/content overflow fix, docs/HANDOFF.md): this
         // used to shrink the header by an extra 40 units on top of
@@ -43,7 +48,7 @@ namespace Sapphire.EditorTools
         // this "fix" shipped. Now that OdinContentMargin itself uses the
         // correct border, the header needs no separate reduction - it uses
         // the exact same contentWidth as the icon grid below it.
-        internal static void BuildOdinSectionHeader(GameObject panelGo, Sprite dividerLeftSprite, Sprite dividerRightSprite, string title, float topY, float contentWidth)
+        internal static void BuildOdinSectionHeader(GameObject panelGo, Sprite dividerSprite, string title, float topY, float contentWidth)
         {
             float headerWidth = contentWidth;
 
@@ -75,19 +80,19 @@ namespace Sapphire.EditorTools
             text.text = title;
             text.raycastTarget = false;
 
-            float halfLineWidth = headerWidth * 0.5f;
-            BuildDividerHalf(headerGo, dividerLeftSprite, "UnderlineLeft", new Vector2(0f, 0f), halfLineWidth);
-            BuildDividerHalf(headerGo, dividerRightSprite, "UnderlineRight", new Vector2(1f, 0f), halfLineWidth);
+            BuildUnderline(headerGo, dividerSprite, headerWidth);
         }
 
-        private static void BuildDividerHalf(GameObject headerGo, Sprite dividerSprite, string name, Vector2 anchor, float width)
+        private static void BuildUnderline(GameObject headerGo, Sprite dividerSprite, float width)
         {
-            var go = new GameObject(name, typeof(Image));
+            var go = new GameObject("Underline", typeof(Image));
             go.transform.SetParent(headerGo.transform, false);
             var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = anchor;
-            rect.anchorMax = anchor;
-            rect.pivot = anchor;
+            // Anchored at the header's own bottom-left (0,0), spanning the
+            // full header width in one piece - no left/right split.
+            rect.anchorMin = new Vector2(0f, 0f);
+            rect.anchorMax = new Vector2(0f, 0f);
+            rect.pivot = new Vector2(0f, 0f);
             rect.sizeDelta = new Vector2(width, DividerHeight);
             rect.anchoredPosition = new Vector2(0f, 3f);
             var image = go.GetComponent<Image>();
