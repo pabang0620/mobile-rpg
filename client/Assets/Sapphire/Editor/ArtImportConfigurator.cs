@@ -29,7 +29,9 @@ namespace Sapphire.EditorTools
             ConfigureGroundAtlas();
             ConfigureVillagePropsAtlas();
             ConfigureSlimeKingdomAtlas();
+            ConfigureSlimeKingdomExpansionAtlases();
             ConfigureSlimeKingdomGroundTiles();
+            ConfigureSlimeKingdomSeamlessTiles();
             ConfigureCharacterSheets();
             ConfigureMageAttackSheet();
             ConfigureUiFrames();
@@ -94,6 +96,32 @@ namespace Sapphire.EditorTools
             }
         }
 
+        private static void ConfigureSlimeKingdomExpansionAtlases()
+        {
+            string[] propNames =
+            {
+                "Slime2_House", "Slime2_Shop", "Slime2_Fountain", "Slime2_Lamp",
+                "Slime2_BridgeH", "Slime2_BridgeV", "Slime2_Cliff", "Slime2_Hedge",
+                "Slime2_Cave", "Slime2_Sign", "Slime2_Flowers", "Slime2_PalaceArch",
+            };
+            var propSlices = new (string, Rect, Vector2)[propNames.Length];
+            for (int i = 0; i < propNames.Length; i++)
+                propSlices[i] = (propNames[i], new Rect((i % 4) * 362f, (2 - i / 4) * 362f, 362f, 362f), new Vector2(0.5f, 0.5f));
+            ConfigureMultiSprite(SapphireSceneBuilder.WorldArtDir + "/SlimeKingdomProps2.png", 362f, FilterMode.Bilinear, false, null, propSlices);
+
+        }
+
+        private static void ConfigureSlimeKingdomSeamlessTiles()
+        {
+            string root = SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/SeamlessV4/";
+            foreach (string family in new[] { "Grass", "Dirt", "Water", "Stone", "Shore" })
+            {
+                int count = family == "Shore" ? 32 : 4;
+                for (int i = 0; i < count; i++)
+                    ConfigureGroundTileSprite(root + family + i + ".png", 512, 512f);
+            }
+        }
+
         // 2026-09-15: one shared PPU for all 6 individually-imported ground
         // tiles (see ConfigureGroundAtlas below for why this isn't 512).
         private const float GroundTilePpu = 508f;
@@ -134,7 +162,7 @@ namespace Sapphire.EditorTools
         // edge-bleed artifact this split is meant to remove), Max Size 256,
         // uncompressed, FullRect mesh (a plain rectangular tile doesn't need
         // Tight's alpha-hull trim), PPU 508 (see ConfigureGroundAtlas above).
-        private static void ConfigureGroundTileSprite(string path)
+        private static void ConfigureGroundTileSprite(string path, int maxSize = 256, float pixelsPerUnit = GroundTilePpu)
         {
             var importer = AssetImporter.GetAtPath(path) as TextureImporter;
             if (importer == null)
@@ -144,7 +172,7 @@ namespace Sapphire.EditorTools
 
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Single;
-            importer.spritePixelsPerUnit = GroundTilePpu;
+            importer.spritePixelsPerUnit = pixelsPerUnit;
 
             // spriteAlignment/spriteMeshType/spritePivot are not direct
             // TextureImporter properties (unlike spriteImportMode/
@@ -161,7 +189,7 @@ namespace Sapphire.EditorTools
             importer.filterMode = FilterMode.Bilinear;
             importer.mipmapEnabled = false;
             importer.wrapMode = TextureWrapMode.Clamp;
-            importer.maxTextureSize = 256;
+            importer.maxTextureSize = maxSize;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.alphaIsTransparency = importer.DoesSourceTextureHaveAlpha();
             importer.SaveAndReimport();
