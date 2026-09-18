@@ -186,23 +186,23 @@ namespace Sapphire.EditorTools
             collision.SetTile(new Vector3Int(13, 7, 0), blocker);
 
             // Village Props (moved from SlimeKingdom)
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 6, 12, 1.8f, 1);
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "elder_house", "Slime2_House", 18, 12,
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 6, 13, 1.8f, 1);
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "elder_house", "Slime2_House", 18, 13,
                 "촌장님의 집이다. 문이 굳게 잠겨 있다.", null, 1.8f);
 
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_shop", "Slime2_Shop", 8, 8,
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_shop", "Slime2_Shop", 8, 5,
                 "잡화점이다. 상인이 아직 출근하지 않은 것 같다.", null, 1.8f);
                 
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_fountain", "Slime2_Fountain", 12, 9,
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_fountain", "Slime2_Fountain", 12, 11,
                 "마을의 맑은 분수다. 마음이 편안해진다.", null, 1.55f);
 
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 10, 6, .9f, "Lamp1", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 14, 6, .9f, "Lamp2", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 7, 7, .8f, "Flowers1", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 17, 7, .8f, "Flowers2", 1);
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 10, 10, .9f, "Lamp1", 1);
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 14, 10, .9f, "Lamp2", 1);
+            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 5, 12, .8f, "Flowers1", 1);
+            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 19, 12, .8f, "Flowers2", 1);
             
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 18, 9, 1.5f, 1);
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 6, 9, 1.5f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 16, 5, 1.5f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 4, 5, 1.5f, 1);
 
             // Gate to Slime Forest (Top exit)
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "slime_kingdom_gate", "SlimeProp_Gate", SapphireSceneBuilder.SpawnX, SapphireSceneBuilder.MapHeight - 1,

@@ -240,7 +240,7 @@ namespace Sapphire.EditorTools
             var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(SkillMotionPlayer), typeof(PlayerGridController));
             playerGo.transform.position = CellCenter(spawnX, spawnY);
             playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
-            playerGo.GetComponent<SpriteRenderer>().sortingOrder = 0;
+            playerGo.GetComponent<SpriteRenderer>().sortingOrder = 10;
 
             var spriteAnimator = playerGo.GetComponent<DirectionalSpriteAnimator>();
             AssignField(spriteAnimator, "idleUp", idleUp);
