@@ -127,25 +127,5 @@ namespace Sapphire.Domain.Grid
         /// <summary>The direction to actually move in, or null if nothing is held.</summary>
         public static GridDirection? TopDirection(IReadOnlyList<GridDirection> stack)
             => stack != null && stack.Count > 0 ? stack[0] : (GridDirection?)null;
-
-        /// <summary>
-        /// 2026-09-16, turn-before-move: when the resolved input direction differs
-        /// from the actor's current facing, this step must turn the actor in place
-        /// (facing only, no tile moved) instead of moving - the classic grid-game
-        /// rule where the first press after a direction change spends itself
-        /// rotating, and only a direction that already matches facing actually
-        /// steps. A short tap in a new direction therefore never moves; holding it
-        /// (or pressing it again) resolves to Move once facing has caught up from
-        /// the previous TurnOnly step.
-        /// </summary>
-        public static StepAction ResolveStepAction(GridDirection inputDirection, GridDirection currentFacing)
-            => inputDirection == currentFacing ? StepAction.Move : StepAction.TurnOnly;
-    }
-
-    /// <summary>Outcome of <see cref="GridMoveInputBuffer.ResolveStepAction"/>.</summary>
-    public enum StepAction
-    {
-        Move,
-        TurnOnly
     }
 }

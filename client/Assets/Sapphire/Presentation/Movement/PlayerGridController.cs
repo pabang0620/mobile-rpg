@@ -94,20 +94,6 @@ namespace Sapphire.Presentation.Movement
 
             GridDirection direction = moveDirection.Value;
 
-            // 2026-09-16, turn-before-move: if the resolved direction differs from
-            // the current facing, this step turns in place only (facing flips
-            // instantly, no tile moved) - the mover stays free (IsMoving stays
-            // false) so the very next step, once the held/re-pressed direction
-            // matches the now-updated facing, actually moves. See
-            // GridMoveInputBuffer.ResolveStepAction's doc for the full rule and
-            // GridMoveInputBufferTests for the locked-in scenarios.
-            if (GridMoveInputBuffer.ResolveStepAction(direction, mover.Facing) == StepAction.TurnOnly)
-            {
-                mover.TurnToFace(direction);
-                spriteAnimator?.SetFacing(mover.Facing);
-                return;
-            }
-
             // Was this direction already the (or a) held direction last frame? If
             // so this move continues an existing hold; if not, it is a freshly
             // pressed tap (even if some OTHER direction was held before) and gets
