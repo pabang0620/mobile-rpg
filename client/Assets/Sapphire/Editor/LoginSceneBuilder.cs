@@ -34,8 +34,7 @@ namespace Sapphire.EditorTools
 
             GameObject canvasGo = CharacterFlowUiScaffold.BuildEventSystemAndCanvas();
 
-            Sprite background = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/TitleBackground.png");
-            CharacterFlowUiScaffold.BuildFullScreenBackground(canvasGo, background);
+            CharacterFlowUiScaffold.BuildFullScreenVideoBackground(canvasGo, "Assets/Sapphire/Art/Video/login_village_plaza_loop.mp4");
 
             Sprite logo = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/TitleLogo.png");
             BuildLogo(canvasGo, logo);

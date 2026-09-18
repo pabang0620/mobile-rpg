@@ -32,7 +32,7 @@ namespace Sapphire.EditorTools
             return canvasGo;
         }
 
-        internal static Image BuildFullScreenBackground(GameObject canvasGo, Sprite backgroundSprite)
+        internal static UnityEngine.UI.Image BuildFullScreenBackground(GameObject canvasGo, Sprite backgroundSprite)
         {
             var backgroundGo = new GameObject("Background", typeof(Image));
             backgroundGo.transform.SetParent(canvasGo.transform, false);
@@ -47,6 +47,41 @@ namespace Sapphire.EditorTools
             image.type = Image.Type.Simple;
             image.raycastTarget = false;
             return image;
+        }
+
+        internal static void BuildFullScreenVideoBackground(GameObject canvasGo, string videoAssetPath)
+        {
+            var backgroundGo = new GameObject("VideoBackground", typeof(UnityEngine.UI.RawImage), typeof(UnityEngine.Video.VideoPlayer));
+            backgroundGo.transform.SetParent(canvasGo.transform, false);
+            backgroundGo.transform.SetAsFirstSibling();
+            var rect = backgroundGo.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            var rawImage = backgroundGo.GetComponent<UnityEngine.UI.RawImage>();
+            rawImage.raycastTarget = false;
+
+            var videoPlayer = backgroundGo.GetComponent<UnityEngine.Video.VideoPlayer>();
+            videoPlayer.playOnAwake = true;
+            videoPlayer.isLooping = true;
+            videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.RenderTexture;
+            
+            // Create a render texture for the video player
+            var rt = new UnityEngine.RenderTexture(1280, 720, 16, UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_UNorm);
+            videoPlayer.targetTexture = rt;
+            rawImage.texture = rt;
+
+            var clip = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Video.VideoClip>(videoAssetPath);
+            if (clip != null)
+            {
+                videoPlayer.clip = clip;
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("Video clip not found at: " + videoAssetPath);
+            }
         }
 
         /// <summary>A gold pill button (MenuButtonGold.png, 9-sliced) with a centered Korean-font label - the shape every "게임 시작"/"선택"/"삭제"/"생성" button in this flow shares.</summary>
