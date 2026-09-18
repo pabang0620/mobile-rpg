@@ -107,63 +107,63 @@ namespace Sapphire.EditorTools
 
         private static void BuildLandmarks(Tilemap collision, Tile blocker, List<InteractableZone> zones)
         {
-            Transform root = new GameObject("SlimeKingdomLandmarks").transform;
+            Transform root = new GameObject("SlimeForestLandmarks").transform;
 
+            // Forest Entrance
             PlaceVisual(root, PropsAtlas, "Slime2_Sign", 16, 4, 1.05f, "EntranceSign", 2);
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL", 1);
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 17, 5, .9f, "EntranceLampL", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 21, 5, .9f, "EntranceLampR", 1);
 
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 12, 8, 1.8f, 1);
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 26, 8, 1.8f, 1);
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_shop", "Slime2_Shop", 12, 12,
-                "젤리 상점이다. 왕국 주화로 회복 물약과 수정 조각을 교환할 수 있다.", null, 1.8f);
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_fountain", "Slime2_Fountain", 19, 9,
-                "왕국의 샘이 반짝인다. 잠시 쉬자 HP와 MP가 회복되는 듯하다.", null, 1.55f);
+            // Natural Blockers (Cliffs & Hedges representing dense forest edges)
             PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 8, 6, 1.5f, 1);
             PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 30, 6, 1.5f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 12, 8, 1.5f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 26, 8, 1.5f, 1);
 
+            // Mysteries of the forest
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "crystal_cave", "Slime2_Cave", 3, 21,
-                "수정 동굴은 차가운 마력으로 봉인되어 있다. 왕의 인장이 필요하다.", null, 2f);
+                "수정 동굴은 차가운 마력으로 봉인되어 있다. 안에서 희미한 빛이 새어 나온다.", null, 2f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "west_chest", "SlimeProp_Chest", 12, 19,
-                "젤리 습지의 보물상자에서 왕국 주화와 푸른 수정 조각을 발견했다!", null, 1.15f);
+                "오래된 보물상자다. 누군가 숨겨둔 마력석이 들어있다!", null, 1.15f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "east_chest", "SlimeProp_Chest", 27, 19,
-                "수정 정원의 보물상자에서 별빛 젤리와 마력석을 발견했다!", null, 1.15f);
+                "덤불 속에 숨겨진 상자다. 별빛 젤리를 발견했다!", null, 1.15f);
 
+            // Bridges over the river
             PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 8, 15, 3f, 3f, "WestRiverBridge", 2);
             PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 15, 3f, 3f, "CentralRiverBridge", 2);
             PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 31, 15, 3f, 3f, "EastRiverBridge", 2);
-            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 22, 3f, 2f, "PalaceBridge", 2);
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 22, 3f, 2f, "NorthBridge", 2);
+            
+            // Natural Terrain (Cliffs)
             PlaceBlockingSet(root, collision, blocker, PropsAtlas, "Slime2_Cliff", new[]
             {
                 new Vector2Int(2,6), new Vector2Int(2,12), new Vector2Int(2,24), new Vector2Int(37,6),
                 new Vector2Int(37,13), new Vector2Int(37,24), new Vector2Int(7,26), new Vector2Int(31,26),
+                new Vector2Int(14,24), new Vector2Int(24,24) // Replaced statues with cliffs
             }, 1.65f);
+            
+            // Crystals and Mushrooms
             PlaceBlockingSet(root, collision, blocker, PrimaryAtlas, "SlimeProp_Crystal", new[]
             {
                 new Vector2Int(5,11), new Vector2Int(13,16), new Vector2Int(26,15),
                 new Vector2Int(34,12), new Vector2Int(8,24), new Vector2Int(30,24),
+                new Vector2Int(19, 28) // Replaced throne with a giant crystal
             }, 1.1f);
             PlaceBlockingSet(root, collision, blocker, PrimaryAtlas, "SlimeProp_Mushroom", new[]
             {
                 new Vector2Int(6,5), new Vector2Int(32,5), new Vector2Int(5,20), new Vector2Int(34,20),
+                new Vector2Int(12,12), new Vector2Int(19,9) // Replaced shop/fountain with giant mushrooms
             }, 1f);
 
-            PlaceVisual(root, PropsAtlas, "Slime2_PalaceArch", 19, 23, 2.45f, "PalaceArch", 3);
-            PlaceBlockingSet(root, collision, blocker, PrimaryAtlas, "SlimeProp_Statue", new[]
-            {
-                new Vector2Int(14,24), new Vector2Int(24,24),
-            }, 1.3f);
-            BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "slime_throne", "SlimeProp_Throne", 19, 28,
-                "슬라임 왕의 왕좌다. 왕국 곳곳의 시련을 마친 모험가를 기다리고 있다.", null, 2.5f);
-
-            BuildEncounter(root, collision, blocker, zones, 16, 13, "경비 슬라임 셋이 광장을 순찰하고 있다.");
-            BuildEncounter(root, collision, blocker, zones, 14, 18, "늪지 슬라임 무리가 다리에서 왕궁으로 가는 길을 지키고 있다.");
-            BuildEncounter(root, collision, blocker, zones, 25, 18, "수정 슬라임이 마력 결정을 흡수하고 있다.");
-            BuildEncounter(root, collision, blocker, zones, 19, 25, "왕실 근위 슬라임이 왕좌로 가는 길을 막고 있다.");
+            // Wild Slimes (Monsters)
+            BuildEncounter(root, collision, blocker, zones, 16, 13, "야생 늪지 슬라임이 끈적한 액체를 흘리며 다가옵니다!");
+            BuildEncounter(root, collision, blocker, zones, 14, 18, "다리 근처에서 서성이는 슬라임 무리입니다.");
+            BuildEncounter(root, collision, blocker, zones, 25, 18, "마력을 머금은 수정 슬라임이 경계하고 있습니다.");
+            BuildEncounter(root, collision, blocker, zones, 19, 25, "거대한 대장 슬라임이 길을 가로막고 있습니다!");
+            
+            // Exit Gate
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "return_gate", "SlimeProp_Gate", 19, 0,
-                "시작 마을로 돌아갑니다.", "VillageHub", 2.5f);
+                "시작 마을(사파이어 타운)로 돌아갑니다.", "VillageHub", 2.5f);
         }
 
         private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message)
