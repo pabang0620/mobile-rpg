@@ -152,9 +152,25 @@ namespace Sapphire.EditorTools
             }, 1.1f);
             PlaceBlockingSet(root, collision, blocker, PrimaryAtlas, "SlimeProp_Mushroom", new[]
             {
-                new Vector2Int(6,5), new Vector2Int(32,5), new Vector2Int(5,20), new Vector2Int(34,20),
-                new Vector2Int(12,12), new Vector2Int(19,9) // Replaced shop/fountain with giant mushrooms
+                new Vector2Int(6,5), new Vector2Int(32,5), new Vector2Int(5,20), new Vector2Int(34,20)
             }, 1f);
+
+            // --- Buildings from Slime2 atlas ---
+            // Houses on west side of main road
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 5, 7, 1.8f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 5, 12, 1.8f, 1);
+            // Shops on east side
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Shop", 33, 7, 2.0f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Shop", 33, 12, 2.0f, 1);
+            // Fountain at plaza center
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Fountain", 19, 9, 1.6f, 1);
+            // Palace arch at north entrance
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_PalaceArch", 19, 24, 2.2f, 1);
+            // Lampposts along the main road
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 17, 6, 1.0f, "LampL1");
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 21, 6, 1.0f, "LampR1");
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 17, 11, 1.0f, "LampL2");
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 21, 11, 1.0f, "LampR2");
 
             // Wild Slimes (Monsters)
             BuildEncounter(root, collision, blocker, zones, 16, 13, "야생 슬라임이 길을 막고 있습니다.");
@@ -212,7 +228,11 @@ namespace Sapphire.EditorTools
             var go = new GameObject(name, typeof(SpriteRenderer));
             go.transform.SetParent(parent); go.transform.position = SapphireSceneBuilder.CellCenter(x, y);
             go.transform.localScale = new Vector3(scaleX, scaleY, 1f);
-            var renderer = go.GetComponent<SpriteRenderer>(); renderer.sprite = LoadSprite(atlas, sprite); renderer.sortingOrder = Mathf.RoundToInt(-go.transform.position.y * 100f);
+            var renderer = go.GetComponent<SpriteRenderer>(); renderer.sprite = LoadSprite(atlas, sprite);
+            // Use the foot (bottom edge) of the sprite for Y-sort so tall props/buildings
+            // always render above the tiles they stand on, not below them.
+            float footY = go.transform.position.y - scaleY * 0.5f;
+            renderer.sortingOrder = Mathf.RoundToInt(-footY * 100f);
             return go;
         }
 
