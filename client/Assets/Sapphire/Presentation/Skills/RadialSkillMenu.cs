@@ -139,7 +139,8 @@ namespace Sapphire.Presentation.Skills
                 if (combat != null)
                 {
                     GridCoord target = player.Mover.Position + player.Mover.Facing.ToOffset();
-                    combat.AttackTarget(target.X, target.Y, 1.0f);
+                    var tiles = new System.Collections.Generic.List<GridCoord> { target };
+                    combat.AttackArea(tiles, 1.0f);
                 }
             }
 
@@ -190,10 +191,26 @@ namespace Sapphire.Presentation.Skills
             {
                 if (!isMovementSkill && skill.RangeTiles > 0)
                 {
-                    // Deal damage to all tiles in skill shape/range
-                    // For simplicity, just attack the first tile in range for now
-                    GridCoord target = player.Mover.Position + player.Mover.Facing.ToOffset();
-                    combat.AttackTarget(target.X, target.Y, 2.0f); // Skill does 2x damage
+                    System.Collections.Generic.IReadOnlyList<GridCoord> tiles;
+                    GridCoord pos = player.Mover.Position;
+                    GridDirection dir = player.Mover.Facing;
+
+                    switch (skill.RangeShape)
+                    {
+                        case SkillRangeShape.Line:
+                            tiles = SkillRangeCalculator.TilesInLine(pos, dir, skill.RangeTiles);
+                            break;
+                        case SkillRangeShape.Radius:
+                            tiles = SkillRangeCalculator.TilesInRing(pos, skill.RangeTiles);
+                            break;
+                        case SkillRangeShape.Cone:
+                            tiles = SkillRangeCalculator.TilesInFrontCone(pos, dir, skill.RangeTiles);
+                            break;
+                        default:
+                            tiles = new System.Collections.Generic.List<GridCoord>();
+                            break;
+                    }
+                    combat.AttackArea(tiles, 2.0f);
                 }
             }
 

@@ -322,6 +322,7 @@ namespace Sapphire.EditorTools
             cameraGo.transform.position = playerPosition + new Vector3(0f, 0f, -10f);
 
             var followRig = cameraGo.AddComponent<CameraFollowRig>();
+            cameraGo.AddComponent<Sapphire.Presentation.Combat.CameraShake>();
             followRig.SetGroundTilemap(groundTilemap);
             return followRig;
         }
