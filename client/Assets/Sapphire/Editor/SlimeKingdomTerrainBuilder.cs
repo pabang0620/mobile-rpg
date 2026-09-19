@@ -170,7 +170,7 @@ namespace Sapphire.EditorTools
         private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message, bool isBoss = false)
         {
             var zone = BuildInteractable(parent, collision, blocker, zones, PrimaryAtlas, "slime_" + x + "_" + y, "SlimeProp_Slime", x, y, message, null, .82f);
-            var monster = zone.gameObject.AddComponent<Sapphire.Presentation.Combat.MonsterController>();
+            var shadow = new GameObject("Shadow"); shadow.transform.SetParent(zone.transform, false); shadow.transform.localPosition = new Vector3(0, -0.35f, 0); shadow.transform.localScale = new Vector3(0.08f, 0.2f, 1f); var sr = shadow.AddComponent<SpriteRenderer>(); sr.sprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/GaugeFillMana.png"); sr.color = new Color(0f, 0f, 0f, 0.4f);; sr.sortingOrder = -30000; var monster = zone.gameObject.AddComponent<Sapphire.Presentation.Combat.MonsterController>();
             // Basic Slime Stats: 30 HP, 5 ATK, 2 DEF
             if (isBoss) { zone.transform.localScale = new Vector3(1.5f, 1.5f, 1f); monster.Initialize(x, y, 150, 15, 5, true); } else { monster.Initialize(x, y, 30, 5, 2, false); }
         }

@@ -7,6 +7,7 @@ namespace Sapphire.Presentation.Combat
     {
         [SerializeField] private GaugeView hpGauge;
         [SerializeField] private GaugeView mpGauge;
+        [SerializeField] private GaugeView expGauge;
 
         private PlayerCombatController activePlayer;
 
@@ -27,6 +28,11 @@ namespace Sapphire.Presentation.Combat
                 if (mpGauge != null && activePlayer.Mana != null)
                 {
                     mpGauge.SetFillAmount((float)activePlayer.Mana.CurrentMp / activePlayer.Mana.MaxMp);
+                }
+
+                if (expGauge != null && activePlayer.Exp != null)
+                {
+                    expGauge.SetFillAmount((float)activePlayer.Exp.CurrentExp / activePlayer.Exp.ExpToNextLevel);
                 }
             }
         }

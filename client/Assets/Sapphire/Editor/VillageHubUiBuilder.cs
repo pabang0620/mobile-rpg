@@ -55,7 +55,7 @@ namespace Sapphire.EditorTools
         internal static UiBuildResult Build(
             PlayerGridController mageController, PlayerInputReader mageInputReader, SkillCastFeedback mageCastFeedback,
             PlayerGridController warriorController, PlayerInputReader warriorInputReader, SkillCastFeedback warriorCastFeedback,
-            string regionName = "사파이어 광장")
+            string regionName = "?�파?�어 광장")
         {
             BuildEventSystem();
             GameObject canvasGo = BuildCanvas();
@@ -201,7 +201,7 @@ namespace Sapphire.EditorTools
             buttonText.alignment = TextAnchor.MiddleCenter;
             buttonText.color = Color.white;
             buttonText.fontSize = 26;
-            buttonText.text = "닫기";
+            buttonText.text = "?�기";
 
             return button;
         }
@@ -291,8 +291,8 @@ namespace Sapphire.EditorTools
             GaugeView hpGauge = BuildGauge(canvasGo, "HealthBar", trackSprite, hpFillSprite,
                 new Vector2(20f, -20f), barWidth, barHeight);
 
-            GaugeView mpGauge = BuildGauge(canvasGo, "ManaBar", trackSprite, mpFillSprite,
-                new Vector2(20f, -20f - barHeight - gaugeGap), barWidth, barHeight);
+            GaugeView mpGauge = BuildGauge(canvasGo, "ManaBar", trackSprite, mpFillSprite, new Vector2(20f, -20f - barHeight - 6f), barWidth, barHeight);
+            GaugeView expGauge = BuildGauge(canvasGo, "ExpBar", trackSprite, hpFillSprite, new Vector2(20f, -20f - (barHeight + 6f) * 2), barWidth, barHeight * 0.7f, new Color(1f, 0.8f, 0.2f));
 
             var hudController = canvasGo.AddComponent<Sapphire.Presentation.Combat.HudCombatController>();
             var fieldHp = hudController.GetType().GetField("hpGauge", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -302,7 +302,10 @@ namespace Sapphire.EditorTools
             if (fieldMp != null) fieldMp.SetValue(hudController, mpGauge);
 
             BuildLevelText(canvasGo, levelBadgeSprite, barWidth, barHeight, gaugeGap);
-        }
+
+            var fieldExp = hudController.GetType().GetField("expGauge", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (fieldExp != null) fieldExp.SetValue(hudController, expGauge);
+            }
 
         private static GaugeView BuildGauge(GameObject canvasGo, string name, Sprite trackSprite, Sprite fillSprite, Vector2 anchoredPosition, float barWidth, float barHeight, Color? fillColor = null)
         {
@@ -381,7 +384,7 @@ namespace Sapphire.EditorTools
         }
 
         // --- Top-center region name banner (2026-09-16, Phase 2 item 4):
-        // reserves the SSOT's "지역/보스 HP" slot with the region name for now
+        // reserves the SSOT's "지??보스 HP" slot with the region name for now
         // (no boss-HP system exists yet).
 
         // 2026-09-15 (gemless MapleStory-M rebuild): switched from the retired
@@ -435,7 +438,7 @@ namespace Sapphire.EditorTools
         // 2026-09-16: every Text in this file used to render with Unity's
         // builtin LegacyRuntime.ttf (an Arial-family font with no Korean glyph
         // coverage) despite every label in this file being Korean text ("메뉴",
-        // "장비", "이 기능은 다음 슬라이스에서 연결됩니다", ...) - a real,
+        // "?�비", "??기능?� ?�음 ?�라?�스?�서 ?�결?�니??, ...) - a real,
         // previously-unaddressed rendering defect (missing-glyph boxes/tofu),
         // not something this task's scope introduced but directly affecting
         // every UI label this pass touches. Fixed at this single call site
@@ -444,7 +447,7 @@ namespace Sapphire.EditorTools
         // close button, region banner, level text, Odin menu headers/labels)
         // picks it up automatically. Fonts/NotoSansCJKkr-Regular.otf already
         // ships in the project (docs/planning/01_PRODUCT.md's UI section:
-        // "한글은 동봉 NotoSansCJKkr 폰트") but nothing loaded it until now.
+        // "?��??� ?�봉 NotoSansCJKkr ?�트") but nothing loaded it until now.
         private static Font koreanFont;
 
         internal static Font LoadKoreanFont()
@@ -511,3 +514,5 @@ namespace Sapphire.EditorTools
         }
     }
 }
+
+
