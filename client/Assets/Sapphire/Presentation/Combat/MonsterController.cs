@@ -117,11 +117,14 @@ namespace Sapphire.Presentation.Combat
                 var combatController = player.GetComponent<PlayerCombatController>();
                 if (combatController != null && !combatController.Health.IsDead)
                 {
-                    int damage = CombatEngine.CalculateDamage(Stats, combatController.Stats, 1.0f);
-                    CombatEngine.ProcessAttack(Stats, combatController.Stats, combatController.Health, 1.0f);
+                    bool isCrit = UnityEngine.Random.value < 0.15f;
+                    float finalMultiplier = isCrit ? 1.5f : 1.0f;
+                    int damage = CombatEngine.CalculateDamage(Stats, combatController.Stats, finalMultiplier);
+                    CombatEngine.ProcessAttack(Stats, combatController.Stats, combatController.Health, finalMultiplier);
                     
                     combatController.OnHit(damage);
-                    DamagePopup.Spawn(player.transform.position, damage);
+                    DamagePopup.Spawn(player.transform.position, damage, isCrit ? damage.ToString() + " CRIT!" : null);
+                    HitEffectSpawner.Spawn(player.transform.position + new Vector3(0, 0.25f, -1f));
                     var shake = FindObjectOfType<CameraShake>();
                     shake?.Shake(0.08f, 0.15f);
 
@@ -212,6 +215,7 @@ namespace Sapphire.Presentation.Combat
             }
 
             StartCoroutine(DeathFade());
+            ItemDrop.Spawn(transform.position);
         }
 
         private IEnumerator DeathFade()
@@ -244,3 +248,4 @@ namespace Sapphire.Presentation.Combat
         }
     }
 }
+

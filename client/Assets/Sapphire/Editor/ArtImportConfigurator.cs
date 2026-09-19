@@ -38,6 +38,7 @@ namespace Sapphire.EditorTools
             ConfigureSkillButtonFrame();
             ConfigureHealthBarFrame();
             ConfigureSkillIconsSet();
+            ConfigureSingleSprite(SapphireSceneBuilder.UiArtDir + "/HitSpark.png", Vector4.zero, FilterMode.Bilinear, false, 100);
             HudArtImportConfigurator.ConfigureAll();
             WarriorArtImportConfigurator.ConfigureAll();
 

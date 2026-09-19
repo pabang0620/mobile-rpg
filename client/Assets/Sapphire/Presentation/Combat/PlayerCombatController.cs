@@ -137,11 +137,14 @@ namespace Sapphire.Presentation.Combat
                     {
                         if (monster.Health.IsDead) continue; 
 
-                        int damage = CombatEngine.CalculateDamage(Stats, monster.Stats, skillMultiplier);
-                        CombatEngine.ProcessAttack(Stats, monster.Stats, monster.Health, skillMultiplier);
+                        bool isCrit = UnityEngine.Random.value < 0.25f;
+                        float finalMultiplier = isCrit ? skillMultiplier * 1.5f : skillMultiplier;
+                        int damage = CombatEngine.CalculateDamage(Stats, monster.Stats, finalMultiplier);
+                        CombatEngine.ProcessAttack(Stats, monster.Stats, monster.Health, finalMultiplier);
 
                         monster.OnHit(damage, Stats);
-                        DamagePopup.Spawn(monster.transform.position, damage);
+                        DamagePopup.Spawn(monster.transform.position, damage, isCrit ? damage.ToString() + " CRIT!" : null);
+                        HitEffectSpawner.Spawn(monster.transform.position + new Vector3(0, 0.25f, -1f));
                         hitAny = true;
                         
                         if (monster.Health.IsDead)
@@ -160,3 +163,4 @@ namespace Sapphire.Presentation.Combat
         }
     }
 }
+
