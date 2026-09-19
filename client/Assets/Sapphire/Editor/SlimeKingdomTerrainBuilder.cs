@@ -155,27 +155,24 @@ namespace Sapphire.EditorTools
                 new Vector2Int(6,5), new Vector2Int(32,5), new Vector2Int(5,20), new Vector2Int(34,20)
             }, 1f);
 
-            // --- Buildings from Slime2 atlas ---
-            // Houses on west side of main road
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 5, 7, 1.8f, 1);
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 5, 12, 1.8f, 1);
-            // Shops on east side
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Shop", 33, 7, 2.0f, 1);
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Shop", 33, 12, 2.0f, 1);
-            // Fountain at plaza center
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Fountain", 19, 9, 1.6f, 1);
-            // Palace arch at north entrance
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_PalaceArch", 19, 24, 2.2f, 1);
-            // Lampposts along the main road
+            // Remove cut-off buildings, add more mushrooms and slimes instead.
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 17, 6, 1.0f, "LampL1");
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 21, 6, 1.0f, "LampR1");
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 17, 11, 1.0f, "LampL2");
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 21, 11, 1.0f, "LampR2");
 
-            // Wild Slimes (Monsters)
+            // Wild Slimes (Monsters) - Hunting Ground!
             BuildEncounter(root, collision, blocker, zones, 16, 13, "야생 슬라임이 길을 막고 있습니다.");
             BuildEncounter(root, collision, blocker, zones, 14, 18, "수풀 근처에서 서성이는 슬라임 무리입니다.");
             BuildEncounter(root, collision, blocker, zones, 25, 18, "마력을 머금은 변종 슬라임이 경계하고 있습니다.");
+            BuildEncounter(root, collision, blocker, zones, 8, 8, "점액질을 흘리는 슬라임입니다.");
+            BuildEncounter(root, collision, blocker, zones, 30, 8, "통통 튀어다니는 슬라임입니다.");
+            BuildEncounter(root, collision, blocker, zones, 10, 20, "화가 난 듯한 슬라임입니다.");
+            BuildEncounter(root, collision, blocker, zones, 28, 22, "거대한 슬라임 무리입니다.");
+            BuildEncounter(root, collision, blocker, zones, 6, 15, "반짝이는 슬라임입니다.");
+            BuildEncounter(root, collision, blocker, zones, 32, 14, "먹이를 찾는 슬라임입니다.");
+            BuildEncounter(root, collision, blocker, zones, 12, 26, "숲의 기운을 받은 슬라임입니다.");
+            BuildEncounter(root, collision, blocker, zones, 26, 26, "단단해 보이는 슬라임입니다.");
             BuildEncounter(root, collision, blocker, zones, 19, 25, "보스!", true);
             
             // Exit Gate

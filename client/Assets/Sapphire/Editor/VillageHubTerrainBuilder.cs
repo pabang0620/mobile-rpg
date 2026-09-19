@@ -170,15 +170,15 @@ namespace Sapphire.EditorTools
                 "초보 모험가의 마을, 사파이어 타운에 오신 것을 환영합니다.", null, 1.0f);
 
             // Village Props (placed logically on the expanded dirt plaza/grass edges)
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 4, 13, 1.8f, 1);
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "elder_house", "Slime2_House", 20, 13,
-                "촌장님의 집이다. 문이 굳게 잠겨 있다.", null, 1.8f);
-
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_shop", "Slime2_Shop", 6, 8,
-                "다양한 잡화를 파는 상점이다.", null, 1.5f);
-
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_fountain", "Slime2_Fountain", 12, 14,
-                "마을의 맑은 분수다. 마음이 편안해진다.", null, 1.55f);
+            // Town Hall (Large generated building)
+            string townHallPath = SapphireSceneBuilder.WorldArtDir + "/TownHall.png";
+            BuildInteractable(root, collision, blocker, zones, townHallPath, "town_hall", "TownHall", 12, 12,
+                "웅장한 마을 회관이다. 마을의 중심 역할을 한다.", null, 3.5f);
+            
+            // Add collision around the large town hall
+            for (int dx = -3; dx <= 3; dx++)
+                for (int dy = -2; dy <= 2; dy++) 
+                    collision.SetTile(new Vector3Int(12 + dx, 12 + dy, 0), blocker);
 
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 10, 14, .9f, "Lamp1");
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 14, 14, .9f, "Lamp2");
