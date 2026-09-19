@@ -111,9 +111,9 @@ namespace Sapphire.EditorTools
 
             // Forest Entrance
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "entrance_sign", "Slime2_Sign", 16, 4,
-                "경고: 앞은 흉포한 야생 슬라임 출몰 지역입니다. 전투에 대비하십시오!", null, 1.05f);
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR", 1);
+                "경고: ?��? ?�포???�생 ?�라??출몰 지??��?�다. ?�투???�비하??��??", null, 1.05f);
+            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL");
+            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR");
 
             // Natural Blockers (Cliffs & Hedges representing dense forest edges)
             PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 8, 6, 1.5f, 1);
@@ -123,17 +123,17 @@ namespace Sapphire.EditorTools
 
             // Mysteries of the forest
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "crystal_cave", "Slime2_Cave", 3, 21,
-                "수정 동굴은 차가운 마력으로 봉인되어 있다. 안에서 희미한 빛이 새어 나온다.", null, 2f);
+                "?�정 ?�굴?� 차�???마력?�로 봉인?�어 ?�다. ?�에???��???빛이 ?�어 ?�온??", null, 2f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "west_chest", "SlimeProp_Chest", 12, 19,
-                "오래된 보물상자다. 누군가 숨겨둔 마력석이 들어있다!", null, 1.15f);
+                "?�래??보물?�자?? ?�군가 ?�겨??마력?�이 ?�어?�다!", null, 1.15f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "east_chest", "SlimeProp_Chest", 27, 19,
-                "덤불 속에 숨겨진 상자다. 별빛 젤리를 발견했다!", null, 1.15f);
+                "?�불 ?�에 ?�겨�??�자?? 별빛 ?�리�?발견?�다!", null, 1.15f);
 
             // Bridges over the river
-            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 8, 15, 3f, 3f, "WestRiverBridge", 2);
-            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 15, 3f, 3f, "CentralRiverBridge", 2);
-            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 31, 15, 3f, 3f, "EastRiverBridge", 2);
-            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 22, 3f, 2f, "NorthBridge", 2);
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 8, 15, 3f, 3f, "WestRiverBridge");
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 15, 3f, 3f, "CentralRiverBridge");
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 31, 15, 3f, 3f, "EastRiverBridge");
+            PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 19, 22, 3f, 2f, "NorthBridge");
             
             // Natural Terrain (Cliffs)
             PlaceBlockingSet(root, collision, blocker, PropsAtlas, "Slime2_Cliff", new[]
@@ -157,14 +157,14 @@ namespace Sapphire.EditorTools
             }, 1f);
 
             // Wild Slimes (Monsters)
-            BuildEncounter(root, collision, blocker, zones, 16, 13, "야생 늪지 슬라임이 끈적한 액체를 흘리며 다가옵니다!");
-            BuildEncounter(root, collision, blocker, zones, 14, 18, "다리 근처에서 서성이는 슬라임 무리입니다.");
-            BuildEncounter(root, collision, blocker, zones, 25, 18, "마력을 머금은 수정 슬라임이 경계하고 있습니다.");
-            BuildEncounter(root, collision, blocker, zones, 19, 25, "거대한 대장 슬라임이 길을 가로막고 있습니다!");
+            BuildEncounter(root, collision, blocker, zones, 16, 13, "?�생 ?��? ?�라?�이 ?�적???�체�??�리�??��??�니??");
+            BuildEncounter(root, collision, blocker, zones, 14, 18, "?�리 근처?�서 ?�성?�는 ?�라??무리?�니??");
+            BuildEncounter(root, collision, blocker, zones, 25, 18, "마력??머금?� ?�정 ?�라?�이 경계?�고 ?�습?�다.");
+            BuildEncounter(root, collision, blocker, zones, 19, 25, "거�????�???�라?�이 길을 가로막�??�습?�다!");
             
             // Exit Gate
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "return_gate", "SlimeProp_Gate", 19, 0,
-                "시작 마을(사파이어 타운)로 돌아갑니다.", "VillageHub", 2.5f);
+                "?�작 마을(?�파?�어 ?�??�??�아갑니??", "VillageHub", 2.5f);
         }
 
         private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message)
@@ -177,7 +177,7 @@ namespace Sapphire.EditorTools
 
         private static void PlaceBlockingFootprint(Transform parent, Tilemap collision, Tile blocker, string atlas, string sprite, int x, int y, float scale, int radius)
         {
-            PlaceVisual(parent, atlas, sprite, x, y, scale, sprite + "_" + x + "_" + y, 1);
+            PlaceVisual(parent, atlas, sprite, x, y, scale, sprite + "_" + x + "_" + y);
             for (int dx = -radius; dx <= radius; dx++)
             for (int dy = -radius; dy <= radius; dy++) collision.SetTile(new Vector3Int(x + dx, y + dy, 0), blocker);
         }
@@ -186,7 +186,7 @@ namespace Sapphire.EditorTools
         {
             foreach (Vector2Int coord in coords)
             {
-                PlaceVisual(parent, atlas, sprite, coord.x, coord.y, scale, sprite + "_" + coord.x + "_" + coord.y, 1);
+                PlaceVisual(parent, atlas, sprite, coord.x, coord.y, scale, sprite + "_" + coord.x + "_" + coord.y);
                 collision.SetTile(new Vector3Int(coord.x, coord.y, 0), blocker);
             }
         }
@@ -194,7 +194,7 @@ namespace Sapphire.EditorTools
         private static InteractableZone BuildInteractable(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones,
             string atlas, string id, string sprite, int x, int y, string message, string destination, float scale)
         {
-            GameObject go = PlaceVisual(parent, atlas, sprite, x, y, scale, id, 2);
+            GameObject go = PlaceVisual(parent, atlas, sprite, x, y, scale, id);
             collision.SetTile(new Vector3Int(x, y, 0), blocker);
             var zone = go.AddComponent<InteractableZone>();
             AssignField(zone, "interactableId", id); AssignField(zone, "gridX", x); AssignField(zone, "gridY", y);
@@ -202,17 +202,17 @@ namespace Sapphire.EditorTools
             return zone;
         }
 
-        private static GameObject PlaceVisual(Transform parent, string atlas, string sprite, int x, int y, float scale, string name, int order)
+        private static GameObject PlaceVisual(Transform parent, string atlas, string sprite, int x, int y, float scale, string name)
         {
-            return PlaceVisualScaled(parent, atlas, sprite, x, y, scale, scale, name, order);
+            return PlaceVisualScaled(parent, atlas, sprite, x, y, scale, scale, name);
         }
 
-        private static GameObject PlaceVisualScaled(Transform parent, string atlas, string sprite, int x, int y, float scaleX, float scaleY, string name, int order)
+        private static GameObject PlaceVisualScaled(Transform parent, string atlas, string sprite, int x, int y, float scaleX, float scaleY, string name)
         {
             var go = new GameObject(name, typeof(SpriteRenderer));
             go.transform.SetParent(parent); go.transform.position = SapphireSceneBuilder.CellCenter(x, y);
             go.transform.localScale = new Vector3(scaleX, scaleY, 1f);
-            var renderer = go.GetComponent<SpriteRenderer>(); renderer.sprite = LoadSprite(atlas, sprite); renderer.sortingOrder = order;
+            var renderer = go.GetComponent<SpriteRenderer>(); renderer.sprite = LoadSprite(atlas, sprite); renderer.sortingOrder = Mathf.RoundToInt(-go.transform.position.y * 100f);
             return go;
         }
 

@@ -69,14 +69,13 @@ namespace Sapphire.EditorTools
 
             var groundGo = new GameObject("Ground", typeof(Tilemap), typeof(TilemapRenderer));
             groundGo.transform.SetParent(gridGo.transform);
-            var groundTilemap = groundGo.GetComponent<Tilemap>();
-            groundGo.GetComponent<TilemapRenderer>().sortingOrder = -100;
+            groundGo.GetComponent<TilemapRenderer>().sortingOrder = -1000;
 
             var collisionGo = new GameObject("Collision", typeof(Tilemap));
             collisionGo.transform.SetParent(gridGo.transform);
-            var collisionTilemap = collisionGo.GetComponent<Tilemap>();
-
-            return (gridGo, groundTilemap, collisionTilemap);
+            var collisionMap = collisionGo.GetComponent<Tilemap>();
+            
+            return (gridGo, groundGo.GetComponent<Tilemap>(), collisionMap);
         }
 
         private static void PopulateGroundAndCollision(
@@ -89,8 +88,8 @@ namespace Sapphire.EditorTools
                     var cell = new Vector3Int(x, y, 0);
                     bool isBorder = x == 0 || x == SapphireSceneBuilder.MapWidth - 1 || y == 0 || y == SapphireSceneBuilder.MapHeight - 1;
                     
-                    // Center plaza and paths
-                    bool plaza = (x >= 9 && x <= 15 && y >= 6 && y <= 12);
+                    // Center plaza and paths - enlarged for better placement
+                    bool plaza = (x >= 7 && x <= 17 && y >= 6 && y <= 16);
                     bool verticalPath = (x >= 11 && x <= 13);
                     bool horizontalPath = (y >= 8 && y <= 10 && x >= 4 && x <= 20);
                     bool onPath = (plaza || verticalPath || horizontalPath) && !isBorder;
@@ -109,33 +108,29 @@ namespace Sapphire.EditorTools
             }
         }
 
-        private static uint HashCell(int x, int y)
+        private static TilemapGridMapBuilder BuildGridMapBuilder(GameObject gridGo, Tilemap ground, Tilemap collision)
         {
-            uint h = (uint)(x * 374761393 + y * 668265263);
-            h = (h ^ (h >> 13)) * 1274126177u;
-            h ^= h >> 16;
-            return h;
+            var builder = gridGo.AddComponent<TilemapGridMapBuilder>();
+            AssignField(builder, "width", SapphireSceneBuilder.MapWidth);
+            AssignField(builder, "height", SapphireSceneBuilder.MapHeight);
+            AssignField(builder, "groundTilemap", ground);
+            AssignField(builder, "collisionTilemap", collision);
+            return builder;
         }
 
         private static Matrix4x4 GetFlipMatrix(uint hash)
         {
-            uint flipState = (hash / 3) % 4;
-            bool flipX = (flipState & 1) != 0;
-            bool flipY = (flipState & 2) != 0;
-            var scale = new Vector3(flipX ? -1f : 1f, flipY ? -1f : 1f, 1f);
-            return Matrix4x4.Scale(scale);
+            bool flipX = (hash & 1) == 1;
+            bool flipY = (hash & 2) == 2;
+            return Matrix4x4.Scale(new Vector3(flipX ? -1f : 1f, flipY ? -1f : 1f, 1f));
         }
 
-        private static TilemapGridMapBuilder BuildGridMapBuilder(GameObject gridGo, Tilemap groundTilemap, Tilemap collisionTilemap)
+        private static uint HashCell(int x, int y)
         {
-            var gridMapBuilder = gridGo.AddComponent<TilemapGridMapBuilder>();
-            AssignField(gridMapBuilder, "groundTilemap", groundTilemap);
-            AssignField(gridMapBuilder, "collisionTilemap", collisionTilemap);
-            AssignField(gridMapBuilder, "width", SapphireSceneBuilder.MapWidth);
-            AssignField(gridMapBuilder, "height", SapphireSceneBuilder.MapHeight);
-            AssignField(gridMapBuilder, "originCellX", 0);
-            AssignField(gridMapBuilder, "originCellY", 0);
-            return gridMapBuilder;
+            uint hash = (uint)(x * 73856093 ^ y * 19349663);
+            hash = (hash ^ (hash >> 16)) * 0x85ebca6b;
+            hash = (hash ^ (hash >> 13)) * 0xc2b2ae35;
+            return hash ^ (hash >> 16);
         }
 
         private static void BuildFences()
@@ -143,17 +138,15 @@ namespace Sapphire.EditorTools
             var fencesRoot = new GameObject("Fences");
             Sprite fenceStraight = LoadNamedSprite(SapphireSceneBuilder.WorldArtDir + "/VillageProps.png", "VillageProps_FenceStraight");
             Sprite fenceCornerA = LoadNamedSprite(SapphireSceneBuilder.WorldArtDir + "/VillageProps.png", "VillageProps_FenceCornerA");
-
+            
             int mapWidth = SapphireSceneBuilder.MapWidth;
             int mapHeight = SapphireSceneBuilder.MapHeight;
 
             for (int x = 1; x < mapWidth - 1; x++)
             {
-                if (x != SapphireSceneBuilder.SpawnX)
-                {
-                    PlaceFence(fencesRoot.transform, fenceStraight, x, 0, 0f, "Fence_Bottom_" + x);
-                    PlaceFence(fencesRoot.transform, fenceStraight, x, mapHeight - 1, 0f, "Fence_Top_" + x);
-                }
+                if (x == 12) continue; // gap for vertical path
+                PlaceFence(fencesRoot.transform, fenceStraight, x, 0, 0f, "Fence_Bottom_" + x);
+                PlaceFence(fencesRoot.transform, fenceStraight, x, mapHeight - 1, 0f, "Fence_Top_" + x);
             }
 
             for (int y = 1; y < mapHeight - 1; y++)
@@ -172,54 +165,45 @@ namespace Sapphire.EditorTools
         {
             Transform root = new GameObject("VillageLandmarks").transform;
 
-            // Welcome sign
-            Sprite signSprite = LoadNamedSprite(SapphireSceneBuilder.WorldArtDir + "/VillageProps.png", "VillageProps_Signpost");
-            var signGo = new GameObject("Signpost", typeof(SpriteRenderer));
-            signGo.transform.SetParent(root);
-            signGo.transform.position = CellCenter(13, 7);
-            signGo.GetComponent<SpriteRenderer>().sprite = signSprite;
-            var signZone = signGo.AddComponent<InteractableZone>();
-            AssignField(signZone, "interactableId", "signpost");
-            AssignField(signZone, "gridX", 13); AssignField(signZone, "gridY", 7);
-            AssignField(signZone, "message", "ì´ˆë³´ ëª¨í—˜ê°€ì˜ ë§ˆì„, ì‚¬íŒŒì´ì–´ íƒ€ìš´ì— ì˜¤ì‹  ê²ƒì„ í™˜ì˜í•©ë‹ˆë‹¤.");
-            zones.Add(signZone);
-            collision.SetTile(new Vector3Int(13, 7, 0), blocker);
+            // Welcome sign (bottom entrance)
+            BuildInteractable(root, collision, blocker, zones, SapphireSceneBuilder.WorldArtDir + "/VillageProps.png", "signpost", "VillageProps_Signpost", 14, 7,
+                "ÃÊº¸ ¸ğÇè°¡ÀÇ ¸¶À», »çÆÄÀÌ¾î Å¸¿î¿¡ ¿À½Å °ÍÀ» È¯¿µÇÕ´Ï´Ù.", null, 1.0f);
 
-            // Village Props (moved from SlimeKingdom)
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 6, 13, 1.8f, 1);
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "elder_house", "Slime2_House", 18, 13,
-                "ì´Œì¥ë‹˜ì˜ ì§‘ì´ë‹¤. ë¬¸ì´ êµ³ê²Œ ì ê²¨ ìˆë‹¤.", null, 1.8f);
+            // Village Props (placed logically on the expanded dirt plaza/grass edges)
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 4, 13, 1.8f, 1);
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "elder_house", "Slime2_House", 20, 13,
+                "ÃÌÀå´ÔÀÇ ÁıÀÌ´Ù. ¹®ÀÌ ±»°Ô Àá°Ü ÀÖ´Ù.", null, 1.8f);
 
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_shop", "Slime2_Shop", 8, 5,
-                "ì¡í™”ì ì´ë‹¤. ìƒì¸ì´ ì•„ì§ ì¶œê·¼í•˜ì§€ ì•Šì€ ê²ƒ ê°™ë‹¤.", null, 1.8f);
-                
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_fountain", "Slime2_Fountain", 12, 11,
-                "ë§ˆì„ì˜ ë§‘ì€ ë¶„ìˆ˜ë‹¤. ë§ˆìŒì´ í¸ì•ˆí•´ì§„ë‹¤.", null, 1.55f);
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_shop", "Slime2_Shop", 6, 8,
+                "´Ù¾çÇÑ ÀâÈ­¸¦ ÆÄ´Â »óÁ¡ÀÌ´Ù.", null, 1.5f);
 
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 10, 10, .9f, "Lamp1", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 14, 10, .9f, "Lamp2", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 5, 12, .8f, "Flowers1", 1);
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 19, 12, .8f, "Flowers2", 1);
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_fountain", "Slime2_Fountain", 12, 14,
+                "¸¶À»ÀÇ ¸¼Àº ºĞ¼ö´Ù. ¸¶À½ÀÌ Æí¾ÈÇØÁø´Ù.", null, 1.55f);
+
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 10, 14, .9f, "Lamp1");
+            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 14, 14, .9f, "Lamp2");
+            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 5, 6, .8f, "Flowers1");
+            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 19, 6, .8f, "Flowers2");
             
             PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 16, 5, 1.5f, 1);
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 4, 5, 1.5f, 1);
+            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 8, 5, 1.5f, 1);
 
             // Gate to Slime Forest (Top exit)
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "slime_kingdom_gate", "SlimeProp_Gate", SapphireSceneBuilder.SpawnX, SapphireSceneBuilder.MapHeight - 1,
-                "ìŠ¬ë¼ì„ ìˆ²ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.", "SlimeKingdom", 2.6f);
+                "½½¶óÀÓ ½£À¸·Î ÀÌµ¿ÇÕ´Ï´Ù.", "SlimeKingdom", 2.6f);
 
             // NPCs
             Sprite guideSprite = LoadNamedSprite(SapphireSceneBuilder.RootArtDir + "/MageTopdownGridSheet.png", "Mage_Down_Idle");
             Sprite elderSprite = LoadNamedSprite(SapphireSceneBuilder.RootArtDir + "/WarriorTopdownGridSheet.png", "Warrior_Down_Idle");
             
             BuildNpc(root, collision, blocker, zones, guideSprite, "npc_guide", 11, 7,
-                "ë°©í–¥í‚¤ë¥¼ ëˆŒëŸ¬ ì´ë™í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤. ë§ˆì„ ìœ„ìª½ ë¬¸ì„ í†µí•´ ìŠ¬ë¼ì„ ìˆ²ìœ¼ë¡œ ê°€ë³´ì„¸ìš”.", 1.0f);
+                "¹æÇâÅ°¸¦ ´­·¯ ÀÌµ¿ÇÒ ¼ö ÀÖ½À´Ï´Ù. ¸¶À» ºÏÂÊ ¹®À» ÅëÇØ ½½¶óÀÓ ½£À¸·Î °¡º¸¼¼¿ä.", 1.0f);
             
-            BuildNpc(root, collision, blocker, zones, elderSprite, "npc_elder", 17, 12,
-                "í—ˆí—ˆ, ì Šì€ì´. ìˆ²ì—ëŠ” í‰í¬í•œ ìŠ¬ë¼ì„ì´ ë§ìœ¼ë‹ˆ ì¡°ì‹¬í•˜ê²Œ.", 1.0f);
+            BuildNpc(root, collision, blocker, zones, elderSprite, "npc_elder", 18, 12,
+                "ÇãÇã, ½£¿¡´Â Æ÷¾ÇÇÑ ½½¶óÀÓÀÌ ¸¹À¸´Ï Á¶½ÉÇÏ°Ô.", 1.0f);
                 
-            BuildNpc(root, collision, blocker, zones, elderSprite, "npc_merchant", 9, 5,
-                "ì–´ì„œì˜µì‡¼! ì“¸ë§Œí•œ ë¬¼ê±´ì´ ì•„ì£¼... ì•„, ì•„ì§ ê°œì  ì „ì´ë„¤.", 1.0f);
+            BuildNpc(root, collision, blocker, zones, elderSprite, "npc_merchant", 8, 8,
+                "¾î¼­¿É¼î! ¾µ¸¸ÇÑ ¹°°ÇÀÌ ¾ÆÁÖ... ¾Æ, ¾ÆÁ÷ °³Á¡ ÀüÀÌ³×.", 1.0f);
         }
 
         private static InteractableZone BuildNpc(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones,
@@ -229,9 +213,11 @@ namespace Sapphire.EditorTools
             go.transform.SetParent(parent); 
             go.transform.position = CellCenter(x, y);
             go.transform.localScale = new Vector3(scale, scale, 1f);
+            
             var renderer = go.GetComponent<SpriteRenderer>(); 
             renderer.sprite = sprite; 
-            renderer.sortingOrder = 5;
+            // Y-sorting fix: replace static order with dynamic order component
+            go.AddComponent<DynamicYSort>();
             
             collision.SetTile(new Vector3Int(x, y, 0), blocker);
             
@@ -250,7 +236,9 @@ namespace Sapphire.EditorTools
             go.transform.SetParent(parent);
             go.transform.position = CellCenter(x, y);
             go.transform.rotation = Quaternion.Euler(0f, 0f, rotationZ);
-            go.GetComponent<SpriteRenderer>().sprite = sprite;
+            var renderer = go.GetComponent<SpriteRenderer>();
+            renderer.sprite = sprite;
+            renderer.sortingOrder = Mathf.RoundToInt(-go.transform.position.y * 100f);
         }
 
         private static Vector3 CellCenter(int x, int y)
@@ -305,8 +293,15 @@ namespace Sapphire.EditorTools
 
         private static Sprite LoadNamedSprite(string path, string name)
         {
+            // First check if it's an atlas
             Sprite sprite = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().FirstOrDefault(s => s.name == name);
-            if (sprite == null) throw new Exception($"Sprite '{name}' not found at {path}");
+            if (sprite == null)
+            {
+                // Fallback for single sprites
+                sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (sprite == null || sprite.name != name) 
+                    throw new Exception($"Sprite '{name}' not found at {path}");
+            }
             return sprite;
         }
 
@@ -320,7 +315,7 @@ namespace Sapphire.EditorTools
         
         private static void PlaceBlockingFootprint(Transform parent, Tilemap collision, Tile blocker, string atlas, string sprite, int x, int y, float scale, int radius)
         {
-            PlaceVisual(parent, atlas, sprite, x, y, scale, sprite + "_" + x + "_" + y, 1);
+            PlaceVisual(parent, atlas, sprite, x, y, scale, sprite + "_" + x + "_" + y);
             for (int dx = -radius; dx <= radius; dx++)
                 for (int dy = -radius; dy <= radius; dy++) 
                     collision.SetTile(new Vector3Int(x + dx, y + dy, 0), blocker);
@@ -329,7 +324,7 @@ namespace Sapphire.EditorTools
         private static InteractableZone BuildInteractable(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones,
             string atlas, string id, string sprite, int x, int y, string message, string destination, float scale)
         {
-            GameObject go = PlaceVisual(parent, atlas, sprite, x, y, scale, id, 2);
+            GameObject go = PlaceVisual(parent, atlas, sprite, x, y, scale, id);
             collision.SetTile(new Vector3Int(x, y, 0), blocker);
             var zone = go.AddComponent<InteractableZone>();
             AssignField(zone, "interactableId", id); AssignField(zone, "gridX", x); AssignField(zone, "gridY", y);
@@ -337,7 +332,7 @@ namespace Sapphire.EditorTools
             return zone;
         }
 
-        private static GameObject PlaceVisual(Transform parent, string atlas, string sprite, int x, int y, float scale, string name, int order)
+        private static GameObject PlaceVisual(Transform parent, string atlas, string sprite, int x, int y, float scale, string name)
         {
             var go = new GameObject(name, typeof(SpriteRenderer));
             go.transform.SetParent(parent); 
@@ -345,7 +340,8 @@ namespace Sapphire.EditorTools
             go.transform.localScale = new Vector3(scale, scale, 1f);
             var renderer = go.GetComponent<SpriteRenderer>(); 
             renderer.sprite = LoadNamedSprite(atlas, sprite); 
-            renderer.sortingOrder = order;
+            // Apply Y-sorting directly based on position
+            renderer.sortingOrder = Mathf.RoundToInt(-go.transform.position.y * 100f);
             return go;
         }
     }

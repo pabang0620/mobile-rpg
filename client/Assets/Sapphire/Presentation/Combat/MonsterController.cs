@@ -29,6 +29,8 @@ namespace Sapphire.Presentation.Combat
             Health.OnDied += HandleDeath;
 
             hpBar = MonsterHpBar.Create(transform);
+            
+            gameObject.AddComponent<Sapphire.Presentation.World.DynamicYSort>();
         }
 
         public void OnHit(int damage, CombatStats attackerStats)

@@ -240,7 +240,9 @@ namespace Sapphire.EditorTools
             var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(SkillMotionPlayer), typeof(PlayerGridController), typeof(Sapphire.Presentation.Combat.PlayerCombatController));
             playerGo.transform.position = CellCenter(spawnX, spawnY);
             playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
-            playerGo.GetComponent<SpriteRenderer>().sortingOrder = 10;
+            var spriteRenderer = playerGo.GetComponent<SpriteRenderer>();
+            spriteRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            playerGo.AddComponent<Sapphire.Presentation.World.DynamicYSort>();
 
             var spriteAnimator = playerGo.GetComponent<DirectionalSpriteAnimator>();
             AssignField(spriteAnimator, "idleUp", idleUp);
