@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Sapphire.Domain.Combat;
@@ -18,13 +19,25 @@ namespace Sapphire.Presentation.Combat
             Mana = new ManaComponent(50);
         }
 
-        public void AttackTarget(int gridX, int gridY, float skillMultiplier = 1.0f)
+        public void AttackArea(IReadOnlyList<GridCoord> tiles, float skillMultiplier = 1.0f, float delay = 0f)
         {
-            var tiles = new List<GridCoord> { new GridCoord(gridX, gridY) };
-            AttackArea(tiles, skillMultiplier);
+            if (delay > 0f)
+            {
+                StartCoroutine(AttackAreaDelayed(tiles, skillMultiplier, delay));
+            }
+            else
+            {
+                ExecuteAttack(tiles, skillMultiplier);
+            }
         }
 
-        public void AttackArea(IReadOnlyList<GridCoord> tiles, float skillMultiplier = 1.0f)
+        private IEnumerator AttackAreaDelayed(IReadOnlyList<GridCoord> tiles, float skillMultiplier, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            ExecuteAttack(tiles, skillMultiplier);
+        }
+
+        private void ExecuteAttack(IReadOnlyList<GridCoord> tiles, float skillMultiplier)
         {
             var monsters = FindObjectsOfType<MonsterController>();
             bool hitAny = false;
@@ -36,6 +49,8 @@ namespace Sapphire.Presentation.Combat
                     if (monster == null) continue;
                     if (monster.GridX == tile.X && monster.GridY == tile.Y)
                     {
+                        if (monster.Health.IsDead) continue; // Don't hit dead monsters
+
                         int damage = CombatEngine.CalculateDamage(Stats, monster.Stats, skillMultiplier);
                         CombatEngine.ProcessAttack(Stats, monster.Stats, monster.Health, skillMultiplier);
 

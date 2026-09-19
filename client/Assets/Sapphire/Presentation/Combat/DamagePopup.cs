@@ -8,7 +8,10 @@ namespace Sapphire.Presentation.Combat
         public static void Spawn(Vector3 worldPosition, int damage)
         {
             var go = new GameObject("DamagePopup", typeof(TextMesh), typeof(MeshRenderer));
-            go.transform.position = worldPosition + Vector3.up * 0.5f;
+            
+            // Random horizontal offset so numbers don't overlap completely
+            float randomX = Random.Range(-0.3f, 0.3f);
+            go.transform.position = worldPosition + new Vector3(randomX, 0.5f, 0f);
 
             var tm = go.GetComponent<TextMesh>();
             tm.text = damage.ToString();
@@ -28,22 +31,32 @@ namespace Sapphire.Presentation.Combat
 
         private IEnumerator FloatAndFade()
         {
-            float duration = 0.8f;
+            float duration = 0.7f;
             float elapsed = 0f;
             Vector3 start = transform.position;
             var tm = GetComponent<TextMesh>();
             Color startColor = tm.color;
+            
+            // Random horizontal drift direction
+            float driftX = Random.Range(-0.5f, 0.5f);
 
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
                 float t = elapsed / duration;
-                transform.position = start + Vector3.up * (t * 0.8f);
-                float alpha = t < 0.5f ? 1f : Mathf.Lerp(1f, 0f, (t - 0.5f) / 0.5f);
+                
+                // Parabolic arc: fast up, then slow down
+                float yOffset = Mathf.Lerp(0f, 1.2f, Mathf.Sin(t * Mathf.PI / 2f));
+                
+                transform.position = start + new Vector3(driftX * t, yOffset, 0f);
+                
+                float alpha = t < 0.6f ? 1f : Mathf.Lerp(1f, 0f, (t - 0.6f) / 0.4f);
                 tm.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
+                
                 float punch = t < 0.15f ? Mathf.Lerp(1f, 1.4f, t / 0.15f) : Mathf.Lerp(1.4f, 1f, (t - 0.15f) / 0.35f);
                 if (t > 0.5f) punch = Mathf.Lerp(1f, 0.8f, (t - 0.5f) / 0.5f);
                 transform.localScale = new Vector3(punch, punch, 1f);
+                
                 yield return null;
             }
 

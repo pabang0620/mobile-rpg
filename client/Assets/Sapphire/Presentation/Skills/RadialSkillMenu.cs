@@ -140,7 +140,7 @@ namespace Sapphire.Presentation.Skills
                 {
                     GridCoord target = player.Mover.Position + player.Mover.Facing.ToOffset();
                     var tiles = new System.Collections.Generic.List<GridCoord> { target };
-                    combat.AttackArea(tiles, 1.0f);
+                    combat.AttackArea(tiles, 1.0f, 0.15f);
                 }
             }
 
@@ -210,7 +210,7 @@ namespace Sapphire.Presentation.Skills
                             tiles = new System.Collections.Generic.List<GridCoord>();
                             break;
                     }
-                    combat.AttackArea(tiles, 2.0f);
+                    combat.AttackArea(tiles, 2.0f, 0.2f);
                 }
             }
 
