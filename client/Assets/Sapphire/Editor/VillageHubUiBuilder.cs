@@ -293,8 +293,13 @@ namespace Sapphire.EditorTools
 
             GaugeView mpGauge = BuildGauge(canvasGo, "ManaBar", trackSprite, mpFillSprite,
                 new Vector2(20f, -20f - barHeight - gaugeGap), barWidth, barHeight);
-            _ = hpGauge;
-            _ = mpGauge;
+
+            var hudController = canvasGo.AddComponent<Sapphire.Presentation.Combat.HudCombatController>();
+            var fieldHp = hudController.GetType().GetField("hpGauge", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (fieldHp != null) fieldHp.SetValue(hudController, hpGauge);
+            
+            var fieldMp = hudController.GetType().GetField("mpGauge", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (fieldMp != null) fieldMp.SetValue(hudController, mpGauge);
 
             BuildLevelText(canvasGo, levelBadgeSprite, barWidth, barHeight, gaugeGap);
         }

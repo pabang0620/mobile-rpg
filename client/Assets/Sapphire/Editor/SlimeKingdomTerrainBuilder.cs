@@ -169,7 +169,10 @@ namespace Sapphire.EditorTools
 
         private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message)
         {
-            BuildInteractable(parent, collision, blocker, zones, PrimaryAtlas, "slime_" + x + "_" + y, "SlimeProp_Slime", x, y, message, null, .82f);
+            var zone = BuildInteractable(parent, collision, blocker, zones, PrimaryAtlas, "slime_" + x + "_" + y, "SlimeProp_Slime", x, y, message, null, .82f);
+            var monster = zone.gameObject.AddComponent<Sapphire.Presentation.Combat.MonsterController>();
+            // Basic Slime Stats: 30 HP, 5 ATK, 2 DEF
+            monster.Initialize(x, y, 30, 5, 2);
         }
 
         private static void PlaceBlockingFootprint(Transform parent, Tilemap collision, Tile blocker, string atlas, string sprite, int x, int y, float scale, int radius)

@@ -237,7 +237,7 @@ namespace Sapphire.EditorTools
             Sprite recoveryLeft = LoadNamedSprite(attackSheet, className + "_Left_Recovery");
             Sprite recoveryRight = LoadNamedSprite(attackSheet, className + "_Right_Recovery");
 
-            var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(SkillMotionPlayer), typeof(PlayerGridController));
+            var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(SkillMotionPlayer), typeof(PlayerGridController), typeof(Sapphire.Presentation.Combat.PlayerCombatController));
             playerGo.transform.position = CellCenter(spawnX, spawnY);
             playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
             playerGo.GetComponent<SpriteRenderer>().sortingOrder = 10;

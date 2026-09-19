@@ -134,6 +134,13 @@ namespace Sapphire.Presentation.Skills
                 skillVfx = ResolveSkillVfx();
                 (skillVfx as WarriorSkillVfxPlayer)?.PlayBasicAttack(player.Mover.Facing);
                 motionPlayer?.PlayAttack(player.Mover.Facing);
+                
+                var combat = player.GetComponent<Sapphire.Presentation.Combat.PlayerCombatController>();
+                if (combat != null)
+                {
+                    GridCoord target = player.Mover.Position + player.Mover.Facing.ToOffset();
+                    combat.AttackTarget(target.X, target.Y, 1.0f);
+                }
             }
 
             castFeedback?.PlayCast(BasicAttackDisplayName);
@@ -156,10 +163,6 @@ namespace Sapphire.Presentation.Skills
             GridCoord origin = player.Mover.Position;
             GridDirection facing = player.Mover.Facing;
 
-            // Blink (mage) and Dash (warrior) both move the caster via the
-            // exact same GridMover.TryBlink mechanic before any VFX plays -
-            // see SkillVfxPlayer/WarriorSkillVfxPlayer's row-0/1 comments for
-            // how they reconstruct the departure point afterwards.
             bool isMovementSkill = skill.Id == SkillCatalog.BlinkSkillId || skill.Id == SkillCatalog.DashSkillId;
             if (isMovementSkill && !player.TryBlink(skill.RangeTiles))
             {
@@ -167,9 +170,32 @@ namespace Sapphire.Presentation.Skills
                 return;
             }
 
+            var combat = player.GetComponent<Sapphire.Presentation.Combat.PlayerCombatController>();
+            
+            // Mana Check (Arbitrary 10 MP per skill for now)
+            if (combat != null && !isMovementSkill)
+            {
+                if (!combat.Mana.TryConsume(10))
+                {
+                    castFeedback?.PlayCast("마나가 부족합니다!");
+                    return;
+                }
+            }
+
             skillVfx = ResolveSkillVfx();
             skillVfx.Play(index, origin, player.Mover.Position, facing);
             motionPlayer?.PlayAttack(facing);
+            
+            if (combat != null)
+            {
+                if (!isMovementSkill && skill.RangeTiles > 0)
+                {
+                    // Deal damage to all tiles in skill shape/range
+                    // For simplicity, just attack the first tile in range for now
+                    GridCoord target = player.Mover.Position + player.Mover.Facing.ToOffset();
+                    combat.AttackTarget(target.X, target.Y, 2.0f); // Skill does 2x damage
+                }
+            }
 
             castFeedback?.PlayCast(skill.DisplayName);
         }
