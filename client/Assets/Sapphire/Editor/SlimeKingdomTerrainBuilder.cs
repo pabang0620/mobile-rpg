@@ -111,7 +111,7 @@ namespace Sapphire.EditorTools
 
             // Forest Entrance
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "entrance_sign", "Slime2_Sign", 16, 4,
-                "경고: ?��? ?�포???�생 ?�라??출몰 지??��?�다. ?�투???�비???��??", null, 1.05f);
+                "경고: 야생 슬라임 출몰 지역입니다. 전투 준비가 필요합니다.", null, 1.05f);
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL");
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR");
 
@@ -123,11 +123,11 @@ namespace Sapphire.EditorTools
 
             // Mysteries of the forest
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "crystal_cave", "Slime2_Cave", 3, 21,
-                "?�정 ?�굴?�?차�???마력?�로 봉인?�어 ?�다. ?�에???��???빛이 ?�어 ?�온??", null, 2f);
+                "봉인된 동굴입니다. 마력으로 봉인되어 있습니다. 안에서 빛이 새어 들어옵니다.", null, 2f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "west_chest", "SlimeProp_Chest", 12, 19,
-                "?�래??보물?�자?? ?�군가 ?�겨??마력?�이 ?�어?�다!", null, 1.15f);
+                "낡은 보물 상자입니다. 누군가 숨겨둔 마력이 흘러나옵니다!", null, 1.15f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "east_chest", "SlimeProp_Chest", 27, 19,
-                "?�불 ?�에 ?�겨�??�자?? 별빛 ?�리�?발견?�다!", null, 1.15f);
+                "모닥불 옆에 숨겨진 상자입니다. 별빛 결정이 가득 담겨 있습니다!", null, 1.15f);
 
             // Bridges over the river
             PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 8, 15, 3f, 3f, "WestRiverBridge");
@@ -164,7 +164,7 @@ namespace Sapphire.EditorTools
             
             // Exit Gate
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "return_gate", "SlimeProp_Gate", 19, 0,
-                "?�작 마을(?�파?�어 ?�??�??�아갑니??", "VillageHub", 2.5f);
+                "시작 마을(사파이어 허브)로 돌아갑니다.", "VillageHub", 2.5f);
         }
 
         private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message, bool isBoss = false)
