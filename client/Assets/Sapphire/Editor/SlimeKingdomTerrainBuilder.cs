@@ -111,7 +111,7 @@ namespace Sapphire.EditorTools
 
             // Forest Entrance
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "entrance_sign", "Slime2_Sign", 16, 4,
-                "경고: ?��? ?�포???�생 ?�라??출몰 지??��?�다. ?�투???�비하??��??", null, 1.05f);
+                "경고: ?��? ?�포???�생 ?�라??출몰 지??��?�다. ?�투???�비하??��??", null, 1.05f);
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL");
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR");
 
@@ -123,11 +123,11 @@ namespace Sapphire.EditorTools
 
             // Mysteries of the forest
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "crystal_cave", "Slime2_Cave", 3, 21,
-                "?�정 ?�굴?� 차�???마력?�로 봉인?�어 ?�다. ?�에???��???빛이 ?�어 ?�온??", null, 2f);
+                "?�정 ?�굴?� 차�???마력?�로 봉인?�어 ?�다. ?�에???��???빛이 ?�어 ?�온??", null, 2f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "west_chest", "SlimeProp_Chest", 12, 19,
-                "?�래??보물?�자?? ?�군가 ?�겨??마력?�이 ?�어?�다!", null, 1.15f);
+                "?�래??보물?�자?? ?�군가 ?�겨??마력?�이 ?�어?�다!", null, 1.15f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "east_chest", "SlimeProp_Chest", 27, 19,
-                "?�불 ?�에 ?�겨�??�자?? 별빛 ?�리�?발견?�다!", null, 1.15f);
+                "?�불 ?�에 ?�겨�??�자?? 별빛 ?�리�?발견?�다!", null, 1.15f);
 
             // Bridges over the river
             PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 8, 15, 3f, 3f, "WestRiverBridge");
@@ -157,20 +157,20 @@ namespace Sapphire.EditorTools
             }, 1f);
 
             // Wild Slimes (Monsters)
-            BuildEncounter(root, collision, blocker, zones, 16, 13, "?�생 ?��? ?�라?�이 ?�적???�체�??�리�??��??�니??");
-            BuildEncounter(root, collision, blocker, zones, 14, 18, "?�리 근처?�서 ?�성?�는 ?�라??무리?�니??");
-            BuildEncounter(root, collision, blocker, zones, 25, 18, "마력??머금?� ?�정 ?�라?�이 경계?�고 ?�습?�다.");
-            BuildEncounter(root, collision, blocker, zones, 19, 25, "���� �������̴�!", true);
+            BuildEncounter(root, collision, blocker, zones, 16, 13, "야생 슬라임이 길을 막고 있습니다.");
+            BuildEncounter(root, collision, blocker, zones, 14, 18, "수풀 근처에서 서성이는 슬라임 무리입니다.");
+            BuildEncounter(root, collision, blocker, zones, 25, 18, "마력을 머금은 변종 슬라임이 경계하고 있습니다.");
+            BuildEncounter(root, collision, blocker, zones, 19, 25, "보스!", true);
             
             // Exit Gate
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "return_gate", "SlimeProp_Gate", 19, 0,
-                "?�작 마을(?�파?�어 ?�??�??�아갑니??", "VillageHub", 2.5f);
+                "?�작 마을(?�파?�어 ?�??�??�아갑니??", "VillageHub", 2.5f);
         }
 
         private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message, bool isBoss = false)
         {
             var zone = BuildInteractable(parent, collision, blocker, zones, PrimaryAtlas, "slime_" + x + "_" + y, "SlimeProp_Slime", x, y, message, null, .82f);
-            var shadow = new GameObject("Shadow"); shadow.transform.SetParent(zone.transform, false); shadow.transform.localPosition = new Vector3(0, -0.35f, 0); shadow.transform.localScale = new Vector3(0.08f, 0.2f, 1f); var sr = shadow.AddComponent<SpriteRenderer>(); sr.sprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/GaugeFillMana.png"); sr.color = new Color(0f, 0f, 0f, 0.4f);; sr.sortingOrder = -30000; var monster = zone.gameObject.AddComponent<Sapphire.Presentation.Combat.MonsterController>();
+            var monster = zone.gameObject.AddComponent<Sapphire.Presentation.Combat.MonsterController>();
             // Basic Slime Stats: 30 HP, 5 ATK, 2 DEF
             if (isBoss) { zone.transform.localScale = new Vector3(1.5f, 1.5f, 1f); monster.Initialize(x, y, 150, 15, 5, true); } else { monster.Initialize(x, y, 30, 5, 2, false); }
         }

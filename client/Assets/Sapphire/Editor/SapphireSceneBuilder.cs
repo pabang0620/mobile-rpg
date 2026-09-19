@@ -52,7 +52,7 @@ namespace Sapphire.EditorTools
         {
             if (!Application.isBatchMode)
             {
-                Debug.LogWarning("SapphireSceneBuilder.BuildAll()?� 배치모드 ?�용?�니?? ?�?�형 ?�디?�에???�???????�을 ?�릴 ???�어 ?�행??건너?�니??");
+                Debug.LogWarning("SapphireSceneBuilder.BuildAll()은 씬을 덮어쓰기 때문에 에디터에서만 실행해야 합니다.");
                 return;
             }
 
@@ -141,11 +141,6 @@ namespace Sapphire.EditorTools
                 mageController, mageInputReader, mageCastFeedback,
                 warriorController, warriorInputReader, warriorCastFeedback);
 
-            var dustSpawnerGo = new GameObject("AmbientDustSpawner");
-            var dustSpawner = dustSpawnerGo.AddComponent<Sapphire.Presentation.World.AmbientDustSpawner>();
-            dustSpawner.DustSprite = VillageHubUiBuilder.LoadSingleSprite(UiArtDir + "/GaugeFillMana.png");
-            dustSpawner.ParticleColor = new Color(0.8f, 0.9f, 1f);
-
             ComposeSceneRoot(terrain, mageController, mageInputReader, ui.MageSkillMenuRoot, warriorController, warriorInputReader, ui.WarriorSkillMenuRoot, followRig, ui.MessagePanel);
 
             if (!EditorSceneManager.SaveScene(scene, ScenePath))
@@ -177,12 +172,7 @@ namespace Sapphire.EditorTools
             UiBuildResult ui = VillageHubUiBuilder.Build(
                 mageController, mageInputReader, mageCastFeedback,
                 warriorController, warriorInputReader, warriorCastFeedback,
-                "?�라???�국");
-
-            var dustSpawnerGo = new GameObject("AmbientDustSpawner");
-            var dustSpawner = dustSpawnerGo.AddComponent<Sapphire.Presentation.World.AmbientDustSpawner>();
-            dustSpawner.DustSprite = VillageHubUiBuilder.LoadSingleSprite(UiArtDir + "/GaugeFillMana.png");
-            dustSpawner.ParticleColor = new Color(0.8f, 0.9f, 1f);
+                "슬라임 왕국");
 
             ComposeSceneRoot(
                 terrain, mageController, mageInputReader, ui.MageSkillMenuRoot,
@@ -201,8 +191,8 @@ namespace Sapphire.EditorTools
         // 2026-09 character-flow slice: generalized from a Mage-only hardcoded
         // sheet path/sprite-name prefix to any CharacterClass. Warrior's sheet
         // (WarriorTopdownGridSheet.png) uses the exact same grid/cell layout
-        // and naming convention as Mage's (task spec: "?�일??격자/?� ?�기/
-        // ?�열 ?�서"), just with "Warrior_" instead of "Mage_" as the sprite
+        // and naming convention as Mage's (task spec: "동일한 격자/셀 크기/
+        // 행열 순서"), just with "Warrior_" instead of "Mage_" as the sprite
         // name prefix - see WarriorArtImportConfigurator for the import side.
         // Calling this with CharacterClass.Mage loads the exact same sheet/
         // sprite names as before this method took a parameter, so Mage's
@@ -253,13 +243,6 @@ namespace Sapphire.EditorTools
             var spriteRenderer = playerGo.GetComponent<SpriteRenderer>();
             spriteRenderer.material = new Material(Shader.Find("Sprites/Default"));
             playerGo.AddComponent<Sapphire.Presentation.World.DynamicYSort>();
-
-            var shadow = new GameObject("Shadow");
-            shadow.transform.SetParent(playerGo.transform, false);
-            shadow.transform.localPosition = new Vector3(0, -0.35f, 0); shadow.transform.localScale = new Vector3(0.08f, 0.2f, 1f);
-            var shadowSr = shadow.AddComponent<SpriteRenderer>();
-            shadowSr.sprite = VillageHubUiBuilder.LoadSingleSprite(UiArtDir + "/GaugeFillMana.png"); shadowSr.color = new Color(0f, 0f, 0f, 0.4f);;
-            shadowSr.sortingOrder = -30000;
 
             var spriteAnimator = playerGo.GetComponent<DirectionalSpriteAnimator>();
             AssignField(spriteAnimator, "idleUp", idleUp);
@@ -372,11 +355,6 @@ namespace Sapphire.EditorTools
             AssignField(sceneComposer, "warriorInputReader", warriorInputReader);
             AssignField(sceneComposer, "warriorSkillMenuRoot", warriorSkillMenuRoot);
             AssignField(sceneComposer, "cameraFollowRig", followRig);
-
-            var dustSpawnerGo = new GameObject("AmbientDustSpawner");
-            var dustSpawner = dustSpawnerGo.AddComponent<Sapphire.Presentation.World.AmbientDustSpawner>();
-            dustSpawner.DustSprite = VillageHubUiBuilder.LoadSingleSprite(UiArtDir + "/GaugeFillMana.png");
-            dustSpawner.ParticleColor = new Color(0.8f, 0.9f, 1f);
             AssignField(sceneComposer, "interactionTrigger", interactionTrigger);
             AssignField(sceneComposer, "messagePanel", messagePanel);
             AssignField(sceneComposer, "playerSpawnX", spawnX);
@@ -420,4 +398,3 @@ namespace Sapphire.EditorTools
         }
     }
 }
-
