@@ -10,7 +10,7 @@ namespace Sapphire.Presentation.Combat
     {
         private static Sprite sparkSprite;
 
-        public static void Spawn(Vector3 worldPosition)
+        public static void Spawn(Vector3 worldPosition, bool isCrit = false)
         {
             if (sparkSprite == null)
             {
@@ -31,6 +31,13 @@ namespace Sapphire.Presentation.Combat
 
             var spawner = go.AddComponent<HitEffectSpawner>();
             spawner.StartCoroutine(spawner.AnimateSpark(sr));
+        }
+
+        private IEnumerator HitStop()
+        {
+            Time.timeScale = 0.1f;
+            yield return new WaitForSecondsRealtime(0.08f);
+            Time.timeScale = 1f;
         }
 
         private IEnumerator AnimateSpark(SpriteRenderer sr)

@@ -124,7 +124,7 @@ namespace Sapphire.Presentation.Combat
                     
                     combatController.OnHit(damage);
                     DamagePopup.Spawn(player.transform.position, damage, isCrit ? damage.ToString() + " CRIT!" : null);
-                    HitEffectSpawner.Spawn(player.transform.position + new Vector3(0, 0.25f, -1f));
+                    HitEffectSpawner.Spawn(player.transform.position + new Vector3(0, 0.25f, -1f), isCrit);
                     var shake = FindObjectOfType<CameraShake>();
                     shake?.Shake(0.08f, 0.15f);
 

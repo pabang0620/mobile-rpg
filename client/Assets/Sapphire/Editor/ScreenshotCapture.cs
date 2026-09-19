@@ -7,7 +7,7 @@ namespace Sapphire.EditorTools
     {
         public static void TakeScreenshot() 
         {
-            UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Sapphire/Scenes/Login.unity");
+            UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Sapphire/Scenes/SlimeKingdom.unity");
             
             Camera cam = Camera.main;
             if (cam == null)
@@ -28,7 +28,7 @@ namespace Sapphire.EditorTools
                 cam.targetTexture = null;
                 RenderTexture.active = null;
                 byte[] bytes = tex.EncodeToPNG();
-                System.IO.File.WriteAllBytes("login.png", bytes);
+                System.IO.File.WriteAllBytes("slime_kingdom.png", bytes);
                 Debug.Log("Screenshot saved to village_hub.png");
             }
             else

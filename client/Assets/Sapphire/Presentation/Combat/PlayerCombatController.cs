@@ -144,7 +144,7 @@ namespace Sapphire.Presentation.Combat
 
                         monster.OnHit(damage, Stats);
                         DamagePopup.Spawn(monster.transform.position, damage, isCrit ? damage.ToString() + " CRIT!" : null);
-                        HitEffectSpawner.Spawn(monster.transform.position + new Vector3(0, 0.25f, -1f));
+                        HitEffectSpawner.Spawn(monster.transform.position + new Vector3(0, 0.25f, -1f), isCrit);
                         hitAny = true;
                         
                         if (monster.Health.IsDead)

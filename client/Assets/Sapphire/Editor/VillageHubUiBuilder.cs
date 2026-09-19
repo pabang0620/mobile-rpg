@@ -72,6 +72,7 @@ namespace Sapphire.EditorTools
             BuildVirtualMovementPad(canvasGo, mageInputReader, warriorInputReader);
             GameObject mageSkillMenuRoot = VillageHubSkillMenuBuilder.Build(canvasGo, mageController, mageCastFeedback, CharacterClass.Mage, "SkillIconsSetGold.png");
             GameObject warriorSkillMenuRoot = VillageHubSkillMenuBuilder.Build(canvasGo, warriorController, warriorCastFeedback, CharacterClass.Warrior, "WarriorSkillIconsSetGold.png");
+            BuildVignette(canvasGo);
             BuildGauges(canvasGo);
             BuildRegionNameBanner(canvasGo, regionName);
             VillageHubMenuBuilder.Build(canvasGo, messagePanel);
@@ -256,6 +257,22 @@ namespace Sapphire.EditorTools
         // 1-3): HealthBarView generalized into GaugeView (Presentation/UI) so
         // the same component drives both bars. There is no stat system in this
         // slice yet, so both gauges are built fixed at 100% fill.
+
+        private static void BuildVignette(GameObject canvasGo)
+        {
+            var go = new GameObject("Vignette", typeof(UnityEngine.UI.Image));
+            go.transform.SetParent(canvasGo.transform, false);
+            var rect = go.GetComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            go.transform.SetAsFirstSibling();
+            var img = go.GetComponent<UnityEngine.UI.Image>();
+            img.sprite = LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/Vignette.png");
+            img.color = new Color(1f, 1f, 1f, 0.65f);
+            img.raycastTarget = false;
+        }
 
         private static void BuildGauges(GameObject canvasGo)
         {
@@ -514,5 +531,6 @@ namespace Sapphire.EditorTools
         }
     }
 }
+
 
 
