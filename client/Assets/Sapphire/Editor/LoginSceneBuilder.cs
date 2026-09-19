@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,8 +25,8 @@ namespace Sapphire.EditorTools
         // (280,90), top/bottom edges at -95/-185) with a comfortable margin
         // on every side - matches LoginPortalFrame.png's own authored target
         // size (400x260) exactly, so no unstretched-corner distortion.
-        private static readonly Vector2 PortalSize = new Vector2(400f, 260f);
-        private const float PortalCenterY = -85f;
+        private static readonly Vector2 PortalSize = new Vector2(320f, 220f);
+        private const float PortalCenterY = -75f;
 
         internal static void Build()
         {
@@ -56,32 +56,18 @@ namespace Sapphire.EditorTools
             // swap), so that shared asset itself is untouched, only this one
             // call site's sprite reference changed. Layout (position/size)
             // below is unchanged - only the sprite differs.
-            Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/NicknameInputFieldV2.png");
+            // 2026-09-19: switched to simpler InputFieldFrame.png (plain rounded rect)
+            // and narrowed width from 360 to 260 for a cleaner look.
+            Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/InputFieldFrame.png");
             InputField accountIdInput = BuildAccountIdInput(canvasGo, inputFrame);
 
-            // 2026-09-16 (login input/button redesign task): swapped from
-            // ButtonPrimary.png (warm brown hex-cut pill, grep-confirmed used
-            // nowhere else so nothing else is affected) to the new
-            // LoginStartButtonV2.png (blue neon hexagon, Normal/Pressed 2-cell
-            // sheet - see HudArtImportConfigurator... actually
-            // CharacterFlowArtImportConfigurator.ConfigureTwoCellButton, same
-            // pattern as ButtonSelectV2/ButtonDeleteV2/ButtonCreateV2).
-            // Button.transition is switched from the Selectable default
-            // (ColorTint) to SpriteSwap so pressedSprite actually renders on
-            // press - the shared CharacterFlowUiScaffold.BuildLabeledButton
-            // helper doesn't wire SpriteSwap itself (every other screen using
-            // it is fine with the default color-tint feedback), so this is
-            // done locally here rather than changing that shared helper for
-            // every other button using it.
-            Sprite startButtonSprite = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png");
-            Sprite startButtonPressedSprite = startButtonSprite;
-            Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, startButtonSprite, "StartButton", new Vector2(0f, -140f), new Vector2(280f, 90f), "게임 시작", fontSize: 28);
-            startButton.transition = Selectable.Transition.SpriteSwap;
-            SpriteState startButtonSpriteState = startButton.spriteState;
-            startButtonSpriteState.pressedSprite = startButtonPressedSprite;
-            startButton.spriteState = startButtonSpriteState;
+            // 2026-09-19: replaced flashy neon LoginStartButtonV2.png with
+            // the simpler ButtonSelectV2.png (solid dark button, same asset used
+            // in character-select screen). Color-tint transition kept (default).
+            Sprite startButtonSprite = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/ButtonSelectV2.png");
+            Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, startButtonSprite, "StartButton", new Vector2(0f, -120f), new Vector2(240f, 64f), "게임 시작", fontSize: 26);
 
-            Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, -195f), new Vector2(500f, 32f), string.Empty, fontSize: 20);
+            Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, -165f), new Vector2(400f, 30f), string.Empty, fontSize: 18);
             errorText.color = new Color(1f, 0.5f, 0.5f);
 
             var controllerGo = new GameObject("LoginScreenController", typeof(LoginScreenController));
@@ -116,7 +102,7 @@ namespace Sapphire.EditorTools
 
         private static InputField BuildAccountIdInput(GameObject canvasGo, Sprite frameSprite)
         {
-            Image frame = CharacterFlowUiScaffold.BuildSlicedPanel(canvasGo, frameSprite, "AccountIdInput", new Vector2(0f, -20f), new Vector2(360f, 72f));
+            Image frame = CharacterFlowUiScaffold.BuildSlicedPanel(canvasGo, frameSprite, "AccountIdInput", new Vector2(0f, -20f), new Vector2(260f, 60f));
             GameObject frameGo = frame.gameObject;
             var inputField = frameGo.AddComponent<InputField>();
 
