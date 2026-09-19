@@ -110,7 +110,8 @@ namespace Sapphire.EditorTools
             Transform root = new GameObject("SlimeForestLandmarks").transform;
 
             // Forest Entrance
-            PlaceVisual(root, PropsAtlas, "Slime2_Sign", 16, 4, 1.05f, "EntranceSign", 2);
+            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "entrance_sign", "Slime2_Sign", 16, 4,
+                "경고: 앞은 흉포한 야생 슬라임 출몰 지역입니다. 전투에 대비하십시오!", null, 1.05f);
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL", 1);
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR", 1);
 

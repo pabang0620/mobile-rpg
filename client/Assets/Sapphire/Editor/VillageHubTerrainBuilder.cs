@@ -207,6 +207,41 @@ namespace Sapphire.EditorTools
             // Gate to Slime Forest (Top exit)
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "slime_kingdom_gate", "SlimeProp_Gate", SapphireSceneBuilder.SpawnX, SapphireSceneBuilder.MapHeight - 1,
                 "슬라임 숲으로 이동합니다.", "SlimeKingdom", 2.6f);
+
+            // NPCs
+            Sprite guideSprite = LoadNamedSprite(SapphireSceneBuilder.RootArtDir + "/MageTopdownGridSheet.png", "Mage_Down_Idle");
+            Sprite elderSprite = LoadNamedSprite(SapphireSceneBuilder.RootArtDir + "/WarriorTopdownGridSheet.png", "Warrior_Down_Idle");
+            
+            BuildNpc(root, collision, blocker, zones, guideSprite, "npc_guide", 11, 7,
+                "방향키를 눌러 이동할 수 있습니다. 마을 위쪽 문을 통해 슬라임 숲으로 가보세요.", 1.0f);
+            
+            BuildNpc(root, collision, blocker, zones, elderSprite, "npc_elder", 17, 12,
+                "허허, 젊은이. 숲에는 흉포한 슬라임이 많으니 조심하게.", 1.0f);
+                
+            BuildNpc(root, collision, blocker, zones, elderSprite, "npc_merchant", 9, 5,
+                "어서옵쇼! 쓸만한 물건이 아주... 아, 아직 개점 전이네.", 1.0f);
+        }
+
+        private static InteractableZone BuildNpc(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones,
+            Sprite sprite, string id, int x, int y, string message, float scale)
+        {
+            var go = new GameObject(id, typeof(SpriteRenderer));
+            go.transform.SetParent(parent); 
+            go.transform.position = CellCenter(x, y);
+            go.transform.localScale = new Vector3(scale, scale, 1f);
+            var renderer = go.GetComponent<SpriteRenderer>(); 
+            renderer.sprite = sprite; 
+            renderer.sortingOrder = 5;
+            
+            collision.SetTile(new Vector3Int(x, y, 0), blocker);
+            
+            var zone = go.AddComponent<InteractableZone>();
+            AssignField(zone, "interactableId", id); 
+            AssignField(zone, "gridX", x); 
+            AssignField(zone, "gridY", y);
+            AssignField(zone, "message", message); 
+            zones.Add(zone);
+            return zone;
         }
 
         private static void PlaceFence(Transform parent, Sprite sprite, int x, int y, float rotationZ, string name)
