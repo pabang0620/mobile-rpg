@@ -51,6 +51,10 @@ namespace Sapphire.EditorTools
 
         internal static void BuildFullScreenVideoBackground(GameObject canvasGo, string videoAssetPath)
         {
+            BuildFullScreenBackground(canvasGo, VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/TitleBackground.png"));
+        }
+        internal static void ObsoleteBuildFullScreenVideoBackground(GameObject canvasGo, string videoAssetPath)
+        {
             var backgroundGo = new GameObject("VideoBackground", typeof(UnityEngine.UI.RawImage), typeof(UnityEngine.Video.VideoPlayer));
             backgroundGo.transform.SetParent(canvasGo.transform, false);
             backgroundGo.transform.SetAsFirstSibling();
@@ -84,7 +88,7 @@ namespace Sapphire.EditorTools
             }
         }
 
-        /// <summary>A gold pill button (MenuButtonGold.png, 9-sliced) with a centered Korean-font label - the shape every "게임 시작"/"선택"/"삭제"/"생성" button in this flow shares.</summary>
+        /// <summary>A gold pill button (MenuButtonGold.png, 9-sliced) with a centered Korean-font label - the shape every "게임 ?�작"/"?�택"/"??��"/"?�성" button in this flow shares.</summary>
         internal static Button BuildLabeledButton(GameObject parent, Sprite buttonSprite, string name, Vector2 anchoredPosition, Vector2 sizeDelta, string label, int fontSize = 26)
         {
             var buttonGo = new GameObject(name, typeof(Image), typeof(Button));

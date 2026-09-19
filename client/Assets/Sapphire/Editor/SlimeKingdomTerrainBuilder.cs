@@ -36,7 +36,7 @@ namespace Sapphire.EditorTools
             var groundGo = new GameObject("Ground", typeof(Tilemap), typeof(TilemapRenderer));
             groundGo.transform.SetParent(gridGo.transform);
             var ground = groundGo.GetComponent<Tilemap>();
-            groundGo.GetComponent<TilemapRenderer>().sortingOrder = -100;
+            groundGo.GetComponent<TilemapRenderer>().sortingOrder = -30000;
             var collisionGo = new GameObject("Collision", typeof(Tilemap));
             collisionGo.transform.SetParent(gridGo.transform);
             var collision = collisionGo.GetComponent<Tilemap>();
@@ -111,7 +111,7 @@ namespace Sapphire.EditorTools
 
             // Forest Entrance
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "entrance_sign", "Slime2_Sign", 16, 4,
-                "경고: ?��? ?�포???�생 ?�라??출몰 지??��?�다. ?�투???�비하??��??", null, 1.05f);
+                "경고: ?��? ?�포???�생 ?�라??출몰 지??��?�다. ?�투???�비???��??", null, 1.05f);
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL");
             PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR");
 
@@ -123,7 +123,7 @@ namespace Sapphire.EditorTools
 
             // Mysteries of the forest
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "crystal_cave", "Slime2_Cave", 3, 21,
-                "?�정 ?�굴?� 차�???마력?�로 봉인?�어 ?�다. ?�에???��???빛이 ?�어 ?�온??", null, 2f);
+                "?�정 ?�굴?�?차�???마력?�로 봉인?�어 ?�다. ?�에???��???빛이 ?�어 ?�온??", null, 2f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "west_chest", "SlimeProp_Chest", 12, 19,
                 "?�래??보물?�자?? ?�군가 ?�겨??마력?�이 ?�어?�다!", null, 1.15f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "east_chest", "SlimeProp_Chest", 27, 19,

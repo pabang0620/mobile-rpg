@@ -1,4 +1,4 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -73,8 +73,8 @@ namespace Sapphire.EditorTools
             // it is fine with the default color-tint feedback), so this is
             // done locally here rather than changing that shared helper for
             // every other button using it.
-            Sprite startButtonSprite = VillageHubUiBuilder.LoadNamedSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png", "Normal");
-            Sprite startButtonPressedSprite = VillageHubUiBuilder.LoadNamedSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png", "Pressed");
+            Sprite startButtonSprite = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png");
+            Sprite startButtonPressedSprite = startButtonSprite;
             Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, startButtonSprite, "StartButton", new Vector2(0f, -140f), new Vector2(280f, 90f), "게임 시작", fontSize: 28);
             startButton.transition = Selectable.Transition.SpriteSwap;
             SpriteState startButtonSpriteState = startButton.spriteState;

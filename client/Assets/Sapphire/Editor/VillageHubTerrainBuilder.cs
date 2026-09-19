@@ -69,7 +69,7 @@ namespace Sapphire.EditorTools
 
             var groundGo = new GameObject("Ground", typeof(Tilemap), typeof(TilemapRenderer));
             groundGo.transform.SetParent(gridGo.transform);
-            groundGo.GetComponent<TilemapRenderer>().sortingOrder = -1000;
+            groundGo.GetComponent<TilemapRenderer>().sortingOrder = -30000;
 
             var collisionGo = new GameObject("Collision", typeof(Tilemap));
             collisionGo.transform.SetParent(gridGo.transform);
@@ -192,18 +192,7 @@ namespace Sapphire.EditorTools
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "slime_kingdom_gate", "SlimeProp_Gate", SapphireSceneBuilder.SpawnX, SapphireSceneBuilder.MapHeight - 1,
                 "슬라임 숲으로 이동합니다.", "SlimeKingdom", 2.6f);
 
-            // NPCs
-            Sprite guideSprite = LoadNamedSprite(SapphireSceneBuilder.RootArtDir + "/MageTopdownGridSheet.png", "Mage_Down_Idle");
-            Sprite elderSprite = LoadNamedSprite(SapphireSceneBuilder.RootArtDir + "/WarriorTopdownGridSheet.png", "Warrior_Down_Idle");
             
-            BuildNpc(root, collision, blocker, zones, guideSprite, "npc_guide", 11, 7,
-                "방향키를 눌러 이동할 수 있습니다. 마을 북쪽 문을 통해 슬라임 숲으로 가보세요.", 1.0f);
-            
-            BuildNpc(root, collision, blocker, zones, elderSprite, "npc_elder", 18, 12,
-                "허허, 숲에는 포악한 슬라임이 많으니 조심하게.", 1.0f);
-                
-            BuildNpc(root, collision, blocker, zones, elderSprite, "npc_merchant", 8, 8,
-                "어서옵쇼! 쓸만한 물건이 아주... 아, 아직 개점 전이네.", 1.0f);
         }
 
         private static InteractableZone BuildNpc(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones,
@@ -346,3 +335,4 @@ namespace Sapphire.EditorTools
         }
     }
 }
+
