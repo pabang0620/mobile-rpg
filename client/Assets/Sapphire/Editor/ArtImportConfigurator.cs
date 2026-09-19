@@ -311,7 +311,7 @@ namespace Sapphire.EditorTools
             // pixelsPerUnit calibrated to nativeWidth/280 (~3.546), scaled by
             // referencePixelsPerUnit (100) - see the *100 note on
             // MessagePanelFrameGold above; without it this exact asset/border
-            // combo is what produced the "메뉴 버튼 배경이 안 보인다" bug (main
+            // combo is what produced the "메뉴 버튼 배경????보인?? bug (main
             // menu open button, MenuButtonGold border sums (114+116)/280 x
             // 100 no longer fits the ~28x-inflated math, collapsing the
             // Sliced mesh to 0 vertices). 280 is the close button's width, the
@@ -321,7 +321,7 @@ namespace Sapphire.EditorTools
             // ~65/150 = 43% of width, ~42/72 = 58% of height, no overlap.
             ConfigureSingleSprite(
                 SapphireSceneBuilder.UiArtDir + "/MenuButtonGold.png",
-                border: new Vector4(114, 71, 116, 77),
+                border: new Vector4(30, 30, 30, 30),
                 filterMode: FilterMode.Bilinear,
                 mipmaps: false,
                 pixelsPerUnit: 100f * 993f / 280f);
@@ -405,7 +405,7 @@ namespace Sapphire.EditorTools
             // and reading order - visually re-confirmed against each icon's
             // artwork: staff+starburst/flying shard/snowflake top row,
             // chevron/shield/winged bolt bottom row, matching
-            // 기본공격/비전탄/서리파동 then 점멸/보호막/질주). Sprite names unchanged
+            // 기본공격/비전???�리?�동 then ?�멸/보호�?질주). Sprite names unchanged
             // so SkillCatalog.cs and RadialSkillMenu need no changes.
             //
             // Re-measured rather than reused: column gaps at 520-527 and

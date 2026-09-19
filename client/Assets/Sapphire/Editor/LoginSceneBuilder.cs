@@ -9,11 +9,10 @@ namespace Sapphire.EditorTools
 {
     /// <summary>
     /// Builds Login.unity from scratch: title background/logo, an account-id
-    /// InputField, a "게임 시작" button, and an error line. Mirrors
+    /// InputField, a "게임 ?�작" button, and an error line. Mirrors
     /// SapphireSceneBuilder's "always start from a brand-new empty scene,
     /// idempotent" approach. Build Settings registration is Login's own
-    /// responsibility to put at index 0 (docs/planning/01_PRODUCT.md's "첫
-    /// 씬이 로그인" - see CharacterFlowSceneBuilder for the overall order).
+    /// responsibility to put at index 0 (docs/planning/01_PRODUCT.md's "�?    /// ?�이 로그?? - see CharacterFlowSceneBuilder for the overall order).
     /// </summary>
     internal static class LoginSceneBuilder
     {
@@ -73,13 +72,13 @@ namespace Sapphire.EditorTools
             // it is fine with the default color-tint feedback), so this is
             // done locally here rather than changing that shared helper for
             // every other button using it.
-            Sprite startButtonSprite = VillageHubUiBuilder.LoadNamedSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png", "Normal");
-            Sprite startButtonPressedSprite = VillageHubUiBuilder.LoadNamedSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png", "Pressed");
-            Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, startButtonSprite, "StartButton", new Vector2(0f, -140f), new Vector2(280f, 90f), "게임 시작", fontSize: 28);
-            startButton.transition = Selectable.Transition.SpriteSwap;
-            SpriteState startButtonSpriteState = startButton.spriteState;
-            startButtonSpriteState.pressedSprite = startButtonPressedSprite;
-            startButton.spriteState = startButtonSpriteState;
+            Sprite startButtonSprite = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/LoginStartButtonV2.png");
+            
+            Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, startButtonSprite, "StartButton", new Vector2(0f, -140f), new Vector2(280f, 90f), "게임 ?�작", fontSize: 28);
+            startButton.transition = Selectable.Transition.ColorTint;
+            
+            
+            
 
             Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, -195f), new Vector2(500f, 32f), string.Empty, fontSize: 20);
             errorText.color = new Color(1f, 0.5f, 0.5f);
@@ -146,7 +145,7 @@ namespace Sapphire.EditorTools
             placeholder.color = new Color(1f, 1f, 1f, 0.5f);
             placeholder.fontSize = 26;
             placeholder.alignment = TextAnchor.MiddleLeft;
-            placeholder.text = "아이디 입력";
+            placeholder.text = "?�이???�력";
 
             inputField.textComponent = text;
             inputField.placeholder = placeholder;

@@ -145,7 +145,7 @@ namespace Sapphire.EditorTools
             ConfigureTwoCellButton(TitleArtDir + "/ButtonCreateV2.png", 480, 168, 72, CreateButtonBorder);
 
             ConfigureSlicedSprite(TitleArtDir + "/NicknameInputFieldV2.png", NicknameInputFieldV2Border, InputFieldFrameTargetWidth);
-            ConfigureTwoCellButton(TitleArtDir + "/LoginStartButtonV2.png", 750, 250, 80, LoginStartButtonV2Border);
+            ConfigureSlicedSprite(TitleArtDir + "/LoginStartButtonV2.png", new Vector4(40, 40, 40, 40), 280);
         }
 
         // Full-canvas Simple sprite for the new v2 title-kit assets - same
