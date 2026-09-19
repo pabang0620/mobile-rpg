@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="88" result="Passed" total="88" passed="88" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:36Z" duration="0.1636318">
+  <test-suite type="TestSuite" id="1000" name="Sapphire RPG" fullname="Sapphire RPG" runstate="Runnable" testcasecount="88" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:36Z" duration="0.163632" total="88" passed="88" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1100" name="Sapphire.Domain.Tests.dll" fullname="C:/Users/admin/Desktop/games/mobile-rpg/client/Library/ScriptAssemblies/Sapphire.Domain.Tests.dll" runstate="Runnable" testcasecount="84" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.094899" total="84" passed="84" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25328" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1101" name="Sapphire" fullname="Sapphire" runstate="Runnable" testcasecount="84" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.094533" total="84" passed="84" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1104" name="Domain" fullname="Sapphire.Domain" runstate="Runnable" testcasecount="81" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.092979" total="81" passed="81" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1105" name="Tests" fullname="Sapphire.Domain.Tests" runstate="Runnable" testcasecount="81" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.092697" total="81" passed="81" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1005" name="CharacterFootPivotCalculatorTests" fullname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests" classname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.033742" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1010" name="DisconnectedBleedBelowMainContent_StillCountsAsFoot" fullname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests.DisconnectedBleedBelowMainContent_StillCountsAsFoot" methodname="DisconnectedBleedBelowMainContent_StillCountsAsFoot" classname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests" runstate="Runnable" seed="711061757" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.017696" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1008" name="EmptyFrame_FallsBackToBottomCenter" fullname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests.EmptyFrame_FallsBackToBottomCenter" methodname="EmptyFrame_FallsBackToBottomCenter" classname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests" runstate="Runnable" seed="58448322" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000425" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="FeetFlushWithFrameBottom_ProducesZeroYPivot" fullname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests.FeetFlushWithFrameBottom_ProducesZeroYPivot" methodname="FeetFlushWithFrameBottom_ProducesZeroYPivot" classname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests" runstate="Runnable" seed="2079348216" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000221" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="FootPivot_AnchorsToBottomOfAlphaContent_NotVerticalCenter" fullname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests.FootPivot_AnchorsToBottomOfAlphaContent_NotVerticalCenter" methodname="FootPivot_AnchorsToBottomOfAlphaContent_NotVerticalCenter" classname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests" runstate="Runnable" seed="1031870032" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1009" name="FrameOffsetWithinLargerTexture_IsRespected" fullname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests.FrameOffsetWithinLargerTexture_IsRespected" methodname="FrameOffsetWithinLargerTexture_IsRespected" classname="Sapphire.Domain.Tests.CharacterFootPivotCalculatorTests" runstate="Runnable" seed="639937276" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000194" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1011" name="CharacterNameValidatorTests" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.007244" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1017" name="Validate_ContainsSpace_ReturnsInvalidCharacters" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_ContainsSpace_ReturnsInvalidCharacters" methodname="Validate_ContainsSpace_ReturnsInvalidCharacters" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="1986980479" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.001966" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1018" name="Validate_ContainsSymbol_ReturnsInvalidCharacters" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_ContainsSymbol_ReturnsInvalidCharacters" methodname="Validate_ContainsSymbol_ReturnsInvalidCharacters" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="264079656" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.002104" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1019" name="Validate_DuplicateAgainstExisting_ReturnsDuplicate" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_DuplicateAgainstExisting_ReturnsDuplicate" methodname="Validate_DuplicateAgainstExisting_ReturnsDuplicate" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="410289589" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000307" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1013" name="Validate_EightCharacters_ReturnsValid" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_EightCharacters_ReturnsValid" methodname="Validate_EightCharacters_ReturnsValid" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="2090538753" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000185" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1016" name="Validate_NineCharacters_ReturnsTooLong" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_NineCharacters_ReturnsTooLong" methodname="Validate_NineCharacters_ReturnsTooLong" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="665840737" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000132" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1020" name="Validate_NotInExistingList_ReturnsValid" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_NotInExistingList_ReturnsValid" methodname="Validate_NotInExistingList_ReturnsValid" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="1806156630" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000223" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="Validate_NullName_ReturnsTooShort" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_NullName_ReturnsTooShort" methodname="Validate_NullName_ReturnsTooShort" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="1081515681" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000122" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1014" name="Validate_OneCharacter_ReturnsTooShort" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_OneCharacter_ReturnsTooShort" methodname="Validate_OneCharacter_ReturnsTooShort" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="1350657035" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000106" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="Validate_TwoCharacters_ReturnsValid" fullname="Sapphire.Domain.Tests.CharacterNameValidatorTests.Validate_TwoCharacters_ReturnsValid" methodname="Validate_TwoCharacters_ReturnsValid" classname="Sapphire.Domain.Tests.CharacterNameValidatorTests" runstate="Runnable" seed="734638043" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000097" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1021" name="CharacterRosterTests" fullname="Sapphire.Domain.Tests.CharacterRosterTests" classname="Sapphire.Domain.Tests.CharacterRosterTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.005517" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1028" name="Constructor_WithInitialSlots_PopulatesSlots" fullname="Sapphire.Domain.Tests.CharacterRosterTests.Constructor_WithInitialSlots_PopulatesSlots" methodname="Constructor_WithInitialSlots_PopulatesSlots" classname="Sapphire.Domain.Tests.CharacterRosterTests" runstate="Runnable" seed="1126525135" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.001139" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1025" name="TryAddCharacter_AtMaxSlots_ReturnsRosterFullAndDoesNotMutate" fullname="Sapphire.Domain.Tests.CharacterRosterTests.TryAddCharacter_AtMaxSlots_ReturnsRosterFullAndDoesNotMutate" methodname="TryAddCharacter_AtMaxSlots_ReturnsRosterFullAndDoesNotMutate" classname="Sapphire.Domain.Tests.CharacterRosterTests" runstate="Runnable" seed="1331416306" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000945" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1023" name="TryAddCharacter_DuplicateName_ReturnsNameDuplicateAndDoesNotMutate" fullname="Sapphire.Domain.Tests.CharacterRosterTests.TryAddCharacter_DuplicateName_ReturnsNameDuplicateAndDoesNotMutate" methodname="TryAddCharacter_DuplicateName_ReturnsNameDuplicateAndDoesNotMutate" classname="Sapphire.Domain.Tests.CharacterRosterTests" runstate="Runnable" seed="445157219" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000273" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1024" name="TryAddCharacter_InvalidName_ReturnsSpecificRejectionAndDoesNotMutate" fullname="Sapphire.Domain.Tests.CharacterRosterTests.TryAddCharacter_InvalidName_ReturnsSpecificRejectionAndDoesNotMutate" methodname="TryAddCharacter_InvalidName_ReturnsSpecificRejectionAndDoesNotMutate" classname="Sapphire.Domain.Tests.CharacterRosterTests" runstate="Runnable" seed="517518193" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000262" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1022" name="TryAddCharacter_ValidName_AddsSlotAtLevelOne" fullname="Sapphire.Domain.Tests.CharacterRosterTests.TryAddCharacter_ValidName_AddsSlotAtLevelOne" methodname="TryAddCharacter_ValidName_AddsSlotAtLevelOne" classname="Sapphire.Domain.Tests.CharacterRosterTests" runstate="Runnable" seed="711667497" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000387" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1026" name="TryRemoveCharacter_ExistingId_RemovesAndReturnsTrue" fullname="Sapphire.Domain.Tests.CharacterRosterTests.TryRemoveCharacter_ExistingId_RemovesAndReturnsTrue" methodname="TryRemoveCharacter_ExistingId_RemovesAndReturnsTrue" classname="Sapphire.Domain.Tests.CharacterRosterTests" runstate="Runnable" seed="1890807048" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000844" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1027" name="TryRemoveCharacter_UnknownId_ReturnsFalseAndDoesNotMutate" fullname="Sapphire.Domain.Tests.CharacterRosterTests.TryRemoveCharacter_UnknownId_ReturnsFalseAndDoesNotMutate" methodname="TryRemoveCharacter_UnknownId_ReturnsFalseAndDoesNotMutate" classname="Sapphire.Domain.Tests.CharacterRosterTests" runstate="Runnable" seed="519271075" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000436" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestSuite" id="1106" name="Combat" fullname="Sapphire.Domain.Tests.Combat" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.002523" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="TestFixture" id="1094" name="CombatEngineTests" fullname="Sapphire.Domain.Tests.Combat.CombatEngineTests" classname="Sapphire.Domain.Tests.Combat.CombatEngineTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.002241" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1095" name="CombatEngine_CalculatesDamage_SubtractsDefenseFromAttack" fullname="Sapphire.Domain.Tests.Combat.CombatEngineTests.CombatEngine_CalculatesDamage_SubtractsDefenseFromAttack" methodname="CombatEngine_CalculatesDamage_SubtractsDefenseFromAttack" classname="Sapphire.Domain.Tests.Combat.CombatEngineTests" runstate="Runnable" seed="1348187478" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000287" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1096" name="CombatEngine_ProcessAttack_ReducesDefenderHealth" fullname="Sapphire.Domain.Tests.Combat.CombatEngineTests.CombatEngine_ProcessAttack_ReducesDefenderHealth" methodname="CombatEngine_ProcessAttack_ReducesDefenderHealth" classname="Sapphire.Domain.Tests.Combat.CombatEngineTests" runstate="Runnable" seed="1140059401" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000441" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1097" name="HealthComponent_Dies_WhenHpReachesZero" fullname="Sapphire.Domain.Tests.Combat.CombatEngineTests.HealthComponent_Dies_WhenHpReachesZero" methodname="HealthComponent_Dies_WhenHpReachesZero" classname="Sapphire.Domain.Tests.Combat.CombatEngineTests" runstate="Runnable" seed="1713662026" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000282" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1098" name="ManaComponent_TryConsume_FailsIfNotEnoughMana" fullname="Sapphire.Domain.Tests.Combat.CombatEngineTests.ManaComponent_TryConsume_FailsIfNotEnoughMana" methodname="ManaComponent_TryConsume_FailsIfNotEnoughMana" classname="Sapphire.Domain.Tests.Combat.CombatEngineTests" runstate="Runnable" seed="1554841464" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000213" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1099" name="ManaComponent_TryConsume_SucceedsIfEnoughMana" fullname="Sapphire.Domain.Tests.Combat.CombatEngineTests.ManaComponent_TryConsume_SucceedsIfEnoughMana" methodname="ManaComponent_TryConsume_SucceedsIfEnoughMana" classname="Sapphire.Domain.Tests.Combat.CombatEngineTests" runstate="Runnable" seed="1434677741" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000115" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1029" name="GridDirectionExtensionsTests" fullname="Sapphire.Domain.Tests.GridDirectionExtensionsTests" classname="Sapphire.Domain.Tests.GridDirectionExtensionsTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.004270" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1030" name="ToOffset_Down_ReturnsNegativeYOffset" fullname="Sapphire.Domain.Tests.GridDirectionExtensionsTests.ToOffset_Down_ReturnsNegativeYOffset" methodname="ToOffset_Down_ReturnsNegativeYOffset" classname="Sapphire.Domain.Tests.GridDirectionExtensionsTests" runstate="Runnable" seed="1200814504" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000713" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1031" name="ToOffset_UndefinedDirectionValue_ThrowsArgumentOutOfRangeException" fullname="Sapphire.Domain.Tests.GridDirectionExtensionsTests.ToOffset_UndefinedDirectionValue_ThrowsArgumentOutOfRangeException" methodname="ToOffset_UndefinedDirectionValue_ThrowsArgumentOutOfRangeException" classname="Sapphire.Domain.Tests.GridDirectionExtensionsTests" runstate="Runnable" seed="1930237062" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.003092" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1032" name="GridMoveInputBufferTests" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.008613" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1043" name="FullScenario_HoldDownTapRightReleaseRight_MatchesBugReportExpectation" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.FullScenario_HoldDownTapRightReleaseRight_MatchesBugReportExpectation" methodname="FullScenario_HoldDownTapRightReleaseRight_MatchesBugReportExpectation" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="920464310" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.002941" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1040" name="HeldDirections_IsHeld_ReflectsEachAxisIndependently" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.HeldDirections_IsHeld_ReflectsEachAxisIndependently" methodname="HeldDirections_IsHeld_ReflectsEachAxisIndependently" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="714106138" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000169" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1042" name="HeldDirections_Only_NullDirection_HoldsNothing" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.HeldDirections_Only_NullDirection_HoldsNothing" methodname="HeldDirections_Only_NullDirection_HoldsNothing" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="776162275" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000283" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1041" name="HeldDirections_Only_ReportsExactlyThatSingleDirection" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.HeldDirections_Only_ReportsExactlyThatSingleDirection" methodname="HeldDirections_Only_ReportsExactlyThatSingleDirection" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="324419497" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000188" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1044" name="PressedThenReleasedBeforeMoveEnds_NoExtraMoveWhenMoverFrees" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.PressedThenReleasedBeforeMoveEnds_NoExtraMoveWhenMoverFrees" methodname="PressedThenReleasedBeforeMoveEnds_NoExtraMoveWhenMoverFrees" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="1544081271" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000278" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1038" name="TopDirection_EmptyStack_ReturnsNull" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.TopDirection_EmptyStack_ReturnsNull" methodname="TopDirection_EmptyStack_ReturnsNull" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="920823887" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000189" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1039" name="TopDirection_NonEmptyStack_ReturnsFrontElement" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.TopDirection_NonEmptyStack_ReturnsFrontElement" methodname="TopDirection_NonEmptyStack_ReturnsFrontElement" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="314125742" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000546" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1033" name="UpdatePriorityStack_FreshPressWhileAnotherHeld_NewPressGoesToFront" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.UpdatePriorityStack_FreshPressWhileAnotherHeld_NewPressGoesToFront" methodname="UpdatePriorityStack_FreshPressWhileAnotherHeld_NewPressGoesToFront" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="468065223" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000783" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1034" name="UpdatePriorityStack_NewlyReleasedDirectionFallsBackToStillHeldDirection" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.UpdatePriorityStack_NewlyReleasedDirectionFallsBackToStillHeldDirection" methodname="UpdatePriorityStack_NewlyReleasedDirectionFallsBackToStillHeldDirection" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="1326430680" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000237" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1035" name="UpdatePriorityStack_NothingHeld_ResultIsEmptyAndTopIsNull" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.UpdatePriorityStack_NothingHeld_ResultIsEmptyAndTopIsNull" methodname="UpdatePriorityStack_NothingHeld_ResultIsEmptyAndTopIsNull" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="319072427" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000916" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1036" name="UpdatePriorityStack_NullPreviousStackTreatedAsEmpty" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.UpdatePriorityStack_NullPreviousStackTreatedAsEmpty" methodname="UpdatePriorityStack_NullPreviousStackTreatedAsEmpty" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="466214680" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000202" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1037" name="UpdatePriorityStack_SameDirectionHeldAcrossFrames_StaysAtSameRank" fullname="Sapphire.Domain.Tests.GridMoveInputBufferTests.UpdatePriorityStack_SameDirectionHeldAcrossFrames_StaysAtSameRank" methodname="UpdatePriorityStack_SameDirectionHeldAcrossFrames_StaysAtSameRank" classname="Sapphire.Domain.Tests.GridMoveInputBufferTests" runstate="Runnable" seed="1396376096" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000231" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1045" name="GridMoverTests" fullname="Sapphire.Domain.Tests.GridMoverTests" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.004646" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1047" name="CompleteMove_AfterStartedMove_UpdatesPositionAndClearsIsMoving" fullname="Sapphire.Domain.Tests.GridMoverTests.CompleteMove_AfterStartedMove_UpdatesPositionAndClearsIsMoving" methodname="CompleteMove_AfterStartedMove_UpdatesPositionAndClearsIsMoving" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" seed="472165065" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.001566" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1051" name="CompleteMove_WhenNotMoving_IsNoOp" fullname="Sapphire.Domain.Tests.GridMoverTests.CompleteMove_WhenNotMoving_IsNoOp" methodname="CompleteMove_WhenNotMoving_IsNoOp" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" seed="1999670174" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000178" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1048" name="TryBeginMove_TowardBlockedCoord_ReturnsBlockedByObstacleAndPositionUnchanged" fullname="Sapphire.Domain.Tests.GridMoverTests.TryBeginMove_TowardBlockedCoord_ReturnsBlockedByObstacleAndPositionUnchanged" methodname="TryBeginMove_TowardBlockedCoord_ReturnsBlockedByObstacleAndPositionUnchanged" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" seed="2052407731" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000668" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1049" name="TryBeginMove_TowardOutOfBoundsCoord_ReturnsBlockedByObstacle" fullname="Sapphire.Domain.Tests.GridMoverTests.TryBeginMove_TowardOutOfBoundsCoord_ReturnsBlockedByObstacle" methodname="TryBeginMove_TowardOutOfBoundsCoord_ReturnsBlockedByObstacle" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" seed="1321502749" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000176" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1046" name="TryBeginMove_WalkableDirection_ReturnsStartedAndSetsIsMoving" fullname="Sapphire.Domain.Tests.GridMoverTests.TryBeginMove_WalkableDirection_ReturnsStartedAndSetsIsMoving" methodname="TryBeginMove_WalkableDirection_ReturnsStartedAndSetsIsMoving" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" seed="1406746726" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000209" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1050" name="TryBeginMove_WhileAlreadyMoving_ReturnsAlreadyMovingAndKeepsOriginalTarget" fullname="Sapphire.Domain.Tests.GridMoverTests.TryBeginMove_WhileAlreadyMoving_ReturnsAlreadyMovingAndKeepsOriginalTarget" methodname="TryBeginMove_WhileAlreadyMoving_ReturnsAlreadyMovingAndKeepsOriginalTarget" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" seed="1376526896" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000181" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1052" name="TurnToFace_ChangesFacingOnly_PositionAndIsMovingUnchanged" fullname="Sapphire.Domain.Tests.GridMoverTests.TurnToFace_ChangesFacingOnly_PositionAndIsMovingUnchanged" methodname="TurnToFace_ChangesFacingOnly_PositionAndIsMovingUnchanged" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" seed="1759773188" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000226" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1053" name="TurnToFace_WhileAlreadyMoving_IsNoOp" fullname="Sapphire.Domain.Tests.GridMoverTests.TurnToFace_WhileAlreadyMoving_IsNoOp" methodname="TurnToFace_WhileAlreadyMoving_IsNoOp" classname="Sapphire.Domain.Tests.GridMoverTests" runstate="Runnable" seed="455068058" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000187" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1054" name="GridWorldConversionTests" fullname="Sapphire.Domain.Tests.GridWorldConversionTests" classname="Sapphire.Domain.Tests.GridWorldConversionTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.002124" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1055" name="GridToWorld_NegativeCoord_ReturnsCellCenter" fullname="Sapphire.Domain.Tests.GridWorldConversionTests.GridToWorld_NegativeCoord_ReturnsCellCenter" methodname="GridToWorld_NegativeCoord_ReturnsCellCenter" classname="Sapphire.Domain.Tests.GridWorldConversionTests" runstate="Runnable" seed="46556748" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000678" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1057" name="WorldToGrid_AtCellCenter_ReturnsSameCell" fullname="Sapphire.Domain.Tests.GridWorldConversionTests.WorldToGrid_AtCellCenter_ReturnsSameCell" methodname="WorldToGrid_AtCellCenter_ReturnsSameCell" classname="Sapphire.Domain.Tests.GridWorldConversionTests" runstate="Runnable" seed="1426904845" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000213" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1058" name="WorldToGrid_AtCellEdge_RoundsUpToNextCell" fullname="Sapphire.Domain.Tests.GridWorldConversionTests.WorldToGrid_AtCellEdge_RoundsUpToNextCell" methodname="WorldToGrid_AtCellEdge_RoundsUpToNextCell" classname="Sapphire.Domain.Tests.GridWorldConversionTests" runstate="Runnable" seed="512062993" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000139" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1059" name="WorldToGrid_JustBelowCellEdge_StaysInLowerCell" fullname="Sapphire.Domain.Tests.GridWorldConversionTests.WorldToGrid_JustBelowCellEdge_StaysInLowerCell" methodname="WorldToGrid_JustBelowCellEdge_StaysInLowerCell" classname="Sapphire.Domain.Tests.GridWorldConversionTests" runstate="Runnable" seed="166360548" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000139" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1056" name="WorldToGrid_NegativeCoordRoundTrip_ReturnsOriginalCoord" fullname="Sapphire.Domain.Tests.GridWorldConversionTests.WorldToGrid_NegativeCoordRoundTrip_ReturnsOriginalCoord" methodname="WorldToGrid_NegativeCoordRoundTrip_ReturnsOriginalCoord" classname="Sapphire.Domain.Tests.GridWorldConversionTests" runstate="Runnable" seed="1742049584" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000152" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1060" name="InteractableIdTests" fullname="Sapphire.Domain.Tests.InteractableIdTests" classname="Sapphire.Domain.Tests.InteractableIdTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.001716" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1062" name="Constructor_EmptyValue_ThrowsArgumentException" fullname="Sapphire.Domain.Tests.InteractableIdTests.Constructor_EmptyValue_ThrowsArgumentException" methodname="Constructor_EmptyValue_ThrowsArgumentException" classname="Sapphire.Domain.Tests.InteractableIdTests" runstate="Runnable" seed="299865380" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000473" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1061" name="Constructor_NullValue_ThrowsArgumentException" fullname="Sapphire.Domain.Tests.InteractableIdTests.Constructor_NullValue_ThrowsArgumentException" methodname="Constructor_NullValue_ThrowsArgumentException" classname="Sapphire.Domain.Tests.InteractableIdTests" runstate="Runnable" seed="831605938" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1063" name="Constructor_ValidValue_SetsValue" fullname="Sapphire.Domain.Tests.InteractableIdTests.Constructor_ValidValue_SetsValue" methodname="Constructor_ValidValue_SetsValue" classname="Sapphire.Domain.Tests.InteractableIdTests" runstate="Runnable" seed="961610577" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000109" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1064" name="None_HasNullValueAndEqualsDefault" fullname="Sapphire.Domain.Tests.InteractableIdTests.None_HasNullValueAndEqualsDefault" methodname="None_HasNullValueAndEqualsDefault" classname="Sapphire.Domain.Tests.InteractableIdTests" runstate="Runnable" seed="797054696" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000339" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1065" name="InteractionMapTests" fullname="Sapphire.Domain.Tests.InteractionMapTests" classname="Sapphire.Domain.Tests.InteractionMapTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.004532" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1068" name="Register_OverwritesExistingEntryAtSameCoord" fullname="Sapphire.Domain.Tests.InteractionMapTests.Register_OverwritesExistingEntryAtSameCoord" methodname="Register_OverwritesExistingEntryAtSameCoord" classname="Sapphire.Domain.Tests.InteractionMapTests" runstate="Runnable" seed="1720525822" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.001729" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1066" name="TryGet_AfterRegister_ReturnsTrueAndCorrectId" fullname="Sapphire.Domain.Tests.InteractionMapTests.TryGet_AfterRegister_ReturnsTrueAndCorrectId" methodname="TryGet_AfterRegister_ReturnsTrueAndCorrectId" classname="Sapphire.Domain.Tests.InteractionMapTests" runstate="Runnable" seed="853535650" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000221" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1067" name="TryGet_UnregisteredCoord_ReturnsFalse" fullname="Sapphire.Domain.Tests.InteractionMapTests.TryGet_UnregisteredCoord_ReturnsFalse" methodname="TryGet_UnregisteredCoord_ReturnsFalse" classname="Sapphire.Domain.Tests.InteractionMapTests" runstate="Runnable" seed="759462154" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000189" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1069" name="SkillRangeCalculatorTests" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.007621" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1071" name="ChebyshevDistance_DiagonalOffset_ReturnsMaxOfAxes" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests.ChebyshevDistance_DiagonalOffset_ReturnsMaxOfAxes" methodname="ChebyshevDistance_DiagonalOffset_ReturnsMaxOfAxes" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" seed="927367397" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000334" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1070" name="ChebyshevDistance_SameCoord_ReturnsZero" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests.ChebyshevDistance_SameCoord_ReturnsZero" methodname="ChebyshevDistance_SameCoord_ReturnsZero" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" seed="780796070" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000177" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1073" name="TilesInLine_Right_ReturnsSequentialTilesExcludingOrigin" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests.TilesInLine_Right_ReturnsSequentialTilesExcludingOrigin" methodname="TilesInLine_Right_ReturnsSequentialTilesExcludingOrigin" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" seed="1938375009" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.004310" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1074" name="TilesInLine_Up_MatchesFacingOffset" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests.TilesInLine_Up_MatchesFacingOffset" methodname="TilesInLine_Up_MatchesFacingOffset" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" seed="1961167545" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000276" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1072" name="TilesInLine_ZeroRange_ReturnsEmpty" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests.TilesInLine_ZeroRange_ReturnsEmpty" methodname="TilesInLine_ZeroRange_ReturnsEmpty" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" seed="1317768422" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000140" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1077" name="TilesInRadius_NegativeRadius_ReturnsEmpty" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests.TilesInRadius_NegativeRadius_ReturnsEmpty" methodname="TilesInRadius_NegativeRadius_ReturnsEmpty" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" seed="1802603462" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000322" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1076" name="TilesInRadius_RadiusOne_ReturnsThreeByThreeBlockIncludingOrigin" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests.TilesInRadius_RadiusOne_ReturnsThreeByThreeBlockIncludingOrigin" methodname="TilesInRadius_RadiusOne_ReturnsThreeByThreeBlockIncludingOrigin" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" seed="1138307814" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000455" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1075" name="TilesInRadius_RadiusZero_ReturnsOnlyOrigin" fullname="Sapphire.Domain.Tests.SkillRangeCalculatorTests.TilesInRadius_RadiusZero_ReturnsOnlyOrigin" methodname="TilesInRadius_RadiusZero_ReturnsOnlyOrigin" classname="Sapphire.Domain.Tests.SkillRangeCalculatorTests" runstate="Runnable" seed="1882084424" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000203" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1078" name="VfxFramePivotCalculatorTests" fullname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests" classname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.002666" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1079" name="CenteredPivot_MatchesOffCenterAlphaContent" fullname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests.CenteredPivot_MatchesOffCenterAlphaContent" methodname="CenteredPivot_MatchesOffCenterAlphaContent" classname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests" runstate="Runnable" seed="884798179" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000392" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1080" name="DirectionalPivot_UsesContentLeftEdge_NotCellEdge" fullname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests.DirectionalPivot_UsesContentLeftEdge_NotCellEdge" methodname="DirectionalPivot_UsesContentLeftEdge_NotCellEdge" classname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests" runstate="Runnable" seed="1279946785" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000220" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1082" name="EmptyDirectionalFrame_FallsBackToLeftEdgePivot" fullname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests.EmptyDirectionalFrame_FallsBackToLeftEdgePivot" methodname="EmptyDirectionalFrame_FallsBackToLeftEdgePivot" classname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests" runstate="Runnable" seed="1910010227" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000159" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1081" name="EmptyFrame_FallsBackToGeometricCenter" fullname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests.EmptyFrame_FallsBackToGeometricCenter" methodname="EmptyFrame_FallsBackToGeometricCenter" classname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests" runstate="Runnable" seed="305605587" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000145" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1084" name="FrameOffsetWithinLargerTexture_IsRespected" fullname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests.FrameOffsetWithinLargerTexture_IsRespected" methodname="FrameOffsetWithinLargerTexture_IsRespected" classname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests" runstate="Runnable" seed="1282838642" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000170" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1083" name="ShiftedContentBetweenFrames_ProducesDifferentPivots" fullname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests.ShiftedContentBetweenFrames_ProducesDifferentPivots" methodname="ShiftedContentBetweenFrames_ProducesDifferentPivots" classname="Sapphire.Domain.Tests.VfxFramePivotCalculatorTests" runstate="Runnable" seed="499187789" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000433" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1085" name="WarriorBasicAttackRangeTests" fullname="Sapphire.Domain.Tests.WarriorBasicAttackRangeTests" classname="Sapphire.Domain.Tests.WarriorBasicAttackRangeTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000927" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1086" name="BasicAttackRange_TwoTilesInLine_CoversForwardTilesExcludingOrigin" fullname="Sapphire.Domain.Tests.WarriorBasicAttackRangeTests.BasicAttackRange_TwoTilesInLine_CoversForwardTilesExcludingOrigin" methodname="BasicAttackRange_TwoTilesInLine_CoversForwardTilesExcludingOrigin" classname="Sapphire.Domain.Tests.WarriorBasicAttackRangeTests" runstate="Runnable" seed="2008921469" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000359" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1087" name="WarriorSkillRangeTests" fullname="Sapphire.Domain.Tests.WarriorSkillRangeTests" classname="Sapphire.Domain.Tests.WarriorSkillRangeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.004005" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1093" name="Dash_BlockedPath_StopsBeforeObstacleAtWarriorDashRange" fullname="Sapphire.Domain.Tests.WarriorSkillRangeTests.Dash_BlockedPath_StopsBeforeObstacleAtWarriorDashRange" methodname="Dash_BlockedPath_StopsBeforeObstacleAtWarriorDashRange" classname="Sapphire.Domain.Tests.WarriorSkillRangeTests" runstate="Runnable" seed="268697372" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000518" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1091" name="TilesInFrontCone_FacingUp_WidensAlongXAxis" fullname="Sapphire.Domain.Tests.WarriorSkillRangeTests.TilesInFrontCone_FacingUp_WidensAlongXAxis" methodname="TilesInFrontCone_FacingUp_WidensAlongXAxis" classname="Sapphire.Domain.Tests.WarriorSkillRangeTests" runstate="Runnable" seed="985654307" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000849" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1090" name="TilesInFrontCone_RangeOne_ReturnsThreeTilesCenterAndBothSides" fullname="Sapphire.Domain.Tests.WarriorSkillRangeTests.TilesInFrontCone_RangeOne_ReturnsThreeTilesCenterAndBothSides" methodname="TilesInFrontCone_RangeOne_ReturnsThreeTilesCenterAndBothSides" classname="Sapphire.Domain.Tests.WarriorSkillRangeTests" runstate="Runnable" seed="66664781" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000396" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1092" name="TilesInFrontCone_ZeroRange_ReturnsEmpty" fullname="Sapphire.Domain.Tests.WarriorSkillRangeTests.TilesInFrontCone_ZeroRange_ReturnsEmpty" methodname="TilesInFrontCone_ZeroRange_ReturnsEmpty" classname="Sapphire.Domain.Tests.WarriorSkillRangeTests" runstate="Runnable" seed="547913387" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1088" name="TilesInRing_RadiusOne_ReturnsExactlyEightTilesExcludingOrigin" fullname="Sapphire.Domain.Tests.WarriorSkillRangeTests.TilesInRing_RadiusOne_ReturnsExactlyEightTilesExcludingOrigin" methodname="TilesInRing_RadiusOne_ReturnsExactlyEightTilesExcludingOrigin" classname="Sapphire.Domain.Tests.WarriorSkillRangeTests" runstate="Runnable" seed="2141861663" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000853" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1089" name="TilesInRing_RadiusZero_ReturnsEmpty" fullname="Sapphire.Domain.Tests.WarriorSkillRangeTests.TilesInRing_RadiusZero_ReturnsEmpty" methodname="TilesInRing_RadiusZero_ReturnsEmpty" classname="Sapphire.Domain.Tests.WarriorSkillRangeTests" runstate="Runnable" seed="957961840" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000185" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+        <test-suite type="TestSuite" id="1102" name="Tests" fullname="Sapphire.Tests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.001423" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1103" name="Domain" fullname="Sapphire.Tests.Domain" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.001265" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1001" name="GridBlinkTests" fullname="Sapphire.Tests.Domain.GridBlinkTests" classname="Sapphire.Tests.Domain.GridBlinkTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.001151" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1002" name="BlinkMovesExactlyTwoCells" fullname="Sapphire.Tests.Domain.GridBlinkTests.BlinkMovesExactlyTwoCells" methodname="BlinkMovesExactlyTwoCells" classname="Sapphire.Tests.Domain.GridBlinkTests" runstate="Runnable" seed="1617102674" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000236" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1003" name="BlinkStopsBeforeObstacleAndNeverSkipsIt" fullname="Sapphire.Tests.Domain.GridBlinkTests.BlinkStopsBeforeObstacleAndNeverSkipsIt" methodname="BlinkStopsBeforeObstacleAndNeverSkipsIt" classname="Sapphire.Tests.Domain.GridBlinkTests" runstate="Runnable" seed="981281685" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000206" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1004" name="BusyAndBlockedBlinksLeavePositionUnchanged" fullname="Sapphire.Tests.Domain.GridBlinkTests.BusyAndBlockedBlinksLeavePositionUnchanged" methodname="BusyAndBlockedBlinksLeavePositionUnchanged" classname="Sapphire.Tests.Domain.GridBlinkTests" runstate="Runnable" seed="1626677049" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.000233" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1112" name="Sapphire.Infrastructure.Tests.dll" fullname="C:/Users/admin/Desktop/games/mobile-rpg/client/Library/ScriptAssemblies/Sapphire.Infrastructure.Tests.dll" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:36Z" duration="0.058417" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25328" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1113" name="Sapphire" fullname="Sapphire" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:36Z" duration="0.058294" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1114" name="Infrastructure" fullname="Sapphire.Infrastructure" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:36Z" duration="0.058173" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1115" name="Tests" fullname="Sapphire.Infrastructure.Tests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:36Z" duration="0.058038" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1107" name="CharacterRosterFileRepositoryTests" fullname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests" classname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:36Z" duration="0.057864" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1108" name="Load_NoFileYet_ReturnsEmpty" fullname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests.Load_NoFileYet_ReturnsEmpty" methodname="Load_NoFileYet_ReturnsEmpty" classname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests" runstate="Runnable" seed="1830914960" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:35Z" duration="0.005285" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1110" name="Save_EmptyList_RoundTripsToEmpty" fullname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests.Save_EmptyList_RoundTripsToEmpty" methodname="Save_EmptyList_RoundTripsToEmpty" classname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests" runstate="Runnable" seed="2011872466" result="Passed" start-time="2026-09-19 00:52:35Z" end-time="2026-09-19 00:52:36Z" duration="0.015711" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1109" name="SaveThenLoad_RoundTripsAllFieldsForEverySlot" fullname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests.SaveThenLoad_RoundTripsAllFieldsForEverySlot" methodname="SaveThenLoad_RoundTripsAllFieldsForEverySlot" classname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests" runstate="Runnable" seed="1659032351" result="Passed" start-time="2026-09-19 00:52:36Z" end-time="2026-09-19 00:52:36Z" duration="0.013258" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1111" name="SaveThenSaveAgain_OverwritesRatherThanAppends" fullname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests.SaveThenSaveAgain_OverwritesRatherThanAppends" methodname="SaveThenSaveAgain_OverwritesRatherThanAppends" classname="Sapphire.Infrastructure.Tests.CharacterRosterFileRepositoryTests" runstate="Runnable" seed="1703253629" result="Passed" start-time="2026-09-19 00:52:36Z" end-time="2026-09-19 00:52:36Z" duration="0.021830" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:\Users\admin\Desktop\games\mobile-rpg\client\TestResults_Combat.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

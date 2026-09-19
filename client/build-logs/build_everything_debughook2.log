@@ -1,0 +1,619 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.5/staging' branch; Version is '6000.5.9f1 (b57deb96f08d) revision 11894251'; Using compiler version '194234433'; Build Type 'Release'
+[Licensing::IpcConnector] Channel LicenseClient-admin doesn't exist
+OS: 'Windows 11  (10.0.26200) Core' Language: 'ko' Physical Memory: 24465 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-09-16T08:04:49Z
+[Licensing::Module] Successfully launched the LicensingClient (PId: 8844)
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Unity.exe
+-batchmode
+-quit
+-nographics
+-projectPath
+C:\Users\admin\Desktop\games\mobile-rpg\client
+-executeMethod
+Sapphire.EditorTools.SapphireSceneBuilder.BuildEverything
+-logFile
+C:\Users\admin\Desktop\games\mobile-rpg\client\build-logs\build_everything_debughook2.log
+Successfully changed project path to: C:\Users\admin\Desktop\games\mobile-rpg\client
+C:/Users/admin/Desktop/games/mobile-rpg/client
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-remapper-allocator-initial-capacity=32768"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [26768]  Target information:
+
+Player connection [26768]  * "[IP] 192.168.219.100 [Port] 55504 [Flags] 2 [Guid] 26225056 [EditorId] 26225056 [Version] 1048832 [Id] WindowsEditor(7,lee) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [26768]  * "[IP] 172.25.176.1 [Port] 55504 [Flags] 2 [Guid] 26225056 [EditorId] 26225056 [Version] 1048832 [Id] WindowsEditor(7,lee) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [26768] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [26768] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-21664" after 0.2 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-admin" at "2026-09-16T08:04:50.4501728Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 8844, path: "C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              7cc607d0994344088e728a203a673978
+  Correlation Id:          f4fe2f7c92866efb6998f3da121bcb27
+  External correlation Id: 8268584664222424610
+  Machine Id:              cq4R4ynVkOB1d/Vm46CbIOS9oPU=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-admin" (connect: 0.57s, validation: 0.04s, handshake: 0.03s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-admin-notifications" at "2026-09-16T08:04:50.5210027Z"
+[Licensing::Module] Connected to LicensingClient (PId: 8844, launch time: 0.01, total connection time: 0.64s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 14569790345973-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.67s
+[Licensing::Module] Licensing is initialized (took 0.29s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Initialize engine version: 6000.5.9f1 (b57deb96f08d)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/Users/admin/Desktop/games/mobile-rpg/client/Assets
+Forcing GfxDevice: Null
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+NullGfxDevice:
+    Version:  NULL 1.0 [1.0]
+    Renderer: Null Device
+    Vendor:   Unity Technologies
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56664
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Registered in 0.004796 seconds.
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.546 seconds
+Domain Reload Profiling: 1127ms
+	BeginReloadAssembly (132ms)
+		CreateAndSetChildDomain (6ms)
+	RebuildCommonClasses (5ms)
+	RebuildNativeTypeToScriptingClass (17ms)
+	initialDomainReloadingComplete (70ms)
+	LoadAllAssembliesAndSetupDomain (356ms)
+		LoadAssemblies (123ms)
+		AnalyzeDomain (269ms)
+			TypeCache.Refresh (268ms)
+				TypeCache.ScanAssembly (254ms)
+	FinalizeReload (548ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (9ms)
+			BeforeProcessingInitializeOnLoad (98ms)
+			ProcessInitializeOnLoadAttributes (106ms)
+			ProcessInitializeOnLoadMethodAttributes (252ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 41 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.inputsystem@1.20.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.inputsystem@7a4e1a2a8194)
+  Built-in packages:
+    com.unity.test-framework@1.7.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.ugui@1c4864518158)
+    com.unity.multiplayer.center@1.0.1 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.multiplayer.center@b860850997d0)
+    com.unity.modules.accessibility@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physics2d)
+    com.unity.modules.physicscore2d@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.1.0 (location: C:\Users\admin\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.ext.nunit@44f7d31723bd)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.02 seconds
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/Users/admin/Desktop/games/mobile-rpg/client
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 1s499ms
+[330/336    1s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp.dll (+2 others)
+[334/336    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp.pdb
+[335/336    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp.dll
+*** Tundra build success (1.47 seconds), 3 items updated, 336 evaluated
+AssetDatabase: script compilation time: 2.001531s
+Begin MonoManager ReloadAssembly
+Total cache size 258858316
+Native extension for Android target not found
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.554 seconds
+Domain Reload Profiling: 1281ms
+	BeginReloadAssembly (371ms)
+		DisableScriptedObjects (33ms)
+		CreateAndSetChildDomain (155ms)
+	RebuildCommonClasses (9ms)
+	RebuildNativeTypeToScriptingClass (16ms)
+	initialDomainReloadingComplete (44ms)
+	LoadAllAssembliesAndSetupDomain (286ms)
+		LoadAssemblies (253ms)
+		AnalyzeDomain (53ms)
+			TypeCache.Refresh (36ms)
+				TypeCache.ScanAssembly (28ms)
+			BuildScriptInfoCaches (13ms)
+	FinalizeReload (556ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (10ms)
+			BeforeProcessingInitializeOnLoad (94ms)
+			ProcessInitializeOnLoadAttributes (125ms)
+			ProcessInitializeOnLoadMethodAttributes (91ms)
+			AfterProcessingInitializeOnLoad (7ms)
+		AwakeInstancesAfterBackupRestoration (35ms)
+Starting new worker id: 0 with log in C:/Users/admin/Desktop/games/mobile-rpg/client/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=193f25ed9818c1f4997581878a09a5e2): Total: 3.609 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=727 ms
+		Asset DB Callback time: managed=77 ms, native=21 ms
+		Scripting: domain reloads=1, domain reload time=758 ms, compile time=2003 ms, other=19 ms
+		Project Asset Count: scripts=382, non-scripts=396
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokePackagesCallback: 19.611ms
+	ApplyChangesToAssetFolders: 0.579ms
+	Scan: 43.996ms
+	Collect global state as custom dependencies: 10.785ms
+	OnSourceAssetsModified: 0.790ms
+	CategorizeScriptCompilationAssets: 7.917ms
+	ProcessAssetsWithTransientArtifactChanges: 16.193ms
+	CategorizeAssets: 7.305ms
+	CompileScripts: 2003.448ms
+	ImportOutOfDateAssets: 573.912ms (560.277ms without children)
+		UnloadImportedAssets: 0.130ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.123ms
+		ImportSchedulerStart: 13.380ms
+	PostProcessAllAssets: 78.618ms
+		VCAutoAddAssetPostprocess 1.242ms
+		XRBuildSystem.XRAssetImported 0.085ms
+		MonoPostProcessAllAssets: 76.724ms
+			AssetPostprocessor.OnPostprocessAllAssets 30.606ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 11.947ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 8.026ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 5.524ms
+			AssetChangedListener.OnPostprocessAllAssets 2.120ms
+			SyncVS.PostprocessSyncProject 1.980ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 1.233ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 1.141ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.783ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.632ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.489ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.378ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.372ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.366ms
+			SkillVfxImporter.OnPostprocessAllAssets 0.349ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.289ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.278ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.266ms
+			AssetEvents.OnPostprocessAllAssets 0.262ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.165ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.146ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.139ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.135ms
+			WarriorSkillVfxImporter.OnPostprocessAllAssets 0.135ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.125ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.093ms
+			AudioContainerPostProcessor.OnPostprocessAllAssets 0.079ms
+	PostAssetChangesProfiler: 2.343ms
+	UnloadStreamsBegin: 1.227ms
+	GenerateScriptTypeHashes: 1.728ms
+	GenerateScriptTypeSerializationHashes: 3.515ms
+	Untracked: 837.100ms
+
+Application.AssetDatabase Initial Refresh End
+Scanning for USB devices : 3.990ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-Sapphire RPG
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 1360 unused Assets / (1.2 MB). Loaded Objects now: 2148.
+Memory consumption went from 221.7 MB to 220.6 MB.
+Total: 6.707600 ms (FindLiveObjects: 0.303000 ms CreateObjectMapping: 0.406600 ms MarkObjects: 5.303100 ms  DeleteObjects: 0.692200 ms)
+
+Importing 'GUID: 67919e38704e7514b97636471ce72c25 - Path: Assets/Sapphire/Art/World/Ground/Grass_0.png' with importer (TextureImporter)
+Imported 'GUID: 67919e38704e7514b97636471ce72c25' -> (Import Result ID: 'a42000db4f2a887230ad07d1986c4364') in 0.018 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7c40a4e1126430ce4224b4501a4aab88 DependenciesID=6ff0fddc7b0bc19e08071eaa7723af62 StaticDependenciesID=4a34740933d22a48d6dc0353fc0d5759 
+Asset Pipeline Refresh (id=2245e2108e3cccc4f9eadcd79cefe183): Total: 0.050 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 4f2bc0d80a0414b4db2f6ac813fef54c - Path: Assets/Sapphire/Art/World/Ground/Grass_1.png' with importer (TextureImporter)
+Imported 'GUID: 4f2bc0d80a0414b4db2f6ac813fef54c' -> (Import Result ID: 'c458396abadd198b20582c1ffa16d0b1') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=40fc90b8dd1151569ce68f77423aecb5 DependenciesID=2dc7bb986fec349866489679dad1cd91 StaticDependenciesID=7e50836e4cf5602357471877a73b062f 
+Asset Pipeline Refresh (id=df6c72869fb575c41b2cf6bfb2a3bc5a): Total: 0.024 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 9b5d5677a6b7072448d9212fa1314d88 - Path: Assets/Sapphire/Art/World/Ground/Grass_2.png' with importer (TextureImporter)
+Imported 'GUID: 9b5d5677a6b7072448d9212fa1314d88' -> (Import Result ID: 'af9c244e06135e1ae272a3bd427e2073') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e20d675271771b05c23042b140d1cc13 DependenciesID=aa7f2a3ad51e4f5941e5ea1848c3d4d3 StaticDependenciesID=104ef805114991a79aefcae9e7591ffa 
+Asset Pipeline Refresh (id=555e0e51d4f57e647b8c697d83d08e49): Total: 0.025 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 0cf4bbec691487648959eb3202745b33 - Path: Assets/Sapphire/Art/World/Ground/Dirt_0.png' with importer (TextureImporter)
+Imported 'GUID: 0cf4bbec691487648959eb3202745b33' -> (Import Result ID: '85e1df0e96ef7d4df70207b4a2665993') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=843496780e040a43f07238cf5bf0c26b DependenciesID=c7068dc41cfe63c0dec4b6a8e36b9d0b StaticDependenciesID=86cdc229d74f0424875359a6b4869f45 
+Asset Pipeline Refresh (id=b6a45ec6bfb79014cb3076795368d751): Total: 0.025 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: e241f5bc20d6f6649ba8925818b63663 - Path: Assets/Sapphire/Art/World/Ground/Dirt_1.png' with importer (TextureImporter)
+Imported 'GUID: e241f5bc20d6f6649ba8925818b63663' -> (Import Result ID: '0c91fc79c46f48cb0aefbad7725352f8') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=afe09edf32a0bcdcd07ea9e8f2f63efe DependenciesID=da741ae8add5b02e78a50801073b6ac4 StaticDependenciesID=397f7d7377000c40a00dba654f065d4f 
+Asset Pipeline Refresh (id=1ce027d40da655946a88b90f56ccc714): Total: 0.027 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 61578ea784823874a8cd83c0c3648fa2 - Path: Assets/Sapphire/Art/World/Ground/Dirt_2.png' with importer (TextureImporter)
+Imported 'GUID: 61578ea784823874a8cd83c0c3648fa2' -> (Import Result ID: '2e19ff02e854ab3564fc0fa0b8a80a9a') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ccd3b59712fd06fea95a5fb4f2193a70 DependenciesID=de1834305809ecb3be0db077653c6c33 StaticDependenciesID=910e0a7aaf96275068c5e55402682c29 
+Asset Pipeline Refresh (id=7040b364062b93645818ef77e7bd8623): Total: 0.026 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: e323213338a5f0544b6ac9b4eb0801be - Path: Assets/Sapphire/Art/World/VillageProps.png' with importer (TextureImporter)
+Imported 'GUID: e323213338a5f0544b6ac9b4eb0801be' -> (Import Result ID: 'f22dd70214cfed789ae3efee9e3a2936') in 0.089 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0c5b04863906247478d01590cf4cd43f DependenciesID=221976264b7657580a4a562189a74fc9 StaticDependenciesID=df8cd229734b9eb428a98d88549677e0 
+Asset Pipeline Refresh (id=af03c49aaa4f81144a30bc009c4b454e): Total: 0.117 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 283ecab433d12ce4b875ffd893d0356b - Path: Assets/Sapphire/Art/World/SlimeKingdomAtlas.png' with importer (TextureImporter)
+Imported 'GUID: 283ecab433d12ce4b875ffd893d0356b' -> (Import Result ID: '1482d860a9f1b63f3eeb4a875dc72ecd') in 0.124 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=78b7d08bdcc62f85d6243ddc7f9f2e7e DependenciesID=ece8f56e00bfb449c0efd21bbb9c7461 StaticDependenciesID=15d66cc374171a2bbab9493fd54d4622 
+Asset Pipeline Refresh (id=5a9fa18f87a89af429cbdf39e63b010c): Total: 0.149 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: be831e50a0cafd94ab556ea82b0a0188 - Path: Assets/Sapphire/Art/World/SlimeKingdom/Ground/Grass.png' with importer (TextureImporter)
+Imported 'GUID: be831e50a0cafd94ab556ea82b0a0188' -> (Import Result ID: '78469bb611e0b3f574c27a99579a411b') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5a5afdbd5405404691ced0303fa60577 DependenciesID=460f41357a1b559e5dea6443d736dd0b StaticDependenciesID=77cbf62beb172db480322be562bb2190 
+Asset Pipeline Refresh (id=7098b7d2bd381544b8a6f54ec37a508a): Total: 0.062 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 067ca092d5411994da3b21dfb80bc82b - Path: Assets/Sapphire/Art/World/SlimeKingdom/Ground/RoyalRoad.png' with importer (TextureImporter)
+Imported 'GUID: 067ca092d5411994da3b21dfb80bc82b' -> (Import Result ID: '35d3dc8928fd617e6916f5812944a40b') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=237231eae2778e193b50089bc0eef4af DependenciesID=8e0733ab3f75cbe4a34c1ebb24294d4a StaticDependenciesID=3171e610df9e5ffa76abb71337852d4f 
+Asset Pipeline Refresh (id=b2dba201a2518874a8b9ec722903a557): Total: 0.062 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 04e2fdc1fca197d489018e3457f3f283 - Path: Assets/Sapphire/Art/World/SlimeKingdom/Ground/JellyPool.png' with importer (TextureImporter)
+Imported 'GUID: 04e2fdc1fca197d489018e3457f3f283' -> (Import Result ID: 'cb217cc4483e3adf16be2d7367a03a90') in 0.042 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ec9082ee348471972a05f9ed8e511b57 DependenciesID=ea21a0fd95ac8e6bc0ea9fee389417cb StaticDependenciesID=cade7ed8309fef473c98107669828e8d 
+Asset Pipeline Refresh (id=f4546f7c0d8a6e74a9385da2e513cee2): Total: 0.057 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a0e87f7a8746df949a6727b2fda8685e - Path: Assets/Sapphire/Art/World/SlimeKingdom/Ground/CastleStone.png' with importer (TextureImporter)
+Imported 'GUID: a0e87f7a8746df949a6727b2fda8685e' -> (Import Result ID: 'd160b4e66f99a31f6dd89cff07839863') in 0.047 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=93914664df70da218f07562ff15fdd8e DependenciesID=ab2296595eaf39a5daf0dcac4aaa3900 StaticDependenciesID=f5dd8b2a778b439914e50f0fed4a3180 
+Asset Pipeline Refresh (id=5ddf792b98aff5142a3c036abfe88a82): Total: 0.061 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6e54b78ec81e54540a09ccf506dcfcf3 - Path: Assets/Sapphire/Art/MageTopdownGridSheet.png' with importer (TextureImporter)
+Imported 'GUID: 6e54b78ec81e54540a09ccf506dcfcf3' -> (Import Result ID: 'bb3963c476893cea880785532dd073ce') in 0.101 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b9436a54baa9c78babc89a1c0fb4bf65 DependenciesID=acc74b8776fa51c77bdfc95df47ab487 StaticDependenciesID=280c146b9e9367e1368a3ced897dcac8 
+Asset Pipeline Refresh (id=e9f3f6b5513f0284fb3e16cfbe5e719f): Total: 0.125 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 2c6e14ac589217b4cac2e947b013f2c4 - Path: Assets/Sapphire/Art/MageAttackGridSheet.png' with importer (TextureImporter)
+Imported 'GUID: 2c6e14ac589217b4cac2e947b013f2c4' -> (Import Result ID: '9c9e3f06a9ec226744997e227cb9733b') in 0.118 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8626b64ed628ebb4db9d4f36904c1b17 DependenciesID=1ccefa3552c88ef34643d890a8caa33b StaticDependenciesID=9ea733cff4cd877e4d0e2476938038df 
+Asset Pipeline Refresh (id=104c07e5bcd740d41999d865527214ef): Total: 0.143 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d97453d562340f248ba410019b2e0c79 - Path: Assets/Sapphire/Art/UI/MessagePanelFrameGold.png' with importer (TextureImporter)
+Imported 'GUID: d97453d562340f248ba410019b2e0c79' -> (Import Result ID: 'a4db4d94fa39b7813c4063927e10577e') in 0.067 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=63a6fbeb28319f6fe539b7c4a1fa4b9b DependenciesID=b8acd63461a49d666b00c727e8f0cdc8 StaticDependenciesID=46ab293b8a6ba0e434c5762bbae1765f 
+Asset Pipeline Refresh (id=ad979ba46c03dee40b2ffcc324aa575c): Total: 0.082 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6ec2c65bb7fb72f409324fce3313176b - Path: Assets/Sapphire/Art/UI/MenuButtonGold.png' with importer (TextureImporter)
+Imported 'GUID: 6ec2c65bb7fb72f409324fce3313176b' -> (Import Result ID: '6d18a8cfc27051f761bf005490d2f30a') in 0.013 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1f46a348ea1c270a956ca82cb072b11e DependenciesID=d0305043a76ec164ee6201d9262f3f8b StaticDependenciesID=dce02ed9ef8c575fb7fd4a9ed3791cde 
+Asset Pipeline Refresh (id=c473d96b959f36f4c8aaf4b9d93e6d0f): Total: 0.026 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: aae42f796a6d7f24ead776da052249a2 - Path: Assets/Sapphire/Art/UI/SkillButtonFrameGold.png' with importer (TextureImporter)
+Imported 'GUID: aae42f796a6d7f24ead776da052249a2' -> (Import Result ID: 'db081e8e1bb2273b25bc76943c1e687e') in 0.017 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=60107bb77ba9a5058b9fabad6d9e089d DependenciesID=d4628c0f6cff636503121f61a92f914d StaticDependenciesID=a6c68d077590c5fc5ad44998c40530a2 
+Asset Pipeline Refresh (id=8c26a2202c0739f4c81b3ebe74096bfd): Total: 0.037 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 159fa0a071ee3a349adafc8f2c345227 - Path: Assets/Sapphire/Art/UI/HealthBarFrameGold.png' with importer (TextureImporter)
+Imported 'GUID: 159fa0a071ee3a349adafc8f2c345227' -> (Import Result ID: 'c26d97c59d27e8327a5414fc10976d16') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=21c2476b5449d41e85455fb5f054b14d DependenciesID=cb7b34d9a3d5159ab039094895d0c8c4 StaticDependenciesID=65bef355bf801cd0b1eb9c99c7642be9 
+Asset Pipeline Refresh (id=0145dbb5e9f975741a6e1df329605142): Total: 0.030 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a80f5793bf6572e4c814ad9ff846c231 - Path: Assets/Sapphire/Art/UI/SkillIconsSetGold.png' with importer (TextureImporter)
+Worker ready: AssetImportWorkerHW0 0
+Imported 'GUID: a80f5793bf6572e4c814ad9ff846c231' -> (Import Result ID: '8e8396d122645d451e7e326a80114930') in 0.134 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=af926f542b4718e0587068ec0785c7ab DependenciesID=bc9687f2accdbe66550650b3c9805d08 StaticDependenciesID=49aef37e08f5b5cb1fe64f57a3dedceb 
+Asset Pipeline Refresh (id=28c31121c56380e488e79d43f110f176): Total: 0.155 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 3e6a297a18247c9479c8b9626591adbe - Path: Assets/Sapphire/Art/UI/MovementStickGold.png' with importer (TextureImporter)
+Imported 'GUID: 3e6a297a18247c9479c8b9626591adbe' -> (Import Result ID: '38c019bd5e97fced1683fefabbccc26b') in 0.015 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5f07ec44b20a6f2de673e1fb24957d57 DependenciesID=bde7e6ede2ea80e84fa764a08f7df35e StaticDependenciesID=6a88af48e79aad7f826dc21771419bc2 
+Asset Pipeline Refresh (id=dad3e2c75cc892d46b354ae3c1fecf48): Total: 0.036 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 8b51beca032c8dd438856b3b90d1a90d - Path: Assets/Sapphire/Art/UI/MenuPanelOdin.png' with importer (TextureImporter)
+Imported 'GUID: 8b51beca032c8dd438856b3b90d1a90d' -> (Import Result ID: '208446956026dcb97b409cd27deaddc6') in 0.109 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=881c3858a643e1fdf214fe59e7583a40 DependenciesID=76eaff139356053b08605fcce329695c StaticDependenciesID=590ff3ded854625fbe2176764d4db17e 
+Asset Pipeline Refresh (id=056cae5554bfb3841b7feb6e38ec2f16): Total: 0.124 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: cb1092d2ea046c344a2ae09c9fb63d6a - Path: Assets/Sapphire/Art/UI/MenuSectionDividerSingle.png' with importer (TextureImporter)
+Imported 'GUID: cb1092d2ea046c344a2ae09c9fb63d6a' -> (Import Result ID: 'ab797e8d65955eec82649557fdc29b20') in 0.006 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7e767e8b17f732d82c935cc2d9c0aed5 DependenciesID=6c603d2a691f369a4927e9cbde480e6d StaticDependenciesID=27c678be6ef076822807d450b54d8a9c 
+Asset Pipeline Refresh (id=c4359052c72b6444f9a091491f15efa9): Total: 0.023 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6c7474067a11b2c4abb3ce4550a5b084 - Path: Assets/Sapphire/Art/UI/RegionNameplate.png' with importer (TextureImporter)
+Imported 'GUID: 6c7474067a11b2c4abb3ce4550a5b084' -> (Import Result ID: '4aa739b1ae1e7695374cd230a50a65b4') in 0.003 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d6ce0a2cbc694b32970b192551bf5456 DependenciesID=09724bbcfe06d18b2ac273e36afdf9c9 StaticDependenciesID=f536d0fd4748e79995335241e8b84213 
+Asset Pipeline Refresh (id=43680fba1e510794c9f56cd734c18dcd): Total: 0.019 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d889fe07b36ab5d4881acc4032abe8d3 - Path: Assets/Sapphire/Art/UI/ButtonSecondary.png' with importer (TextureImporter)
+Imported 'GUID: d889fe07b36ab5d4881acc4032abe8d3' -> (Import Result ID: '7cf489fbeaa8599f51967fd67f85f751') in 0.020 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d738e84b02c7436161152578c914fb41 DependenciesID=a802314801b1bcfa72930b12e37b6c55 StaticDependenciesID=9e425a06bc1d75d3c1abc0d2e8e5e22a 
+Asset Pipeline Refresh (id=c6da338cd35092a4e9a20bbd35dd46a3): Total: 0.043 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d889fe07b36ab5d4881acc4032abe8d3 - Path: Assets/Sapphire/Art/UI/ButtonSecondary.png' with importer (TextureImporter)
+Imported 'GUID: d889fe07b36ab5d4881acc4032abe8d3' -> (Import Result ID: '7cf489fbeaa8599f51967fd67f85f751') in 0.020 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d738e84b02c7436161152578c914fb41 DependenciesID=a802314801b1bcfa72930b12e37b6c55 StaticDependenciesID=9e425a06bc1d75d3c1abc0d2e8e5e22a 
+Asset Pipeline Refresh (id=794912dcc774da24395f64d74d339fe0): Total: 0.034 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d889fe07b36ab5d4881acc4032abe8d3 - Path: Assets/Sapphire/Art/UI/ButtonSecondary.png' with importer (TextureImporter)
+Imported 'GUID: d889fe07b36ab5d4881acc4032abe8d3' -> (Import Result ID: '7cf489fbeaa8599f51967fd67f85f751') in 0.020 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d738e84b02c7436161152578c914fb41 DependenciesID=a802314801b1bcfa72930b12e37b6c55 StaticDependenciesID=9e425a06bc1d75d3c1abc0d2e8e5e22a 
+Asset Pipeline Refresh (id=6b48529f8255c8e48b99b086bd012c3f): Total: 0.035 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a24129757b2314949b1d3f66eb6e55d1 - Path: Assets/Sapphire/Art/UI/ButtonPrimary.png' with importer (TextureImporter)
+Imported 'GUID: a24129757b2314949b1d3f66eb6e55d1' -> (Import Result ID: '55b20896edd1e822bc3d8a0bd6e4e720') in 0.022 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b5fc9c0839d19239b046a6049f95b685 DependenciesID=0999de113aa33449923ee42e1cdb1a0b StaticDependenciesID=4e7cc0b250098e613f00a208296a542b 
+Asset Pipeline Refresh (id=916ac8b6ff99d394bbe8fa7292f9b35d): Total: 0.042 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a24129757b2314949b1d3f66eb6e55d1 - Path: Assets/Sapphire/Art/UI/ButtonPrimary.png' with importer (TextureImporter)
+Imported 'GUID: a24129757b2314949b1d3f66eb6e55d1' -> (Import Result ID: '55b20896edd1e822bc3d8a0bd6e4e720') in 0.019 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b5fc9c0839d19239b046a6049f95b685 DependenciesID=0999de113aa33449923ee42e1cdb1a0b StaticDependenciesID=4e7cc0b250098e613f00a208296a542b 
+Asset Pipeline Refresh (id=5440ee5bed2d70749b73db632e9184dd): Total: 0.033 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a24129757b2314949b1d3f66eb6e55d1 - Path: Assets/Sapphire/Art/UI/ButtonPrimary.png' with importer (TextureImporter)
+Imported 'GUID: a24129757b2314949b1d3f66eb6e55d1' -> (Import Result ID: '55b20896edd1e822bc3d8a0bd6e4e720') in 0.023 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b5fc9c0839d19239b046a6049f95b685 DependenciesID=0999de113aa33449923ee42e1cdb1a0b StaticDependenciesID=4e7cc0b250098e613f00a208296a542b 
+Asset Pipeline Refresh (id=dc0fe19067ab35347b777b01d48cf4b3): Total: 0.038 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6d8c426359adf1c4a9d94ff6cb53b09f - Path: Assets/Sapphire/Art/UI/MenuHamburgerIcon.png' with importer (TextureImporter)
+Imported 'GUID: 6d8c426359adf1c4a9d94ff6cb53b09f' -> (Import Result ID: 'f1077da4c7f2d1f89f78b4471188f6a2') in 0.082 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a9370d8200c42138138bc891e6901fcd DependenciesID=f4f6fa534d265ec99611f64351e5541d StaticDependenciesID=4b90a9c8a9a03f42134fa71b73180ee8 
+Asset Pipeline Refresh (id=d30559725eb81934e93611fd20da13de): Total: 0.101 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 0744777ff6718cd43b8f7f664a68993b - Path: Assets/Sapphire/Art/UI/LevelBadgeHex.png' with importer (TextureImporter)
+Imported 'GUID: 0744777ff6718cd43b8f7f664a68993b' -> (Import Result ID: '1e1f44f480ef537134b484dc4a576186') in 0.003 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=81420b5fe560117f49220dc6e8541d43 DependenciesID=0e14c587ad4675b3f27b23557fb24b4e StaticDependenciesID=bd3a70ad6fd9775fbaeab9b9202bf20b 
+Asset Pipeline Refresh (id=ae4f66aa3d4444a429d4a5fb543b1635): Total: 0.017 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: aaf68ba01c370e94bb0e1992e5944119 - Path: Assets/Sapphire/Art/UI/MenuIconsSet.png' with importer (TextureImporter)
+Imported 'GUID: aaf68ba01c370e94bb0e1992e5944119' -> (Import Result ID: 'bc72cb095de9831cfe210cf25b5dd513') in 0.106 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=8700d2baaba6b0e5ef7676c904d40305 DependenciesID=a8518c32e499c930f403e1caf91468ad StaticDependenciesID=84d848ecf8c71fba6a44c6a4bcc443c0 
+Asset Pipeline Refresh (id=3446187aa3ed3f945975a85aa652348f): Total: 0.126 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 826c91c276e3e12428dc091705a5ae7d - Path: Assets/Sapphire/Art/UI/MenuPanelDark.png' with importer (TextureImporter)
+Imported 'GUID: 826c91c276e3e12428dc091705a5ae7d' -> (Import Result ID: '194a0a66ca05707f1374aeb99532f31d') in 0.086 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=98ca3743fa64fb20540f92a361550206 DependenciesID=2bb30a19f1762441f087bdd7181cc178 StaticDependenciesID=8158486afa57215a4170d24634a6b6f4 
+Asset Pipeline Refresh (id=ff07f5bde1e84ec41962ba7ea8fbf30f): Total: 0.100 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 721c435cf85b68043bb0661d77d2e618 - Path: Assets/Sapphire/Art/UI/MenuIconsSetDark.png' with importer (TextureImporter)
+Imported 'GUID: 721c435cf85b68043bb0661d77d2e618' -> (Import Result ID: '40f333b54face034066d05e834bc4eb1') in 0.125 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=88b6efbe392d5efdd1034a52b1e5a4da DependenciesID=c97cc4606f352ae3cb3888eb58d89f8f StaticDependenciesID=0dd8f90179c50d72b21110cee4557c8f 
+Asset Pipeline Refresh (id=a129889fd8d69424e9ffa7ea94017991): Total: 0.150 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: f3266b3f19feb3f4a9005bb999503cf9 - Path: Assets/Sapphire/Art/UI/MenuLockBadge.png' with importer (TextureImporter)
+Imported 'GUID: f3266b3f19feb3f4a9005bb999503cf9' -> (Import Result ID: 'de24c63d82822f5ecab245caf3b90bdc') in 0.065 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3d96d87f865bb4187b58772f9c698b7b DependenciesID=9fa6d99f737102b0df49bd5297793718 StaticDependenciesID=4b093864f67c218bee8b851d26548bf8 
+Asset Pipeline Refresh (id=f25affee8e6a15c4d847101d607c7392): Total: 0.086 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 75a64612698beda42a912fe18db8739a - Path: Assets/Sapphire/Art/UI/GaugeFillMana.png' with importer (TextureImporter)
+Imported 'GUID: 75a64612698beda42a912fe18db8739a' -> (Import Result ID: 'e6b5d146d9e6d2b1412ac26902b18c76') in 0.004 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d9facc8756cb30486b9909f872112618 DependenciesID=97ed3bf3ed33ddb163801cc11a1c6378 StaticDependenciesID=d0192e7104030e33dd6e3bec1de22a29 
+Asset Pipeline Refresh (id=436c38fa84cc2194eaa53b077dcdcd9b): Total: 0.017 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 034ad5173e1cf6243a97b867b8c83457 - Path: Assets/Sapphire/Art/UI/MenuIconsSetExtra.png' with importer (TextureImporter)
+Imported 'GUID: 034ad5173e1cf6243a97b867b8c83457' -> (Import Result ID: '11d816a1e561fa1a4ba6b6da158174bc') in 0.029 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2f9fa4f14a6dfc9d6131bc3174b2edcc DependenciesID=3a8b8d1b087d75788823c78ccb677ce2 StaticDependenciesID=6b13c65aea645fd84757c073b2de47fb 
+Asset Pipeline Refresh (id=7ec5f9b110843a9448a65a813c177abe): Total: 0.048 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 1cfb58612ae882941b5aa949ee713670 - Path: Assets/Sapphire/Art/WarriorTopdownGridSheet.png' with importer (TextureImporter)
+Imported 'GUID: 1cfb58612ae882941b5aa949ee713670' -> (Import Result ID: '7f2db2cb421ae8dbba177de7bc2bdb7e') in 0.121 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2c72c08957796a032cd29ebd7f2de705 DependenciesID=c6b4b620e64bd2c384efec8d9c9e35f6 StaticDependenciesID=0bd7bf6ba37aee631eb1df268c30142a 
+Asset Pipeline Refresh (id=fb26f2afd20dba046834b00bfa07a787): Total: 0.146 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 5d463fe669e462441ab9bc2a315027d1 - Path: Assets/Sapphire/Art/WarriorAttackGridSheet.png' with importer (TextureImporter)
+Imported 'GUID: 5d463fe669e462441ab9bc2a315027d1' -> (Import Result ID: 'a1bfdb4e71fa13bbff22a0cd4197cb61') in 0.120 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=519b91e6c50fd37208b0569d18d6ac41 DependenciesID=b588743dd53ae42b5c2dde17656db3ce StaticDependenciesID=dba7b45b2e8f906f16b5aca9bb121a5b 
+Asset Pipeline Refresh (id=99f7334eb21e00e4188053c124d3e9af): Total: 0.144 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 9e94875a024478a48b72ceb43e8a4158 - Path: Assets/Sapphire/Art/UI/WarriorSkillIconsSetGold.png' with importer (TextureImporter)
+Imported 'GUID: 9e94875a024478a48b72ceb43e8a4158' -> (Import Result ID: '60581920d95ef6394c4fdcb01ddd8cee') in 0.113 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7baf0e725aa6bdc28a8ee4273d97498d DependenciesID=79465d79cc0e09e790d497c8d7ffab2d StaticDependenciesID=f4730c0a02ac20a91307a16a3dad7e82 
+Asset Pipeline Refresh (id=da91e18be5141234c875bd1dc9d89e48): Total: 0.132 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=122649789c636f04986381d040fc1984): Total: 0.027 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Unloading 8 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 180 unused Assets / (0.7 MB). Loaded Objects now: 2150.
+Memory consumption went from 255.8 MB to 255.1 MB.
+Total: 5.853700 ms (FindLiveObjects: 0.119000 ms CreateObjectMapping: 0.136200 ms MarkObjects: 5.319700 ms  DeleteObjects: 0.278000 ms)
+
+Importing 'GUID: 1075efa21ea052441a584d82a3908c0f - Path: Assets/Sapphire/Generated/Tile_Grass_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 1075efa21ea052441a584d82a3908c0f' -> (Import Result ID: 'eccfec477bd014fb21aa7aea2e531f20') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=a3f8e4ee80b061738b84c1b5ba219f5b DependenciesID=9f743d0d0b73ca9fdf6cd070329ffbc9 StaticDependenciesID=82cf03cc762bfaff78275e4a2aac84ce 
+Importing 'GUID: 038ddef89bec3e4418d4fe33c7458415 - Path: Assets/Sapphire/Generated/Tile_Grass_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 038ddef89bec3e4418d4fe33c7458415' -> (Import Result ID: '365e6393e625091ebab2ee06490b8dc9') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=ea86ae82233eeeae9fc1ebad602f7416 DependenciesID=92fdabe1e69cda8cafc51d6bb2c7ed67 StaticDependenciesID=0edfbdb5d3fafada0a79e765d5f006bd 
+Importing 'GUID: 688fbecce22d4ee4c9543cb06a5278b4 - Path: Assets/Sapphire/Generated/Tile_Dirt_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 688fbecce22d4ee4c9543cb06a5278b4' -> (Import Result ID: 'e735e4330b77821cf97b4a5b29aad9af') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=455c48e0236f84b5c5d0b0a03a31297d DependenciesID=4323dcbf37484b2807ac8ea22b8b7ab3 StaticDependenciesID=c0a958927f3a55d428d0fc8976a79bd6 
+Importing 'GUID: a9061a1569adb9649bb6f04336a79deb - Path: Assets/Sapphire/Generated/Tile_Grass_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a9061a1569adb9649bb6f04336a79deb' -> (Import Result ID: '94fa5642c6db61326d0b1628a7d6b8ab') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=3983d2c536e1f84693f4e433953d05cf DependenciesID=aa006ab54b3c6962cb1295cdec727e4a StaticDependenciesID=603ef9feb80079e1d19e84be0a429207 
+Importing 'GUID: 5f4d4085865a35c45b0a75b59c459c65 - Path: Assets/Sapphire/Generated/Tile_Dirt_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 5f4d4085865a35c45b0a75b59c459c65' -> (Import Result ID: '1db6ed9ca9ec59c8cde19f16ae49af7c') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=a322591df49d994908a3f6f3a0336a7c DependenciesID=cbd968c3506bf55c7cc0dbc6c18e7cfc StaticDependenciesID=9f6cc4c2461804b9997b6350002958eb 
+Importing 'GUID: afe14d9ed97718d4cace54d2183b2ff0 - Path: Assets/Sapphire/Generated/Tile_Dirt_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: afe14d9ed97718d4cace54d2183b2ff0' -> (Import Result ID: '1eb723e37786512e2f75059fa37504ee') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=88007ae7b3068faada827d520efa9694 DependenciesID=c64b013e9b223709f8d6bb9761702c8b StaticDependenciesID=e8f4d4d7ed21fc49fcbcf36bf57d2237 
+Asset Pipeline Refresh (id=faa15415517a848428c15dbd9d7aa977): Total: 0.020 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: c0740018f8c61c14bac95e08d2b33132 - Path: Assets/Sapphire/Scenes/VillageHub.unity' with importer (DefaultImporter)
+Imported 'GUID: c0740018f8c61c14bac95e08d2b33132' -> (Import Result ID: 'e4fd0cf08603a8949b6d519839ea3ee0') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=14deb7e78efebb82f26e1407257c652f DependenciesID=b4bba1c9399ba0110c3ad30dfe32a683 StaticDependenciesID=8467c67a0fbd6191c30174701b0c8632 
+Asset Pipeline Refresh (id=d67b9ff6e61924047ba208834c082b10): Total: 0.020 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 187 unused Assets / (344.9 KB). Loaded Objects now: 2163.
+Memory consumption went from 331.4 MB to 331.0 MB.
+Total: 6.074700 ms (FindLiveObjects: 0.106800 ms CreateObjectMapping: 0.133700 ms MarkObjects: 5.455700 ms  DeleteObjects: 0.377700 ms)
+
+Importing 'GUID: 895166bacfe970a4aa418e8231d94d03 - Path: Assets/Sapphire/Generated/Tile_SlimeGrass.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 895166bacfe970a4aa418e8231d94d03' -> (Import Result ID: 'a8a14f06c43d9502907490b4e57a9932') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=e5f0f815bfe57534f85916ffc93f06f9 DependenciesID=50521c298fb228b8a67bb6e2ad795c63 StaticDependenciesID=b8ddd691502461023fee14905bc5010f 
+Importing 'GUID: d9346a56beb373544a89f158e1ef8422 - Path: Assets/Sapphire/Generated/Tile_SlimeBlocker.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d9346a56beb373544a89f158e1ef8422' -> (Import Result ID: '6af8258f18fc6998e6544bad41cac2a7') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=28a32484e9ae533b7c9b70a40e233be4 DependenciesID=7df1ee6db94b398a52e913e13c429750 StaticDependenciesID=6752ffa80ef82ea9c074fbd8327ba4eb 
+Importing 'GUID: aae565efce3460840bf8fdc92f9c5f91 - Path: Assets/Sapphire/Generated/Tile_SlimeStone.asset' with importer (NativeFormatImporter)
+Imported 'GUID: aae565efce3460840bf8fdc92f9c5f91' -> (Import Result ID: '01074a6efa9dbd082208b5cfaea3b013') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4ae4ae870506ffc2d5bc961d2adc0f1a DependenciesID=283f2596b1e65054ff1ac7d279e17a68 StaticDependenciesID=111e4afd78c6208e0b777355dcc451f3 
+Importing 'GUID: ac3dedf35b8f05743bb6bde533ad1c3a - Path: Assets/Sapphire/Generated/Tile_SlimeRoad.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ac3dedf35b8f05743bb6bde533ad1c3a' -> (Import Result ID: '766d1b769b418b908020a9824100eac3') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=09877eb5696232e4db93ccc0fe694472 DependenciesID=4449d06123e802cbaa7877463225b9a6 StaticDependenciesID=32101b1efb067cce7cffed4e97723f30 
+Importing 'GUID: 6f784a1d1ce9f4a43b78cc010e913894 - Path: Assets/Sapphire/Generated/Tile_SlimePool.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 6f784a1d1ce9f4a43b78cc010e913894' -> (Import Result ID: 'f870b740e76ef5059395350c5e83ab05') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=b12ee3e40c02403dfc1e8b587b23a393 DependenciesID=f22dab7503e34eb4abe00a7e1b0e2bd3 StaticDependenciesID=685a34ce2536c99b762f3e55f9ef3990 
+Asset Pipeline Refresh (id=ab268496aa921cc4eac724676c206617): Total: 0.019 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: ace42b7247777c44bbe006f29265b38e - Path: Assets/Sapphire/Scenes/SlimeKingdom.unity' with importer (DefaultImporter)
+Imported 'GUID: ace42b7247777c44bbe006f29265b38e' -> (Import Result ID: 'cdd693502ab89c77bcd95ca3d18473ad') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=946a2bddb4f86b9d9edf09a3d4c33802 DependenciesID=9805155ed365f11f30a09440293bb387 StaticDependenciesID=9f71b8176dc01c41b16883b56a732fc3 
+Asset Pipeline Refresh (id=e92b957f9dd9f5443a5ad5f563c03a39): Total: 0.020 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+SAPPHIRE_BUILD SUCCESS
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Sapphire.EditorTools.SapphireSceneBuilder:BuildAll () (at Assets/Sapphire/Editor/SapphireSceneBuilder.cs:66)
+Sapphire.EditorTools.SapphireSceneBuilder:BuildEverything () (at Assets/Sapphire/Editor/SapphireSceneBuilder.cs:95)
+
+(Filename: Assets/Sapphire/Editor/SapphireSceneBuilder.cs Line: 66)
+
+Importing 'GUID: 5719713ca5c2c164597ebee1b8e4b953 - Path: Assets/Sapphire/Art/UI/Title/TitleBackground.png' with importer (TextureImporter)
+Imported 'GUID: 5719713ca5c2c164597ebee1b8e4b953' -> (Import Result ID: 'f8c3bf4bd5310a15e5e6aa8c731b0680') in 0.073 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c4aec8c6eb669f2678d33aa72a8ec75a DependenciesID=244f6433b99d2fe1940abddb719ae201 StaticDependenciesID=e316bcb31747a547c04b7d81a072e6ff 
+Asset Pipeline Refresh (id=1694936b5aa6dbb45a1b70da6d0290c7): Total: 0.088 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: fdd80b7f061ba4d429082615a0e3b9e8 - Path: Assets/Sapphire/Art/UI/Title/TitleLogo.png' with importer (TextureImporter)
+Imported 'GUID: fdd80b7f061ba4d429082615a0e3b9e8' -> (Import Result ID: 'dbba506b775c248b089c6a01556a2dbd') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e72e4df6124c4a22fa25dc8760db5d9e DependenciesID=72eb1be4d25db82982a73550f0f1ea00 StaticDependenciesID=859525da0edaf318193554c41a31703f 
+Asset Pipeline Refresh (id=90041c84f05fc5d41a83dc22b8e5af2f): Total: 0.065 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: da15b1e95132fc643ba9e94bc165c715 - Path: Assets/Sapphire/Art/UI/Title/PortraitMage.png' with importer (TextureImporter)
+Imported 'GUID: da15b1e95132fc643ba9e94bc165c715' -> (Import Result ID: '65e21d51910f96bdf96b6c5cc29c0674') in 0.130 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2ca5dc4dd50a6220e09c234c3f63b6f6 DependenciesID=4c8eff0ab98e580fc188d81122177bfd StaticDependenciesID=f1f343ca7d83f64db1ef484bab7e8e74 
+Asset Pipeline Refresh (id=26def172139ff4f46a5b2d01a069aca2): Total: 0.144 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 40dbb883c74c74f4ebbbc8904afb6969 - Path: Assets/Sapphire/Art/UI/Title/PortraitWarrior.png' with importer (TextureImporter)
+Imported 'GUID: 40dbb883c74c74f4ebbbc8904afb6969' -> (Import Result ID: '96644a46372edc502f4bd73be04b0299') in 0.100 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d3d54f1b3b0067020a6dc87c54d48444 DependenciesID=5600ac81b40535d28d26c19558f3a340 StaticDependenciesID=139a49f12bf672f09b376bb5567fa6dd 
+Asset Pipeline Refresh (id=c857dfa8bcf2057478549de935493094): Total: 0.114 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 9fcf5cc486dfda346a79d969d736b28a - Path: Assets/Sapphire/Art/UI/Title/InputFieldFrame.png' with importer (TextureImporter)
+Imported 'GUID: 9fcf5cc486dfda346a79d969d736b28a' -> (Import Result ID: 'c5173c1fa0b77d1e6696264c6531e33d') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d67de78d5f63c2db343129fa26dd939a DependenciesID=67e9a0001899c0176bcfc53794a756e7 StaticDependenciesID=786f9b4956476fe70f5b754293932088 
+Asset Pipeline Refresh (id=c14904d527662e94db97bece9aacec82): Total: 0.022 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 9956d4c1614a3fe46843e8d2757797db - Path: Assets/Sapphire/Art/UI/Title/CharacterPedestal.png' with importer (TextureImporter)
+Imported 'GUID: 9956d4c1614a3fe46843e8d2757797db' -> (Import Result ID: '472fcd0b31bf6f192f8bb7c20d740e79') in 0.018 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=07a9a802772974669b5695d5ac71c6b0 DependenciesID=86262276ad8751adb650385324857071 StaticDependenciesID=b3d3f278185908d9d40ad2d3ae3b1803 
+Asset Pipeline Refresh (id=1f424e3ef93477e409d2317904c9345e): Total: 0.031 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 712a95930a20ab144bd18edf4fca1b89 - Path: Assets/Sapphire/Art/UI/Title/ClassBadgeMage.png' with importer (TextureImporter)
+Imported 'GUID: 712a95930a20ab144bd18edf4fca1b89' -> (Import Result ID: '2772b6d88842451e8cee8b7a934dfdda') in 0.004 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2e42b3d825d7e1f5e4d89d827e49fe17 DependenciesID=dd8cf6dff324f94b63c734f429c29b37 StaticDependenciesID=17a37b6c41a2aeba70dab44661f9f41d 
+Asset Pipeline Refresh (id=6c5bf70531d450c4099c7901ae5b86e1): Total: 0.017 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 37ec043643741f449a3f865f27369bd3 - Path: Assets/Sapphire/Art/UI/Title/ClassBadgeWarrior.png' with importer (TextureImporter)
+Imported 'GUID: 37ec043643741f449a3f865f27369bd3' -> (Import Result ID: 'dc2dd8ed281c486e86b2472e03d01071') in 0.004 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9a5fa182cf0578bf3401b9a268efe5af DependenciesID=f2df8f6a104e53b8cc4d03d1ce891e5b StaticDependenciesID=432b7d12b5f8b8089905c859e55978d3 
+Asset Pipeline Refresh (id=97f31621ea213854d84c34c9282a0f3e): Total: 0.017 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: f77b11f064f03b4489ac275cc140c684 - Path: Assets/Sapphire/Art/UI/Title/CharacterCreateSpotlight.png' with importer (TextureImporter)
+Imported 'GUID: f77b11f064f03b4489ac275cc140c684' -> (Import Result ID: '7871f668040e6b6c6262007c96615e32') in 0.035 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a54779ff6738e844af34e7701064b080 DependenciesID=67cf612d32bc767cc135633d10171549 StaticDependenciesID=de7231b7e4dfa350be0e05858df63a67 
+Asset Pipeline Refresh (id=2cf2979ae31709442a55b0062b5bbb51): Total: 0.049 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 36e345d1f0d2d324bba6b371b2d62318 - Path: Assets/Sapphire/Art/UI/Title/CharacterSlotFrameV2.png' with importer (TextureImporter)
+Imported 'GUID: 36e345d1f0d2d324bba6b371b2d62318' -> (Import Result ID: '74061dfc1c60735f5ba510649d2d6f92') in 0.038 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=3bf26918c37af454bc0feed405c3e54a DependenciesID=8d04b78def97ce5ea2d1e4faf52229f3 StaticDependenciesID=4dcf9fcdb560835397b31faa45b41df5 
+Asset Pipeline Refresh (id=82e5661c76077744786922844b9e7387): Total: 0.052 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 299fa50c03e5dc6439e013ae46e18653 - Path: Assets/Sapphire/Art/UI/Title/CharacterSlotFrameEmptyV2.png' with importer (TextureImporter)
+Imported 'GUID: 299fa50c03e5dc6439e013ae46e18653' -> (Import Result ID: '1381b755ad2d88a27db3d5a2a0576297') in 0.032 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5996fb221ce40f8147db754938639377 DependenciesID=d6b9af5ae1f71d9225d4eda87200b133 StaticDependenciesID=abb2136ec874f92ee14e41e093d6d91f 
+Asset Pipeline Refresh (id=7476453a50219bd499b79a472a1aef4d): Total: 0.047 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: bb642a5a3669aa24d8985f88d45affd8 - Path: Assets/Sapphire/Art/UI/Title/NameplateBar.png' with importer (TextureImporter)
+Imported 'GUID: bb642a5a3669aa24d8985f88d45affd8' -> (Import Result ID: 'afacb38459bd2288fc92005cd6f12b8c') in 0.004 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=573aee0b6395e94a160278c8610ae25d DependenciesID=69368b4f87544563120e2135b3c95f91 StaticDependenciesID=6a94185938bbdccd1ae41b3f789353c7 
+Asset Pipeline Refresh (id=44962255f51e4c74eb5579a18f38db7d): Total: 0.018 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: aff0a90207cde334a9d609e3dcd735b2 - Path: Assets/Sapphire/Art/UI/Title/LoginPortalFrame.png' with importer (TextureImporter)
+Imported 'GUID: aff0a90207cde334a9d609e3dcd735b2' -> (Import Result ID: '04512c65bfe77dfc51e1259326e85b7f') in 0.035 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e4f1b94b0c5f4aa3fa8b38b47b1a6649 DependenciesID=29be1136cfbd9e74f1dd72e8ef3517e2 StaticDependenciesID=db53aacce459dfe1d31b86bdb32fdd86 
+Asset Pipeline Refresh (id=0b1d22ee586fb0d48808b6a2ad4b128a): Total: 0.048 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: e46a7f51e86416e4ebdcf40f8d67a48e - Path: Assets/Sapphire/Art/UI/Title/ButtonSelectV2.png' with importer (TextureImporter)
+Imported 'GUID: e46a7f51e86416e4ebdcf40f8d67a48e' -> (Import Result ID: '2f27d50d3099c3b554a0478cde83368e') in 0.007 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ded8990668f47cea24864f6ec90fe1f6 DependenciesID=7a7556d2cf4fc6f1ac21775f8d15b0fd StaticDependenciesID=ccf498e801da03ae8f7dd22ad2cfd04c 
+Asset Pipeline Refresh (id=1dd1e93899b81f344b1708dd46358b3a): Total: 0.031 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: e46a7f51e86416e4ebdcf40f8d67a48e - Path: Assets/Sapphire/Art/UI/Title/ButtonSelectV2.png' with importer (TextureImporter)
+Imported 'GUID: e46a7f51e86416e4ebdcf40f8d67a48e' -> (Import Result ID: '2f27d50d3099c3b554a0478cde83368e') in 0.005 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ded8990668f47cea24864f6ec90fe1f6 DependenciesID=7a7556d2cf4fc6f1ac21775f8d15b0fd StaticDependenciesID=ccf498e801da03ae8f7dd22ad2cfd04c 
+Asset Pipeline Refresh (id=882ed4809478deb4dabf883a50259cf2): Total: 0.018 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: e46a7f51e86416e4ebdcf40f8d67a48e - Path: Assets/Sapphire/Art/UI/Title/ButtonSelectV2.png' with importer (TextureImporter)
+Imported 'GUID: e46a7f51e86416e4ebdcf40f8d67a48e' -> (Import Result ID: '2f27d50d3099c3b554a0478cde83368e') in 0.005 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ded8990668f47cea24864f6ec90fe1f6 DependenciesID=7a7556d2cf4fc6f1ac21775f8d15b0fd StaticDependenciesID=ccf498e801da03ae8f7dd22ad2cfd04c 
+Asset Pipeline Refresh (id=cab76d44697844b418463d16fea27ce7): Total: 0.018 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a73d3deb3bdcd4249ae5c8f0793ded70 - Path: Assets/Sapphire/Art/UI/Title/ButtonDeleteV2.png' with importer (TextureImporter)
+Imported 'GUID: a73d3deb3bdcd4249ae5c8f0793ded70' -> (Import Result ID: '0dfc3057871c5c5988d3afcdd3a71a72') in 0.006 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b258e1a4018b2d20f3926ae94b75c56e DependenciesID=d2a9c8f6c26702f270364850bc7d619b StaticDependenciesID=fd3d5d3a80959af743361020ab13d688 
+Asset Pipeline Refresh (id=143a8230f1ebec341ae59047a7c83cd1): Total: 0.026 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a73d3deb3bdcd4249ae5c8f0793ded70 - Path: Assets/Sapphire/Art/UI/Title/ButtonDeleteV2.png' with importer (TextureImporter)
+Imported 'GUID: a73d3deb3bdcd4249ae5c8f0793ded70' -> (Import Result ID: '0dfc3057871c5c5988d3afcdd3a71a72') in 0.005 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b258e1a4018b2d20f3926ae94b75c56e DependenciesID=d2a9c8f6c26702f270364850bc7d619b StaticDependenciesID=fd3d5d3a80959af743361020ab13d688 
+Asset Pipeline Refresh (id=6f58cb54f3b27bb48a17d28a98863e08): Total: 0.018 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a73d3deb3bdcd4249ae5c8f0793ded70 - Path: Assets/Sapphire/Art/UI/Title/ButtonDeleteV2.png' with importer (TextureImporter)
+Imported 'GUID: a73d3deb3bdcd4249ae5c8f0793ded70' -> (Import Result ID: '0dfc3057871c5c5988d3afcdd3a71a72') in 0.004 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b258e1a4018b2d20f3926ae94b75c56e DependenciesID=d2a9c8f6c26702f270364850bc7d619b StaticDependenciesID=fd3d5d3a80959af743361020ab13d688 
+Asset Pipeline Refresh (id=649f9d2d9de44ef408c3454b63865863): Total: 0.018 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: add6b3c5ce2071b4ca1e0bd5b56c1877 - Path: Assets/Sapphire/Art/UI/Title/ButtonCreateV2.png' with importer (TextureImporter)
+Imported 'GUID: add6b3c5ce2071b4ca1e0bd5b56c1877' -> (Import Result ID: '8f33ee273a3f4ca455ff0734cf902478') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a6624cf049cc0ed8a3aed473b0295ec7 DependenciesID=804838b26e9b4f69062edb58618c4464 StaticDependenciesID=0e3217dce3312661c47c8f4e547ff64c 
+Asset Pipeline Refresh (id=f34f40119eff7684987a21c9b74477b9): Total: 0.030 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: add6b3c5ce2071b4ca1e0bd5b56c1877 - Path: Assets/Sapphire/Art/UI/Title/ButtonCreateV2.png' with importer (TextureImporter)
+Imported 'GUID: add6b3c5ce2071b4ca1e0bd5b56c1877' -> (Import Result ID: '8f33ee273a3f4ca455ff0734cf902478') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a6624cf049cc0ed8a3aed473b0295ec7 DependenciesID=804838b26e9b4f69062edb58618c4464 StaticDependenciesID=0e3217dce3312661c47c8f4e547ff64c 
+Asset Pipeline Refresh (id=403d84a50980dc943a4d1dfecc8fb982): Total: 0.024 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: add6b3c5ce2071b4ca1e0bd5b56c1877 - Path: Assets/Sapphire/Art/UI/Title/ButtonCreateV2.png' with importer (TextureImporter)
+Imported 'GUID: add6b3c5ce2071b4ca1e0bd5b56c1877' -> (Import Result ID: '8f33ee273a3f4ca455ff0734cf902478') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a6624cf049cc0ed8a3aed473b0295ec7 DependenciesID=804838b26e9b4f69062edb58618c4464 StaticDependenciesID=0e3217dce3312661c47c8f4e547ff64c 
+Asset Pipeline Refresh (id=58faca456575cd547b6c6ce35f3a4052): Total: 0.023 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: faf0cf1748bcd194b85ec9b853e0d688 - Path: Assets/Sapphire/Art/UI/Title/NicknameInputFieldV2.png' with importer (TextureImporter)
+Imported 'GUID: faf0cf1748bcd194b85ec9b853e0d688' -> (Import Result ID: '6be08f1ee2ec65dedf1a5467d3d55c62') in 0.070 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1ea2fc1c27a3d2dfdf81201da3724f52 DependenciesID=25dc06f7058258b24fe7367dc403e72a StaticDependenciesID=a0605d2f475e343f062d0038dc67f27c 
+Asset Pipeline Refresh (id=53461fc19d6453f4796f88ca357c4b73): Total: 0.084 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6a76e02dd01cbaa4bb91c646086e98dd - Path: Assets/Sapphire/Art/UI/Title/LoginStartButtonV2.png' with importer (TextureImporter)
+Imported 'GUID: 6a76e02dd01cbaa4bb91c646086e98dd' -> (Import Result ID: 'a82121b0d96327ae0a0abb2ff4f3f90f') in 0.022 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=00db6360f532ecf3b34f62e757ce4bc5 DependenciesID=5571a2cfdfc4143f335960b1ba04ca19 StaticDependenciesID=9ddd83fc0249de5e84aaec7259ab40f2 
+Asset Pipeline Refresh (id=d4792b9752b62a349bb4570a5b82ee03): Total: 0.042 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6a76e02dd01cbaa4bb91c646086e98dd - Path: Assets/Sapphire/Art/UI/Title/LoginStartButtonV2.png' with importer (TextureImporter)
+Imported 'GUID: 6a76e02dd01cbaa4bb91c646086e98dd' -> (Import Result ID: 'a82121b0d96327ae0a0abb2ff4f3f90f') in 0.018 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=00db6360f532ecf3b34f62e757ce4bc5 DependenciesID=5571a2cfdfc4143f335960b1ba04ca19 StaticDependenciesID=9ddd83fc0249de5e84aaec7259ab40f2 
+Asset Pipeline Refresh (id=98e6386aa810de24aaa04659139fe87a): Total: 0.033 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6a76e02dd01cbaa4bb91c646086e98dd - Path: Assets/Sapphire/Art/UI/Title/LoginStartButtonV2.png' with importer (TextureImporter)
+Imported 'GUID: 6a76e02dd01cbaa4bb91c646086e98dd' -> (Import Result ID: 'a82121b0d96327ae0a0abb2ff4f3f90f') in 0.018 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=00db6360f532ecf3b34f62e757ce4bc5 DependenciesID=5571a2cfdfc4143f335960b1ba04ca19 StaticDependenciesID=9ddd83fc0249de5e84aaec7259ab40f2 
+Asset Pipeline Refresh (id=69ba3dbd3762b8346a8af95197eeeb69): Total: 0.032 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=ba2a41cc239f6e24095bab05b77dd07d): Total: 0.011 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 193 unused Assets / (327.2 KB). Loaded Objects now: 2163.
+Memory consumption went from 327.2 MB to 326.9 MB.
+Total: 6.107500 ms (FindLiveObjects: 0.158900 ms CreateObjectMapping: 0.213100 ms MarkObjects: 5.455300 ms  DeleteObjects: 0.279500 ms)
+
+Importing 'GUID: fdedefbbff0369d46b09bd88af71cb12 - Path: Assets/Sapphire/Scenes/Login.unity' with importer (DefaultImporter)
+Imported 'GUID: fdedefbbff0369d46b09bd88af71cb12' -> (Import Result ID: '3ad7cd141ff521ce9fc24b7dab5ae51a') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=6765b5c24439421f345d6f8f06fa8773 DependenciesID=fe2b3b09b14b13c4777d932d7af7ae38 StaticDependenciesID=aa7cbca7926f664ec6198aec9edf4830 
+Asset Pipeline Refresh (id=e28b46b34e55fb7408e84d791591624e): Total: 0.020 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 31 unused Assets / (22.7 KB). Loaded Objects now: 2163.
+Memory consumption went from 263.1 MB to 263.1 MB.
+Total: 5.154100 ms (FindLiveObjects: 0.085200 ms CreateObjectMapping: 0.105000 ms MarkObjects: 4.890100 ms  DeleteObjects: 0.073300 ms)
+
+Importing 'GUID: b09e021be5f42b54eb4f56cd98c1f229 - Path: Assets/Sapphire/Scenes/CharacterSelect.unity' with importer (DefaultImporter)
+Imported 'GUID: b09e021be5f42b54eb4f56cd98c1f229' -> (Import Result ID: '9305b7d329fcffe2ef68274aeee075ac') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=5cf050a8454bb0394cd04a73ccce95c2 DependenciesID=5bf8b5516bd911eba577772fb82db7bf StaticDependenciesID=e1bd2439ed6a4128eb574fbd54846bd6 
+Asset Pipeline Refresh (id=1f53185dbc0e0824d8cc57c3b592bedb): Total: 0.022 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 53 unused Assets / (66.4 KB). Loaded Objects now: 2163.
+Memory consumption went from 276.3 MB to 276.2 MB.
+Total: 4.804700 ms (FindLiveObjects: 0.074000 ms CreateObjectMapping: 0.098900 ms MarkObjects: 4.535900 ms  DeleteObjects: 0.095300 ms)
+
+Importing 'GUID: 4a45b89cc69b0c34aabb19340b8d5f6f - Path: Assets/Sapphire/Scenes/CharacterCreate.unity' with importer (DefaultImporter)
+Imported 'GUID: 4a45b89cc69b0c34aabb19340b8d5f6f' -> (Import Result ID: 'bcd1d5486fcdd9e58b00b0d026a73bf4') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=80972d0436508fafa017a9922929702d DependenciesID=8ed833b648ee15650979d29d37b92348 StaticDependenciesID=648dd2744b61fa3216cc898e207f7a06 
+Asset Pipeline Refresh (id=18759bab4d4fb914098cc522fd684f97): Total: 0.020 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+SAPPHIRE_CHARACTER_FLOW_BUILD SUCCESS
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Sapphire.EditorTools.CharacterFlowSceneBuilder:BuildAll () (at Assets/Sapphire/Editor/CharacterFlowSceneBuilder.cs:40)
+Sapphire.EditorTools.SapphireSceneBuilder:BuildEverything () (at Assets/Sapphire/Editor/SapphireSceneBuilder.cs:96)
+
+(Filename: Assets/Sapphire/Editor/CharacterFlowSceneBuilder.cs Line: 40)
+
+Batchmode quit successfully invoked - shutting down!
+Killing ADB server in 2.0684676 seconds.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-admin-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-admin channel disconnected successfully.
+Lingering sessions upon destruction of worker manager
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+CodeReloadManager destroyed
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0

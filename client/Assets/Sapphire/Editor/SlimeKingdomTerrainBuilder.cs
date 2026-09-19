@@ -160,19 +160,19 @@ namespace Sapphire.EditorTools
             BuildEncounter(root, collision, blocker, zones, 16, 13, "?¼ìƒ ?ªì? ?¬ë¼?„ì´ ?ˆì ???¡ì²´ë¥??˜ë¦¬ë©??¤ê??µë‹ˆ??");
             BuildEncounter(root, collision, blocker, zones, 14, 18, "?¤ë¦¬ ê·¼ì²˜?ì„œ ?œì„±?´ëŠ” ?¬ë¼??ë¬´ë¦¬?…ë‹ˆ??");
             BuildEncounter(root, collision, blocker, zones, 25, 18, "ë§ˆë ¥??ë¨¸ê¸ˆ?€ ?˜ì • ?¬ë¼?„ì´ ê²½ê³„?˜ê³  ?ˆìŠµ?ˆë‹¤.");
-            BuildEncounter(root, collision, blocker, zones, 19, 25, "ê±°ë????€???¬ë¼?„ì´ ê¸¸ì„ ê°€ë¡œë§‰ê³??ˆìŠµ?ˆë‹¤!");
+            BuildEncounter(root, collision, blocker, zones, 19, 25, "º¸½º ½½¶óÀÓÀÌ´Ù!", true);
             
             // Exit Gate
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "return_gate", "SlimeProp_Gate", 19, 0,
                 "?œì‘ ë§ˆì„(?¬íŒŒ?´ì–´ ?€??ë¡??Œì•„ê°‘ë‹ˆ??", "VillageHub", 2.5f);
         }
 
-        private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message)
+        private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message, bool isBoss = false)
         {
             var zone = BuildInteractable(parent, collision, blocker, zones, PrimaryAtlas, "slime_" + x + "_" + y, "SlimeProp_Slime", x, y, message, null, .82f);
             var monster = zone.gameObject.AddComponent<Sapphire.Presentation.Combat.MonsterController>();
             // Basic Slime Stats: 30 HP, 5 ATK, 2 DEF
-            monster.Initialize(x, y, 30, 5, 2);
+            if (isBoss) { zone.transform.localScale = new Vector3(1.5f, 1.5f, 1f); monster.Initialize(x, y, 150, 15, 5, true); } else { monster.Initialize(x, y, 30, 5, 2, false); }
         }
 
         private static void PlaceBlockingFootprint(Transform parent, Tilemap collision, Tile blocker, string atlas, string sprite, int x, int y, float scale, int radius)

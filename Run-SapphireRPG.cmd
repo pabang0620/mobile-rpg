@@ -1,2 +1,2 @@
 @echo off
-start "" "%~dp0client\builds\Windows\SapphireRPG.exe"
+start "" "%~dp0builds\Windows\SapphireRPG.exe"
