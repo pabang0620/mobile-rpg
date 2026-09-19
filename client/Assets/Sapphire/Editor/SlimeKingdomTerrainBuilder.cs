@@ -226,13 +226,15 @@ namespace Sapphire.EditorTools
         private static GameObject PlaceVisualScaled(Transform parent, string atlas, string sprite, int x, int y, float scaleX, float scaleY, string name)
         {
             var go = new GameObject(name, typeof(SpriteRenderer));
-            go.transform.SetParent(parent); go.transform.position = SapphireSceneBuilder.CellCenter(x, y);
+            go.transform.SetParent(parent);
+            // Shift the sprite UP by half its Y scale so the foot (bottom edge)
+            // sits exactly on tile y, not half a unit below it.
+            Vector3 center = SapphireSceneBuilder.CellCenter(x, y);
+            go.transform.position = new Vector3(center.x, center.y + scaleY * 0.5f, center.z);
             go.transform.localScale = new Vector3(scaleX, scaleY, 1f);
             var renderer = go.GetComponent<SpriteRenderer>(); renderer.sprite = LoadSprite(atlas, sprite);
-            // Use the foot (bottom edge) of the sprite for Y-sort so tall props/buildings
-            // always render above the tiles they stand on, not below them.
-            float footY = go.transform.position.y - scaleY * 0.5f;
-            renderer.sortingOrder = Mathf.RoundToInt(-footY * 100f);
+            // Sort by tile foot (center y) so tall props always render above lower ground.
+            renderer.sortingOrder = Mathf.RoundToInt(-center.y * 100f);
             return go;
         }
 

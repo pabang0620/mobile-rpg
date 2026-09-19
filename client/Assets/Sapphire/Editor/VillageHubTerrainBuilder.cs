@@ -167,18 +167,18 @@ namespace Sapphire.EditorTools
 
             // Welcome sign (bottom entrance)
             BuildInteractable(root, collision, blocker, zones, SapphireSceneBuilder.WorldArtDir + "/VillageProps.png", "signpost", "VillageProps_Signpost", 14, 7,
-                "ÃÊº¸ ¸ğÇè°¡ÀÇ ¸¶À», »çÆÄÀÌ¾î Å¸¿î¿¡ ¿À½Å °ÍÀ» È¯¿µÇÕ´Ï´Ù.", null, 1.0f);
+                "ì´ˆë³´ ëª¨í—˜ê°€ì˜ ë§ˆì„, ì‚¬íŒŒì´ì–´ íƒ€ìš´ì— ì˜¤ì‹  ê²ƒì„ í™˜ì˜í•©ë‹ˆë‹¤.", null, 1.0f);
 
             // Village Props (placed logically on the expanded dirt plaza/grass edges)
             PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_House", 4, 13, 1.8f, 1);
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "elder_house", "Slime2_House", 20, 13,
-                "ÃÌÀå´ÔÀÇ ÁıÀÌ´Ù. ¹®ÀÌ ±»°Ô Àá°Ü ÀÖ´Ù.", null, 1.8f);
+                "ì´Œì¥ë‹˜ì˜ ì§‘ì´ë‹¤. ë¬¸ì´ êµ³ê²Œ ì ê²¨ ìˆë‹¤.", null, 1.8f);
 
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_shop", "Slime2_Shop", 6, 8,
-                "´Ù¾çÇÑ ÀâÈ­¸¦ ÆÄ´Â »óÁ¡ÀÌ´Ù.", null, 1.5f);
+                "ë‹¤ì–‘í•œ ì¡í™”ë¥¼ íŒŒëŠ” ìƒì ì´ë‹¤.", null, 1.5f);
 
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "village_fountain", "Slime2_Fountain", 12, 14,
-                "¸¶À»ÀÇ ¸¼Àº ºĞ¼ö´Ù. ¸¶À½ÀÌ Æí¾ÈÇØÁø´Ù.", null, 1.55f);
+                "ë§ˆì„ì˜ ë§‘ì€ ë¶„ìˆ˜ë‹¤. ë§ˆìŒì´ í¸ì•ˆí•´ì§„ë‹¤.", null, 1.55f);
 
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 10, 14, .9f, "Lamp1");
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 14, 14, .9f, "Lamp2");
@@ -190,7 +190,7 @@ namespace Sapphire.EditorTools
 
             // Gate to Slime Forest (Top exit)
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "slime_kingdom_gate", "SlimeProp_Gate", SapphireSceneBuilder.SpawnX, SapphireSceneBuilder.MapHeight - 1,
-                "½½¶óÀÓ ½£À¸·Î ÀÌµ¿ÇÕ´Ï´Ù.", "SlimeKingdom", 2.6f);
+                "ìŠ¬ë¼ì„ ìˆ²ìœ¼ë¡œ ì´ë™í•©ë‹ˆë‹¤.", "SlimeKingdom", 2.6f);
 
             
         }
@@ -325,12 +325,13 @@ namespace Sapphire.EditorTools
         {
             var go = new GameObject(name, typeof(SpriteRenderer));
             go.transform.SetParent(parent); 
-            go.transform.position = CellCenter(x, y);
+            Vector3 center = CellCenter(x, y);
+            go.transform.position = new Vector3(center.x, center.y + scale * 0.5f, center.z);
             go.transform.localScale = new Vector3(scale, scale, 1f);
             var renderer = go.GetComponent<SpriteRenderer>(); 
             renderer.sprite = LoadNamedSprite(atlas, sprite); 
-            // Apply Y-sorting directly based on position
-            renderer.sortingOrder = Mathf.RoundToInt(-go.transform.position.y * 100f);
+            // Sort by foot (= original tile center y)
+            renderer.sortingOrder = Mathf.RoundToInt(-center.y * 100f);
             return go;
         }
     }
