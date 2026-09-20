@@ -62,10 +62,8 @@ namespace Sapphire.EditorTools
             Sprite inputFrame = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/InputFieldFrame.png");
             InputField accountIdInput = BuildAccountIdInput(canvasGo, inputFrame);
 
-            // 2026-09-19: replaced flashy neon LoginStartButtonV2.png with
-            // the simpler ButtonSelectV2.png (solid dark button, same asset used
-            // in character-select screen). Color-tint transition kept (default).
-            Sprite startButtonSprite = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/ButtonSelectV2.png");
+            // 2026-09-20: User requested a plain rectangular button instead of the diamond/ornate one.
+            Sprite startButtonSprite = VillageHubUiBuilder.LoadSingleSprite(SapphireSceneBuilder.UiArtDir + "/ButtonSecondary.png");
             Button startButton = CharacterFlowUiScaffold.BuildLabeledButton(canvasGo, startButtonSprite, "StartButton", new Vector2(0f, -120f), new Vector2(240f, 64f), "게임 시작", fontSize: 26);
 
             Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, -165f), new Vector2(400f, 30f), string.Empty, fontSize: 18);
