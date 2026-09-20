@@ -1,0 +1,719 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Channel LicenseClient-darac doesn't exist
+Built from '6000.5/staging' branch; Version is '6000.5.9f1 (b57deb96f08d) revision 11894251'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.22631) Core' Language: 'ko' Physical Memory: 32469 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-09-20T12:34:57Z
+[Licensing::Module] Successfully launched the LicensingClient (PId: 2396)
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Unity.exe
+-batchmode
+-quit
+-projectPath
+C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client
+-executeMethod
+WindowsBuilder.Build
+-logFile
+C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\unity_build_standalone_final.log
+Successfully changed project path to: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client
+C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-remapper-allocator-initial-capacity=32768"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [16624]  Target information:
+
+Player connection [16624]  * "[IP] 172.30.1.49 [Port] 55504 [Flags] 2 [Guid] 1989057448 [EditorId] 1989057448 [Version] 1048832 [Id] WindowsEditor(7,SHIN) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [16624] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [16624] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-1840" after 0.2 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-darac" at "2026-09-20T12:34:57.9056525Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 2396, path: "C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              9a7fb1832f554f91a4daf5dd917e196b
+  Correlation Id:          5bd1b4965c888bb016f815810a87af75
+  External correlation Id: 3118707086778866061
+  Machine Id:              5e3iIbZGEVR5VxgYE89BuUpMSg4=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-darac" (connect: 0.57s, validation: 0.12s, handshake: 0.05s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-darac-notifications" at "2026-09-20T12:34:58.0830466Z"
+[Licensing::Module] Connected to LicensingClient (PId: 2396, launch time: 0.02, total connection time: 0.74s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-UT2P-JK6J-CVKP-3GZX-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-27T13:31:45Z
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.80s
+[Licensing::Module] Licensing is initialized (took 0.39s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Initialize engine version: 6000.5.9f1 (b57deb96f08d)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        NVIDIA GeForce RTX 4070 SUPER (ID=0x2783)
+    Vendor:          NVIDIA
+    VRAM:            11997 MB
+    App VRAM Budget: 11229 MB
+    Driver:          32.0.15.9186
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56840
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.002081 seconds.
+Native extension for WindowsStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.451 seconds
+Domain Reload Profiling: 939ms
+	BeginReloadAssembly (143ms)
+		CreateAndSetChildDomain (19ms)
+	RebuildCommonClasses (5ms)
+	RebuildNativeTypeToScriptingClass (14ms)
+	initialDomainReloadingComplete (58ms)
+	LoadAllAssembliesAndSetupDomain (268ms)
+		LoadAssemblies (120ms)
+		AnalyzeDomain (200ms)
+			TypeCache.Refresh (198ms)
+				TypeCache.ScanAssembly (182ms)
+	FinalizeReload (452ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (76ms)
+			ProcessInitializeOnLoadAttributes (88ms)
+			ProcessInitializeOnLoadMethodAttributes (222ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 41 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.inputsystem@1.20.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.inputsystem@7a4e1a2a8194)
+  Built-in packages:
+    com.unity.test-framework@1.7.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.ugui@1c4864518158)
+    com.unity.multiplayer.center@1.0.1 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.multiplayer.center@b860850997d0)
+    com.unity.modules.accessibility@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physics2d)
+    com.unity.modules.physicscore2d@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.1.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.ext.nunit@44f7d31723bd)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 1s884ms
+[329/332    1s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(493,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(536,38): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(545,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+[330/332    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[331/332    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (1.82 seconds), 3 items updated, 332 evaluated
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(493,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(536,38): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(545,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Total cache size 9894044
+Total cache size after purge 9894044, took 00:00:00.0158165
+AssetDatabase: script compilation time: 2.495451s
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.428 seconds
+Domain Reload Profiling: 941ms
+	BeginReloadAssembly (225ms)
+		DisableScriptedObjects (20ms)
+		CreateAndSetChildDomain (57ms)
+	RebuildCommonClasses (9ms)
+	RebuildNativeTypeToScriptingClass (19ms)
+	initialDomainReloadingComplete (42ms)
+	LoadAllAssembliesAndSetupDomain (217ms)
+		LoadAssemblies (208ms)
+		AnalyzeDomain (41ms)
+			TypeCache.Refresh (27ms)
+				TypeCache.ScanAssembly (22ms)
+			BuildScriptInfoCaches (12ms)
+	FinalizeReload (429ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (76ms)
+			ProcessInitializeOnLoadAttributes (97ms)
+			ProcessInitializeOnLoadMethodAttributes (69ms)
+			AfterProcessingInitializeOnLoad (7ms)
+		AwakeInstancesAfterBackupRestoration (34ms)
+Starting new worker id: 0 with log in C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=2727088b2c961f845a4c298755c5cf06): Total: 3.819 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=667 ms
+		Asset DB Callback time: managed=70 ms, native=20 ms
+		Scripting: domain reloads=1, domain reload time=545 ms, compile time=2498 ms, other=17 ms
+		Project Asset Count: scripts=388, non-scripts=769
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokePackagesCallback: 16.398ms
+	ApplyChangesToAssetFolders: 0.951ms
+	Scan: 84.380ms
+	Collect global state as custom dependencies: 10.128ms
+	OnSourceAssetsModified: 0.721ms
+	CategorizeScriptCompilationAssets: 9.126ms
+	ProcessAssetsWithTransientArtifactChanges: 15.854ms
+	CategorizeAssets: 8.639ms
+	CompileScripts: 2497.712ms
+	ImportOutOfDateAssets: 483.389ms (433.342ms without children)
+		UnloadImportedAssets: 0.196ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.148ms
+		ImportSchedulerStart: 49.701ms
+	PostProcessAllAssets: 71.518ms
+		VCAutoAddAssetPostprocess 1.012ms
+		XRBuildSystem.XRAssetImported 0.096ms
+		MonoPostProcessAllAssets: 69.930ms
+			AssetPostprocessor.OnPostprocessAllAssets 31.208ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 10.224ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 7.036ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 4.771ms
+			AssetChangedListener.OnPostprocessAllAssets 1.522ms
+			SyncVS.PostprocessSyncProject 1.192ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.978ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 0.912ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.622ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.507ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.460ms
+			AssetEvents.OnPostprocessAllAssets 0.330ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.308ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.282ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.275ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.273ms
+			SkillVfxImporter.OnPostprocessAllAssets 0.229ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.221ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.209ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.157ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.122ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.116ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.110ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.104ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.081ms
+			AudioContainerPostProcessor.OnPostprocessAllAssets 0.077ms
+			WarriorSkillVfxImporter.OnPostprocessAllAssets 0.075ms
+	PostAssetChangesProfiler: 4.322ms
+	UnloadStreamsBegin: 1.280ms
+	GenerateScriptTypeHashes: 1.110ms
+	GenerateScriptTypeSerializationHashes: 2.281ms
+	Untracked: 610.312ms
+
+Application.AssetDatabase Initial Refresh End
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
+Scanning for USB devices : 24.045ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-Sapphire RPG
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 1384 unused Assets / (1.1 MB). Loaded Objects now: 2170.
+Memory consumption went from 224.2 MB to 223.2 MB.
+Total: 6.807300 ms (FindLiveObjects: 0.201600 ms CreateObjectMapping: 0.254400 ms MarkObjects: 5.740700 ms  DeleteObjects: 0.608100 ms)
+
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aESkipCompile.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssembliesAndTypeDB
+WorkingDir: C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+ExitCode: 0 Duration: 0s182ms
+*** Tundra build success (0.07 seconds), 0 items updated, 3 evaluated
+Total cache size 9894044
+Total cache size after purge 9894044, took 00:00:00.0181491
+Asset Pipeline Refresh (id=b2545ffd252199448880350f341de52c): Total: 0.013 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[ScriptCompilation] Requested script compilation because: Recompiling scripts for player build.
+BuildPlayer: start building target 19
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aP.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssembliesAndTypeDB
+WorkingDir: C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+ExitCode: 0 Duration: 0s429ms
+[143/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Sapphire.Domain.dll
+[144/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.InternalAPIEngineBridge.004.dll
+[145/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.TextMeshPro.dll
+[146/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.InternalAPIEngineBridge.004.pdb
+[147/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Sapphire.Domain.pdb
+[148/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Sapphire.Infrastructure.dll
+[149/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/UnityEngine.UI.dll
+[150/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Sapphire.Infrastructure.pdb
+[151/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.Multiplayer.Center.Common.dll
+[152/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Assembly-CSharp.dll
+[153/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.InputSystem.ForUI.dll
+[154/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.InputSystem.dll
+[155/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.Multiplayer.Center.Common.pdb
+[156/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.TextMeshPro.pdb
+[157/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.InputSystem.ForUI.pdb
+[158/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Unity.InputSystem.pdb
+[159/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/Assembly-CSharp.pdb
+[160/163    0s] CopyFiles Library/Bee/PlayerScriptAssemblies/UnityEngine.UI.pdb
+*** Tundra build success (0.37 seconds), 18 items updated, 163 evaluated
+Total cache size 9894044
+Total cache size after purge 9894044, took 00:00:00.0176373
+Not rebuilding Data files -- no changes
+
+
+Mono dependencies included in the build
+Dependency assembly - System.Data.DataSetExtensions.dll
+Dependency assembly - I18N.Rare.dll
+Dependency assembly - System.Runtime.InteropServices.dll
+Dependency assembly - System.Collections.Specialized.dll
+Dependency assembly - Mono.Btls.Interface.dll
+Dependency assembly - System.Net.AuthenticationManager.dll
+Dependency assembly - System.Windows.Forms.dll
+Dependency assembly - System.Core.dll
+Dependency assembly - System.ServiceModel.Discovery.dll
+Dependency assembly - Unity.InternalAPIEngineBridge.004.dll
+Dependency assembly - System.Diagnostics.Tools.dll
+Dependency assembly - System.Security.Cryptography.X509Certificates.dll
+Dependency assembly - System.Diagnostics.Process.dll
+Dependency assembly - System.IO.UnmanagedMemoryStream.dll
+Dependency assembly - I18N.CJK.dll
+Dependency assembly - System.Web.DynamicData.dll
+Dependency assembly - System.EnterpriseServices.dll
+Dependency assembly - System.Xml.Linq.dll
+Dependency assembly - System.ComponentModel.dll
+Dependency assembly - System.ServiceModel.Http.dll
+Dependency assembly - System.Globalization.Extensions.dll
+Dependency assembly - Microsoft.CSharp.dll
+Dependency assembly - SMDiagnostics.dll
+Dependency assembly - System.Data.Entity.dll
+Dependency assembly - Mono.Data.Tds.dll
+Dependency assembly - Mono.Security.Win32.dll
+Dependency assembly - System.Numerics.dll
+Dependency assembly - Mono.CSharp.dll
+Dependency assembly - System.Dynamic.dll
+Dependency assembly - System.Reactive.Core.dll
+Dependency assembly - Mono.Data.Sqlite.dll
+Dependency assembly - System.Xml.dll
+Dependency assembly - System.Runtime.Extensions.dll
+Dependency assembly - System.Web.Extensions.Design.dll
+Dependency assembly - Microsoft.Win32.Registry.AccessControl.dll
+Dependency assembly - System.Diagnostics.TraceEvent.dll
+Dependency assembly - System.Resources.Writer.dll
+Dependency assembly - System.Net.Mail.dll
+Dependency assembly - System.Security.Cryptography.Cng.dll
+Dependency assembly - System.Web.Routing.dll
+Dependency assembly - System.ServiceModel.Web.dll
+Dependency assembly - System.Management.dll
+Dependency assembly - System.Net.Cache.dll
+Dependency assembly - System.Data.SqlClient.dll
+Dependency assembly - Assembly-CSharp.dll
+Dependency assembly - System.ComponentModel.DataAnnotations.dll
+Dependency assembly - System.Transactions.dll
+Dependency assembly - System.Runtime.Handles.dll
+Dependency assembly - System.Security.AccessControl.dll
+Dependency assembly - System.Collections.Immutable.dll
+Dependency assembly - System.Web.Http.dll
+Dependency assembly - System.Security.Claims.dll
+Dependency assembly - System.ObjectModel.dll
+Dependency assembly - System.Reflection.TypeExtensions.dll
+Dependency assembly - System.Diagnostics.Debug.dll
+Dependency assembly - System.Reflection.Emit.Lightweight.dll
+Dependency assembly - System.Web.Http.WebHost.dll
+Dependency assembly - System.Reflection.dll
+Dependency assembly - System.ComponentModel.EventBasedAsync.dll
+Dependency assembly - System.ComponentModel.Primitives.dll
+Dependency assembly - System.IO.FileSystem.dll
+Dependency assembly - Microsoft.Web.Infrastructure.dll
+Dependency assembly - System.Json.Microsoft.dll
+Dependency assembly - System.ServiceModel.Activation.dll
+Dependency assembly - System.Net.Security.dll
+Dependency assembly - Mono.Messaging.dll
+Dependency assembly - System.Data.OracleClient.dll
+Dependency assembly - System.dll
+Dependency assembly - Commons.Xml.Relaxng.dll
+Dependency assembly - System.Net.WebSockets.Client.dll
+Dependency assembly - System.AppContext.dll
+Dependency assembly - System.Net.Http.WebRequest.dll
+Dependency assembly - System.ComponentModel.TypeConverter.dll
+Dependency assembly - System.Reflection.Metadata.dll
+Dependency assembly - System.Runtime.CompilerServices.VisualC.dll
+Dependency assembly - Microsoft.Win32.Primitives.dll
+Dependency assembly - System.Net.Http.Rtc.dll
+Dependency assembly - System.Runtime.InteropServices.WindowsRuntime.dll
+Dependency assembly - System.Runtime.dll
+Dependency assembly - System.Memory.dll
+Dependency assembly - System.IdentityModel.dll
+Dependency assembly - Mono.Management.dll
+Dependency assembly - System.Reflection.Primitives.dll
+Dependency assembly - Microsoft.Build.Tasks.v4.0.dll
+Dependency assembly - System.Reactive.PlatformServices.dll
+Dependency assembly - System.Security.Cryptography.OpenSsl.dll
+Dependency assembly - System.ServiceProcess.ServiceController.dll
+Dependency assembly - System.Xml.Xsl.Primitives.dll
+Dependency assembly - System.Threading.AccessControl.dll
+Dependency assembly - System.Net.NetworkInformation.dll
+Dependency assembly - Sapphire.Domain.dll
+Dependency assembly - System.Reflection.Extensions.dll
+Dependency assembly - SystemWebTestShim.dll
+Dependency assembly - System.Collections.Concurrent.dll
+Dependency assembly - System.Web.RegularExpressions.dll
+Dependency assembly - System.Windows.Forms.DataVisualization.dll
+Dependency assembly - System.Net.WebHeaderCollection.dll
+Dependency assembly - System.Net.ServicePoint.dll
+Dependency assembly - System.ComponentModel.Composition.dll
+Dependency assembly - System.IO.FileSystem.Watcher.dll
+Dependency assembly - System.Security.Cryptography.Csp.dll
+Dependency assembly - System.Numerics.Vectors.dll
+Dependency assembly - System.Collections.NonGeneric.dll
+Dependency assembly - System.Reflection.Emit.ILGeneration.dll
+Dependency assembly - System.Reactive.Windows.Forms.dll
+Dependency assembly - System.Security.Cryptography.Encryption.ECDsa.dll
+Dependency assembly - System.IO.Compression.ZipFile.dll
+Dependency assembly - System.Runtime.InteropServices.RuntimeInformation.dll
+Dependency assembly - System.Text.Encoding.dll
+Dependency assembly - System.Xml.XDocument.dll
+Dependency assembly - System.Net.NameResolution.dll
+Dependency assembly - System.Net.Http.dll
+Dependency assembly - System.Reactive.Experimental.dll
+Dependency assembly - System.Reactive.Interfaces.dll
+Dependency assembly - System.Web.Extensions.dll
+Dependency assembly - System.Web.Services.dll
+Dependency assembly - System.Text.Encoding.Extensions.dll
+Dependency assembly - WebMatrix.Data.dll
+Dependency assembly - System.IO.Pipes.dll
+Dependency assembly - System.Security.Principal.Windows.dll
+Dependency assembly - System.Runtime.Serialization.Json.dll
+Dependency assembly - System.Threading.Timer.dll
+Dependency assembly - Mono.Parallel.dll
+Dependency assembly - System.Globalization.Calendars.dll
+Dependency assembly - System.Net.dll
+Dependency assembly - System.Web.Razor.dll
+Dependency assembly - System.Threading.Overlapped.dll
+Dependency assembly - System.Globalization.dll
+Dependency assembly - System.IO.Compression.dll
+Dependency assembly - System.Resources.Reader.dll
+Dependency assembly - System.Web.ApplicationServices.dll
+Dependency assembly - System.Reflection.Emit.dll
+Dependency assembly - System.Reactive.Debugger.dll
+Dependency assembly - Microsoft.Build.dll
+Dependency assembly - System.Messaging.dll
+Dependency assembly - System.Reactive.Windows.Threading.dll
+Dependency assembly - System.Security.Cryptography.Hashing.Algorithms.dll
+Dependency assembly - System.Json.dll
+Dependency assembly - System.Web.dll
+Dependency assembly - System.Runtime.Loader.dll
+Dependency assembly - System.ServiceModel.Duplex.dll
+Dependency assembly - System.Threading.Tasks.Parallel.dll
+Dependency assembly - Mono.Http.dll
+Dependency assembly - cscompmgd.dll
+Dependency assembly - System.Data.dll
+Dependency assembly - System.Runtime.Serialization.dll
+Dependency assembly - System.ServiceModel.NetTcp.dll
+Dependency assembly - System.DirectoryServices.Protocols.dll
+Dependency assembly - System.Security.Cryptography.Hashing.dll
+Dependency assembly - System.Diagnostics.TraceSource.dll
+Dependency assembly - System.Web.WebPages.Deployment.dll
+Dependency assembly - System.Threading.Tasks.dll
+Dependency assembly - System.Design.dll
+Dependency assembly - mscorlib.dll
+Dependency assembly - netstandard.dll
+Dependency assembly - System.ServiceModel.dll
+Dependency assembly - System.ServiceModel.Internals.dll
+Dependency assembly - System.Data.Common.dll
+Dependency assembly - Sapphire.Infrastructure.dll
+Dependency assembly - System.Drawing.dll
+Dependency assembly - Microsoft.Build.Engine.dll
+Dependency assembly - Microsoft.Build.Utilities.v4.0.dll
+Dependency assembly - System.Deployment.dll
+Dependency assembly - Unity.Multiplayer.Center.Common.dll
+Dependency assembly - Mono.Posix.dll
+Dependency assembly - System.Runtime.Serialization.Primitives.dll
+Dependency assembly - System.Reflection.Context.dll
+Dependency assembly - System.Data.Services.Client.dll
+Dependency assembly - UnityEngine.UI.dll
+Dependency assembly - Mono.Security.dll
+Dependency assembly - System.IO.MemoryMappedFiles.dll
+Dependency assembly - Microsoft.Extensions.DependencyInjection.Abstractions.dll
+Dependency assembly - System.Net.Sockets.dll
+Dependency assembly - WindowsBase.dll
+Dependency assembly - Microsoft.Extensions.Logging.Abstractions.dll
+Dependency assembly - System.Text.Json.dll
+Dependency assembly - System.Xaml.dll
+Dependency assembly - RabbitMQ.Client.dll
+Dependency assembly - System.Runtime.Serialization.Formatters.Soap.dll
+Dependency assembly - System.Security.Cryptography.Encryption.ECDiffieHellman.dll
+Dependency assembly - System.Runtime.Serialization.Formatters.dll
+Dependency assembly - System.Xml.XmlDocument.dll
+Dependency assembly - System.Security.Cryptography.Pkcs.dll
+Dependency assembly - System.Threading.dll
+Dependency assembly - System.Reactive.Observable.Aliases.dll
+Dependency assembly - System.Runtime.DurableInstancing.dll
+Dependency assembly - System.Web.WebPages.dll
+Dependency assembly - System.Windows.dll
+Dependency assembly - System.Xml.XmlSerializer.dll
+Dependency assembly - System.Diagnostics.Contracts.dll
+Dependency assembly - Unity.TextMeshPro.dll
+Dependency assembly - System.Web.Http.SelfHost.dll
+Dependency assembly - System.Text.RegularExpressions.dll
+Dependency assembly - System.Runtime.CompilerServices.Unsafe.dll
+Dependency assembly - Mono.Messaging.RabbitMQ.dll
+Dependency assembly - System.Configuration.dll
+Dependency assembly - System.Reactive.Linq.dll
+Dependency assembly - System.Resources.ResourceManager.dll
+Dependency assembly - System.Net.Utilities.dll
+Dependency assembly - System.ComponentModel.Annotations.dll
+Dependency assembly - System.ServiceModel.Security.dll
+Dependency assembly - Unity.InputSystem.ForUI.dll
+Dependency assembly - System.Data.Linq.dll
+Dependency assembly - I18N.dll
+Dependency assembly - System.Diagnostics.StackTrace.dll
+Dependency assembly - System.Net.Ping.dll
+Dependency assembly - System.Reactive.Providers.dll
+Dependency assembly - Mono.Cairo.dll
+Dependency assembly - System.IdentityModel.Selectors.dll
+Dependency assembly - System.Runtime.Serialization.Xml.dll
+Dependency assembly - Mono.Simd.dll
+Dependency assembly - System.Security.dll
+Dependency assembly - System.ServiceProcess.dll
+Dependency assembly - System.IO.IsolatedStorage.dll
+Dependency assembly - System.IO.dll
+Dependency assembly - Microsoft.VisualC.dll
+Dependency assembly - System.Diagnostics.FileVersionInfo.dll
+Dependency assembly - System.Buffers.dll
+Dependency assembly - System.Linq.Queryable.dll
+Dependency assembly - System.ServiceModel.Primitives.dll
+Dependency assembly - System.Web.WebPages.Razor.dll
+Dependency assembly - System.Security.Cryptography.Encoding.dll
+Dependency assembly - System.Security.Principal.dll
+Dependency assembly - Mono.XBuild.Tasks.dll
+Dependency assembly - System.Runtime.Caching.dll
+Dependency assembly - System.Runtime.Numerics.dll
+Dependency assembly - System.Workflow.ComponentModel.dll
+Dependency assembly - System.Xml.XPath.dll
+Dependency assembly - System.IO.Compression.FileSystem.dll
+Dependency assembly - I18N.Other.dll
+Dependency assembly - System.Xml.Serialization.dll
+Dependency assembly - CustomMarshalers.dll
+Dependency assembly - System.Configuration.Install.dll
+Dependency assembly - System.Net.Http.Formatting.dll
+Dependency assembly - System.Diagnostics.Tracing.dll
+Dependency assembly - System.IO.FileSystem.Primitives.dll
+Dependency assembly - System.Security.Cryptography.ProtectedData.dll
+Dependency assembly - ICSharpCode.SharpZipLib.dll
+Dependency assembly - System.Workflow.Activities.dll
+Dependency assembly - System.Net.Requests.dll
+Dependency assembly - System.Xml.XPath.XDocument.dll
+Dependency assembly - System.Security.Cryptography.Encryption.Aes.dll
+Dependency assembly - I18N.West.dll
+Dependency assembly - Mono.WebBrowser.dll
+Dependency assembly - System.Threading.Tasks.Dataflow.dll
+Dependency assembly - Microsoft.Win32.Registry.dll
+Dependency assembly - System.Net.HttpListener.dll
+Dependency assembly - System.Diagnostics.TextWriterTraceListener.dll
+Dependency assembly - Microsoft.Build.Framework.dll
+Dependency assembly - System.IO.FileSystem.AccessControl.dll
+Dependency assembly - Mono.Options.dll
+Dependency assembly - System.Linq.Parallel.dll
+Dependency assembly - Accessibility.dll
+Dependency assembly - monodoc.dll
+Dependency assembly - System.Text.Encoding.CodePages.dll
+Dependency assembly - System.Security.SecureString.dll
+Dependency assembly - System.Xml.ReaderWriter.dll
+Dependency assembly - System.Threading.Thread.dll
+Dependency assembly - IBM.Data.DB2.dll
+Dependency assembly - Novell.Directory.Ldap.dll
+Dependency assembly - System.Security.Cryptography.Algorithms.dll
+Dependency assembly - System.ServiceModel.Routing.dll
+Dependency assembly - System.Drawing.Primitives.dll
+Dependency assembly - System.Data.Services.dll
+Dependency assembly - System.Console.dll
+Dependency assembly - System.Linq.Expressions.dll
+Dependency assembly - Mono.Profiler.Log.dll
+Dependency assembly - System.Net.WebSockets.dll
+Dependency assembly - I18N.MidEast.dll
+Dependency assembly - System.Reactive.Runtime.Remoting.dll
+Dependency assembly - System.Collections.dll
+Dependency assembly - System.IO.FileSystem.DriveInfo.dll
+Dependency assembly - System.Resources.ReaderWriter.dll
+Dependency assembly - System.Security.Cryptography.RSA.dll
+Dependency assembly - System.Security.Cryptography.Primitives.dll
+Dependency assembly - System.Threading.ThreadPool.dll
+Dependency assembly - System.Diagnostics.DiagnosticSource.dll
+Dependency assembly - System.Dynamic.Runtime.dll
+Dependency assembly - System.Xml.XPath.XmlDocument.dll
+Dependency assembly - System.DirectoryServices.dll
+Dependency assembly - System.Web.Abstractions.dll
+Dependency assembly - Mono.C5.dll
+Dependency assembly - Mono.Tasklets.dll
+Dependency assembly - System.Workflow.Runtime.dll
+Dependency assembly - System.Reflection.DispatchProxy.dll
+Dependency assembly - System.Drawing.Design.dll
+Dependency assembly - System.Runtime.Remoting.dll
+Dependency assembly - Mono.CompilerServices.SymbolWriter.dll
+Dependency assembly - System.IO.Hashing.dll
+Dependency assembly - System.Security.Cryptography.DeriveBytes.dll
+Dependency assembly - System.Security.Cryptography.RandomNumberGenerator.dll
+Dependency assembly - System.Net.Primitives.dll
+Dependency assembly - Microsoft.Bcl.AsyncInterfaces.dll
+Dependency assembly - System.Text.Encodings.Web.dll
+Dependency assembly - System.Web.Mobile.dll
+Dependency assembly - System.ValueTuple.dll
+Dependency assembly - Unity.InputSystem.dll
+Dependency assembly - System.Threading.Tasks.Extensions.dll
+Dependency assembly - System.Linq.dll
+Dependency assembly - System.Security.Cryptography.Encryption.dll
+Dependency assembly - System.Web.Mvc.dll
+Dependency assembly - PEAPI.dll
+
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --dagfile="Library/Bee/Playerca03f5bf.dag" --profile="Library/Bee/backend1.traceevents" Player
+WorkingDir: C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+ExitCode: 4 Duration: 0s123ms
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\netcorerun\netcorerun.exe "C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\WinPlayerBuildProgram.exe" "C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Bee;C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Tools/BuildPipeline" "Library/Bee/Playerca03f5bf.dag.json" "Library/Bee/Playerca03f5bf-inputdata.json" "Library\Bee\buildprogram0.traceevents"
+WorkingDir: C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+DisplayProgressbar: Incremental Player Build
+Worker ready: AssetImportWorkerHW0 0
+ExitCode: 0 Duration: 0s366ms
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --dagfile="Library/Bee/Playerca03f5bf.dag" --dagfilejson="Library\Bee\Playerca03f5bf.dag.json" --profile="Library/Bee/backend2.traceevents" Player
+WorkingDir: C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+ExitCode: 0 Duration: 1s457ms
+Total cache size 9894044
+Total cache size after purge 9894044, took 00:00:00.0140371
+
+-------------------------------------------------------------------------------
+Build Report
+Information on used Assets is not available, since player data was not rebuilt.
+Do a clean build to view the Asset build report information.
+-------------------------------------------------------------------------------
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 26 unused Assets / (0.8 MB). Loaded Objects now: 2188.
+Memory consumption went from 235.8 MB to 235.0 MB.
+Total: 6.853500 ms (FindLiveObjects: 0.187900 ms CreateObjectMapping: 0.116600 ms MarkObjects: 6.187000 ms  DeleteObjects: 0.360600 ms)
+
+DisplayProgressNotification: Build Successful
+Build Finished, Result: Success.
+##utp:{"success":true,"type":"PlayerBuildInfo","version":2,"phase":"Immediate","time":1789907707249,"processId":1840,"steps":[{"description":"Preprocess Player","duration":15},{"description":"Prepare For Build","duration":10},{"description":"ProducePlayerScriptAssemblies","duration":941},{"description":"Verify Build setup","duration":105},{"description":"Prepare assets for target platform","duration":2},{"description":"Prepare splash screen","duration":0},{"description":"Run script only build","duration":18},{"description":"Build scripts DLLs","duration":26},{"description":"Postprocess built player","duration":2235}],"duration":3352}
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Temp/__Backupscenes/0.backup'
+	Deserialize:            0.650 ms
+	Integration:            8.542 ms
+	Integration of assets:  0.002 ms
+	Thread Wait Time:       0.054 ms
+	Total Operation Time:   9.248 ms
+Unloading 0 unused Assets / (0 B). Loaded Objects now: 2188.
+Memory consumption went from 235.2 MB to 235.2 MB.
+Total: 5.685400 ms (FindLiveObjects: 0.190400 ms CreateObjectMapping: 0.123300 ms MarkObjects: 5.363800 ms  DeleteObjects: 0.006700 ms)
+
+Windows Build Successful!
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+WindowsBuilder:Build () (at Assets/Sapphire/Editor/WindowsBuilder.cs:17)
+
+(Filename: Assets/Sapphire/Editor/WindowsBuilder.cs Line: 17)
+
+Batchmode quit successfully invoked - shutting down!
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-darac-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-darac channel disconnected successfully.
+Lingering sessions upon destruction of worker manager
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+CodeReloadManager destroyed
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0

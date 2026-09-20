@@ -13,7 +13,7 @@ public static class WindowsBuilder
             "Assets/Sapphire/Scenes/SlimeKingdom.unity"
         };
         
-        BuildPipeline.BuildPlayer(scenes, "builds/Windows/SapphireRPG.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
+        BuildPipeline.BuildPlayer(scenes, "../builds/Windows/SapphireRPG.exe", BuildTarget.StandaloneWindows64, BuildOptions.None);
         Debug.Log("Windows Build Successful!");
     }
 }
