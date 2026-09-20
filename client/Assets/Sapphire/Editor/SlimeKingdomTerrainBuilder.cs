@@ -26,22 +26,19 @@ namespace Sapphire.EditorTools
             // with standalone, edge-matched textures like the starting map.
             Tile[] grass = CreateStandaloneTiles("Grass", 4, "Tile_SlimeV3_Grass_");
             Tile[] road = CreateStandaloneTiles("Dirt", 4, "Tile_SlimeV3_Dirt_");
+            Tile[] dirtEdge = CreateStandaloneTiles("DirtEdge", 32, "Tile_SlimeV5_DirtEdge_");
             Tile[] water = CreateStandaloneTiles("Water", 4, "Tile_SlimeV3_Water_");
             Tile[] stone = CreateStandaloneTiles("Stone", 4, "Tile_SlimeV3_Stone_");
             // South, north, east, west land edges, then NW/NE/SW/SE water corners.
             Tile[] shore = CreateStandaloneTiles("Shore", 32, "Tile_SlimeV3_Shore_");
 
             var gridGo = new GameObject("Grid", typeof(Grid));
-            gridGo.GetComponent<Grid>().cellSize = Vector3.one;
             var groundGo = new GameObject("Ground", typeof(Tilemap), typeof(TilemapRenderer));
-            groundGo.transform.SetParent(gridGo.transform);
-            var ground = groundGo.GetComponent<Tilemap>();
-            groundGo.GetComponent<TilemapRenderer>().sortingOrder = -30000;
-            var collisionGo = new GameObject("Collision", typeof(Tilemap));
-            collisionGo.transform.SetParent(gridGo.transform);
-            var collision = collisionGo.GetComponent<Tilemap>();
+            groundGo.transform.SetParent(gridGo.transform); var ground = groundGo.GetComponent<Tilemap>(); groundGo.GetComponent<TilemapRenderer>().sortingOrder = -30000;
+            var collisionGo = new GameObject("Collision", typeof(Tilemap), typeof(TilemapRenderer));
+            collisionGo.transform.SetParent(gridGo.transform); var collision = collisionGo.GetComponent<Tilemap>();
 
-            PopulateTerrain(ground, collision, grass, road, water, stone, shore, blocker);
+            PopulateTerrain(ground, collision, grass, road, dirtEdge, water, stone, shore, blocker);
             var zones = new List<InteractableZone>();
             BuildLandmarks(collision, blocker, zones);
             ValidatePlayableLayout(collision, zones);
@@ -57,7 +54,7 @@ namespace Sapphire.EditorTools
             return new TerrainBuildResult(gridBuilder, zones.ToArray(), ground);
         }
 
-        private static void PopulateTerrain(Tilemap ground, Tilemap collision, Tile[] grass, Tile[] royalRoad, Tile[] water, Tile[] stone, Tile[] shore, Tile blocker)
+        private static void PopulateTerrain(Tilemap ground, Tilemap collision, Tile[] grass, Tile[] royalRoad, Tile[] dirtEdge, Tile[] water, Tile[] stone, Tile[] shore, Tile blocker)
         {
             for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
@@ -72,7 +69,7 @@ namespace Sapphire.EditorTools
                 // river/lake bed with a road tile or it visibly sits on dry land.
                 Tile chosen = palace ? SelectVariant(stone, x, y, 62, 82, 94)
                     : liquid ? SelectWaterOrShore(water, shore, x, y)
-                    : road ? SelectVariant(royalRoad, x, y, 64, 82, 95)
+                    : road ? SelectDirtOrEdge(royalRoad, dirtEdge, x, y)
                     : SelectVariant(grass, x, y, 55, 78, 93);
                 ground.SetTile(cell, chosen);
                 if (border || (liquid && !bridge)) collision.SetTile(cell, blocker);
@@ -119,11 +116,11 @@ namespace Sapphire.EditorTools
 
             // Mysteries of the forest
             BuildInteractable(root, collision, blocker, zones, PropsAtlas, "crystal_cave", "Slime2_Cave", 3, 21,
-                "봉인된 동굴입니다. 마력으로 봉인되어 있습니다. 안에서 빛이 새어 들어옵니다.", null, 2f);
+                "봉인???�굴?�니?? 마력?�로 봉인?�어 ?�습?�다. ?�에??빛이 ?�어 ?�어?�니??", null, 2f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "west_chest", "SlimeProp_Chest", 12, 19,
-                "낡은 보물 상자입니다. 누군가 숨겨둔 마력이 흘러나옵니다!", null, 1.15f);
+                "?��? 보물 ?�자?�니?? ?�군가 ?�겨??마력???�러?�옵?�다!", null, 1.15f);
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "east_chest", "SlimeProp_Chest", 27, 19,
-                "모닥불 옆에 숨겨진 상자입니다. 별빛 결정이 가득 담겨 있습니다!", null, 1.15f);
+                "모닥�??�에 ?�겨�??�자?�니?? 별빛 결정??가???�겨 ?�습?�다!", null, 1.15f);
 
             // Bridges over the river
             PlaceVisualScaled(root, PropsAtlas, "Slime2_BridgeV", 8, 15, 3f, 3f, "WestRiverBridge");
@@ -154,22 +151,22 @@ namespace Sapphire.EditorTools
             // Remove cut-off buildings, add more mushrooms and slimes instead.
 
             // Wild Slimes (Monsters) - Hunting Ground!
-            BuildEncounter(root, collision, blocker, zones, 16, 13, "야생 슬라임이 길을 막고 있습니다.");
-            BuildEncounter(root, collision, blocker, zones, 14, 18, "수풀 근처에서 서성이는 슬라임 무리입니다.");
-            BuildEncounter(root, collision, blocker, zones, 25, 18, "마력을 머금은 변종 슬라임이 경계하고 있습니다.");
-            BuildEncounter(root, collision, blocker, zones, 8, 8, "점액질을 흘리는 슬라임입니다.");
-            BuildEncounter(root, collision, blocker, zones, 30, 8, "통통 튀어다니는 슬라임입니다.");
-            BuildEncounter(root, collision, blocker, zones, 10, 20, "화가 난 듯한 슬라임입니다.");
-            BuildEncounter(root, collision, blocker, zones, 28, 22, "거대한 슬라임 무리입니다.");
-            BuildEncounter(root, collision, blocker, zones, 6, 15, "반짝이는 슬라임입니다.");
-            BuildEncounter(root, collision, blocker, zones, 32, 14, "먹이를 찾는 슬라임입니다.");
-            BuildEncounter(root, collision, blocker, zones, 12, 26, "숲의 기운을 받은 슬라임입니다.");
-            BuildEncounter(root, collision, blocker, zones, 26, 26, "단단해 보이는 슬라임입니다.");
+            BuildEncounter(root, collision, blocker, zones, 16, 13, "?�생 ?�라?�이 길을 막고 ?�습?�다.");
+            BuildEncounter(root, collision, blocker, zones, 14, 18, "?��? 근처?�서 ?�성?�는 ?�라??무리?�니??");
+            BuildEncounter(root, collision, blocker, zones, 25, 18, "마력??머금?� 변�??�라?�이 경계?�고 ?�습?�다.");
+            BuildEncounter(root, collision, blocker, zones, 8, 8, "?�액질을 ?�리???�라?�입?�다.");
+            BuildEncounter(root, collision, blocker, zones, 30, 8, "?�통 ?�?�다?�는 ?�라?�입?�다.");
+            BuildEncounter(root, collision, blocker, zones, 10, 20, "?��? ????�� ?�라?�입?�다.");
+            BuildEncounter(root, collision, blocker, zones, 28, 22, "거�????�라??무리?�니??");
+            BuildEncounter(root, collision, blocker, zones, 6, 15, "반짝?�는 ?�라?�입?�다.");
+            BuildEncounter(root, collision, blocker, zones, 32, 14, "먹이�?찾는 ?�라?�입?�다.");
+            BuildEncounter(root, collision, blocker, zones, 12, 26, "?�의 기운??받�? ?�라?�입?�다.");
+            BuildEncounter(root, collision, blocker, zones, 26, 26, "?�단??보이???�라?�입?�다.");
             BuildEncounter(root, collision, blocker, zones, 19, 25, "보스!", true);
             
             // Exit Gate
             BuildInteractable(root, collision, blocker, zones, PrimaryAtlas, "return_gate", "SlimeProp_Gate", 19, 0,
-                "시작 마을(사파이어 허브)로 돌아갑니다.", "VillageHub", 2.5f);
+                "?�작 마을(?�파?�어 ?�브)�??�아갑니??", "VillageHub", 2.5f);
         }
 
         private static void BuildEncounter(Transform parent, Tilemap collision, Tile blocker, List<InteractableZone> zones, int x, int y, string message, bool isBoss = false)
@@ -227,6 +224,20 @@ namespace Sapphire.EditorTools
             return go;
         }
 
+                private static Tile SelectDirtOrEdge(Tile[] dirt, Tile[] edge, int x, int y)
+        {
+            bool n = !IsRoyalRoad(x, y + 1), s = !IsRoyalRoad(x, y - 1), w = !IsRoyalRoad(x - 1, y), e = !IsRoyalRoad(x + 1, y);
+            int phase = 8 * ((x & 1) + 2 * (y & 1));
+            if (n && w) return edge[phase + 7];
+            if (n && e) return edge[phase + 6];
+            if (s && w) return edge[phase + 5];
+            if (s && e) return edge[phase + 4];
+            if (n) return edge[phase + 1];
+            if (s) return edge[phase];
+            if (w) return edge[phase + 3];
+            if (e) return edge[phase + 2];
+            return SelectVariant(dirt, x, y, 64, 82, 95);
+        }
         private static Tile SelectVariant(Tile[] variants, int x, int y, int firstCut, int secondCut, int thirdCut)
         {
             // Four adjacent crops of one continuous material, never shuffled.
