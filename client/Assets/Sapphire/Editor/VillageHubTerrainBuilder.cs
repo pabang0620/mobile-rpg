@@ -30,10 +30,10 @@ namespace Sapphire.EditorTools
 
         internal static TerrainBuildResult Build()
         {
-            (Tile blockerTile, Tile[] grassTiles, Tile[] dirtTiles) = CreateTiles();
+            var (blockerTile, grassTiles, dirtTiles, dirtEdgeTiles, waterTiles, shoreTiles) = CreateTiles();
 
             var (gridGo, groundTilemap, collisionTilemap) = CreateGridAndTilemaps();
-            PopulateGroundAndCollision(groundTilemap, collisionTilemap, grassTiles, dirtTiles, blockerTile);
+            PopulateGroundAndCollision(groundTilemap, collisionTilemap, grassTiles, dirtTiles, dirtEdgeTiles, waterTiles, shoreTiles, blockerTile);
             TilemapGridMapBuilder gridMapBuilder = BuildGridMapBuilder(gridGo, groundTilemap, collisionTilemap);
 
             BuildFences();
@@ -44,22 +44,29 @@ namespace Sapphire.EditorTools
             return new TerrainBuildResult(gridMapBuilder, zones.ToArray(), groundTilemap);
         }
 
-        private static (Tile blocker, Tile[] grass, Tile[] dirt) CreateTiles()
+        private static (Tile blocker, Tile[] grass, Tile[] dirt, Tile[] dirtEdge, Tile[] water, Tile[] shore) CreateTiles()
         {
             Tile blockerTile = CreateBlockerTile();
+            string root = SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/SeamlessV5/";
 
-            Tile grassTileA = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Grass_0.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_0.asset");
-            Tile grassTileB = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Grass_1.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_1.asset");
-            Tile grassTileC = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Grass_2.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Grass_2.asset");
-            Tile[] grassTiles = { grassTileA, grassTileB, grassTileC };
+            Tile[] CreateVariantTiles(string name, int count)
+            {
+                var tiles = new Tile[count];
+                for (int i = 0; i < count; i++)
+                {
+                    tiles[i] = CreateGroundTile(root + name + i + ".png", SapphireSceneBuilder.GeneratedDir + "/Tile_V5_" + name + i + ".asset");
+                }
+                return tiles;
+            }
 
-            Tile dirtTileA = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Dirt_0.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_0.asset");
-            Tile dirtTileB = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Dirt_1.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_1.asset");
-            Tile dirtTileC = CreateGroundTile(SapphireSceneBuilder.WorldArtDir + "/Ground/Dirt_2.png", SapphireSceneBuilder.GeneratedDir + "/Tile_Dirt_2.asset");
-            Tile[] dirtTiles = { dirtTileA, dirtTileB, dirtTileC };
+            Tile[] grassTiles = CreateVariantTiles("Grass", 4);
+            Tile[] dirtTiles = CreateVariantTiles("Dirt", 4);
+            Tile[] dirtEdgeTiles = CreateVariantTiles("DirtEdge", 32);
+            Tile[] waterTiles = CreateVariantTiles("Water", 4);
+            Tile[] shoreTiles = CreateVariantTiles("Shore", 32);
 
             AssetDatabase.SaveAssets();
-            return (blockerTile, grassTiles, dirtTiles);
+            return (blockerTile, grassTiles, dirtTiles, dirtEdgeTiles, waterTiles, shoreTiles);
         }
 
         private static (GameObject gridGo, Tilemap groundTilemap, Tilemap collisionTilemap) CreateGridAndTilemaps()
@@ -79,33 +86,121 @@ namespace Sapphire.EditorTools
         }
 
         private static void PopulateGroundAndCollision(
-            Tilemap groundTilemap, Tilemap collisionTilemap, Tile[] grassTiles, Tile[] dirtTiles, Tile blockerTile)
+            Tilemap groundTilemap, Tilemap collisionTilemap, Tile[] grassTiles, Tile[] dirtTiles, Tile[] dirtEdgeTiles, Tile[] waterTiles, Tile[] shoreTiles, Tile blockerTile)
         {
+            Sprite treeSprite = AssetDatabase.LoadAssetAtPath<Sprite>(SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/AutumnTree.png");
+
             for (int x = 0; x < SapphireSceneBuilder.MapWidth; x++)
             {
                 for (int y = 0; y < SapphireSceneBuilder.MapHeight; y++)
                 {
                     var cell = new Vector3Int(x, y, 0);
-                    bool isBorder = x == 0 || x == SapphireSceneBuilder.MapWidth - 1 || y == 0 || y == SapphireSceneBuilder.MapHeight - 1;
                     
-                    // Center plaza and paths - enlarged for better placement
-                    bool plaza = (x >= 11 && x <= 21 && y >= 6 && y <= 26);
-                    bool verticalPath = (x >= 15 && x <= 17);
-                    bool horizontalPath = (y >= 8 && y <= 10 && x >= 8 && x <= 24);
-                    bool onPath = (plaza || verticalPath || horizontalPath) && !isBorder;
+                    bool liquid = IsLiquid(x, y);
+                    bool path = IsPath(x, y);
+                    bool forest = IsForest(x, y);
 
-                    Tile[] variants = onPath ? dirtTiles : grassTiles;
-                    uint hash = HashCell(x, y);
-                    Tile tile = variants[(int)(hash % (uint)variants.Length)];
-                    groundTilemap.SetTile(cell, tile);
-                    groundTilemap.SetTransformMatrix(cell, GetFlipMatrix(hash));
+                    Tile chosen;
+                    if (liquid) chosen = SelectWaterOrShore(waterTiles, shoreTiles, x, y);
+                    else if (path) chosen = SelectDirtOrEdge(dirtTiles, dirtEdgeTiles, x, y);
+                    else chosen = SelectVariant(grassTiles, x, y);
 
-                    if (isBorder)
+                    groundTilemap.SetTile(cell, chosen);
+
+                    if (liquid)
                     {
+                        collisionTilemap.SetTile(cell, blockerTile);
+                    }
+
+                    if (forest && treeSprite != null)
+                    {
+                        // Spawn tree
+                        GameObject tree = new GameObject($"Tree_{x}_{y}");
+                        tree.transform.position = groundTilemap.GetCellCenterWorld(cell);
+                        SpriteRenderer sr = tree.AddComponent<SpriteRenderer>();
+                        sr.sprite = treeSprite;
+                        sr.sortingLayerName = "Default"; // Adjust as needed
+                        sr.sortingOrder = 100 - y; // Y-sorting
+
                         collisionTilemap.SetTile(cell, blockerTile);
                     }
                 }
             }
+        }
+
+        private static bool IsForest(int x, int y)
+        {
+            // Trees around the borders with some noise
+            float borderDist = Mathf.Min(x, Mathf.Min(y, Mathf.Min(SapphireSceneBuilder.MapWidth - 1 - x, SapphireSceneBuilder.MapHeight - 1 - y)));
+            float noise = Mathf.PerlinNoise(x * 0.4f, y * 0.4f) * 4f;
+            return borderDist + noise < 5f;
+        }
+
+        private static bool IsPath(int x, int y)
+        {
+            if (IsForest(x, y)) return false;
+            
+            // Central plaza area
+            float dx = x - 16f;
+            float dy = y - 16f;
+            if ((dx * dx) / 64f + (dy * dy) / 64f < 1f) return true; // Large dirt area around center
+
+            // Paths connecting around
+            float waveV = Mathf.Sin(y * 0.3f) * 2f;
+            bool verticalPath = Mathf.Abs(x - 16f + waveV) < 2f;
+            
+            float waveH = Mathf.Sin(x * 0.3f) * 2f;
+            bool horizontalPath = Mathf.Abs(y - 12f + waveH) < 2f && x >= 4 && x <= 28;
+
+            return verticalPath || horizontalPath;
+        }
+
+        private static bool IsLiquid(int x, int y)
+        {
+            if (IsForest(x, y)) return false;
+            // A long pond at the bottom (like the image)
+            // But bridge in the middle
+            if (x >= 14 && x <= 18 && y >= 8 && y <= 12) return false; // Bridge/Dirt cross
+            
+            float dy = y - 10f;
+            float dx = x - 16f;
+            float noise = Mathf.PerlinNoise(x * 0.3f, y * 0.3f) * 2f;
+            return Mathf.Abs(dy) + noise < 3f && Mathf.Abs(dx) < 10f;
+        }
+
+        private static Tile SelectVariant(Tile[] variants, int x, int y)
+        {
+            return variants[(x & 1) + 2 * (y & 1)];
+        }
+
+        private static Tile SelectWaterOrShore(Tile[] water, Tile[] shore, int x, int y)
+        {
+            bool n = !IsLiquid(x, y + 1), s = !IsLiquid(x, y - 1), w = !IsLiquid(x - 1, y), e = !IsLiquid(x + 1, y);
+            int phase = 8 * ((x & 1) + 2 * (y & 1));
+            if (n && w) return shore[phase + 7];
+            if (n && e) return shore[phase + 6];
+            if (s && w) return shore[phase + 5];
+            if (s && e) return shore[phase + 4];
+            if (n) return shore[phase + 1];
+            if (s) return shore[phase];
+            if (w) return shore[phase + 3];
+            if (e) return shore[phase + 2];
+            return SelectVariant(water, x, y);
+        }
+
+        private static Tile SelectDirtOrEdge(Tile[] dirt, Tile[] edge, int x, int y)
+        {
+            bool n = !IsPath(x, y + 1), s = !IsPath(x, y - 1), w = !IsPath(x - 1, y), e = !IsPath(x + 1, y);
+            int phase = 8 * ((x & 1) + 2 * (y & 1));
+            if (n && w) return edge[phase + 7];
+            if (n && e) return edge[phase + 6];
+            if (s && w) return edge[phase + 5];
+            if (s && e) return edge[phase + 4];
+            if (n) return edge[phase + 1];
+            if (s) return edge[phase];
+            if (w) return edge[phase + 3];
+            if (e) return edge[phase + 2];
+            return SelectVariant(dirt, x, y);
         }
 
         private static TilemapGridMapBuilder BuildGridMapBuilder(GameObject gridGo, Tilemap ground, Tilemap collision)

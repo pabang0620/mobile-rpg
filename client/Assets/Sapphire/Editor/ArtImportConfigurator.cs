@@ -120,13 +120,17 @@ namespace Sapphire.EditorTools
 
         private static void ConfigureSlimeKingdomSeamlessTiles()
         {
-            string root = SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/SeamlessV4/";
-            foreach (string family in new[] { "Grass", "Dirt", "Water", "Stone", "Shore" })
+            string root = SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/SeamlessV5/";
+            foreach (string family in new[] { "Grass", "Dirt", "DirtEdge", "Water", "Forest", "Cliff", "Shore" })
             {
-                int count = family == "Shore" ? 32 : 4;
-                for (int i = 0; i < count; i++)
-                    ConfigureGroundTileSprite(root + family + i + ".png", 512, 512f);
+                int max = (family == "Shore" || family == "DirtEdge") ? 32 : 4;
+                for (int i = 0; i < max; i++)
+                {
+                    bool alpha = family == "Shore" || family == "DirtEdge";
+                    ConfigureGroundTileSprite(root + family + i + ".png", 512, 512f, alpha);
+                }
             }
+            ConfigureGroundTileSprite(SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/AutumnTree.png", 512, 512f, true);
         }
 
         // 2026-09-15: one shared PPU for all 6 individually-imported ground
@@ -169,7 +173,7 @@ namespace Sapphire.EditorTools
         // edge-bleed artifact this split is meant to remove), Max Size 256,
         // uncompressed, FullRect mesh (a plain rectangular tile doesn't need
         // Tight's alpha-hull trim), PPU 508 (see ConfigureGroundAtlas above).
-        private static void ConfigureGroundTileSprite(string path, int maxSize = 256, float pixelsPerUnit = GroundTilePpu)
+        private static void ConfigureGroundTileSprite(string path, int maxSize = 256, float pixelsPerUnit = GroundTilePpu, bool alpha = false)
         {
             var importer = AssetImporter.GetAtPath(path) as TextureImporter;
             if (importer == null)
@@ -191,6 +195,8 @@ namespace Sapphire.EditorTools
             settings.spriteAlignment = (int)SpriteAlignment.Center;
             settings.spritePivot = new Vector2(0.5f, 0.5f);
             settings.spriteMeshType = SpriteMeshType.FullRect;
+            settings.spriteExtrude = 0;
+            settings.spriteGenerateFallbackPhysicsShape = false;
             importer.SetTextureSettings(settings);
 
             importer.filterMode = FilterMode.Bilinear;
@@ -198,7 +204,7 @@ namespace Sapphire.EditorTools
             importer.wrapMode = TextureWrapMode.Clamp;
             importer.maxTextureSize = maxSize;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
-            importer.alphaIsTransparency = importer.DoesSourceTextureHaveAlpha();
+            importer.alphaIsTransparency = alpha;
             importer.SaveAndReimport();
         }
 
