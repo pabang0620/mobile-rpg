@@ -39,13 +39,13 @@ namespace Sapphire.EditorTools
         private const string SlimeKingdomScenePath = "Assets/Sapphire/Scenes/SlimeKingdom.unity";
         internal const string GeneratedDir = "Assets/Sapphire/Generated";
 
-        // 2026-09-14 player feedback: 14x10 felt cramped to walk around in.
-        // Widened to 24x18 (same border/fence/path layout logic, new coords).
-        internal const int MapWidth = 24;
-        internal const int MapHeight = 18;
-        internal const int SignX = 12;
+        // 2026-09-20 player feedback: The massive Town Hall completely blocked the top gate on a 24x18 map.
+        // Widened to 32x32 to accommodate the new 10x10 town hall and allow walking around it.
+        internal const int MapWidth = 32;
+        internal const int MapHeight = 32;
+        internal const int SignX = 16;
         internal const int SignY = 11;
-        internal const int SpawnX = 12;
+        internal const int SpawnX = 16;
         internal const int SpawnY = 6;
 
         public static void BuildAll()

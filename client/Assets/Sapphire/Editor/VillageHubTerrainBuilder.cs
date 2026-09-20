@@ -89,9 +89,9 @@ namespace Sapphire.EditorTools
                     bool isBorder = x == 0 || x == SapphireSceneBuilder.MapWidth - 1 || y == 0 || y == SapphireSceneBuilder.MapHeight - 1;
                     
                     // Center plaza and paths - enlarged for better placement
-                    bool plaza = (x >= 7 && x <= 17 && y >= 6 && y <= 16);
-                    bool verticalPath = (x >= 11 && x <= 13);
-                    bool horizontalPath = (y >= 8 && y <= 10 && x >= 4 && x <= 20);
+                    bool plaza = (x >= 11 && x <= 21 && y >= 6 && y <= 26);
+                    bool verticalPath = (x >= 15 && x <= 17);
+                    bool horizontalPath = (y >= 8 && y <= 10 && x >= 8 && x <= 24);
                     bool onPath = (plaza || verticalPath || horizontalPath) && !isBorder;
 
                     Tile[] variants = onPath ? dirtTiles : grassTiles;
@@ -144,7 +144,7 @@ namespace Sapphire.EditorTools
 
             for (int x = 1; x < mapWidth - 1; x++)
             {
-                if (x == 12) continue; // gap for vertical path
+                if (x >= 15 && x <= 17) continue; // gap for vertical path
                 PlaceFence(fencesRoot.transform, fenceStraight, x, 0, 0f, "Fence_Bottom_" + x);
                 PlaceFence(fencesRoot.transform, fenceStraight, x, mapHeight - 1, 0f, "Fence_Top_" + x);
             }
@@ -166,13 +166,13 @@ namespace Sapphire.EditorTools
             Transform root = new GameObject("VillageLandmarks").transform;
 
             // Welcome sign (bottom entrance)
-            BuildInteractable(root, collision, blocker, zones, SapphireSceneBuilder.WorldArtDir + "/VillageProps.png", "signpost", "VillageProps_Signpost", 14, 7,
+            BuildInteractable(root, collision, blocker, zones, SapphireSceneBuilder.WorldArtDir + "/VillageProps.png", "signpost", "VillageProps_Signpost", SapphireSceneBuilder.SignX, SapphireSceneBuilder.SignY,
                 "초보 모험가의 마을, 사파이어 타운에 오신 것을 환영합니다.", null, 1.0f);
 
             // Village Props (placed logically on the expanded dirt plaza/grass edges)
             // Town Hall (Large generated building)
             string townHallPath = SapphireSceneBuilder.WorldArtDir + "/TownHallVertical.png";
-            BuildInteractable(root, collision, blocker, zones, townHallPath, "town_hall", "TownHallVertical", 12, 12,
+            BuildInteractable(root, collision, blocker, zones, townHallPath, "town_hall", "TownHallVertical", 16, 16,
                 "굳게 잠겨 있다. 지금은 들어갈 수 없다.", null, 1.0f);
             
             // Add collision around the large town hall (Width: 10 tiles, Solid Height: ~10 tiles)
@@ -181,7 +181,7 @@ namespace Sapphire.EditorTools
                 for (int dy = 0; dy <= 9; dy++) {
                     // Leave a tiny space for the player to stand right at the center door
                     if (dx == 0 && dy == 0) continue;
-                    collision.SetTile(new Vector3Int(12 + dx, 12 + dy, 0), blocker);
+                    collision.SetTile(new Vector3Int(16 + dx, 16 + dy, 0), blocker);
                 }
             }
             PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 8, 5, 1.5f, 1);
