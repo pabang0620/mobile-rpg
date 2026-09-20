@@ -34,8 +34,8 @@ namespace Sapphire.EditorTools
 
             GameObject canvasGo = CharacterFlowUiScaffold.BuildEventSystemAndCanvas();
 
-            // Removed video background per user request: "캐릭터선택창 뒤쪽에 배경영상 들어간거 잘못들어간거야 일단 뺴줘"
-            // CharacterFlowUiScaffold.BuildFullScreenVideoBackground(canvasGo, "Assets/Sapphire/Art/Video/login_village_plaza_loop.mp4");
+            // 사용자의 요청으로 로그인 창 배경 영상은 다시 복구함
+            CharacterFlowUiScaffold.BuildFullScreenVideoBackground(canvasGo, "Assets/Sapphire/Art/Video/login_village_plaza_loop.mp4");
 
             Sprite logo = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/TitleLogo.png");
             BuildLogo(canvasGo, logo);
