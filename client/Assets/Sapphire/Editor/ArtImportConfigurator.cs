@@ -28,6 +28,7 @@ namespace Sapphire.EditorTools
         {
             ConfigureGroundAtlas();
             ConfigureVillagePropsAtlas();
+            ConfigureTownHall();
             ConfigureSlimeKingdomAtlas();
             ConfigureSlimeKingdomExpansionAtlases();
             ConfigureSlimeKingdomGroundTiles();
@@ -43,6 +44,12 @@ namespace Sapphire.EditorTools
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        private static void ConfigureTownHall()
+        {
+            string path = SapphireSceneBuilder.WorldArtDir + "/TownHall.png";
+            ConfigureSingleSprite(path, Vector4.zero, FilterMode.Point, false, 100f);
         }
 
         private static void ConfigureSlimeKingdomAtlas()
