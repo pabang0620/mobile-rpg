@@ -87,10 +87,10 @@ namespace Sapphire.Composition
             GameObject inactiveRigGo = useWarrior ? mageController.gameObject : warriorController.gameObject;
             GameObject inactiveSkillMenuRoot = useWarrior ? mageSkillMenuRoot : warriorSkillMenuRoot;
 
-            inactiveRigGo.SetActive(false);
+            Destroy(inactiveRigGo);
             if (inactiveSkillMenuRoot != null)
             {
-                inactiveSkillMenuRoot.SetActive(false);
+                Destroy(inactiveSkillMenuRoot);
             }
 
             activePlayerController.gameObject.SetActive(true);

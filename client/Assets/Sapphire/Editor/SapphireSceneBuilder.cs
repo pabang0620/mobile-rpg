@@ -242,7 +242,8 @@ namespace Sapphire.EditorTools
             playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
             var spriteRenderer = playerGo.GetComponent<SpriteRenderer>();
             spriteRenderer.material = new Material(Shader.Find("Sprites/Default"));
-            playerGo.AddComponent<Sapphire.Presentation.World.DynamicYSort>();
+            var dynSort = playerGo.AddComponent<Sapphire.Presentation.World.DynamicYSort>();
+            dynSort.OrderOffset = 20000; // Always render player on top of props/buildings (User request)
 
             var spriteAnimator = playerGo.GetComponent<DirectionalSpriteAnimator>();
             AssignField(spriteAnimator, "idleUp", idleUp);
@@ -320,7 +321,7 @@ namespace Sapphire.EditorTools
             // sky instead of an obvious rendering defect - this flat color
             // makes any future hole immediately, unambiguously visible.
             cam.clearFlags = UnityEngine.CameraClearFlags.SolidColor;
-            cam.backgroundColor = new Color(0.06f, 0.07f, 0.10f);
+            cam.backgroundColor = new Color(0.4f, 0.6f, 0.9f); // Bright sky blue
             cameraGo.transform.position = playerPosition + new Vector3(0f, 0f, -10f);
 
             var followRig = cameraGo.AddComponent<CameraFollowRig>();

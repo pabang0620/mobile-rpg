@@ -87,7 +87,8 @@ namespace Sapphire.EditorTools
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
             GameObject canvasGo = CharacterFlowUiScaffold.BuildEventSystemAndCanvas();
-            CharacterFlowUiScaffold.BuildFullScreenVideoBackground(canvasGo, "Assets/Sapphire/Art/Video/character_select_loop.mp4");
+            // Removed video background per user request: "캐릭터선택창 뒤쪽에 배경영상 들어간거 잘못들어간거야 일단 뺴줘"
+            // CharacterFlowUiScaffold.BuildFullScreenVideoBackground(canvasGo, "Assets/Sapphire/Art/Video/character_select_loop.mp4");
             CharacterFlowUiScaffold.BuildLabel(canvasGo, "TitleText", new Vector2(0f, 300f), new Vector2(600f, 60f), "캐릭터 선택", fontSize: 34);
 
             Sprite cardFrameFilled = VillageHubUiBuilder.LoadSingleSprite(CharacterFlowArtImportConfigurator.TitleArtDir + "/CharacterSlotFrameV2.png");
