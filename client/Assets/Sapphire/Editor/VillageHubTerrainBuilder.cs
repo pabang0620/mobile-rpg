@@ -171,21 +171,19 @@ namespace Sapphire.EditorTools
 
             // Village Props (placed logically on the expanded dirt plaza/grass edges)
             // Town Hall (Large generated building)
-            string townHallPath = SapphireSceneBuilder.WorldArtDir + "/TownHall.png";
-            BuildInteractable(root, collision, blocker, zones, townHallPath, "town_hall", "TownHall", 12, 12,
-                "웅장한 마을 회관이다. 마을의 중심 역할을 한다.", null, 1.0f);
+            string townHallPath = SapphireSceneBuilder.WorldArtDir + "/TownHallVertical.png";
+            BuildInteractable(root, collision, blocker, zones, townHallPath, "town_hall", "TownHallVertical", 12, 12,
+                "굳게 잠겨 있다. 지금은 들어갈 수 없다.", null, 1.0f);
             
-            // Add collision around the large town hall (Width: 7 tiles, Solid Height: ~5 tiles from foot)
-            for (int dx = -3; dx <= 3; dx++)
-                for (int dy = 0; dy <= 4; dy++) 
+            // Add collision around the large town hall (Width: 10 tiles, Solid Height: ~10 tiles)
+            // The generated image is 1024x1024 at 100 PPU, so ~10x10 units.
+            for (int dx = -5; dx <= 5; dx++) {
+                for (int dy = 0; dy <= 9; dy++) {
+                    // Leave a tiny space for the player to stand right at the center door
+                    if (dx == 0 && dy == 0) continue;
                     collision.SetTile(new Vector3Int(12 + dx, 12 + dy, 0), blocker);
-
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 10, 14, .9f, "Lamp1");
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 14, 14, .9f, "Lamp2");
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 5, 6, .8f, "Flowers1");
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 19, 6, .8f, "Flowers2");
-            
-            PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 16, 5, 1.5f, 1);
+                }
+            }
             PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 8, 5, 1.5f, 1);
 
             // Gate to Slime Forest (Top exit)

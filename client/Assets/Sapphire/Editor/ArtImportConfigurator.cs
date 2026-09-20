@@ -48,7 +48,7 @@ namespace Sapphire.EditorTools
 
         private static void ConfigureTownHall()
         {
-            string path = SapphireSceneBuilder.WorldArtDir + "/TownHall.png";
+            string path = SapphireSceneBuilder.WorldArtDir + "/TownHallVertical.png";
             ConfigureSingleSprite(path, Vector4.zero, FilterMode.Point, false, 100f);
         }
 

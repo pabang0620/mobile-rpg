@@ -110,10 +110,6 @@ namespace Sapphire.EditorTools
             Transform root = new GameObject("SlimeForestLandmarks").transform;
 
             // Forest Entrance
-            BuildInteractable(root, collision, blocker, zones, PropsAtlas, "entrance_sign", "Slime2_Sign", 16, 4,
-                "경고: 야생 슬라임 출몰 지역입니다. 전투 준비가 필요합니다.", null, 1.05f);
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 14, 3, .8f, "EntranceFlowersL");
-            PlaceVisual(root, PropsAtlas, "Slime2_Flowers", 24, 3, .8f, "EntranceFlowersR");
 
             // Natural Blockers (Cliffs & Hedges representing dense forest edges)
             PlaceBlockingFootprint(root, collision, blocker, PropsAtlas, "Slime2_Hedge", 8, 6, 1.5f, 1);
@@ -156,10 +152,6 @@ namespace Sapphire.EditorTools
             }, 1f);
 
             // Remove cut-off buildings, add more mushrooms and slimes instead.
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 17, 6, 1.0f, "LampL1");
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 21, 6, 1.0f, "LampR1");
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 17, 11, 1.0f, "LampL2");
-            PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 21, 11, 1.0f, "LampR2");
 
             // Wild Slimes (Monsters) - Hunting Ground!
             BuildEncounter(root, collision, blocker, zones, 16, 13, "야생 슬라임이 길을 막고 있습니다.");
