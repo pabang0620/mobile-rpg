@@ -121,7 +121,7 @@ namespace Sapphire.EditorTools
         private static void ConfigureSlimeKingdomSeamlessTiles()
         {
             string root = SapphireSceneBuilder.WorldArtDir + "/SlimeKingdom/SeamlessV5/";
-            foreach (string family in new[] { "Grass", "Dirt", "DirtEdge", "Water", "Forest", "Cliff", "Shore" })
+            foreach (string family in new[] { "Grass", "Dirt", "DirtEdge", "Water", "Forest", "Cliff", "Shore", "Stone" })
             {
                 int max = (family == "Shore" || family == "DirtEdge") ? 32 : 4;
                 for (int i = 0; i < max; i++)

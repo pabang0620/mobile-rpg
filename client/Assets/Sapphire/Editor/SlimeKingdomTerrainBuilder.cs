@@ -17,7 +17,7 @@ namespace Sapphire.EditorTools
 
         private const string PrimaryAtlas = "Assets/Sapphire/Art/World/SlimeKingdomAtlas.png";
         private const string PropsAtlas = "Assets/Sapphire/Art/World/SlimeKingdomProps2.png";
-        private const string SeamlessTileDir = "Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV4/";
+        private const string SeamlessTileDir = "Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/";
 
         internal static TerrainBuildResult Build()
         {

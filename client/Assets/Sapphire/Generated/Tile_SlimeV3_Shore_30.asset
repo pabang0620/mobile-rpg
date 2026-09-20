@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Tile_SlimeV3_Shore_30
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
-  m_Sprite: {fileID: 21300000, guid: 68698d00da1483540b58e788d0c06b8b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e392b32fb06eb23479ab907f982fbe35, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
