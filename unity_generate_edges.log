@@ -1,0 +1,513 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.5/staging' branch; Version is '6000.5.9f1 (b57deb96f08d) revision 11894251'; Using compiler version '194234433'; Build Type 'Release'
+[Licensing::IpcConnector] Channel LicenseClient-darac doesn't exist
+OS: 'Windows 11  (10.0.22631) Core' Language: 'ko' Physical Memory: 32469 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-09-20T12:12:50Z
+[Licensing::Module] Successfully launched the LicensingClient (PId: 38644)
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Unity.exe
+-batchmode
+-quit
+-projectPath
+C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client
+-executeMethod
+TileSmoother.GenerateEdges
+-logFile
+C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\unity_generate_edges.log
+Successfully changed project path to: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client
+C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-remapper-allocator-initial-capacity=32768"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [16356]  Target information:
+
+Player connection [16356]  * "[IP] 172.30.1.49 [Port] 55504 [Flags] 2 [Guid] 3102885848 [EditorId] 3102885848 [Version] 1048832 [Id] WindowsEditor(7,SHIN) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [16356] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [16356] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-38836" after 0.2 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-darac" at "2026-09-20T12:12:51.1908236Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 38644, path: "C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              a2991dc743074d1583b52d2e101ce1f3
+  Correlation Id:          4b7c2e5da2699d937d0981f05b6ac73b
+  External correlation Id: 8143849112192801478
+  Machine Id:              5e3iIbZGEVR5VxgYE89BuUpMSg4=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-darac" (connect: 0.56s, validation: 0.14s, handshake: 0.05s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-darac-notifications" at "2026-09-20T12:12:51.3765629Z"
+[Licensing::Module] Connected to LicensingClient (PId: 38644, launch time: 0.02, total connection time: 0.75s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-UT2P-JK6J-CVKP-3GZX-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-27T13:11:09Z
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.80s
+[Licensing::Module] Licensing is initialized (took 0.38s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Artifact Garbage Collection - Removed 2 unused hashed content files
+Initialize engine version: 6000.5.9f1 (b57deb96f08d)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        NVIDIA GeForce RTX 4070 SUPER (ID=0x2783)
+    Vendor:          NVIDIA
+    VRAM:            11997 MB
+    App VRAM Budget: 11229 MB
+    Driver:          32.0.15.9186
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56836
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.002100 seconds.
+Native extension for WindowsStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.460 seconds
+Domain Reload Profiling: 908ms
+	BeginReloadAssembly (130ms)
+		CreateAndSetChildDomain (6ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (15ms)
+	initialDomainReloadingComplete (62ms)
+	LoadAllAssembliesAndSetupDomain (236ms)
+		LoadAssemblies (121ms)
+		AnalyzeDomain (174ms)
+			TypeCache.Refresh (173ms)
+				TypeCache.ScanAssembly (160ms)
+	FinalizeReload (461ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (78ms)
+			ProcessInitializeOnLoadAttributes (83ms)
+			ProcessInitializeOnLoadMethodAttributes (234ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 41 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.inputsystem@1.20.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.inputsystem@7a4e1a2a8194)
+  Built-in packages:
+    com.unity.test-framework@1.7.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.ugui@1c4864518158)
+    com.unity.multiplayer.center@1.0.1 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.multiplayer.center@b860850997d0)
+    com.unity.modules.accessibility@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physics2d)
+    com.unity.modules.physicscore2d@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.1.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.ext.nunit@44f7d31723bd)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 1s858ms
+[329/332    1s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(493,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(536,38): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(545,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+[330/332    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[331/332    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (1.80 seconds), 3 items updated, 332 evaluated
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(493,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(536,38): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(545,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Total cache size 9894044
+Total cache size after purge 9894044, took 00:00:00.0163954
+AssetDatabase: script compilation time: 2.430433s
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.447 seconds
+Domain Reload Profiling: 950ms
+	BeginReloadAssembly (224ms)
+		DisableScriptedObjects (22ms)
+		CreateAndSetChildDomain (57ms)
+	RebuildCommonClasses (7ms)
+	RebuildNativeTypeToScriptingClass (17ms)
+	initialDomainReloadingComplete (42ms)
+	LoadAllAssembliesAndSetupDomain (212ms)
+		LoadAssemblies (202ms)
+		AnalyzeDomain (37ms)
+			TypeCache.Refresh (23ms)
+				TypeCache.ScanAssembly (19ms)
+			BuildScriptInfoCaches (11ms)
+	FinalizeReload (448ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (73ms)
+			ProcessInitializeOnLoadAttributes (105ms)
+			ProcessInitializeOnLoadMethodAttributes (78ms)
+			AfterProcessingInitializeOnLoad (5ms)
+		AwakeInstancesAfterBackupRestoration (33ms)
+Starting new worker id: 0 with log in C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=ca502d213c1d2144aabc079eae7a958a): Total: 3.766 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=692 ms
+		Asset DB Callback time: managed=73 ms, native=19 ms
+		Scripting: domain reloads=1, domain reload time=531 ms, compile time=2433 ms, other=16 ms
+		Project Asset Count: scripts=388, non-scripts=733
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokePackagesCallback: 16.074ms
+	ApplyChangesToAssetFolders: 0.450ms
+	Scan: 105.139ms
+	Collect global state as custom dependencies: 8.994ms
+	OnSourceAssetsModified: 0.593ms
+	CategorizeScriptCompilationAssets: 6.371ms
+	ProcessAssetsWithTransientArtifactChanges: 16.371ms
+	CategorizeAssets: 7.653ms
+	CompileScripts: 2432.611ms
+	ImportOutOfDateAssets: 495.087ms (452.636ms without children)
+		UnloadImportedAssets: 0.176ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.137ms
+		ImportSchedulerStart: 42.136ms
+	PostProcessAllAssets: 74.992ms
+		VCAutoAddAssetPostprocess 1.142ms
+		XRBuildSystem.XRAssetImported 0.083ms
+		MonoPostProcessAllAssets: 73.301ms
+			AssetPostprocessor.OnPostprocessAllAssets 33.014ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 10.131ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 6.551ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 5.252ms
+			AssetChangedListener.OnPostprocessAllAssets 1.617ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 1.443ms
+			SyncVS.PostprocessSyncProject 1.081ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 0.714ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.647ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.449ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.445ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.375ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.307ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.279ms
+			AssetEvents.OnPostprocessAllAssets 0.269ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.213ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.193ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.192ms
+			SkillVfxImporter.OnPostprocessAllAssets 0.176ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.153ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.131ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.121ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.117ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.103ms
+			AudioContainerPostProcessor.OnPostprocessAllAssets 0.089ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.083ms
+			WarriorSkillVfxImporter.OnPostprocessAllAssets 0.055ms
+	PostAssetChangesProfiler: 3.962ms
+	UnloadStreamsBegin: 1.075ms
+	GenerateScriptTypeHashes: 1.050ms
+	GenerateScriptTypeSerializationHashes: 2.069ms
+	Untracked: 591.840ms
+
+Application.AssetDatabase Initial Refresh End
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.01 seconds
+Scanning for USB devices : 23.202ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-Sapphire RPG
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 1381 unused Assets / (1.0 MB). Loaded Objects now: 2167.
+Memory consumption went from 223.6 MB to 222.6 MB.
+Total: 5.904100 ms (FindLiveObjects: 0.170800 ms CreateObjectMapping: 0.203100 ms MarkObjects: 4.969000 ms  DeleteObjects: 0.559200 ms)
+
+Worker ready: AssetImportWorkerHW0 0
+Importing 'GUID: 40161982ffa8f13409bba7896a866206 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore2.png' with importer (TextureImporter)
+Imported 'GUID: 40161982ffa8f13409bba7896a866206' -> (Import Result ID: '32ad027e8131a91de7d3bbfdcb9f6435') in 0.019 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=647888400ee37661a4839fe75335201d DependenciesID=8651802c1ccc6d7d8eb67b5dfc35af0a StaticDependenciesID=3a6bbf5a8caee92a1cf375c48aec246b 
+Importing 'GUID: c04b858f68c00cd40a9b23abb4f46e75 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore9.png' with importer (TextureImporter)
+Imported 'GUID: c04b858f68c00cd40a9b23abb4f46e75' -> (Import Result ID: 'f19dfd4f989a2e86e0293842105d2534') in 0.015 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c89860803c68c1d83d5634b8de837ffa DependenciesID=73d358a6ea3637e0a6213a25cc87a3bc StaticDependenciesID=905a900423bc5d8cfeca652ce1a90976 
+Importing 'GUID: 2180e65d8a33eca4b910ce2f725187b1 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore16.png' with importer (TextureImporter)
+Imported 'GUID: 2180e65d8a33eca4b910ce2f725187b1' -> (Import Result ID: '2b7f3bdf5e29efd2df6ec8e4e37fe09d') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=243147f73f9d2148aa0d532ee40e2c29 DependenciesID=4d745afd53ed7f40fcac8d5233194f92 StaticDependenciesID=2e4bdca518eb63acb9780c54dd546d5f 
+Importing 'GUID: 21c679827c57eda488d061816cda9bdb - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore28.png' with importer (TextureImporter)
+Imported 'GUID: 21c679827c57eda488d061816cda9bdb' -> (Import Result ID: '33db6d82763f840363585f0d1d88d672') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4420b9642dffddbd49f5b61d7c49260e DependenciesID=9784640a93080a465d739d5ac1fee90f StaticDependenciesID=3e5dcde2f2a874d890fd06907c1fa018 
+Importing 'GUID: 31b1be02c2fe68949b7fd09e62b75cb4 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge29.png' with importer (TextureImporter)
+Imported 'GUID: 31b1be02c2fe68949b7fd09e62b75cb4' -> (Import Result ID: '6e4dfcc1bb12c64be822d7697a4da7c2') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ba07721b2182a7a274b87e9399dc2896 DependenciesID=9fa308a7286c5b294adc3fc5e9302b97 StaticDependenciesID=1679d63020638fc81bdf6ad649fa5172 
+Importing 'GUID: 3162ffa85af1d6941b64e23163b1b15b - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge21.png' with importer (TextureImporter)
+Imported 'GUID: 3162ffa85af1d6941b64e23163b1b15b' -> (Import Result ID: 'fee35a990cabcfcf2359c64f2ad97f7c') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6927c6f22eddc34f1d74c86d86dc3e43 DependenciesID=2708eb30fd1d6cb5226902fcc251ad64 StaticDependenciesID=61ccf51d6826b61265f2845d8c9fa0ad 
+Importing 'GUID: 413bfdd3726b07540a092cf5545c2307 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge28.png' with importer (TextureImporter)
+Imported 'GUID: 413bfdd3726b07540a092cf5545c2307' -> (Import Result ID: 'e55c579483103197c71801398efa69b6') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1489ad1bed0d016d66f57e2beeb15da6 DependenciesID=ecefa5ae460ca4ad1125ad7b07ca6a73 StaticDependenciesID=e584213b3680dc18ccc43381336e9ab4 
+Importing 'GUID: 61535ffec3723564799f8a3339a0d6d5 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore7.png' with importer (TextureImporter)
+Imported 'GUID: 61535ffec3723564799f8a3339a0d6d5' -> (Import Result ID: '610f1657a1297170ceb210d8c547eee4') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=dd335a2d69b67ef0ac5ef8e4e8b35c82 DependenciesID=490d1aba6b5fcd6a551f33e0fdfd8fd2 StaticDependenciesID=1a8aa7507aff754913f5c89b071f0aa7 
+Importing 'GUID: 91c1d389725326344a823da9534f2261 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge25.png' with importer (TextureImporter)
+Imported 'GUID: 91c1d389725326344a823da9534f2261' -> (Import Result ID: '92016e7683be7eff7d2db597186f8f22') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e0c4ccefdef6aaf4f4cb537df4b519fa DependenciesID=13227f9ea95c9cca35ef429f968ad88f StaticDependenciesID=88dc1648846fb044121df4aa8c840bda 
+Importing 'GUID: 324752024d7936e4d8a42a98340b231a - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge16.png' with importer (TextureImporter)
+Imported 'GUID: 324752024d7936e4d8a42a98340b231a' -> (Import Result ID: 'cf03c9eb91e4fe691219625480011958') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b269e2eb86843b7cd4c6dcafa868ed69 DependenciesID=8fa173f632687d375f93ea276cfc429a StaticDependenciesID=bdab972fef5df33a88233f47d84b9679 
+Importing 'GUID: 522eda9f6f30de74ba7f1b2eeb2daac0 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge20.png' with importer (TextureImporter)
+Imported 'GUID: 522eda9f6f30de74ba7f1b2eeb2daac0' -> (Import Result ID: '50eb835205ffbb70cf954daf0f960b5b') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a1bcefeb983433602dffc43b29464370 DependenciesID=85893ed06255c0faa1dfbd57b1075880 StaticDependenciesID=fa2f651d900bef226f0d8eb85899fe83 
+Importing 'GUID: b25faf47492997346b26528d6f5c4a90 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore23.png' with importer (TextureImporter)
+Imported 'GUID: b25faf47492997346b26528d6f5c4a90' -> (Import Result ID: '9fd0b66a657df8035ee536c3022b4230') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ca4975dedf585584680db3f1b6d9b3e7 DependenciesID=e9d4bae08ac439447d90fa4746b5f741 StaticDependenciesID=c7f3c563df4d33aee48e13aff28e7532 
+Importing 'GUID: d29235e9b8db85f4abc4724229ab3914 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore25.png' with importer (TextureImporter)
+Imported 'GUID: d29235e9b8db85f4abc4724229ab3914' -> (Import Result ID: 'a26d2ea4f57dfc931c28af73d5339f50') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fa63f016927f140fa59d2af999c512bf DependenciesID=b423bcab1024e822da4c595655595e2a StaticDependenciesID=7beb27cbf55cce7a5205b01be3363552 
+Importing 'GUID: 23202e9f51e561a4f80a39fff96b1287 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge22.png' with importer (TextureImporter)
+Imported 'GUID: 23202e9f51e561a4f80a39fff96b1287' -> (Import Result ID: 'f08715a299aef005ad5d2433e43f42e6') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c68eb314daafa3a22badd6fe051a584f DependenciesID=c76ca5b3141625cae778315d7bcc249c StaticDependenciesID=4f51104503b960745c6caa5e8b2fca48 
+Importing 'GUID: 232d6c16d628d7145a9435424ce90713 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge9.png' with importer (TextureImporter)
+Imported 'GUID: 232d6c16d628d7145a9435424ce90713' -> (Import Result ID: 'cfb61a3bfa6104f91aee46202dd36d55') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=200dc26c08d1d0a80b407e9f14cac13f DependenciesID=e0e9fc8aafacbbb54f3106a98c327b25 StaticDependenciesID=20274da321dea1afe26572781cd43e13 
+Importing 'GUID: 43a15421f0e771049aab4216b4f4cd8b - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge8.png' with importer (TextureImporter)
+Imported 'GUID: 43a15421f0e771049aab4216b4f4cd8b' -> (Import Result ID: '3a9712b9850c2c1d3b848fa3d213fe96') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9e4ed1d799081490c552a75f137fd0f3 DependenciesID=8e70e8dadb4c1acd0954d96555de387b StaticDependenciesID=5e33866719cae2f24474d87b61cf3550 
+Importing 'GUID: a3ccb95f484dfd44bbe063d3f3a38832 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge5.png' with importer (TextureImporter)
+Imported 'GUID: a3ccb95f484dfd44bbe063d3f3a38832' -> (Import Result ID: '8485380db2655a222ab9ad1255a8710f') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0a66d089870b99e93d5df59fbf2623da DependenciesID=7c02fbfa4ed7073f055ec20793087618 StaticDependenciesID=ee7af5b5c887902f42f2c0b6a881133b 
+Importing 'GUID: e392b32fb06eb23479ab907f982fbe35 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore30.png' with importer (TextureImporter)
+Imported 'GUID: e392b32fb06eb23479ab907f982fbe35' -> (Import Result ID: 'b6a1c5980b093d7e11bea7a7e6d7c86f') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e2aac79fbfd1276c44890c9c5e4d2d87 DependenciesID=d80b5cce7bc8f5b648a74cfed864f925 StaticDependenciesID=be2e6c53bf7dde6ea257fbb506d4c1d8 
+Importing 'GUID: 2404748d9928d5b4599b49a9370d17e4 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore8.png' with importer (TextureImporter)
+Imported 'GUID: 2404748d9928d5b4599b49a9370d17e4' -> (Import Result ID: '3143ac2994f40defb614ae7a17c294af') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b7fd50538dcd438646cafc16c6788d42 DependenciesID=1e9b11a419f08e13a0a761bfaf2b0005 StaticDependenciesID=a5440f7216a97402ba0d2c26ede6ce43 
+Importing 'GUID: 74e0301d11f548b4c80974b648c4bf92 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge3.png' with importer (TextureImporter)
+Imported 'GUID: 74e0301d11f548b4c80974b648c4bf92' -> (Import Result ID: '3650e63c1ddf896db3e84c5ef90c39b8') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=475c162bc7313c900a3bb40dc0694133 DependenciesID=0802e55b764c4e769e080207199689bb StaticDependenciesID=01cddac6ee77ecddc3823a86bd64d8a0 
+Importing 'GUID: 84cb6831265e23d40bb66ab145924efb - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore24.png' with importer (TextureImporter)
+Imported 'GUID: 84cb6831265e23d40bb66ab145924efb' -> (Import Result ID: '4d476db1e5fb4dad7680ed4b0d7305d8') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7b83c20ffeda45f6827c9d0173876fa1 DependenciesID=04794aa697ae25d6f040a8486611fd71 StaticDependenciesID=495aa65348d4455163d5a954c8701e35 
+Importing 'GUID: a4e0f9097a0d6d34e9ce91232e749dcc - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore4.png' with importer (TextureImporter)
+Imported 'GUID: a4e0f9097a0d6d34e9ce91232e749dcc' -> (Import Result ID: '226b5740448a7d4ed7259e49a4653698') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=998e67023105a02cbaf8da8a24f7bd37 DependenciesID=586ae42759972d6d5bdd71c27cd57e7a StaticDependenciesID=60f3c85fc7aa60858d081f6f40e70799 
+Importing 'GUID: e45a4d0d7a398e94aa75c30417c6f476 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore11.png' with importer (TextureImporter)
+Imported 'GUID: e45a4d0d7a398e94aa75c30417c6f476' -> (Import Result ID: '2e8f8ad6b6c3a2433432651dfb008024') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d39543a390e64340dffe6b1ec827129c DependenciesID=ff90f688a53eebe7a9cfaf0dc07e4cc6 StaticDependenciesID=823334ed2fd86b5680ad6ae11c6d3e3f 
+Importing 'GUID: 353a6a6705bbdfd4f9555dda476f1aba - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge19.png' with importer (TextureImporter)
+Imported 'GUID: 353a6a6705bbdfd4f9555dda476f1aba' -> (Import Result ID: '21172bc9f3a299753da41506c9250121') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=308cd93fad521be6c810d2aed1be327c DependenciesID=e0875683df4c30ed6de1f98a9091fb8e StaticDependenciesID=6789ad0009a9adbd420542192a33f907 
+Importing 'GUID: 562d76099cef4784db88da3d1a0a8c3d - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore21.png' with importer (TextureImporter)
+Imported 'GUID: 562d76099cef4784db88da3d1a0a8c3d' -> (Import Result ID: 'f30fc0f3244aaa89b4dd9b2f76def22c') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=aeb801d8211b4425c7130893cebf8c5e DependenciesID=d63db3983173f8d6b7a9edae62f82b8a StaticDependenciesID=4e5fee8158e9b52bd38cd6671495ec1f 
+Importing 'GUID: 6661b524243edc5438966604e7ee578e - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore31.png' with importer (TextureImporter)
+Imported 'GUID: 6661b524243edc5438966604e7ee578e' -> (Import Result ID: '1da1184f554d27d55c40b454662503dd') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b068bcb0c97b5b269702378d0fed8550 DependenciesID=546663eebdc1f1f23e4f9422f670f42d StaticDependenciesID=6f28201f3a95a2f8809dd126c9493951 
+Importing 'GUID: 760ede54c568a6f4e9f1c5e2e00913b2 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge7.png' with importer (TextureImporter)
+Imported 'GUID: 760ede54c568a6f4e9f1c5e2e00913b2' -> (Import Result ID: '87352062383b71c80944d9fdfdeebcb8') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e63cd9af75e09fcb71e5164f5a736d3d DependenciesID=f9843cb15101330a3ba81414f49458a3 StaticDependenciesID=72a68f6d47b4c19175bb120d26d6d210 
+Importing 'GUID: a6c3581a9d32baa44b12687186fbb8a8 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore1.png' with importer (TextureImporter)
+Imported 'GUID: a6c3581a9d32baa44b12687186fbb8a8' -> (Import Result ID: '02a3218ac3d0965e0b09579717456ace') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7ff80559821c27986f85ae9feeff66bb DependenciesID=63b27f23ead40d0292dad8960b78be99 StaticDependenciesID=ee975db1c77ed4f9cd7b3a1087b810b9 
+Importing 'GUID: c6eee1c6bd6d26c4da3d5c86e1514d0f - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore14.png' with importer (TextureImporter)
+Imported 'GUID: c6eee1c6bd6d26c4da3d5c86e1514d0f' -> (Import Result ID: '779691cb04eab05d8857cb732e008519') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c0bd26138d9b4d5fd0949d209c3bdf59 DependenciesID=05c5c62f54ea54f69c420e3e8e91adb8 StaticDependenciesID=43576f35fe8c9aaf1c86e4fbd73b40ca 
+Importing 'GUID: e6f88644fec6a314aa1c2736f176f875 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge30.png' with importer (TextureImporter)
+Imported 'GUID: e6f88644fec6a314aa1c2736f176f875' -> (Import Result ID: 'd1f1e73ffdc847df2c46476c2db66080') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=66d5755d823aced6622725d1a340a82b DependenciesID=149b859b69b25f78d4f668ebb81b3161 StaticDependenciesID=11753b78d30e8d3a6ff64404f2f1686a 
+Importing 'GUID: e67cc14bc57bf364cb37cce49da1175a - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore15.png' with importer (TextureImporter)
+Imported 'GUID: e67cc14bc57bf364cb37cce49da1175a' -> (Import Result ID: '471c3b5fc9680827dc3513b4e21dbc94') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=70513ff8f2c31a9881c1ac2ba67af11a DependenciesID=568071bf9a26b0298691604866d2b456 StaticDependenciesID=1358ab8676522e95498deb551e848599 
+Importing 'GUID: f6dbda2166fad824c9bb3d409732ea1e - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge10.png' with importer (TextureImporter)
+Imported 'GUID: f6dbda2166fad824c9bb3d409732ea1e' -> (Import Result ID: '5a9aa75cb599c6e955e14e0f23d5b9f0') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4ec23f1e8cd038748827fbe3c6f9bf4f DependenciesID=fa8c45c3f2c718cc7d40a4868f44859e StaticDependenciesID=e789f1cfe32cfa993f0421ff563fcc50 
+Importing 'GUID: 27ad1532b31fe6b438e5945ac50d721b - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge26.png' with importer (TextureImporter)
+Imported 'GUID: 27ad1532b31fe6b438e5945ac50d721b' -> (Import Result ID: '7b326c8bb72f98dfe0941735576d0841') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1e4437e0b551cb155a46197c82711cd5 DependenciesID=adcd936f8d1b435c9af5460314ce4b8d StaticDependenciesID=919665946c4c2bc4515044bf2b8caf35 
+Importing 'GUID: 270ebd46978c9ba4b8a69d8ee0162509 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore17.png' with importer (TextureImporter)
+Imported 'GUID: 270ebd46978c9ba4b8a69d8ee0162509' -> (Import Result ID: '51ba367529ecaced7ba92cf14cd0ea15') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=903fc8c8ac694e05b6e10af5c242bed6 DependenciesID=c40ef258f5850d51d859a48c4c90bb8d StaticDependenciesID=a1e4d171c083c49429f7d0e7a402d8bb 
+Importing 'GUID: 9726a1d123b36fa45b711af5ae468bcc - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore18.png' with importer (TextureImporter)
+Imported 'GUID: 9726a1d123b36fa45b711af5ae468bcc' -> (Import Result ID: '21cf1d47c69bcf149efb74e862cd2eb1') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b6b146365b954489685aebedca4f0ba7 DependenciesID=8c27524d7e10a4b0c87b5715ec12d835 StaticDependenciesID=a3d340d1b04b140d7775f9d214df11a5 
+Importing 'GUID: 286315b45c81a624bb62f20c460af632 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge31.png' with importer (TextureImporter)
+Imported 'GUID: 286315b45c81a624bb62f20c460af632' -> (Import Result ID: '6ee443d0f374f5c833382887285f769b') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=278049f7d13a8c21c77d6d076b4940e5 DependenciesID=d3d28e5cccab910231082147d89d5759 StaticDependenciesID=f49d88d6740b859dc47e58b8e3605ed0 
+Importing 'GUID: 2829a038f955d994bb925721b080db15 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge13.png' with importer (TextureImporter)
+Imported 'GUID: 2829a038f955d994bb925721b080db15' -> (Import Result ID: 'ebd3426d5221bc0254d4f0ce70f3500f') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=319af449a7719c4ac3e258265d21a153 DependenciesID=902702282383f8d58b5d8c795e7f3265 StaticDependenciesID=94c8e01c8d618fcc2dc29475ae05b7a0 
+Importing 'GUID: 887b3f7d22e043e46b22947b0010223d - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge23.png' with importer (TextureImporter)
+Imported 'GUID: 887b3f7d22e043e46b22947b0010223d' -> (Import Result ID: '102d1d0691da91db0897b57840ea6f98') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=df25067f8d256084016eddb08cda8230 DependenciesID=063beb38428c577d17936aefc24736e3 StaticDependenciesID=e47216b2dc9234a800f1435bf030232b 
+Importing 'GUID: 49a0de84e141b014d996e2602cab679a - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore12.png' with importer (TextureImporter)
+Imported 'GUID: 49a0de84e141b014d996e2602cab679a' -> (Import Result ID: '5e35142322f4e53ba7f8da242e50fca0') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6c18f6e59c6c3b3f649600cc9eb2766f DependenciesID=9b3a94633b472bf18999b5627c55d194 StaticDependenciesID=14f2f7d00fe2f45ed4f727f7733416a0 
+Importing 'GUID: a9388b9972e37364bb3b6e612ec7f3eb - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge6.png' with importer (TextureImporter)
+Imported 'GUID: a9388b9972e37364bb3b6e612ec7f3eb' -> (Import Result ID: 'a9821d6197d9fd4a4389c138b44261b4') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b292f8b919d83205f6556a55657040b1 DependenciesID=25561dcb6622c6db916238f00caa58f1 StaticDependenciesID=23e67bbf9a45e84681f13057284e2b66 
+Importing 'GUID: 6a0b93922b1e62b4f896744097f549b0 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore13.png' with importer (TextureImporter)
+Imported 'GUID: 6a0b93922b1e62b4f896744097f549b0' -> (Import Result ID: '6749792a30467249bf7d17b433123a02') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4fe57e3c463d0106db12e502823b4883 DependenciesID=13499855a3b1944bae1c46f69ebd7cc6 StaticDependenciesID=8f26e1909f4042b02505cb64821eaf4c 
+Importing 'GUID: dae452c5e849db74c938c76e3b38e1db - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge0.png' with importer (TextureImporter)
+Imported 'GUID: dae452c5e849db74c938c76e3b38e1db' -> (Import Result ID: '7cd71d6599607273773aca80d6697659') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a37c292020d38eb0d5c5eaaf2d38f970 DependenciesID=3769ac0583dc1f90b46eda192afb3da5 StaticDependenciesID=6d04c6d9c41161e6d7dfd3db93a58184 
+Importing 'GUID: da9ff557ce889554e8b9cf9505037d3a - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore27.png' with importer (TextureImporter)
+Imported 'GUID: da9ff557ce889554e8b9cf9505037d3a' -> (Import Result ID: '17d27838432ede2131369c14bf9f7132') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ea4ce1018b1b649f757417747949cf92 DependenciesID=434dec55c9610b8e3cee09a5e48c7629 StaticDependenciesID=e1310d438b837e3be04d70a9bdb702ec 
+Importing 'GUID: 0b4b5fed4d3ec9e4b97d6ad2ee656687 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore20.png' with importer (TextureImporter)
+Imported 'GUID: 0b4b5fed4d3ec9e4b97d6ad2ee656687' -> (Import Result ID: '60424391f89d92b7b2714f9f8f7e8d2d') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ccc9afea4e7fe6d79e9a9fa1178d90be DependenciesID=88c5a634617aeac8a070bda9ca945567 StaticDependenciesID=c206ebedcfb06a9b6d832f045993d88c 
+Importing 'GUID: 6b12eb95fccdce943b895b4732bfb02d - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge1.png' with importer (TextureImporter)
+Imported 'GUID: 6b12eb95fccdce943b895b4732bfb02d' -> (Import Result ID: '42023014bb5a9b54211ad16bab5e37a7') in 0.013 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0bfc0ba8a04e37a942f976b2bd4e4be9 DependenciesID=32c4127ea95b7e7f218a3b68a583695b StaticDependenciesID=f20af1b90d867aad923624125bdfea96 
+Importing 'GUID: 7b671e19d4eada044a5ab3cbeec6ab01 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge24.png' with importer (TextureImporter)
+Imported 'GUID: 7b671e19d4eada044a5ab3cbeec6ab01' -> (Import Result ID: 'd7d6f05302dc66df6bcf49d603631105') in 0.013 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6d52fc92da9e0c90e6a8745772c50769 DependenciesID=826b629c5f1dcb202883c2bf3f7ce853 StaticDependenciesID=f4c875c530e00da84a55442bf4ce9314 
+Importing 'GUID: ebd410387227cc045bc83dc8fb4a81ed - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge2.png' with importer (TextureImporter)
+Imported 'GUID: ebd410387227cc045bc83dc8fb4a81ed' -> (Import Result ID: '87d1c3355e5fdd12436ade1066d389a1') in 0.013 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=c8920ca54deed8f6d02d78e162d17456 DependenciesID=ec94850a185a3d9cfc3b70747d6cf422 StaticDependenciesID=65105429dd66938a76b9a636ec19bc7e 
+Importing 'GUID: 3cedf06210b29fb4cb6da26c5b8b98c1 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore10.png' with importer (TextureImporter)
+Imported 'GUID: 3cedf06210b29fb4cb6da26c5b8b98c1' -> (Import Result ID: 'c737412061f1c2dd0387e2096f682ff1') in 0.014 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2ddd9fcd1639b98004198dba982e8cf0 DependenciesID=dc89115570f228387f8d6229a731917c StaticDependenciesID=58cb3b41439d37de9acbd6f30c540d6c 
+Importing 'GUID: 6cc80172ad137ac458542382c398548b - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore0.png' with importer (TextureImporter)
+Imported 'GUID: 6cc80172ad137ac458542382c398548b' -> (Import Result ID: '93fcb1c3354177474fabcba6fb0635fc') in 0.024 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e307939a034a9fdcef449b8d02ad2069 DependenciesID=bc9c650317db446f946fadfa81b1ab8f StaticDependenciesID=05438868bade89f67fae9bc78e1cbe13 
+Importing 'GUID: dcf64b908af433d4b8151910bd3c75eb - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge4.png' with importer (TextureImporter)
+Imported 'GUID: dcf64b908af433d4b8151910bd3c75eb' -> (Import Result ID: 'd4720e0ff37bd06d89e5b4dafadf4c5a') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=979952e9b07425541f4de2eff1406b29 DependenciesID=2a314654c7870d99cbedd2bca18ad90b StaticDependenciesID=fb53723880077a520c85eafb308873d8 
+Importing 'GUID: fc2f1b66ce4002a48977b55c504606e9 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge15.png' with importer (TextureImporter)
+Imported 'GUID: fc2f1b66ce4002a48977b55c504606e9' -> (Import Result ID: '0a6740ec9448a1d149363050386ddf5f') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=356923191b6fd30f2cf9e3a92d6986c8 DependenciesID=445a5ef57fe48b56862bbc9794935309 StaticDependenciesID=79b99ebdd5c5da476b689daf81ffc86c 
+Importing 'GUID: 2d4b0c92135af9a4591034d4e4664127 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore6.png' with importer (TextureImporter)
+Imported 'GUID: 2d4b0c92135af9a4591034d4e4664127' -> (Import Result ID: '6994de524283343a28a68aa2c5a99f2a') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0b034e14feda0faf723593910983be85 DependenciesID=d4d068b87a69497fa2c6a0d6681f04f5 StaticDependenciesID=22292f53ec82db072180562bcb6cf7f1 
+Importing 'GUID: 5d738f782ebff9c42997fd66f1b1ec8d - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge12.png' with importer (TextureImporter)
+Imported 'GUID: 5d738f782ebff9c42997fd66f1b1ec8d' -> (Import Result ID: '10483e93cce3a0464200d5669449fac0') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=56d84d18bc4271368bbfe97047e02376 DependenciesID=c197af97e44906cd268d111feec6c9f6 StaticDependenciesID=f42f9c3f9c7f6d26de6af74acf72d819 
+Importing 'GUID: 0e6feadd10b99ec42a322095ddd42597 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge11.png' with importer (TextureImporter)
+Imported 'GUID: 0e6feadd10b99ec42a322095ddd42597' -> (Import Result ID: 'c17ab2f3cfb5035182b87e85cb6196ed') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=02f611a57d41abd32698e2109111bd56 DependenciesID=b63a1fc710f83c0cf88675bff28812f4 StaticDependenciesID=d2b2cf311ef38ec4be2131c1e4c21fb0 
+Importing 'GUID: 3e04582ff9650e94495c3feb9a884d96 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore19.png' with importer (TextureImporter)
+Imported 'GUID: 3e04582ff9650e94495c3feb9a884d96' -> (Import Result ID: 'cc59b8eb5dc71b37459c914c38b57739') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f7ca3463f0e5fe5d8b47287cc1d1b0b8 DependenciesID=78a2d775e77bfff0e7c76c067bd73236 StaticDependenciesID=3b2134c69db8b7d9451b96d5b99e975f 
+Importing 'GUID: 5e05068a407d9184f928a1a5215a729f - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge14.png' with importer (TextureImporter)
+Imported 'GUID: 5e05068a407d9184f928a1a5215a729f' -> (Import Result ID: 'b3e5d21ced8bcc8fb4c4cb23faabf91e') in 0.010 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=685bbc9c28f59686a08ccf7dada498cc DependenciesID=7256b7679602cdb82b4d84d40af7f838 StaticDependenciesID=32096bf585926fda9a1596d421dbd939 
+Importing 'GUID: 7edabf98bb95e994d900cb9679e80353 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore3.png' with importer (TextureImporter)
+Imported 'GUID: 7edabf98bb95e994d900cb9679e80353' -> (Import Result ID: 'b8c3959d36c7fe2cdfaec098fe0c843a') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=fb6ef4d8cb41e1e78719db19dd43389c DependenciesID=7528d0a54024c74cbbb352abef9d0f0e StaticDependenciesID=d4609ffa49386e8e96996ff513a9aa86 
+Importing 'GUID: de32766a88803324cb530d972d5de871 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore26.png' with importer (TextureImporter)
+Imported 'GUID: de32766a88803324cb530d972d5de871' -> (Import Result ID: 'de30186c2cabe69aae8435a618e26558') in 0.016 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=da348bf87a79a821dfd6cad28d309609 DependenciesID=72319c1eb11a57748e8a1034706e602d StaticDependenciesID=9fb58cc381704c8d1237f262faef5de2 
+Importing 'GUID: fea444d53b8836f4e9c4866713a9610c - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore29.png' with importer (TextureImporter)
+Imported 'GUID: fea444d53b8836f4e9c4866713a9610c' -> (Import Result ID: '305be1f399def56d4a911209e0b222f0') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=b887faf55e6c215f72427e0a84d0b453 DependenciesID=c3d3062d8413a9b72f5b70a62ba5b084 StaticDependenciesID=cd4244ad9f49de624920450a49a8a2b6 
+Importing 'GUID: af6b86ae4adb8124482d90ee68d2baa0 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore5.png' with importer (TextureImporter)
+Imported 'GUID: af6b86ae4adb8124482d90ee68d2baa0' -> (Import Result ID: '25f4b0aede78ca9187456a7a11a9db11') in 0.009 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2da6392a6503816c98997fd803f111b4 DependenciesID=d5bd7b8a60d1cbea421b02ebb8e3a78e StaticDependenciesID=2465015fb0304638e26e5f381838694b 
+Importing 'GUID: bf7e42c910917b343ba87b071c52b663 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge27.png' with importer (TextureImporter)
+Imported 'GUID: bf7e42c910917b343ba87b071c52b663' -> (Import Result ID: '471885d535259616b3facb4db8872d34') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=73c2ff0085c3ed8f58949ec51e6d2500 DependenciesID=7434acd16c035c420c8905f77718b3ea StaticDependenciesID=22f93d35cc21f230052225c45ba982e3 
+Importing 'GUID: ef5924b9a723df94198f5ffdb99ea009 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge17.png' with importer (TextureImporter)
+Imported 'GUID: ef5924b9a723df94198f5ffdb99ea009' -> (Import Result ID: '9394e0a06e1d9d872b00776587063b90') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=eeb2bc436e8c1cb765a8b635a96db6ae DependenciesID=272a62f57f62d7a2973ab3c6294d2b08 StaticDependenciesID=72a80387f4262708ed1a4753b30263c7 
+Importing 'GUID: ff7cf70ed6ea7eb4c98d35b5a3065697 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/DirtEdge18.png' with importer (TextureImporter)
+Imported 'GUID: ff7cf70ed6ea7eb4c98d35b5a3065697' -> (Import Result ID: '974fc982652dea353f0bab6f0a3ce0d6') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6027fadece22c4a68173d1b95d1913c2 DependenciesID=5615cd735bbfd239472a003dfa15e738 StaticDependenciesID=fff3a700d0b33eb8fac20d52fa65ce02 
+Importing 'GUID: ffdc458878439524db05d6f4a516d654 - Path: Assets/Sapphire/Art/World/SlimeKingdom/SeamlessV5/Shore22.png' with importer (TextureImporter)
+Imported 'GUID: ffdc458878439524db05d6f4a516d654' -> (Import Result ID: 'c7297ab6a39722030fdd0f0536fb24a8') in 0.011 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=711c41f2b412581f86e2668f994a3cc0 DependenciesID=1cdc86ff5149d1a84a1d8752ae484b87 StaticDependenciesID=6d842a0e32d0b847fdc6f211b24c98f6 
+
+Asset Pipeline Refresh (id=4a7a8728daee9fc48a30c6ff111af944): Total: 0.795 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=64 (actual=64, local cache=0, cache server=0)
+		Asset DB Process Time: managed=13 ms, native=769 ms
+		Asset DB Callback time: managed=8 ms, native=3 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=388, non-scripts=733
+		Asset File Changes: new=0, changed=64, moved=0, deleted=0
+		Scan Filter Count: 0
+	ApplyChangesToAssetFolders: 0.141ms
+	Scan: 10.551ms
+	Collect global state as custom dependencies: 0.804ms
+	OnSourceAssetsModified: 0.646ms
+	CategorizeAssets: 1.659ms
+	ImportOutOfDateAssets: 744.692ms (2.136ms without children)
+		ImportManagerImport: 737.820ms (2.369ms without children)
+			UpdateCategorizedAssets: 0.398ms
+		UnloadImportedAssets: 0.124ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.097ms
+		ImportSchedulerStart: 4.507ms
+	PostProcessAllAssets: 10.170ms
+		XRBuildSystem.XRAssetImported 0.408ms
+		ShaderAssetModifiedCallback 0.108ms
+		PostProcessCallbackCreateDeferredMaterials 0.085ms
+		RaytracingShaderImportPostprocess 0.068ms
+		ComputeShaderImportPostprocess 0.061ms
+		SpeedTreeImporter.PostprocessAllAssets 0.051ms
+		MonoPostProcessAllAssets: 7.030ms
+			AssetPostprocessor.OnPostprocessAllAssets 2.987ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 1.986ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.969ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.290ms
+			AssetChangedListener.OnPostprocessAllAssets 0.244ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.175ms
+			SyncVS.PostprocessSyncProject 0.053ms
+	PostAssetChangesProfiler: 1.196ms
+	UnloadStreamsBegin: 0.077ms
+	PersistCurrentRevisions: 0.444ms
+	Untracked: 21.531ms
+
+Sharp RPG-Maker style edges generated!
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TileSmoother:GenerateEdges () (at Assets/Sapphire/Editor/TileSmoother.cs:19)
+
+(Filename: Assets/Sapphire/Editor/TileSmoother.cs Line: 19)
+
+Batchmode quit successfully invoked - shutting down!
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-darac-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-darac channel disconnected successfully.
+Lingering sessions upon destruction of worker manager
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+CodeReloadManager destroyed
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0

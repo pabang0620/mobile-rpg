@@ -1,0 +1,599 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Channel LicenseClient-darac doesn't exist
+Built from '6000.5/staging' branch; Version is '6000.5.9f1 (b57deb96f08d) revision 11894251'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.22631) Core' Language: 'ko' Physical Memory: 32469 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+System  architecture: x64
+Process architecture: x64
+Date: 2026-09-20T12:27:03Z
+[Licensing::Module] Successfully launched the LicensingClient (PId: 12012)
+
+COMMAND LINE ARGUMENTS:
+C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Unity.exe
+-batchmode
+-quit
+-projectPath
+C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client
+-executeMethod
+Sapphire.EditorTools.SapphireSceneBuilder.BuildSlimeKingdomScene
+-logFile
+C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\unity_build_slime_only.log
+Successfully changed project path to: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client
+C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-remapper-allocator-initial-capacity=32768"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [9872]  Target information:
+
+Player connection [9872]  * "[IP] 172.30.1.49 [Port] 55504 [Flags] 2 [Guid] 4095827607 [EditorId] 4095827607 [Version] 1048832 [Id] WindowsEditor(7,SHIN) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [9872] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [9872] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-35356" after 0.3 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-darac" at "2026-09-20T12:27:04.1466442Z"
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 12012, path: "C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/Licensing/Client/Unity.Licensing.Client.exe")
+[Licensing::Module] LicensingClient has failed validation; ignoring
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              76ec0829a43748f1948bedcb9cb5bcfa
+  Correlation Id:          f0a5005fb29c956e9f73fe6bb17f3b1d
+  External correlation Id: 4995343486837988305
+  Machine Id:              5e3iIbZGEVR5VxgYE89BuUpMSg4=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-darac" (connect: 0.57s, validation: 0.21s, handshake: 0.05s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-darac-notifications" at "2026-09-20T12:27:04.410726Z"
+[Licensing::Module] Connected to LicensingClient (PId: 12012, launch time: 0.02, total connection time: 0.83s)
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: F4-UT2P-JK6J-CVKP-3GZX-XXXX
+  Product: Unity Personal
+  Type: ULF
+  Expiration: 2026-10-27T13:24:53Z
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.89s
+[Licensing::Module] Licensing is initialized (took 0.42s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Initialize engine version: 6000.5.9f1 (b57deb96f08d)
+[Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client/Assets
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        NVIDIA GeForce RTX 4070 SUPER (ID=0x2783)
+    Vendor:          NVIDIA
+    VRAM:            11997 MB
+    App VRAM Budget: 11229 MB
+    Driver:          32.0.15.9186
+Initialize mono
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56356
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.9f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.001696 seconds.
+Native extension for WindowsStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.467 seconds
+Domain Reload Profiling: 960ms
+	BeginReloadAssembly (132ms)
+		CreateAndSetChildDomain (14ms)
+	RebuildCommonClasses (5ms)
+	RebuildNativeTypeToScriptingClass (17ms)
+	initialDomainReloadingComplete (63ms)
+	LoadAllAssembliesAndSetupDomain (275ms)
+		LoadAssemblies (116ms)
+		AnalyzeDomain (205ms)
+			TypeCache.Refresh (204ms)
+				TypeCache.ScanAssembly (190ms)
+	FinalizeReload (468ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (82ms)
+			ProcessInitializeOnLoadAttributes (85ms)
+			ProcessInitializeOnLoadMethodAttributes (236ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 41 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.inputsystem@1.20.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.inputsystem@7a4e1a2a8194)
+  Built-in packages:
+    com.unity.test-framework@1.7.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.ugui@1c4864518158)
+    com.unity.multiplayer.center@1.0.1 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.multiplayer.center@b860850997d0)
+    com.unity.modules.accessibility@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.particlesystem)
+    com.unity.modules.physics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physics)
+    com.unity.modules.physics2d@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physics2d)
+    com.unity.modules.physicscore2d@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.screencapture)
+    com.unity.modules.terrain@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.xr)
+    com.unity.modules.subsystems@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.modules.hierarchycore)
+    com.unity.ext.nunit@2.1.0 (location: C:\Users\darac\OneDrive\Desktop\games\mobile-rpg\client\Library\PackageCache\com.unity.ext.nunit@44f7d31723bd)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+Starting: C:\Program Files\Unity\Hub\Editor\6000.5.9f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 2s27ms
+[329/332    1s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(493,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(536,38): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(545,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+[330/332    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[331/332    0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (1.97 seconds), 3 items updated, 332 evaluated
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(493,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(536,38): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets\Sapphire\Editor\ArtImportConfigurator.cs(545,13): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Total cache size 9894044
+Total cache size after purge 9894044, took 00:00:00.0167265
+AssetDatabase: script compilation time: 2.604635s
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.473 seconds
+Domain Reload Profiling: 1020ms
+	BeginReloadAssembly (253ms)
+		DisableScriptedObjects (53ms)
+		CreateAndSetChildDomain (40ms)
+	RebuildCommonClasses (8ms)
+	RebuildNativeTypeToScriptingClass (16ms)
+	initialDomainReloadingComplete (50ms)
+	LoadAllAssembliesAndSetupDomain (218ms)
+		LoadAssemblies (220ms)
+		AnalyzeDomain (40ms)
+			TypeCache.Refresh (25ms)
+				TypeCache.ScanAssembly (20ms)
+			BuildScriptInfoCaches (13ms)
+	FinalizeReload (474ms)
+		SetupLoadedEditorAssemblies (0ms)
+			BeforeProcessingInitializeOnLoad (93ms)
+			ProcessInitializeOnLoadAttributes (106ms)
+			ProcessInitializeOnLoadMethodAttributes (70ms)
+			AfterProcessingInitializeOnLoad (6ms)
+		AwakeInstancesAfterBackupRestoration (33ms)
+Starting new worker id: 0 with log in C:/Users/darac/OneDrive/Desktop/games/mobile-rpg/client/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=bfd39000064df8d4098c4ade2b272ac8): Total: 4.007 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=688 ms
+		Asset DB Callback time: managed=83 ms, native=22 ms
+		Scripting: domain reloads=1, domain reload time=585 ms, compile time=2607 ms, other=18 ms
+		Project Asset Count: scripts=388, non-scripts=737
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokePackagesCallback: 16.342ms
+	ApplyChangesToAssetFolders: 0.473ms
+	Scan: 48.949ms
+	Collect global state as custom dependencies: 10.799ms
+	OnSourceAssetsModified: 0.653ms
+	CategorizeScriptCompilationAssets: 9.443ms
+	ProcessAssetsWithTransientArtifactChanges: 17.396ms
+	CategorizeAssets: 8.435ms
+	CompileScripts: 2607.434ms
+	ImportOutOfDateAssets: 533.588ms (478.652ms without children)
+		UnloadImportedAssets: 0.177ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.141ms
+		ImportSchedulerStart: 54.615ms
+	PostProcessAllAssets: 86.123ms
+		VCAutoAddAssetPostprocess 2.146ms
+		XRBuildSystem.XRAssetImported 0.126ms
+		PostProcessCallbackCreateDeferredMaterials 0.052ms
+		MonoPostProcessAllAssets: 83.155ms
+			AssetPostprocessor.OnPostprocessAllAssets 35.534ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 8.895ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 7.642ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 7.270ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 1.887ms
+			AssetChangedListener.OnPostprocessAllAssets 1.529ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 1.411ms
+			SyncVS.PostprocessSyncProject 1.246ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.947ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.734ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.681ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.592ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.368ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.361ms
+			SkillVfxImporter.OnPostprocessAllAssets 0.304ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.270ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.267ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.264ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.250ms
+			AssetEvents.OnPostprocessAllAssets 0.228ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.159ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.149ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.144ms
+			WarriorSkillVfxImporter.OnPostprocessAllAssets 0.131ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.126ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.080ms
+			AudioContainerPostProcessor.OnPostprocessAllAssets 0.067ms
+	PostAssetChangesProfiler: 5.588ms
+	UnloadStreamsBegin: 1.136ms
+	GenerateScriptTypeHashes: 1.224ms
+	GenerateScriptTypeSerializationHashes: 2.472ms
+	Untracked: 655.673ms
+
+Application.AssetDatabase Initial Refresh End
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.02 seconds
+Scanning for USB devices : 23.357ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-Sapphire RPG
+Unloading 4 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 1383 unused Assets / (1.2 MB). Loaded Objects now: 2169.
+Memory consumption went from 223.9 MB to 222.7 MB.
+Total: 7.192300 ms (FindLiveObjects: 0.187200 ms CreateObjectMapping: 0.541800 ms MarkObjects: 5.725900 ms  DeleteObjects: 0.735200 ms)
+
+Unloading 1 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 0 unused Assets / (2.2 KB). Loaded Objects now: 2171.
+Memory consumption went from 217.1 MB to 217.1 MB.
+Total: 6.053700 ms (FindLiveObjects: 0.107300 ms CreateObjectMapping: 0.086900 ms MarkObjects: 5.853600 ms  DeleteObjects: 0.004800 ms)
+
+Importing 'GUID: 4bb7fd91eb00c2d46a416aad1eec7f17 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 4bb7fd91eb00c2d46a416aad1eec7f17' -> (Import Result ID: 'c183a7997f1ec0bddd50f95e091af9dd') in 0.004 seconds [static dependencies only]. Details - ImportResultOutputID=46004195c84a0f444ffeea5cc32fabf6 DependenciesID=a544784de472996c5c7f346cbe497f43 StaticDependenciesID=fa9ac211e20b4a57daf944904ee4ef5d 
+Asset Pipeline Refresh (id=6e12b7b34c31170449392220873162d1): Total: 0.045 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 25fe6a42efa5b754fb9789e50e8e37b7 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 25fe6a42efa5b754fb9789e50e8e37b7' -> (Import Result ID: 'e53527b6d259255f82ba67d583d63e59') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=83e9a8900be546af6d7796fde96618d4 DependenciesID=a1481ac8769fa476294c09048fe63a3c StaticDependenciesID=883ad240a6b91b7ebeced52ee3143564 
+Asset Pipeline Refresh (id=d174e5471448c7047a3b17cee185ee46): Total: 0.022 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a90c524417510534d823eaa0ede7d6c9 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a90c524417510534d823eaa0ede7d6c9' -> (Import Result ID: '4846307d935178627b1f5ffb5917406c') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=18f24a0304956c9d96f8c5b2452c4a61 DependenciesID=a31ef951f347173a4e27b3ea01edc0fb StaticDependenciesID=7e4fb110995a7621d6f659c831dd088f 
+Asset Pipeline Refresh (id=60053c550c8b26846a6c5660135284d4): Total: 0.024 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: f54ac1eb3435a2648b61d99ba1731f1e - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_3.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f54ac1eb3435a2648b61d99ba1731f1e' -> (Import Result ID: '591ab663690b5ab30b99602bc6e8c450') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=ccb43cf57945da13200698d012479432 DependenciesID=bead60c101532b6c5239c0f44cf2d7e0 StaticDependenciesID=d65b2be03dfb9b18fdc6c2b9d73b8f93 
+Asset Pipeline Refresh (id=54403284cb9b3de47a7181b31a823206): Total: 0.022 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: dfd3424b92b9b3e4a806407322206f9e - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_4.asset' with importer (NativeFormatImporter)
+Imported 'GUID: dfd3424b92b9b3e4a806407322206f9e' -> (Import Result ID: '66952c2bc61f92ef28d90e8bf7ba48f8') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=d67eb65158d5515029a7d36aef47e0f3 DependenciesID=9d3bcea90f8399a274bfaf9408dc65d7 StaticDependenciesID=a9022ed09926e93f3c396230f48ba999 
+Asset Pipeline Refresh (id=c06760a0623a97e49bd574db1e26a701): Total: 0.022 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 276d4838096e1534a864e3999c675297 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_5.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 276d4838096e1534a864e3999c675297' -> (Import Result ID: '3ba67a505e2b18ce3c1480a2baefb0b2') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=7161dc09f890e90e541f181a5b3ef458 DependenciesID=c74a481f12e41fb1c1b4b52f3de205ab StaticDependenciesID=3bf128f469b3a401e888a36f751233b1 
+Asset Pipeline Refresh (id=361f1d0f74911324f84bef36e8b4b63a): Total: 0.022 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 8a328795693db58408c60737e7e46e06 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_6.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 8a328795693db58408c60737e7e46e06' -> (Import Result ID: 'aa0456513c8586e09eb7b9605905418c') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=0bc69cfa4740f43e78f69e0922cd50eb DependenciesID=6cd06f21088a5f5d9d5995740910b027 StaticDependenciesID=ad16c919bf833225c75db64c321ef1ee 
+Asset Pipeline Refresh (id=916e6a1eb7cdb5e4f8e1f3c0e298ac82): Total: 0.025 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 2686e917be7fa344aa93cd88d1cbab64 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_7.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2686e917be7fa344aa93cd88d1cbab64' -> (Import Result ID: 'f7e1ec1e6f9f900d906849d59b6501f4') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=60c0ca3aab1c4800d25aa66af53aa1a1 DependenciesID=a703a64da008f1e7e605cfae8a417f4c StaticDependenciesID=55ad87fbade09c8da91872cd0d750d6c 
+Asset Pipeline Refresh (id=96f6e8e89f637d945b5f27811377cc54): Total: 0.022 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 2df02d91faf9a3e46b12b43d846aed15 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_8.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2df02d91faf9a3e46b12b43d846aed15' -> (Import Result ID: '4d64d1a85ae75d2ff3c27e4d5dfa2efe') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f1917d768ec6b67864e9e95830d2e853 DependenciesID=365643382b4bd888d96c47afa7feabed StaticDependenciesID=f794cc1ff17f2db2f63571b09172e029 
+Asset Pipeline Refresh (id=86a789e9e5da4914e91ace021e359d36): Total: 0.023 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: c68e1daa1ab7c11428e6cf76b678f90e - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_9.asset' with importer (NativeFormatImporter)
+Imported 'GUID: c68e1daa1ab7c11428e6cf76b678f90e' -> (Import Result ID: '263257df51be34293fcbd80c7b369f8e') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=526fa978e5ee2a26f018cef47cd5d4e6 DependenciesID=ada23ba0cd9581c4f9d933d2a6feab4c StaticDependenciesID=13128ea98ee37758ea0d0aa30dedc090 
+Asset Pipeline Refresh (id=7e3f00d66c5206d4681f445686769fc1): Total: 0.029 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 31ef638a228180b44b3de415673ad3af - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_10.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 31ef638a228180b44b3de415673ad3af' -> (Import Result ID: '87c0957d92d279896f63d2714c16a441') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=273605ca6fcff32e13f841a95094e0eb DependenciesID=d2d76ed25c514123c6d7ebb5b2f3f22e StaticDependenciesID=01cbe0a5a62279802f2a74f8edf3f51d 
+Asset Pipeline Refresh (id=5dfb0b5ecac27df4d82d13b12da2b686): Total: 0.041 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 55ea69d72f81aaa4cafe840fc22eef02 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_11.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 55ea69d72f81aaa4cafe840fc22eef02' -> (Import Result ID: '699b9315b40697fafa1cc4fd317ea14f') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=73a33776144538e76312a5ff88139c02 DependenciesID=d003e1bea5a45f03e18f327409644a05 StaticDependenciesID=b006dd8069b7af6fe4ea32f585d76c72 
+Asset Pipeline Refresh (id=6e1a9ca952906f24a85af557bc0473a8): Total: 0.035 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 8eec17ef8ea29d349a7783dbb9bc4137 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_12.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 8eec17ef8ea29d349a7783dbb9bc4137' -> (Import Result ID: '8bcd3526a6ad5bbea447827a770b60ee') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=363494bb4cfc2865580bce3e8d7232e2 DependenciesID=9d78bd12779f1aa4cc2d1864f183a451 StaticDependenciesID=d1f3149f099df4ce31e222148843e6b0 
+Asset Pipeline Refresh (id=14c5337099ce32b41b00b36e6dbc6df9): Total: 0.031 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: ab1c6c3be19050d47b701dabd964d465 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_13.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ab1c6c3be19050d47b701dabd964d465' -> (Import Result ID: '2e5afc7aa50336934aa400989dd5ef70') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=f0c9ea466f02d24bef88be56fc896ba8 DependenciesID=c9098850ebba2a44ba4d9592e2d8b6b4 StaticDependenciesID=e9655d7619f71bfb25273132f35e45e3 
+Asset Pipeline Refresh (id=3012ac8297e6ae742a8217d8ad888771): Total: 0.026 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 2c653a02ce93e274cb32810a535b829e - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_14.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2c653a02ce93e274cb32810a535b829e' -> (Import Result ID: '8b010cc5a77004bb9f9bc731c41ca5c0') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=dd613838cac4ea6740f3676eb5bd2919 DependenciesID=828536e347038a1455453f87f76d69e4 StaticDependenciesID=b91ce607309b5e015effe9847c37cc8a 
+Asset Pipeline Refresh (id=ca73ace188a54c7438df6255cdc2d5ea): Total: 0.035 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 4362625ca03a2ce4d8d764d8d7e79120 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_15.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 4362625ca03a2ce4d8d764d8d7e79120' -> (Import Result ID: '6e5e62df33203b9f35b4c71b3a4d3a81') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=8275f0283069b9855ce7843731386629 DependenciesID=4c60ff69871b7c631f87b94675373f23 StaticDependenciesID=696bbd3826e457afb19fcaad7615e048 
+Asset Pipeline Refresh (id=929d10658856f124b84247383b2454aa): Total: 0.031 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 3d6ed85dd53d9ae40ab7770f59b99e4a - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_16.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 3d6ed85dd53d9ae40ab7770f59b99e4a' -> (Import Result ID: '85ad0b6b1c96b92327acd980c65ac03a') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=4e185c70f639be8eb40ef3e34cf1ecbe DependenciesID=873188080cbca8f09f74f3832783830b StaticDependenciesID=10f028177267024099843063416662d1 
+Asset Pipeline Refresh (id=1772bca2de6770640a8a25cf7afdaccf): Total: 0.029 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 5ce4151b71ae27a4699a094d0df48f33 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_17.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 5ce4151b71ae27a4699a094d0df48f33' -> (Import Result ID: '1248dc497814b4a5013de8598896b3b9') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=1cc0e81d62df0defe84353eb072ea374 DependenciesID=9b9fd0890734fb12b9915addd39e4b54 StaticDependenciesID=dedaf8eacda6d2bcf26fea8a76f17d98 
+Asset Pipeline Refresh (id=3ae53726d7085744b902a31eaadd2d56): Total: 0.029 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: bf552cc0cf507084aab26c23bba5d403 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_18.asset' with importer (NativeFormatImporter)
+Imported 'GUID: bf552cc0cf507084aab26c23bba5d403' -> (Import Result ID: '0eedbc6c503dcf65bd4a37a6d456da4a') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=6e93dd54c1220de801d724f773ad38ef DependenciesID=93c61652ea960d4f14ad9de525df2679 StaticDependenciesID=9dc9b8a3fd9faecc2690f260d5a006b0 
+Asset Pipeline Refresh (id=1a50f9dd12630d944826517a558c8b1c): Total: 0.031 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 346c3ec41beba304e8dda63a3f52595d - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_19.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 346c3ec41beba304e8dda63a3f52595d' -> (Import Result ID: 'b8a8015338839de67962fd0f3d04434f') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=2ff318be7ef8019cc7f563932bc7b0e3 DependenciesID=3b38f162be80fb435c60394d553c8f60 StaticDependenciesID=9b00a94554caa4954e7dd41f5e3d87dc 
+Asset Pipeline Refresh (id=20c56f7da8c0fc143a509a07853068cc): Total: 0.028 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 01f1bf144aa74454681ec8795e3ebf67 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_20.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 01f1bf144aa74454681ec8795e3ebf67' -> (Import Result ID: 'f2832a7687fcadda92e1919a3a141e57') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=6b7dfd59ac368c36e90fda8acd268ed0 DependenciesID=6647868a599032c560339ef0a98b0668 StaticDependenciesID=d2edbb41fa5e3728aa9230dda2efbb98 
+Asset Pipeline Refresh (id=a00c4e989b4fb9a4b97fbb5f6de91ebd): Total: 0.027 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 88812836db9b8284f8fdb472a20208c5 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_21.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 88812836db9b8284f8fdb472a20208c5' -> (Import Result ID: 'f0dee71258cf25df85e888755505164c') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=3fa368c2f6c16fdee744386831c20c42 DependenciesID=79fdc5392154d14ec6ee85c5567037f0 StaticDependenciesID=bf87c45532b615cd781494e3b2db7c10 
+Asset Pipeline Refresh (id=7813546ffe7e4fe47b58e36b0b41715f): Total: 0.028 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 92f49ddcbce042f49912200705acf42d - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_22.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 92f49ddcbce042f49912200705acf42d' -> (Import Result ID: '43acd573d53534989e1e39d4e55c3b47') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=0bf7630906b2b769b9d8a605d7ff0429 DependenciesID=694d0ab1828617d2d61bf925a2347791 StaticDependenciesID=4cdeeb1d78a54d33db38a682bbd5bd37 
+Asset Pipeline Refresh (id=5469e27fd11b36e4bba2274ea40c8f13): Total: 0.032 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: ccc8f4bbf0382d04b8d6c4543ece4b8a - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_23.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ccc8f4bbf0382d04b8d6c4543ece4b8a' -> (Import Result ID: 'f69452b4e382419e29ca62783ad45791') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=dc3b7342af360419fe8012eeee5065d7 DependenciesID=3648132ade7346f08037d67af8d30e97 StaticDependenciesID=52931e8ec2fe334b8772f2d1aff3bf2b 
+Asset Pipeline Refresh (id=88e4fdddf28f91d499a28101c510f486): Total: 0.028 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 93a90d14c8adbde459e4759247c05a2b - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_24.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 93a90d14c8adbde459e4759247c05a2b' -> (Import Result ID: '8217cacb9d9450c35a860484f1b05a46') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=5793c2c85554a935cf38d39168b083de DependenciesID=c326efc465c73a3d3ff98989d60da2cf StaticDependenciesID=0454e1c3117e0fd04dfab3a2a36a505c 
+Asset Pipeline Refresh (id=856938e50d3c9c045b2709a1ef6305fb): Total: 0.026 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 64f07fecf9d474f49ac8144601152557 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_25.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 64f07fecf9d474f49ac8144601152557' -> (Import Result ID: '6d444be7b396badcac7526cbf0573d7e') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=af01a7b85c53416cc0b435eef525f098 DependenciesID=a01c7001a8e413b690e91a2f76028030 StaticDependenciesID=825088da2ba1938c4f294307eec91a75 
+Asset Pipeline Refresh (id=e56a0c52aaa9603408817e0ff8200604): Total: 0.026 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: a59f8071e75211549b480e83daf00080 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_26.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a59f8071e75211549b480e83daf00080' -> (Import Result ID: '28719155561107dbab2bc9d14fa19226') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=e80be8be6435b944f07e590f3678be4f DependenciesID=34b02219f429c7ff33cc9cca655c162a StaticDependenciesID=062669794f5adc6ede78ac7f75be2e42 
+Asset Pipeline Refresh (id=f6b42d2a9e12c8c4a922c14e3ae52bc1): Total: 0.033 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: efc49a3c765665e45a23b2d862819616 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_27.asset' with importer (NativeFormatImporter)
+Imported 'GUID: efc49a3c765665e45a23b2d862819616' -> (Import Result ID: '32681cec0d21c66a97871a6591352442') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=8b2774a40f2a2dab9a1ecc1160922e36 DependenciesID=23c2744c03488e14ab5e5bd46121cbac StaticDependenciesID=89c0ee5f8ab26678c9a1455c7ff76629 
+Asset Pipeline Refresh (id=972e5b2da4216c142a03fe9e9c1e8343): Total: 0.034 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: ba6995081473a324297ef9736135f6a4 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_28.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ba6995081473a324297ef9736135f6a4' -> (Import Result ID: 'ea6c0313388dda04b5fb54c216a8f589') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=7632a335501f7aa82e836ace5be4bc93 DependenciesID=0191dd13ef0cdcd574c53c6a1110f989 StaticDependenciesID=e874dc3febdf1e4be3ceec1f74762584 
+Asset Pipeline Refresh (id=c29a8bd47ba90db42bb0c916976a05aa): Total: 0.031 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 4224d09adbc670845b41a63aa168b458 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_29.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 4224d09adbc670845b41a63aa168b458' -> (Import Result ID: '06ec1d2223c7e6d746a1fc4a10dc74e2') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=9bffddeefadacd904e6c03663df7d6a5 DependenciesID=2bd7f79693552cadb38b6ac330161869 StaticDependenciesID=7bb1a5cafbf71d5bb9cdd27b47d740e5 
+Asset Pipeline Refresh (id=94d8da8cbb1bd5042a2f6b776e032be7): Total: 0.036 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 51717fc13877d8349bcea07dad193937 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_30.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 51717fc13877d8349bcea07dad193937' -> (Import Result ID: 'ff2cea97107defacfdda6eadc8a39a82') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=70a9ec18a0a62ad4eea9c9e748f60f7c DependenciesID=0fbf87f10760e784237e61af3ce1b54e StaticDependenciesID=d69a9f9479f19f5efe46e674ec5e9313 
+Asset Pipeline Refresh (id=13bce67f2af261e41a15b4f65260434b): Total: 0.043 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d97606b8546e1c345beb714b3cc3bec0 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_31.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d97606b8546e1c345beb714b3cc3bec0' -> (Import Result ID: '20943dd0cb657b57ea6ff1fa284d7169') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=2899b8d44320356ab92d8d8a94f84f93 DependenciesID=c81cda065c8235ee8e73f53eecc47a53 StaticDependenciesID=8c4ecedb1d86caa8af5547a2e946d93e 
+Asset Pipeline Refresh (id=77cba505145714243ad37fc0553e391d): Total: 0.034 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 00b1810a25c1d15419fcf9080b638aec - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_15.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 00b1810a25c1d15419fcf9080b638aec' -> (Import Result ID: 'e3e0c0bf906f1d1e055251cc8bd182d0') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4564e10895d901e353f442223e5051ec DependenciesID=b4e6ef1af6ff81a1f65b81f7285bfa7a StaticDependenciesID=03665e0b4ef8169c748960e68920f4da 
+Importing 'GUID: 108d9404f5e7cd344a9b5a97eaff49e8 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_20.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 108d9404f5e7cd344a9b5a97eaff49e8' -> (Import Result ID: '0889a32b4d1b3c04ce02cae988534cbb') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f1bd64a1d2c85b97941a56b1c8a95bb2 DependenciesID=a77e40e18a6d4e51937cd69196184493 StaticDependenciesID=d0ab84cff6eb22e8c956024996fd09fc 
+Importing 'GUID: a0203f98bbc272f4b8770112f8b8610f - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_18.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a0203f98bbc272f4b8770112f8b8610f' -> (Import Result ID: 'e80112080181a6c22a0f34e418a28d11') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=5acf76c715389654d97015a97a618637 DependenciesID=75de029902518d7215d1be190ea54a62 StaticDependenciesID=e42370885ab6190240f0dca986718034 
+Importing 'GUID: a02b76a1300705c4c92a08fec86c4f18 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Water_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a02b76a1300705c4c92a08fec86c4f18' -> (Import Result ID: 'e6be4e33c5fa138874be5041f74d9156') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=7dcfa37005c6655471c88e9887e8f5b1 DependenciesID=366d1c0b64ccbdca857a64b655589452 StaticDependenciesID=50b1259a0a73e23f539fbca05d86d616 
+Importing 'GUID: c0596d520b7267d44a4ced2c9ee11cd5 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_23.asset' with importer (NativeFormatImporter)
+Imported 'GUID: c0596d520b7267d44a4ced2c9ee11cd5' -> (Import Result ID: 'bfb2bcb6c421ceff9f0194765aad8831') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=559ae252dcf5755c29a05e90b2a16f05 DependenciesID=a8aa4284f83bd4a0293f05cadd2e89e5 StaticDependenciesID=89d809fcd7b70479db5b48742d9f8c61 
+Importing 'GUID: c05f7ce61d20ca3499444bd857c867d4 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Dirt_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: c05f7ce61d20ca3499444bd857c867d4' -> (Import Result ID: '65ed057d1a76370c037902bf54ec5c52') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=2d19716fa945fdc346272c25f774fd43 DependenciesID=846b0d7a349d712efbea12a7f106997e StaticDependenciesID=e36a3d0b37a282ad16fb9d48ffaa1162 
+Importing 'GUID: 01f1bf144aa74454681ec8795e3ebf67 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_20.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 01f1bf144aa74454681ec8795e3ebf67' -> (Import Result ID: '721b5a58783d6e95f202a93da1bbd403') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=6b7dfd59ac368c36e90fda8acd268ed0 DependenciesID=c6d2a88aef5b32a5366fea722a0289a5 StaticDependenciesID=c66aaf5e74491ac857b31566bc9d9a63 
+Importing 'GUID: 217485a20f6205f40964f4b8a26beb50 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Grass_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 217485a20f6205f40964f4b8a26beb50' -> (Import Result ID: '1624ae3aabf607a31bd98d4430929a76') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=358137b689c047f0b55e9c9bf1b95b96 DependenciesID=b73645088963fd6e6bca8ce6b1f0f88d StaticDependenciesID=4828d302260c6b5cd3289a0909940fd3 
+Importing 'GUID: 31ef638a228180b44b3de415673ad3af - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_10.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 31ef638a228180b44b3de415673ad3af' -> (Import Result ID: '81459c387e47a9cf90501f652a10259b') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=273605ca6fcff32e13f841a95094e0eb DependenciesID=212645b3d888542763d08ea6d053f70d StaticDependenciesID=4d678ab172a76070d72c79ee43219c02 
+Importing 'GUID: 51717fc13877d8349bcea07dad193937 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_30.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 51717fc13877d8349bcea07dad193937' -> (Import Result ID: '8d18bdd32dc5357655fffbc47c01fff1') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=70a9ec18a0a62ad4eea9c9e748f60f7c DependenciesID=a302019364c411e715b0e626917ecad5 StaticDependenciesID=d4c2ff6230711e1aa6006520d461b69b 
+Importing 'GUID: 519489caefd64ec439334b5e88d27013 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_8.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 519489caefd64ec439334b5e88d27013' -> (Import Result ID: '41bb2041520224849c140a534fd42393') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=07ff952b36ed6e3ac470305d6315a64b DependenciesID=abe49c8e2656fc780481ed8cf3f6179b StaticDependenciesID=7ca0aac7e1f71dfc634805f5cd1f9b30 
+Importing 'GUID: 516a159635474364eb2c529066cd72fc - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 516a159635474364eb2c529066cd72fc' -> (Import Result ID: 'd8901e7cb2c4343a0a8299610db26ffc') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=db87b099fc494597980518d3a707d527 DependenciesID=00a9f0f89b39294a5e70350b67303069 StaticDependenciesID=15f2a8543f98907dd0fef94a25579298 
+Importing 'GUID: f1cc342daba069a4e8e80a03015fd121 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Stone_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f1cc342daba069a4e8e80a03015fd121' -> (Import Result ID: '9547fbc452960bf2208db107d230826b') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=1ca3eea69147d96b28803e40ea7e3c8d DependenciesID=327e1bf9cc3a33f6aa9e1d2a1deacc0f StaticDependenciesID=fc3633cb831059c6f0815347ea863c5a 
+Importing 'GUID: 4224d09adbc670845b41a63aa168b458 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_29.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 4224d09adbc670845b41a63aa168b458' -> (Import Result ID: '91d740fac9953fbd58e5ae99102b1065') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=9bffddeefadacd904e6c03663df7d6a5 DependenciesID=a53fbf0509b9da774cb3cfc70c3921e2 StaticDependenciesID=42c9070df1a1990b872efa225c766008 
+Importing 'GUID: 92f49ddcbce042f49912200705acf42d - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_22.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 92f49ddcbce042f49912200705acf42d' -> (Import Result ID: 'fa26e7fe0cdd93d002ad4c4737485d12') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=0bf7630906b2b769b9d8a605d7ff0429 DependenciesID=2561d11b2bbbf4d301f080298630ba4d StaticDependenciesID=5639216554a10af9eadaf46014b01598 
+Importing 'GUID: d21aaf63fca0d25459c18fe3f9cab6db - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Stone_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d21aaf63fca0d25459c18fe3f9cab6db' -> (Import Result ID: 'ece945cf7bc526e3def67845c980b8cf') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=865f05b331b892b681968296b1fae451 DependenciesID=0032573ff46d83ae99096e02e793e68e StaticDependenciesID=11ed012b9980cb164dc1b69def721c22 
+Importing 'GUID: d2cec36f25834724ebd8003e1376e74d - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_26.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d2cec36f25834724ebd8003e1376e74d' -> (Import Result ID: 'd17265841fc0c5914e4eda7702e5399a') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=7731b197e775b342076b914b3d00dad6 DependenciesID=b6b7afbd94304ceaf5fcb2883cd4c252 StaticDependenciesID=dd7baa410ccce26fed3506edd8909757 
+Importing 'GUID: 4362625ca03a2ce4d8d764d8d7e79120 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_15.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 4362625ca03a2ce4d8d764d8d7e79120' -> (Import Result ID: '08851dd9cb0be3157ae20e049fe2a265') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=8275f0283069b9855ce7843731386629 DependenciesID=336aa6af104c1bee603e7fefe440b171 StaticDependenciesID=172a01d8c9bb72dd12def948e47ed1c0 
+Importing 'GUID: 7329bbc4fbfcf8c4e97c05a601100f85 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_13.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 7329bbc4fbfcf8c4e97c05a601100f85' -> (Import Result ID: 'c28261bc50283dff697fa614bee3fe9a') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=3ab7a3bb3f1efed16e1c6fb5479b5e1f DependenciesID=50e7d1844c93486b9d43121be8fdbfa9 StaticDependenciesID=bde9ef47cdf19398ab3bde26607ad20e 
+Importing 'GUID: 93a46686c16d3054c8e7496e784b3fc2 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_7.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 93a46686c16d3054c8e7496e784b3fc2' -> (Import Result ID: '8fd7c1b835b2e2266ef47f14c5da530c') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=e9c122430da7f9c00e6a98d54f5e85d3 DependenciesID=f06d36225f2e32f24c1e851edefdb10b StaticDependenciesID=a90641f8a8f6e87aa04de2ca2ec1ca05 
+Importing 'GUID: 93a90d14c8adbde459e4759247c05a2b - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_24.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 93a90d14c8adbde459e4759247c05a2b' -> (Import Result ID: '6e8760a8de76466d79ea2d36205b6cb9') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=5793c2c85554a935cf38d39168b083de DependenciesID=1630c9eb363f6e444cce5db6dcc5cd79 StaticDependenciesID=16598d8ad276c3e945621299906a9e94 
+Importing 'GUID: f3e4ba284cb50be4fb7057de1d22a65c - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_27.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f3e4ba284cb50be4fb7057de1d22a65c' -> (Import Result ID: '6b70bc591a37f701dc2773fc59e8f28d') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=70b557dd3025362f2ffa8b9c4ae17bcc DependenciesID=3652b5a4e981391d677a2da97dd24a93 StaticDependenciesID=6d038f2a8048ce7256f7cf1817d46f2b 
+Importing 'GUID: 346c3ec41beba304e8dda63a3f52595d - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_19.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 346c3ec41beba304e8dda63a3f52595d' -> (Import Result ID: 'eab961255347e8c6a6fe82cf844811b0') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=2ff318be7ef8019cc7f563932bc7b0e3 DependenciesID=b641b98edbeab9a52bbe6329ce644cc0 StaticDependenciesID=7a0c53008eb91734bd6bdb06e8dc406d 
+Importing 'GUID: 64f07fecf9d474f49ac8144601152557 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_25.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 64f07fecf9d474f49ac8144601152557' -> (Import Result ID: 'bc7b8f8b241eafb3b83abe43d8e125c6') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=af01a7b85c53416cc0b435eef525f098 DependenciesID=9651f045f8ae98bf47312b4eca9c3cbb StaticDependenciesID=07aca496bdd7741ec3357a55ce2c2959 
+Importing 'GUID: 641a64cf67934134c96e30209e9c827a - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 641a64cf67934134c96e30209e9c827a' -> (Import Result ID: '69fe7ff1f37634b4cb3b5d93f8d162da') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=5ada08f136e2cf4473d83ff12b020df7 DependenciesID=8dde66a165e27bbd822444bc53040f12 StaticDependenciesID=1b1793d6e4fa8b2af7b4eb01bbf06fed 
+Importing 'GUID: 25fe6a42efa5b754fb9789e50e8e37b7 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 25fe6a42efa5b754fb9789e50e8e37b7' -> (Import Result ID: '0df90af1b7e304dceda0aafa6aa47563') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=83e9a8900be546af6d7796fde96618d4 DependenciesID=aba49f784449586d12c6586f577ed15d StaticDependenciesID=1dd9f70fccb900e6edb5acd5d8ede058 
+Importing 'GUID: 55ea69d72f81aaa4cafe840fc22eef02 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_11.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 55ea69d72f81aaa4cafe840fc22eef02' -> (Import Result ID: '2fe5e7f3f1edd661dccf970254a66292') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=73a33776144538e76312a5ff88139c02 DependenciesID=c72587982835da5e78348e1f8982a3a2 StaticDependenciesID=42a3319ee33ac6bd66b906ef07afdf81 
+Importing 'GUID: 853e0f9cd6bb92d4783f32ade04670d5 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Dirt_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 853e0f9cd6bb92d4783f32ade04670d5' -> (Import Result ID: '0e54c5bb4794b96f0d0465f6d6b17504') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=6c12c3966ca05b26c749d952f7e84002 DependenciesID=9428268da10497d7d3652b9a105391aa StaticDependenciesID=51a5c0cfbcbadfb992df70ba38ed30a2 
+Importing 'GUID: a59f8071e75211549b480e83daf00080 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_26.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a59f8071e75211549b480e83daf00080' -> (Import Result ID: 'f8dfa4f263503215c41e1520cb53389c') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=e80be8be6435b944f07e590f3678be4f DependenciesID=f54266076a5580897659b4241979ad10 StaticDependenciesID=ea9659caebdc22fecc02e218c75af7c6 
+Importing 'GUID: f506f8e4c9140bc4fbc878a52d960cfa - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_17.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f506f8e4c9140bc4fbc878a52d960cfa' -> (Import Result ID: '875962a26fdf18b542cdce230aa40caf') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=1488aba0ef9a0abc8979b03ce2fb2b8b DependenciesID=5825f57b972bc9ea074d29b5a49f5690 StaticDependenciesID=b224f8cfbc87df8f53514502a5c67026 
+Importing 'GUID: f54ac1eb3435a2648b61d99ba1731f1e - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_3.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f54ac1eb3435a2648b61d99ba1731f1e' -> (Import Result ID: '049b568f95b250271afc1a8a6abf8dc7') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=ccb43cf57945da13200698d012479432 DependenciesID=2a77eeaed0eb1a431af901e6765fa4e3 StaticDependenciesID=75e7baabd87654b794f01097ec10e3c6 
+Importing 'GUID: 2686e917be7fa344aa93cd88d1cbab64 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_7.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2686e917be7fa344aa93cd88d1cbab64' -> (Import Result ID: '66bcca75fb91ff2c21108507bf58a555') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=60c0ca3aab1c4800d25aa66af53aa1a1 DependenciesID=32357558291c862a8d00be2171a2a717 StaticDependenciesID=f446a5927c6fe5fa1ffdb7d3df4a4844 
+Importing 'GUID: 36ce0cdb570b08d46b928c3bf7cd779b - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_6.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 36ce0cdb570b08d46b928c3bf7cd779b' -> (Import Result ID: '58d79e8932ace1323b2a759d7c9421d1') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=7e5f051f87a260e1b06f796dbb937535 DependenciesID=63fa4e25c258b999ab7e81851bf61af5 StaticDependenciesID=ca0e05f8ea2c7b82d49ac816f8de5bb6 
+Importing 'GUID: 66cdf9f01ba87ae4abd3eebbabce5a05 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_22.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 66cdf9f01ba87ae4abd3eebbabce5a05' -> (Import Result ID: 'c23959ba64917bf7844cc1ed9dae2e1f') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=e29a8e7fb809194a61cc016208fd04ee DependenciesID=753738e71281f09f3657487d8529b622 StaticDependenciesID=8373fce71d4513b0497af7edadfa54cc 
+Importing 'GUID: 86ad242169964134f946b04ccae2893f - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_5.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 86ad242169964134f946b04ccae2893f' -> (Import Result ID: '9a75af65dc4bc75bdfa7ef69643743c9') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=64eecf89b928cbadc8ba13684a8b7a72 DependenciesID=2f4f4a68ac84bb32b987f7962a089776 StaticDependenciesID=d88b838fa2d45c589b31cb29933f21fc 
+Importing 'GUID: c68e1daa1ab7c11428e6cf76b678f90e - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_9.asset' with importer (NativeFormatImporter)
+Imported 'GUID: c68e1daa1ab7c11428e6cf76b678f90e' -> (Import Result ID: 'f04acdaa737876ff04a84d07b293ca49') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=526fa978e5ee2a26f018cef47cd5d4e6 DependenciesID=970791ea964d64535c5fcb038cab15c5 StaticDependenciesID=426975acd75797ce1c4f78ec9ad386b0 
+Importing 'GUID: 276d4838096e1534a864e3999c675297 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_5.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 276d4838096e1534a864e3999c675297' -> (Import Result ID: '2090d115848e7c7e55656a34c924c426') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=7161dc09f890e90e541f181a5b3ef458 DependenciesID=9db6e5adad8ecd2ec08e5b17b790e736 StaticDependenciesID=c21e7bb265eae1b9ab5d5b7142b051bb 
+Importing 'GUID: a72bb2b657d8c3b48b48315a10f6c1a0 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_19.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a72bb2b657d8c3b48b48315a10f6c1a0' -> (Import Result ID: 'fab3020c34c2271104d84819341500b6') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=d5f57a3e4211871cb8470b1949f96784 DependenciesID=4826f69301cc17062a87986f485e21d6 StaticDependenciesID=3dca62bdcdb951b317cad5998d390913 
+Importing 'GUID: c71fc5ce80a516b4981da98ec9d153b5 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_30.asset' with importer (NativeFormatImporter)
+Imported 'GUID: c71fc5ce80a516b4981da98ec9d153b5' -> (Import Result ID: '0335532efc8066e1922845d8a54dd587') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f9f769c16305b0292e683d993b24561a DependenciesID=c6d52386e655ece4acc26e76fe0ab693 StaticDependenciesID=4b6622fffbf8962ed7d31b86b4c7fb34 
+Importing 'GUID: 88812836db9b8284f8fdb472a20208c5 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_21.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 88812836db9b8284f8fdb472a20208c5' -> (Import Result ID: 'aef5706a05c3931bc7c12f5733afe022') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=3fa368c2f6c16fdee744386831c20c42 DependenciesID=74fcb903a4cc45262eeeac4e8ba2a130 StaticDependenciesID=fc5e48042fb7af6c7a3a9d3a14e590f2 
+Importing 'GUID: 593e42e2283ff0142904caefebd9082e - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Dirt_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 593e42e2283ff0142904caefebd9082e' -> (Import Result ID: 'af8c5ffe250a7f2a442ea031ba896b4c') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=d0240da5db2b469b2e9a42dd643b598a DependenciesID=73175ede549b17fd92bde61f65063c73 StaticDependenciesID=a60b30c1221c248a12c8426a5a7b552d 
+Importing 'GUID: a90c524417510534d823eaa0ede7d6c9 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: a90c524417510534d823eaa0ede7d6c9' -> (Import Result ID: 'eb7d261c00b5b241893b063680f99295') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=18f24a0304956c9d96f8c5b2452c4a61 DependenciesID=5943deca887462b4fd9ec014901e0b16 StaticDependenciesID=646027c188baad7867f703963e0654ed 
+Importing 'GUID: d9346a56beb373544a89f158e1ef8422 - Path: Assets/Sapphire/Generated/Tile_SlimeBlocker.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d9346a56beb373544a89f158e1ef8422' -> (Import Result ID: 'eba0a457c7464282f2ee3af812d5b54a') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=28a32484e9ae533b7c9b70a40e233be4 DependenciesID=05f66ab356a2b5273686eaf8ea8a7cea StaticDependenciesID=82ff53026aa485340e87ac75df32c77f 
+Importing 'GUID: d97606b8546e1c345beb714b3cc3bec0 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_31.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d97606b8546e1c345beb714b3cc3bec0' -> (Import Result ID: '0de824c1bbb67831927b73f42d0e7443') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=2899b8d44320356ab92d8d8a94f84f93 DependenciesID=80fc3b542bcb2eb6c2b9191729520e3a StaticDependenciesID=ad9c0bb639e4d11df85794252ff66e9d 
+Importing 'GUID: f9764df9493932741942e1134663f2b1 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_31.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f9764df9493932741942e1134663f2b1' -> (Import Result ID: '463c26b5baf877e076f011479d67d941') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=94aa364c674677ea51ab16d74f1dd8b6 DependenciesID=e5e30823dac8d0035e8b893f87c01bec StaticDependenciesID=1850a57a9dda6b075e80eabe7fd00cf3 
+Importing 'GUID: 6a7f3cbb2b32f4344b9b954f178ff982 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_4.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 6a7f3cbb2b32f4344b9b954f178ff982' -> (Import Result ID: 'd5dccf672cb022a9b51cd864f1fb1d8b') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=b8058cb1d12b3274f0e42405356b46e3 DependenciesID=559b7db8a9d954c99c98a7e6422b1105 StaticDependenciesID=5277fad7732e98fad7857adcb5c34224 
+Importing 'GUID: 8a328795693db58408c60737e7e46e06 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_6.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 8a328795693db58408c60737e7e46e06' -> (Import Result ID: 'c0bd6ba9977fdb8fd6e5bd8a5c88b084') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=0bc69cfa4740f43e78f69e0922cd50eb DependenciesID=328a3f8830b47efa4072b24b45052183 StaticDependenciesID=8d65420b494ee9342e5771dfb339eac5 
+Importing 'GUID: ba6995081473a324297ef9736135f6a4 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_28.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ba6995081473a324297ef9736135f6a4' -> (Import Result ID: '42fdd5d398a91523244c654487ae3a41') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=7632a335501f7aa82e836ace5be4bc93 DependenciesID=515c92a9941287e4e0373d36f3cfebd9 StaticDependenciesID=19e9ae0ed41e0b7db38264038760a65c 
+Importing 'GUID: 0b1bfa6bd69a1834fb2d830f80745581 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 0b1bfa6bd69a1834fb2d830f80745581' -> (Import Result ID: '7c7fc28b8cd94056e6b3941c121c13bd') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=51352764823276f40548c6f22baf1bdc DependenciesID=de94dc65c682d5d0c60449f0dac6094e StaticDependenciesID=5d69dbb7435982779dad295d99eed886 
+Importing 'GUID: 3b73b0e36881c5047838f8e22b4b6a09 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_25.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 3b73b0e36881c5047838f8e22b4b6a09' -> (Import Result ID: 'bc2e7a6d501581388e3e537811a96dbe') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=c41193d9c5e9c7463fc21b301ce016d7 DependenciesID=b4deca4bd884888cb7c1788127e78c72 StaticDependenciesID=b9f7aedc3ae329581909c605cc065155 
+Importing 'GUID: 4b25107e629ad7c4c8279c30fef2aee2 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Grass_3.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 4b25107e629ad7c4c8279c30fef2aee2' -> (Import Result ID: '39710ca01fffc1ea475be199982d9dd2') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=1f1be97334cbed228d9456948e1b19a0 DependenciesID=530c788c6913d9135e44a85db0dc0be3 StaticDependenciesID=76134a41ff9bfb5053f04d93cb762893 
+Importing 'GUID: 4bb7fd91eb00c2d46a416aad1eec7f17 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 4bb7fd91eb00c2d46a416aad1eec7f17' -> (Import Result ID: '7edd5d80fece9d5e2e6489017c029efa') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=46004195c84a0f444ffeea5cc32fabf6 DependenciesID=b91748f083545b091b00f7d2aa0c729a StaticDependenciesID=761732285c874483a41d84e016e911f9 
+Importing 'GUID: 4b6abdb46fe847a4aaa13ebe04f19a8e - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Stone_3.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 4b6abdb46fe847a4aaa13ebe04f19a8e' -> (Import Result ID: '6ca2eab079380a6dc1fb83184f8ca709') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=7e8ed7bb6fb15ead13715b98c4cb2cf0 DependenciesID=a362b8858be32d5368a565f4806d392d StaticDependenciesID=2ab6061c88e5e9d45fb7b71f483814bc 
+Importing 'GUID: ab1c6c3be19050d47b701dabd964d465 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_13.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ab1c6c3be19050d47b701dabd964d465' -> (Import Result ID: 'c7bbe1b06438f82680e838d73974e192') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f0c9ea466f02d24bef88be56fc896ba8 DependenciesID=c2e7698126c822c2212257f58c9dca31 StaticDependenciesID=ffce09446dd87c9cd8f0597826d4c603 
+Importing 'GUID: 1c7ea8d1696323c40b92f588ba09ef1e - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_14.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 1c7ea8d1696323c40b92f588ba09ef1e' -> (Import Result ID: '90566dd13fc9769080aa4d93466a2bd6') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=73238f4fd420f5570deb0fea212bbabe DependenciesID=3fd57c403782fbf3e911ba9e7ffdeca5 StaticDependenciesID=e3db84bc156eaf188b3e38947d30ea66 
+Importing 'GUID: 2c653a02ce93e274cb32810a535b829e - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_14.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2c653a02ce93e274cb32810a535b829e' -> (Import Result ID: '66abef591b91a2d141a51a4407782305') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=dd613838cac4ea6740f3676eb5bd2919 DependenciesID=77431c051c0413978e1deeeb9a70388b StaticDependenciesID=d11592d5c7dbac61f8ab8da5c96d470a 
+Importing 'GUID: 3c95927c84056ae46a253eae42803aed - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_16.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 3c95927c84056ae46a253eae42803aed' -> (Import Result ID: 'f857d1a19385e8c8a12b93def70523fe') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=a143a0802fd609c64e7e527f252dbde8 DependenciesID=acccee591b2478464ebb8a930666b231 StaticDependenciesID=61cb1f9ed45e98fefe120b53d3c77337 
+Importing 'GUID: 3cbd4dd37df1a1f4bb69a80dbe82799b - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_9.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 3cbd4dd37df1a1f4bb69a80dbe82799b' -> (Import Result ID: '5d437a0df6cbbe92f6b527a0fb420cd4') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=994d04b45d3d96eaa456dd6f0eb331f4 DependenciesID=a7855e34e4c8c90ad556217bee15e757 StaticDependenciesID=4b5dac86baa032aa701db088d9ec0f37 
+Importing 'GUID: 5ce4151b71ae27a4699a094d0df48f33 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_17.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 5ce4151b71ae27a4699a094d0df48f33' -> (Import Result ID: '5f45936ca87dc50952a112a9a3c9a468') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=1cc0e81d62df0defe84353eb072ea374 DependenciesID=43756476bd440193824f9f10ea082857 StaticDependenciesID=0fc815a2c44736e33b7bca58d88a1e2f 
+Importing 'GUID: 8ce5ad78b4fe57f48937f84b316fd025 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Stone_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 8ce5ad78b4fe57f48937f84b316fd025' -> (Import Result ID: '9f4cef5474d274b9257168385679c737') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=a55c4e2aec713b272e911bad6da78d6f DependenciesID=ea67819886df47a29531676c7398e5f7 StaticDependenciesID=63b8bdc25e4ea6b9b01711b9b5a3f1d3 
+Importing 'GUID: ccc8f4bbf0382d04b8d6c4543ece4b8a - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_23.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ccc8f4bbf0382d04b8d6c4543ece4b8a' -> (Import Result ID: 'e631b83abb6a4b7cf80204f4c3dfb844') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=dc3b7342af360419fe8012eeee5065d7 DependenciesID=54dfccf5c5a8d3d689078bccb8d8f577 StaticDependenciesID=5897d8056816b03ee5728287909a1a7e 
+Importing 'GUID: 0dc49e5d78999d740acb7e2a484def4f - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Grass_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 0dc49e5d78999d740acb7e2a484def4f' -> (Import Result ID: 'dc76363853516837131850cf334f57bc') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=6bba8ed618d7047fd029cadf809bc5f4 DependenciesID=6a167504f6ff1f49ecec95b9f6b00718 StaticDependenciesID=34875a026af36df711318311b3aa9a3b 
+Importing 'GUID: 2df02d91faf9a3e46b12b43d846aed15 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_8.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2df02d91faf9a3e46b12b43d846aed15' -> (Import Result ID: 'cbff9b4dbb3b1452d2ae7f4612810a69') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f1917d768ec6b67864e9e95830d2e853 DependenciesID=96fe8b8ba011b5e2a9a66838c8848f01 StaticDependenciesID=4fb195f10fe235dd2a842fac2e6d7268 
+Importing 'GUID: 3d4cfbdbe2bfce74f8150d2a571ea3a2 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_3.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 3d4cfbdbe2bfce74f8150d2a571ea3a2' -> (Import Result ID: 'f1ac406682607dc1726db5c51f34e789') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=498a344365f00aacfcae4e938ba9f8a6 DependenciesID=f3bc709ede2957d5db706a6f66999f12 StaticDependenciesID=55c8fce4de104d7db6e18f4dde9a1c59 
+Importing 'GUID: 3d6ed85dd53d9ae40ab7770f59b99e4a - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_16.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 3d6ed85dd53d9ae40ab7770f59b99e4a' -> (Import Result ID: 'e1cde76cd35c30129dd1ed64b719cd75') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4e185c70f639be8eb40ef3e34cf1ecbe DependenciesID=b0ca4cbcb1a58c1f47b5fb529b82b748 StaticDependenciesID=04ba647e1f68b9886e8cbd1cc88bb829 
+Importing 'GUID: 5de925ed662ee8f4c9e9eb7041b4f214 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_29.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 5de925ed662ee8f4c9e9eb7041b4f214' -> (Import Result ID: 'a5cf84b66408d96e855e2f4291f52653') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f455bd163bb8c299fdec47fe15a935fd DependenciesID=703f98d20037ce9558965d2a52fe9997 StaticDependenciesID=538c2cb61bc08d2ba35627ee772da4b2 
+Importing 'GUID: 6d28fb14529b93f4aac0f1b07dd5c654 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Water_0.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 6d28fb14529b93f4aac0f1b07dd5c654' -> (Import Result ID: '6b2ed5256ef3c88af959a0c5165ab505') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f9faa7bfecaaff601a2df90b7827ad40 DependenciesID=21aa6602d150d05e7903512b841ee69e StaticDependenciesID=eb16f97077f7d191e2e518ea27570abe 
+Importing 'GUID: dd24f335797493f49a5724c5ce5fd325 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_12.asset' with importer (NativeFormatImporter)
+Imported 'GUID: dd24f335797493f49a5724c5ce5fd325' -> (Import Result ID: 'fcfd569c40459ac62e2b179a3a927cf6') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=95d30994b04f90f5e04af7e32b1c6454 DependenciesID=77d6628ba3c26499a4f62a10e145d52c StaticDependenciesID=06b6033a1bc91e04ef3f76a1195c78d9 
+Importing 'GUID: 7ed3f64530638bb47996c5b164866e70 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_24.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 7ed3f64530638bb47996c5b164866e70' -> (Import Result ID: 'f71c9a0483d073907f15b2f5121c38ff') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=c9797a7bee6661e13eefd755be47531f DependenciesID=1e86015ef59bd413c989eab0ca3d163a StaticDependenciesID=567743ba615324fbf4c1678b321c80fe 
+Importing 'GUID: 8e01048902fba5541bf31d1d31b91870 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_28.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 8e01048902fba5541bf31d1d31b91870' -> (Import Result ID: '438efb6c72fddb2ae5c0ecd81a7ce3ab') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=abd8511f6841513ec2941350cd1fa379 DependenciesID=68620fa2ed252d19372c4856cc76a717 StaticDependenciesID=1d6703ba51f50c2a09710d23f573f7f8 
+Importing 'GUID: 8e5928b62641d6f4f930093ae9f2c81f - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_21.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 8e5928b62641d6f4f930093ae9f2c81f' -> (Import Result ID: 'b7bb57ec5ed42e6451daeabaf1592e4f') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=81ea9c2b4d97c42c54770a90c65ba123 DependenciesID=5d89a1da5e8d1003ee0550524e3e119a StaticDependenciesID=993b51c7fb7389607aaa74b557bf8dcc 
+Importing 'GUID: 8eec17ef8ea29d349a7783dbb9bc4137 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_12.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 8eec17ef8ea29d349a7783dbb9bc4137' -> (Import Result ID: '6b8b4c7d4987c2d109bf58aa7d5fb654') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=363494bb4cfc2865580bce3e8d7232e2 DependenciesID=89966c6d13bd8264a2b73aefd516f162 StaticDependenciesID=3e17c6b5edc30efd19b7de6b1dde9fae 
+Importing 'GUID: aee62d99555f51a4ca26131a9d52e11d - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Water_1.asset' with importer (NativeFormatImporter)
+Imported 'GUID: aee62d99555f51a4ca26131a9d52e11d' -> (Import Result ID: '821610bec1c1c50d23329b7897e93542') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f8a8d4d67d3206299c0ba8d2ce3f9f80 DependenciesID=203ebfdcbed2d7525739a732380e3e9b StaticDependenciesID=d0f6f7d9e1fc0ea898e209d219cf5f09 
+Importing 'GUID: ce9c7b199c5e88f468b2f6b7b08cada8 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Grass_2.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce9c7b199c5e88f468b2f6b7b08cada8' -> (Import Result ID: '3dd4c3ea93ebe110d2f225cc9f6689dd') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=f4791e2d7e9c87c6b120fb78d4a722ad DependenciesID=359fe04e63086d8c4ef6d178d45da47f StaticDependenciesID=ad8b9ac4300035d9895a14ba522c0974 
+Importing 'GUID: de9bf1787d3e48b45bb09e64bb05bffb - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_11.asset' with importer (NativeFormatImporter)
+Imported 'GUID: de9bf1787d3e48b45bb09e64bb05bffb' -> (Import Result ID: '982e73901758e80306f86a0f5256252a') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=77711dd5d8dda62602f021c29a9d335f DependenciesID=1d2270e47859664e5c3e482387e305dc StaticDependenciesID=8d75aa3af3fdda14605aafb3658d0da5 
+Importing 'GUID: 6fcae1e4046e85f46834b608afef9abe - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Water_3.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 6fcae1e4046e85f46834b608afef9abe' -> (Import Result ID: '178bb4898ae26226c424de50dca0a6d9') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=19e85adca67c8f5c0b531515c64fb3af DependenciesID=07267ce8a99a943c2dc654763ded32e8 StaticDependenciesID=6efff32b6a5a32aa9a2a8e0e5d6309ad 
+Importing 'GUID: 6fafa626dd5dd4840bca2fe5e89d089f - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Shore_10.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 6fafa626dd5dd4840bca2fe5e89d089f' -> (Import Result ID: '7a06828162cb633f69940f50afe6f729') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=a0ea68291f3866e4a1798079310e7160 DependenciesID=c6e637fca8106b00d9552d3b97b75bb8 StaticDependenciesID=431ef7d3d2efde003c2100cbbb67976e 
+Importing 'GUID: bf552cc0cf507084aab26c23bba5d403 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_18.asset' with importer (NativeFormatImporter)
+Imported 'GUID: bf552cc0cf507084aab26c23bba5d403' -> (Import Result ID: 'e6a08b98540c2e83bf73f2bfd25eb1ea') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=6e93dd54c1220de801d724f773ad38ef DependenciesID=79d40f8d4b7c8d52e21e0949edd42cf1 StaticDependenciesID=e5ed9a579c87e8022b735d3b5c5863d0 
+Importing 'GUID: dfd3424b92b9b3e4a806407322206f9e - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_4.asset' with importer (NativeFormatImporter)
+Imported 'GUID: dfd3424b92b9b3e4a806407322206f9e' -> (Import Result ID: '4a4c66cebb6d5b5a49fa73361d6e5acf') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=d67eb65158d5515029a7d36aef47e0f3 DependenciesID=058fe82f9f39322239a3adf698ea2c1d StaticDependenciesID=4eadbe3a2e22d82679fcae6e76144275 
+Importing 'GUID: df3c50d0533ab7641bf5d7852bf3b8c0 - Path: Assets/Sapphire/Generated/Tile_SlimeV3_Dirt_3.asset' with importer (NativeFormatImporter)
+Imported 'GUID: df3c50d0533ab7641bf5d7852bf3b8c0' -> (Import Result ID: 'a34ecaea5ce97158422d5be2d1948f29') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=b9490546d507da903d5972ba28a195ca DependenciesID=3469c472136c0a3dedf49993b1b3def0 StaticDependenciesID=f4cde2668c0238027b7de4631272690e 
+Importing 'GUID: efc49a3c765665e45a23b2d862819616 - Path: Assets/Sapphire/Generated/Tile_SlimeV5_DirtEdge_27.asset' with importer (NativeFormatImporter)
+Imported 'GUID: efc49a3c765665e45a23b2d862819616' -> (Import Result ID: '851dac157938184960812b681b8484ef') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=8b2774a40f2a2dab9a1ecc1160922e36 DependenciesID=25785f2fcfdc87a3e6098df48651e4b4 StaticDependenciesID=686032fbd37fb4ff2aee08cad6978681 
+Asset Pipeline Refresh (id=ac5a4064a0b4509408df0fdf1267ed38): Total: 0.107 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: ace42b7247777c44bbe006f29265b38e - Path: Assets/Sapphire/Scenes/SlimeKingdom.unity' with importer (DefaultImporter)
+Imported 'GUID: ace42b7247777c44bbe006f29265b38e' -> (Import Result ID: '30d961e43ae2d84fb892244281b978f6') in 0.003 seconds [static dependencies only]. Details - ImportResultOutputID=946a2bddb4f86b9d9edf09a3d4c33802 DependenciesID=372cf7930618cd3a1dc56440bae6fe01 StaticDependenciesID=f14faaa19489fd751671602ee9a47ad0 
+Asset Pipeline Refresh (id=13770753a550b9a4a801185d3d3ae59a): Total: 0.031 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Batchmode quit successfully invoked - shutting down!
+Worker ready: AssetImportWorkerHW0 0
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-darac-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-darac channel disconnected successfully.
+Lingering sessions upon destruction of worker manager
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+CodeReloadManager destroyed
+Exiting batchmode successfully now!
+Exiting without the bug reporter. Application will terminate with return code 0
