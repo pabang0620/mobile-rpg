@@ -147,74 +147,94 @@ namespace Sapphire.Presentation.Skills
             castFeedback?.PlayCast(BasicAttackDisplayName);
         }
 
+        private bool isCasting = false;
+
         public void CastSkill(int index)
+        {
+            if (isCasting) return;
+            StartCoroutine(CastSkillRoutine(index));
+        }
+
+        private System.Collections.IEnumerator CastSkillRoutine(int index)
         {
             SkillDefinition[] skills = Skills;
             if (index < 0 || index >= skills.Length)
             {
-                return;
+                yield break;
             }
 
             if (player == null || player.Mover == null || player.Mover.IsMoving)
             {
-                return;
+                yield break;
             }
 
+            isCasting = true;
             SkillDefinition skill = skills[index];
             GridCoord origin = player.Mover.Position;
             GridDirection facing = player.Mover.Facing;
 
             bool isMovementSkill = skill.Id == SkillCatalog.BlinkSkillId || skill.Id == SkillCatalog.DashSkillId;
+            var combat = player.GetComponent<Sapphire.Presentation.Combat.PlayerCombatController>();
+            
+            System.Collections.Generic.IReadOnlyList<GridCoord> tiles = null;
+            if (!isMovementSkill && skill.RangeTiles > 0)
+            {
+                GridCoord pos = player.Mover.Position;
+                GridDirection dir = player.Mover.Facing;
+
+                switch (skill.RangeShape)
+                {
+                    case SkillRangeShape.Line:
+                        tiles = SkillRangeCalculator.TilesInLine(pos, dir, skill.RangeTiles);
+                        break;
+                    case SkillRangeShape.Radius:
+                        tiles = SkillRangeCalculator.TilesInRing(pos, skill.RangeTiles);
+                        break;
+                    case SkillRangeShape.Cone:
+                        tiles = SkillRangeCalculator.TilesInFrontCone(pos, dir, skill.RangeTiles);
+                        break;
+                    default:
+                        tiles = new System.Collections.Generic.List<GridCoord>();
+                        break;
+                }
+
+                if (rangeIndicator != null && tiles != null && tiles.Count > 0)
+                {
+                    rangeIndicator.Show(tiles);
+                    // 아주 짧게 범위가 색상으로 나오도록 0.1초 대기 (User request)
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+
             if (isMovementSkill && !player.TryBlink(skill.RangeTiles))
             {
                 castFeedback?.PlayCast("이동할 공간이 없습니다");
-                return;
+                isCasting = false;
+                yield break;
             }
 
-            var combat = player.GetComponent<Sapphire.Presentation.Combat.PlayerCombatController>();
-            
             // Mana Check (Arbitrary 10 MP per skill for now)
             if (combat != null && !isMovementSkill)
             {
                 if (!combat.Mana.TryConsume(10))
                 {
                     castFeedback?.PlayCast("마나가 부족합니다!");
-                    return;
+                    isCasting = false;
+                    yield break;
                 }
             }
 
             skillVfx = ResolveSkillVfx();
             skillVfx.Play(index, origin, player.Mover.Position, facing);
             motionPlayer?.PlayAttack(facing);
-            
-            if (combat != null)
-            {
-                if (!isMovementSkill && skill.RangeTiles > 0)
-                {
-                    System.Collections.Generic.IReadOnlyList<GridCoord> tiles;
-                    GridCoord pos = player.Mover.Position;
-                    GridDirection dir = player.Mover.Facing;
 
-                    switch (skill.RangeShape)
-                    {
-                        case SkillRangeShape.Line:
-                            tiles = SkillRangeCalculator.TilesInLine(pos, dir, skill.RangeTiles);
-                            break;
-                        case SkillRangeShape.Radius:
-                            tiles = SkillRangeCalculator.TilesInRing(pos, skill.RangeTiles);
-                            break;
-                        case SkillRangeShape.Cone:
-                            tiles = SkillRangeCalculator.TilesInFrontCone(pos, dir, skill.RangeTiles);
-                            break;
-                        default:
-                            tiles = new System.Collections.Generic.List<GridCoord>();
-                            break;
-                    }
-                    combat.AttackArea(tiles, 2.0f, 0.2f);
-                }
+            if (combat != null && tiles != null)
+            {
+                combat.AttackArea(tiles, 2.0f, 0.2f);
             }
 
             castFeedback?.PlayCast(skill.DisplayName);
+            isCasting = false;
         }
 
         private ISkillVfxPlayer ResolveSkillVfx()

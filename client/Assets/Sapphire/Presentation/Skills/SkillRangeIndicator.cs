@@ -13,7 +13,7 @@ namespace Sapphire.Presentation.Skills
     /// </summary>
     public class SkillRangeIndicator : MonoBehaviour
     {
-        [SerializeField] private float visibleDuration = 0.6f;
+        [SerializeField] private float visibleDuration = 0.1f;
         [SerializeField] private Color tintColor = new Color(0.4f, 0.8f, 1f, 0.35f);
 
         private readonly List<SpriteRenderer> markerPool = new List<SpriteRenderer>();
