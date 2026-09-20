@@ -48,83 +48,108 @@ public static class TileSmoother
                         float nx = x / (float)s;
                         float ny = y / (float)s;
                         
-                        // Pixelated noise for edges
-                        float noise = Mathf.PerlinNoise(nx * 40f + phase * 10f, ny * 40f + dir * 10f) * 0.06f - 0.03f;
+                        float noise = Mathf.PerlinNoise(nx * 10f + phase * 10f, ny * 10f + dir * 10f) * 0.04f - 0.02f;
                         
-                        // Base land mask (1 = FG/Water, 0 = BG/Grass)
+                        // Distance field for curves
                         float landMask = 0f;
                         
-                        // dir: 0=S, 1=N, 2=E, 3=W, 4=SE, 5=SW, 6=NE, 7=NW
-                        if (dir == 0) { landMask = (ny < 0.5f + noise) ? 1f : 0f; }
-                        if (dir == 1) { landMask = (ny > 0.5f + noise) ? 1f : 0f; }
-                        if (dir == 2) { landMask = (nx > 0.5f + noise) ? 1f : 0f; }
-                        if (dir == 3) { landMask = (nx < 0.5f + noise) ? 1f : 0f; }
+                        // Straight edges (wavy)
+                        if (dir == 0) { landMask = (ny < 0.5f + noise) ? 1f : 0f; } // South
+                        if (dir == 1) { landMask = (ny > 0.5f + noise) ? 1f : 0f; } // North
+                        if (dir == 2) { landMask = (nx > 0.5f + noise) ? 1f : 0f; } // East
+                        if (dir == 3) { landMask = (nx < 0.5f + noise) ? 1f : 0f; } // West
                         
-                        // Corners
-                        if (dir == 4) { landMask = (nx > 0.5f + noise && ny < 0.5f + noise) ? 1f : 0f; } // SE
-                        if (dir == 5) { landMask = (nx < 0.5f + noise && ny < 0.5f + noise) ? 1f : 0f; } // SW
-                        if (dir == 6) { landMask = (nx > 0.5f + noise && ny > 0.5f + noise) ? 1f : 0f; } // NE
-                        if (dir == 7) { landMask = (nx < 0.5f + noise && ny > 0.5f + noise) ? 1f : 0f; } // NW
+                        // Inner corners (rounded) - circle equation
+                        float r = 0.5f;
+                        if (dir == 4) { // SE (Center of circle at (1, 0))
+                            float dx = nx - 1f; float dy = ny - 0f;
+                            landMask = (Mathf.Sqrt(dx*dx + dy*dy) > r + noise) ? 1f : 0f;
+                        }
+                        if (dir == 5) { // SW (Center at (0, 0))
+                            float dx = nx - 0f; float dy = ny - 0f;
+                            landMask = (Mathf.Sqrt(dx*dx + dy*dy) > r + noise) ? 1f : 0f;
+                        }
+                        if (dir == 6) { // NE (Center at (1, 1))
+                            float dx = nx - 1f; float dy = ny - 1f;
+                            landMask = (Mathf.Sqrt(dx*dx + dy*dy) > r + noise) ? 1f : 0f;
+                        }
+                        if (dir == 7) { // NW (Center at (0, 1))
+                            float dx = nx - 0f; float dy = ny - 1f;
+                            landMask = (Mathf.Sqrt(dx*dx + dy*dy) > r + noise) ? 1f : 0f;
+                        }
 
                         Color finalColor = Color.clear;
 
                         if (!isWater)
                         {
-                            // Just sharp blend between Dirt (fg) and Grass (bg)
+                            // Path
                             finalColor = landMask > 0.5f ? fgP[y * s + x] : bgP[y * s + x];
                         }
                         else
                         {
-                            // Water with Depth!
-                            // If it's grass (landMask == 0), it's at elevation 1.
-                            // If it's water, it's at elevation 0.
-                            // We shift the water region DOWN by a cliff height (e.g. 0.2 units).
-                            float cliffHeight = 0.2f;
-                            
-                            // Re-evaluate landMask shifted up (which means checking ny + cliffHeight)
-                            // to see if we are in the "cliff" zone.
+                            // Water with Depth
+                            float cliffHeight = 0.2f; // 20% tile height for cliff
                             float nyShift = ny + cliffHeight;
-                            float shiftedNoise = Mathf.PerlinNoise(nx * 40f + phase * 10f, nyShift * 40f + dir * 10f) * 0.06f - 0.03f;
                             
                             float waterMask = 0f;
-                            if (dir == 0) { waterMask = (nyShift < 0.5f + shiftedNoise) ? 1f : 0f; }
-                            if (dir == 1) { waterMask = (nyShift > 0.5f + shiftedNoise) ? 1f : 0f; }
-                            if (dir == 2) { waterMask = (nx > 0.5f + shiftedNoise) ? 1f : 0f; }
-                            if (dir == 3) { waterMask = (nx < 0.5f + shiftedNoise) ? 1f : 0f; }
-                            if (dir == 4) { waterMask = (nx > 0.5f + shiftedNoise && nyShift < 0.5f + shiftedNoise) ? 1f : 0f; }
-                            if (dir == 5) { waterMask = (nx < 0.5f + shiftedNoise && nyShift < 0.5f + shiftedNoise) ? 1f : 0f; }
-                            if (dir == 6) { waterMask = (nx > 0.5f + shiftedNoise && nyShift > 0.5f + shiftedNoise) ? 1f : 0f; }
-                            if (dir == 7) { waterMask = (nx < 0.5f + shiftedNoise && nyShift > 0.5f + shiftedNoise) ? 1f : 0f; }
+                            if (dir == 0) { waterMask = (nyShift < 0.5f + noise) ? 1f : 0f; }
+                            if (dir == 1) { waterMask = (nyShift > 0.5f + noise) ? 1f : 0f; }
+                            if (dir == 2) { waterMask = (nx > 0.5f + noise) ? 1f : 0f; }
+                            if (dir == 3) { waterMask = (nx < 0.5f + noise) ? 1f : 0f; }
+                            
+                            if (dir == 4) { 
+                                float dx = nx - 1f; float dy = nyShift - 0f;
+                                waterMask = (Mathf.Sqrt(dx*dx + dy*dy) > r + noise) ? 1f : 0f;
+                            }
+                            if (dir == 5) { 
+                                float dx = nx - 0f; float dy = nyShift - 0f;
+                                waterMask = (Mathf.Sqrt(dx*dx + dy*dy) > r + noise) ? 1f : 0f;
+                            }
+                            if (dir == 6) { 
+                                float dx = nx - 1f; float dy = nyShift - 1f;
+                                waterMask = (Mathf.Sqrt(dx*dx + dy*dy) > r + noise) ? 1f : 0f;
+                            }
+                            if (dir == 7) { 
+                                float dx = nx - 0f; float dy = nyShift - 1f;
+                                waterMask = (Mathf.Sqrt(dx*dx + dy*dy) > r + noise) ? 1f : 0f;
+                            }
 
-                            // If landMask == 0, we are on Grass (High).
                             if (landMask < 0.5f)
                             {
-                                finalColor = bgP[y * s + x];
-                                // Add a tiny dirt rim on the very edge of grass
-                                // If it's very close to the cliff...
+                                finalColor = bgP[y * s + x]; // Grass
+                                // Draw a slight border line on grass edge
+                                float distToEdge = 999f;
+                                if (dir == 0) distToEdge = (ny - 0.5f - noise);
+                                if (dir == 1) distToEdge = (0.5f + noise - ny);
+                                if (distToEdge > 0f && distToEdge < 0.02f) finalColor = Color.Lerp(finalColor, new Color(0.2f,0.4f,0.1f), 0.5f);
                             }
                             else
                             {
-                                // We are below the grass.
-                                // Are we on the cliff or in the water?
                                 if (waterMask < 0.5f)
                                 {
-                                    // Cliff! (Dirt texture, slightly darkened to look like a wall)
-                                    finalColor = Color.Lerp(cliffP[y * s + x], Color.black, 0.2f);
+                                    // Cliff wall
+                                    finalColor = Color.Lerp(cliffP[y * s + x], new Color(0.4f, 0.3f, 0.2f), 0.5f);
                                 }
                                 else
                                 {
-                                    // Water!
+                                    // Water surface
                                     finalColor = fgP[y * s + x];
                                     
-                                    // Draw a shadow right below the cliff
-                                    // Check if we are very close to the cliff boundary
-                                    float shadowNoise = Mathf.PerlinNoise(nx * 20f, ny * 20f) * 0.02f;
-                                    float distToCliff = 0f;
-                                    if (dir == 1 || dir == 6 || dir == 7) distToCliff = (nyShift - 0.5f - shiftedNoise);
-                                    if (distToCliff > 0f && distToCliff < 0.08f + shadowNoise)
+                                    // Drop shadow below cliff
+                                    float distToCliff = 999f;
+                                    if (dir == 1) distToCliff = (nyShift - 0.5f - noise);
+                                    if (dir == 6) {
+                                        float dx = nx - 1f; float dy = nyShift - 1f;
+                                        distToCliff = (Mathf.Sqrt(dx*dx + dy*dy) - r - noise);
+                                    }
+                                    if (dir == 7) {
+                                        float dx = nx - 0f; float dy = nyShift - 1f;
+                                        distToCliff = (Mathf.Sqrt(dx*dx + dy*dy) - r - noise);
+                                    }
+
+                                    if (distToCliff > 0f && distToCliff < 0.1f)
                                     {
-                                        finalColor = Color.Lerp(finalColor, Color.black, 0.35f);
+                                        finalColor = Color.Lerp(finalColor, new Color(0,0,0,0.5f), 1f - (distToCliff / 0.1f));
                                     }
                                 }
                             }
