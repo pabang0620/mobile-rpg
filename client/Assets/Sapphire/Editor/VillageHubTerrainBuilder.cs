@@ -173,11 +173,11 @@ namespace Sapphire.EditorTools
             // Town Hall (Large generated building)
             string townHallPath = SapphireSceneBuilder.WorldArtDir + "/TownHall.png";
             BuildInteractable(root, collision, blocker, zones, townHallPath, "town_hall", "TownHall", 12, 12,
-                "웅장한 마을 회관이다. 마을의 중심 역할을 한다.", null, 3.5f);
+                "웅장한 마을 회관이다. 마을의 중심 역할을 한다.", null, 1.0f);
             
-            // Add collision around the large town hall
+            // Add collision around the large town hall (Width: 7 tiles, Solid Height: ~5 tiles from foot)
             for (int dx = -3; dx <= 3; dx++)
-                for (int dy = -2; dy <= 2; dy++) 
+                for (int dy = 0; dy <= 4; dy++) 
                     collision.SetTile(new Vector3Int(12 + dx, 12 + dy, 0), blocker);
 
             PlaceVisual(root, PropsAtlas, "Slime2_Lamp", 10, 14, .9f, "Lamp1");
