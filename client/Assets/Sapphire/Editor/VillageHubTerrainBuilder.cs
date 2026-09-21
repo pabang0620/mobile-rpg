@@ -125,16 +125,36 @@ namespace Sapphire.EditorTools
                     // only way from spawn to the gate is around the building. This adds
                     // an explicit east-side bypass instead of leaving it as unmarked
                     // grass: a vertical corridor at x22-24 (merges with smithBranch,
-                    // which already occupies x17-24/y13-14, at x22-24) running the full
-                    // y11-26 span where the main guide rails have a gap (rails run
-                    // y1-11 and y26-30 - see BuildMainPathGuideFences), plus two short
-                    // horizontal connectors at y11 and y26 (x18-24) that bridge the gap
-                    // between the main rail's east column (x=18) and the corridor mouth
-                    // (x=22) so the route reads as one continuous turn, not two
-                    // disconnected dirt patches.
-                    bool detourCorridor = (x >= 22 && x <= 24 && y >= 11 && y <= 26);
-                    bool detourConnectorSouth = (x >= 18 && x <= 24 && y == 11);
-                    bool detourConnectorNorth = (x >= 18 && x <= 24 && y == 26);
+                    // which already occupies x17-24/y13-14, at x22-24).
+                    //
+                    // 2026-09-21 (turn width + north overshoot fix): user reported two
+                    // issues from a full-map screenshot, both measured in pixels against
+                    // this code (PIL brown-tile scan, not eyeballed):
+                    // (1) "갈색타일 너비를 같게해야해...꺾이잖아? 그럼 거기도 타일이 위아래로
+                    //     너비가 같아야지" - the two horizontal connectors were only 1 row
+                    //     tall (y==11 / y==26) while mainPath/detourCorridor are 3 tiles
+                    //     wide, so both turns pinched down to a single-tile bottleneck.
+                    //     Both connectors are now 3 rows tall, matching the 3-tile width
+                    //     of the paths they join.
+                    // (2) "건물의 윗부분에 갈색타일이 더 보이는부분도 더 짧아도될거같은데
+                    //     애초에 왜 아래로 뻗쳐있는지를 모르겠어" - measured via the PIL
+                    //     scan: the corridor's north connector sat at y=26, but mainPath is
+                    //     already open again at y=22 (right above the building's y<=21
+                    //     footprint) - so the corridor ran 5 rows (22-26) PARALLEL to
+                    //     already-walkable mainPath for no reason, reading as an
+                    //     unnecessarily long brown strip north of the building. The south
+                    //     connector, by contrast, sat right at y=11, just 1 row below the
+                    //     building's y=12 south face - no such overshoot. Fixed by moving
+                    //     the north connector down to y=22-24 (immediately above the
+                    //     building, mirroring the south connector's y=9-11 immediately
+                    //     below it) so both turns are now symmetric 3-row platforms hugging
+                    //     the building instead of one hugging it and one overshooting.
+                    // See BuildMainPathGuideFences/BuildDetourGuideFences below for the
+                    // matching fence-rail adjustments (rails must not sit on the widened
+                    // dirt, and caps move with the connectors).
+                    bool detourCorridor = (x >= 22 && x <= 24 && y >= 9 && y <= 24);
+                    bool detourConnectorSouth = (x >= 18 && x <= 24 && y >= 9 && y <= 11);
+                    bool detourConnectorNorth = (x >= 18 && x <= 24 && y >= 22 && y <= 24);
                     bool detourPath = detourCorridor || detourConnectorSouth || detourConnectorNorth;
                     bool onPath = (mainPath || smithBranch || detourPath) && !isBorder && !underTownHall;
 
@@ -230,77 +250,94 @@ namespace Sapphire.EditorTools
         // places at x=14/x=18, y=0 and y=mapHeight-1 (only x15-17 is skipped there), so
         // the corridor reads as continuous from spawn at y0 up to the gate at y31.
         //
-        // x=18's two runs stop at y=10 / start at y=27 instead of the symmetric 11/26 that
-        // x=14 uses. Bug fix 2026-09-21: the old range (1-11 and 26-30 for BOTH columns)
-        // placed a fence+collision blocker directly on (18,11) and (18,26) - but those are
-        // exactly the detourConnectorSouth/North doorway cells (see PopulateGroundAndCollision)
-        // that let the player step off the spine into the east detour corridor. That fence
-        // silently sealed the doorway shut right next to the town hall's east side - this was
-        // the "집 우측에 하나 잘못 놓여져있는것같네" bug. x=14 has no such doorway on the west
-        // side, so its range is unchanged. Ending x=18 at y=10/starting at y=27 leaves (18,11)
-        // and (18,26) fully open, and the resulting caps at (18,10)/(18,27) line up with
-        // BuildDetourGuideFences' x19-24 caps on the same rows, reading as one continuous wall
-        // with a single doorway gap rather than two disconnected fence runs.
+        // x=18's two runs stop at y=7 / start at y=26 - not load-bearing there, since
+        // BuildDetourGuideFences' connector dirt (x18-24, y9-11 / y22-24) and caps
+        // (y=8 south / y=25 north) already seal that flank end-to-end; see below.
+        //
+        // 2026-09-21 (full wall, no more openings): user played the build and
+        // reported "울타리 위로 넘어가지는 구간이 있는데 안넘어가지도록해줘" /
+        // "갈색길 옆에는 전부 울타리를 둬서 이동을 못하게해줘". PlaceMainRailColumn
+        // used to skip every y%4==0 row on purpose (an old "player can step sideways
+        // into the flanking grass" design), which read in-game as broken/missing
+        // fence segments the player could just walk through. That gap logic is
+        // removed below (PlaceMainRailColumn no longer skips any row) - every rail
+        // segment is now a fully unbroken wall.
+        //
+        // Same pass also found x=14's north segment started at y=26 instead of
+        // y=22: mainPath's dirt (x15-17) is unbroken from y=22 to y=30 once past
+        // the town hall footprint (underTownHall ends at y=21), but the old range
+        // here (26-30) left rows 22-25 with NO fence and NO collision on the west
+        // flank at all - not a dashed-rail gap, a genuine 4-row hole straight
+        // through, open since the day the north connector was widened (old 1-row
+        // y=26 doorway -> new y22-24 doorway with cap moved to y=25) without this
+        // range being updated to match. Fixed to start at y=22, matching the
+        // building's footprint edge exactly - the same relationship the y1-11
+        // segment already has with the building's south edge at y=12.
         private static void BuildMainPathGuideFences(Transform parent, Tilemap collision, Tile blocker, Sprite fenceVertical)
         {
             PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 14, 1, 11, "Fence_MainL_");
-            PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 18, 1, 10, "Fence_MainR_");
-            PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 14, 26, 30, "Fence_MainL_");
-            PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 18, 27, 30, "Fence_MainR_");
+            PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 18, 1, 7, "Fence_MainR_");
+            PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 14, 22, 30, "Fence_MainL_");
+            PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 18, 26, 30, "Fence_MainR_");
         }
 
-        // Gap rule: every y where y % RailGapInterval == 0 is left open (no fence
-        // sprite, no collision tile) so the player can step sideways off the main
-        // spine into the flanking grass at that row - both the x=14 and x=18 columns
-        // use the same y values so each gap forms a full doorway straight across the
-        // corridor, not a staggered pinch point. Interval of 4 keeps 2-3 tile fenced
-        // segments between openings, matching "3~4칸마다 1칸" - the rail still reads
-        // as a continuous guide, it just isn't an unbroken wall.
-        private const int RailGapInterval = 4;
-
+        // Places one fence sprite + collision tile per row from yStart to yEnd
+        // inclusive - a fully unbroken wall. Until 2026-09-21 this skipped every
+        // y%4==0 row on purpose (an old "player can step sideways into the flanking
+        // grass" design); removed per user report that it read as broken fence the
+        // player could just walk through - see BuildMainPathGuideFences above.
         private static void PlaceMainRailColumn(Transform parent, Tilemap collision, Tile blocker, Sprite sprite, int x, int yStart, int yEnd, string prefix)
         {
             for (int y = yStart; y <= yEnd; y++)
             {
-                if (y % RailGapInterval == 0) continue; // gap: player can cross into the side grass here
                 PlaceFenceWithCollision(parent, collision, blocker, sprite, x, y, 0f, prefix + y);
             }
         }
 
-        // 2026-09-21 (revised): the original west-side (x=21) rail only had room for two
-        // isolated tiles (y12, y15 - everything else was excluded by the connector rows,
-        // the smithBranch dirt, or the town hall footprint already blocking that edge) and
-        // read as two disconnected fence scraps rather than a guide. Replaced with a single
-        // unbroken rail on the corridor's OUTER (east, x=25) edge plus short horizontal
-        // "framing" fences at the two turns, so the whole bypass reads as one continuous
-        // route instead of a stub:
-        //   x=25, y12-23  - east rail, reuses PlaceMainRailColumn so it gets the exact same
-        //                   RailGapInterval=4 dashed pattern as the main spine rails
-        //                   (visual consistency). x=25 sits one tile outside detourCorridor
-        //                   (x22-24) so it never overlaps the dirt tiles. Capped at y=23
-        //                   (not 25) 2026-09-21: yEnd=25 landed one tile past the gap at
-        //                   y=24, leaving a single orphaned fence at (25,25) with no
-        //                   neighbor on either side (24 is a gap, 26 is past yEnd) - read
-        //                   as one stray misplaced fence sticking out near the building's
-        //                   corner (user report: "건물 바로 오른쪽아래에 울타리가 1개
-        //                   잘못 놓여져있는거같은데"). y=23 ends the rail cleanly on the
-        //                   last full 3-tile segment (21-22-23) instead.
-        //   y=10, x19-24  - horizontal cap just above detourConnectorSouth (y=11, x18-24),
-        //                   frames the south turn. x=18 is excluded because
-        //                   PlaceMainRailColumn(..., 18, 1, 10, ...) already places a fence
-        //                   there (y=10 is that column's last row and isn't a gap row), so
-        //                   adding another sprite at the same cell would double it up.
-        //   y=27, x19-24  - same framing for the north turn, mirrored below
-        //                   detourConnectorNorth (y=26, x18-24); x=18 excluded for the same
-        //                   reason (PlaceMainRailColumn(..., 18, 27, 30, ...) already covers it).
+        // Single unbroken rail on the corridor's OUTER (east, x=25) edge plus short
+        // horizontal "framing" caps at the two turns, so the whole bypass reads as
+        // one continuous route.
+        //
+        // 2026-09-21 (full wall + range fix, per user report "울타리 위로 넘어가지는
+        // 구간이 있는데 안넘어가지도록해줘" / "갈색길 옆에는 전부 울타리를 둬서 이동을
+        // 못하게해줘"): two issues fixed together, found by walking the collision
+        // tilemap cell-by-cell against detourCorridor's actual dirt extent (x22-24,
+        // y9-24 - see PopulateGroundAndCollision):
+        // (1) PlaceMainRailColumn's y%4==0 gap (removed - see its own comment) used
+        //     to punch holes straight through this rail too.
+        // (2) The rail's own range (y12-19) never covered the full corridor. The
+        //     corridor's dirt runs continuously y9-24 at x22-24 (detourConnectorSouth
+        //     /North are subsets of that same column, not separate ground), but this
+        //     rail historically chased a moving target (was y12-23, then y12-21,
+        //     then trimmed to y12-19 to kill a stray orphan post - see prior history
+        //     below) and never actually covered rows 9-11 or 20-24. Those rows had
+        //     ZERO fence and ZERO collision east of the corridor: a player standing
+        //     on the dirt at e.g. (24,10) or (24,22) could walk straight into open
+        //     grass with nothing stopping them. Fixed to y9-24, meeting SouthCap
+        //     (y=8) below and NorthCap (y=25) above with zero gap on either end, so
+        //     the entire east flank is now one continuous wall.
+        //
+        // Prior history (pre-2026-09-21, kept for context): was y12-23; then y12-21
+        // (the building's own north edge, underTownHall y<=21), but with the old
+        // y=20 gap (20%4==0, from the now-removed interval logic) that left a single
+        // orphaned post at y=21 - disconnected from the y17-19 group below and the
+        // north cap above - reading as a stray fence nobody placed on purpose (user
+        // report: "집 앞에 울타리1개 있는거 안지워졌어 집의 우측아래"). That symptom
+        // no longer applies now that the rail is unbroken and spans the full corridor.
+        //   y=8, x18-24   - south cap, one row below the south connector's y=9-11
+        //                   range, full 18-24 width (x=18 not covered by any other
+        //                   rail at this row - BuildMainPathGuideFences' x=18 south
+        //                   rail ends at y=7).
+        //   y=25, x18-24  - north cap, one row above the north connector's y=22-24
+        //                   range, same reasoning (x=18 north rail starts at y=26).
         private static void BuildDetourGuideFences(Transform parent, Tilemap collision, Tile blocker, Sprite fenceVertical, Sprite fenceStraight)
         {
-            PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 25, 12, 23, "Fence_Detour_East_");
+            PlaceMainRailColumn(parent, collision, blocker, fenceVertical, 25, 9, 24, "Fence_Detour_East_");
 
-            for (int x = 19; x <= 24; x++)
+            for (int x = 18; x <= 24; x++)
             {
-                PlaceFenceWithCollision(parent, collision, blocker, fenceStraight, x, 10, 0f, "Fence_Detour_SouthCap_" + x);
-                PlaceFenceWithCollision(parent, collision, blocker, fenceStraight, x, 27, 0f, "Fence_Detour_NorthCap_" + x);
+                PlaceFenceWithCollision(parent, collision, blocker, fenceStraight, x, 8, 0f, "Fence_Detour_SouthCap_" + x);
+                PlaceFenceWithCollision(parent, collision, blocker, fenceStraight, x, 25, 0f, "Fence_Detour_NorthCap_" + x);
             }
         }
 
