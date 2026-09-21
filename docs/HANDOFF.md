@@ -1,5 +1,15 @@
 # 구현 인계 (2026-09-18)
 
+## 2026-09-22 추가: Modular64 지형 1차
+
+잔디/흙길 TS01과 142개 Tile 에셋, 독립 30×30 `ModularGroundTest` 씬을 추가했다.
+`Sapphire.EditorTools.ModularTiles.ModularGroundBuilder.Build`로 재생성한다.
+Unity 6000.5.9f1 배치 종료 0, 262,144개 RGBA 경계 비교, 24개 변형 외곽,
+Sprite 재로드 검사 통과. 직선 경계에 반복되던 홈과 대칭 소재 반복을 보완했다.
+실제 마을/슬라임 킹덤 씬은 아직 이 타일셋으로 교체하지 않았다. 플레이어 빌드/실행도 하지 않았다.
+다음 단계는 고지대/절벽/그림자·계단, 물/물결, 장식·다리 제작 후 맵 통합이다.
+정확한 범위·파일·사용법·프롬프트는 `MODULAR_TILESET_64.md`, `MODULAR_TILESET_PROMPTS.md` 참조.
+
 기준: `docs/planning/*.md`(기획, 불변) + `docs/DECISIONS.md`(기술 방향).
 이 문서는 과거 이력이 쌓여 너무 길어졌던 기존 문서를 아카이브(`HANDOFF_archive_20260916.md`)하고, 현재 코드가 실제로 어떤 상태인지 요약합니다.
 
