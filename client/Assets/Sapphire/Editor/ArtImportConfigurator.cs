@@ -28,6 +28,7 @@ namespace Sapphire.EditorTools
         {
             ConfigureGroundAtlas();
             ConfigureVillagePropsAtlas();
+            ConfigureVillageFenceVertical();
             ConfigureTownHall();
             ConfigureSlimeKingdomAtlas();
             ConfigureSlimeKingdomExpansionAtlases();
@@ -221,6 +222,71 @@ namespace Sapphire.EditorTools
                     ("VillageProps_FenceCornerB", new Rect(0, 0, 768, 512), bottomCenterPivot),
                     ("VillageProps_Signpost", new Rect(768, 0, 768, 512), bottomCenterPivot),
                 });
+        }
+
+        // 2026-09-21: dedicated vertical-perspective fence art
+        // (VillageFenceVertical.png, 1471x2332, RGBA) drawn to replace the
+        // old "rotate the horizontal VillageProps_FenceStraight 90 degrees"
+        // hack (see VillageHubTerrainBuilder.PlaceFence's NOTE comment for
+        // why that was wrong-asset, not wrong-transform).
+        //
+        // PPU derivation mirrors ConfigureVillagePropsAtlas's own rule
+        // exactly, just swapping which axis is "perpendicular to
+        // placement": VillageProps_FenceStraight is placed along x (a row
+        // of fence posts spread out on the x axis) with PPU pinned to the
+        // sprite's height (512) so the axis *perpendicular* to placement
+        // (height) lands on exactly 1 tile, and the placement axis (width,
+        // 768px) is left to fall out of the aspect ratio - giving 1.5
+        // tiles ("wider than 1 cell by design", intentionally overlapping
+        // neighbors so the row reads continuous).
+        //
+        // This sprite is placed along y (a column of posts spread on the y
+        // axis - Fence_Left/Right and PlaceMainRailColumn), so the
+        // perpendicular axis is width: PPU = native width (1471) pins
+        // width to exactly 1.0 tile (1471/1471 = 1.0, matches a single
+        // grid column so it never spills into the neighboring x tile).
+        // Height (the placement axis) then falls out to 2332/1471 =~
+        // 1.585 tile - the same "slightly more than 1 tile in the
+        // placement direction" relationship the horizontal fence has
+        // (1.5), just a bit taller because this artwork's vertical
+        // perspective is more elongated than the horizontal piece's.
+        private const float VillageFenceVerticalPpu = 1471f;
+
+        private static void ConfigureVillageFenceVertical()
+        {
+            string path = SapphireSceneBuilder.WorldArtDir + "/VillageFenceVertical.png";
+            var importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null)
+            {
+                throw new Exception("Texture not found or not a TextureImporter: " + path);
+            }
+
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.spritePixelsPerUnit = VillageFenceVerticalPpu;
+
+            // Bottom-center pivot, same convention as every other ground-level
+            // prop in this scene (VillageProps atlas, town hall, signpost) -
+            // that's what makes "place at grid cell (x,y)" mean "the sprite's
+            // foot touches the ground at that cell" instead of its geometric
+            // center.
+            var settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
+            settings.spriteAlignment = (int)SpriteAlignment.BottomCenter;
+            settings.spritePivot = new Vector2(0.5f, 0f);
+            settings.spriteMeshType = SpriteMeshType.FullRect;
+            importer.SetTextureSettings(settings);
+
+            importer.filterMode = FilterMode.Bilinear;
+            importer.mipmapEnabled = false;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            // Native height (2332) exceeds the Unity default max (2048) -
+            // preserve full resolution instead of letting the importer
+            // silently downscale a freshly-generated high-res piece of art.
+            importer.maxTextureSize = 4096;
+            importer.textureCompression = TextureImporterCompression.Uncompressed;
+            importer.alphaIsTransparency = importer.DoesSourceTextureHaveAlpha();
+            importer.SaveAndReimport();
         }
 
         private static void ConfigureCharacterSheets()
