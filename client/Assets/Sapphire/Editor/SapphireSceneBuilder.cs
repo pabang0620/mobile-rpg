@@ -44,7 +44,7 @@ namespace Sapphire.EditorTools
         internal const int MapWidth = 32;
         internal const int MapHeight = 32;
         internal const int SignX = 16;
-        internal const int SignY = 11;
+        internal const int SignY = 13;
         internal const int SpawnX = 16;
         internal const int SpawnY = 6;
 
