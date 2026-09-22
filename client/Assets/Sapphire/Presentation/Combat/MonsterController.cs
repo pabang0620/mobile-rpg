@@ -9,11 +9,19 @@ namespace Sapphire.Presentation.Combat
 {
     public class MonsterController : MonoBehaviour
     {
+        [SerializeField] private bool spawnConfigured;
+        [SerializeField] private int spawnX, spawnY;
+        [SerializeField] private int spawnMaxHp, spawnAttack, spawnDefense;
+        [SerializeField] private bool spawnIsBoss;
+        [SerializeField] private Vector3 visualOffset;
+        private bool runtimeInitialized;
+        private UnityEngine.Tilemaps.Tile runtimeBlocker;
+        private UnityEngine.Tilemaps.TileBase occupancyTile;
         public CombatStats Stats { get; private set; }
         public HealthComponent Health { get; private set; }
         public int GridX { get; private set; }
         public int GridY { get; private set; }
-        
+
         public bool IsBoss { get; private set; }
 
         private SpriteRenderer spriteRenderer;
@@ -26,25 +34,62 @@ namespace Sapphire.Presentation.Combat
 
         public void Initialize(int x, int y, int maxHp, int atk, int def, bool isBoss = false)
         {
-            GridX = x; GridY = y;
-            IsBoss = isBoss;
-            aiInterval = isBoss ? 1.0f : 1.5f; // Boss is faster
-            Stats = new CombatStats(maxHp, 0, atk, def);
-            Health = new HealthComponent(maxHp);
+            if (runtimeInitialized) return;
+            spawnConfigured = true;
+            spawnX = x; spawnY = y;
+            spawnMaxHp = maxHp; spawnAttack = atk; spawnDefense = def;
+            spawnIsBoss = isBoss;
+            WorldPoint spawnWorld = GridWorldConversion.GridToWorld(new GridCoord(x, y));
+            visualOffset = transform.position - new Vector3(spawnWorld.X, spawnWorld.Y, 0f);
+            if (UnityEngine.Application.isPlaying) InitializeRuntime();
+        }
+
+        private void Awake()
+        {
+            InitializeRuntime();
+        }
+
+        private void InitializeRuntime()
+        {
+            if (!spawnConfigured || runtimeInitialized) return;
+            runtimeInitialized = true;
+            GridX = spawnX; GridY = spawnY;
+            var gridBuilder = FindObjectOfType<TilemapGridMapBuilder>();
+            if (gridBuilder != null)
+                occupancyTile = gridBuilder.GetCollisionTile(new GridCoord(GridX, GridY));
+            IsBoss = spawnIsBoss;
+            aiInterval = IsBoss ? 1.0f : 1.5f;
+            Stats = new CombatStats(spawnMaxHp, 0, spawnAttack, spawnDefense);
+            Health = new HealthComponent(spawnMaxHp);
             spriteRenderer = GetComponent<SpriteRenderer>();
             originalColor = spriteRenderer != null ? spriteRenderer.color : Color.white;
             originalScale = transform.localScale;
             Health.OnDied += HandleDeath;
 
+            // Old generated scenes may contain editor-created bars whose runtime
+            // references were never serialized. Replace those once on load.
+            foreach (var oldBar in GetComponentsInChildren<MonsterHpBar>(true))
+            {
+                oldBar.gameObject.SetActive(false);
+                Destroy(oldBar.gameObject);
+            }
             hpBar = MonsterHpBar.Create(transform);
-            
-            gameObject.AddComponent<Sapphire.Presentation.World.DynamicYSort>();
-            
+
+            var ySort = GetComponent<DynamicYSort>();
+            if (ySort == null) ySort = gameObject.AddComponent<DynamicYSort>();
+            ySort.OrderOffset = Mathf.RoundToInt(visualOffset.y * 100f);
+
             if (IsBoss)
             {
                 originalColor = new Color(0.8f, 0.4f, 1.0f); // Purple boss
                 if (spriteRenderer != null) spriteRenderer.color = originalColor;
             }
+        }
+
+        private void OnDestroy()
+        {
+            if (Health != null) Health.OnDied -= HandleDeath;
+            if (runtimeBlocker != null) Destroy(runtimeBlocker);
         }
 
         public void OnHit(int damage, CombatStats attackerStats)
@@ -101,7 +146,13 @@ namespace Sapphire.Presentation.Combat
 
         private void ExecuteAI()
         {
-            var player = FindObjectOfType<PlayerGridController>();
+            PlayerGridController player = null;
+            foreach (var candidate in FindObjectsOfType<PlayerGridController>())
+            {
+                if (!candidate.isActiveAndEnabled) continue;
+                player = candidate;
+                break;
+            }
             if (player == null) return;
 
             var playerCoord = GridWorldConversion.WorldToGrid(new WorldPoint(player.transform.position.x, player.transform.position.y));
@@ -115,13 +166,13 @@ namespace Sapphire.Presentation.Combat
             {
                 // Attack Player
                 var combatController = player.GetComponent<PlayerCombatController>();
-                if (combatController != null && !combatController.Health.IsDead)
+                if (combatController != null && combatController.Health != null && !combatController.Health.IsDead)
                 {
                     bool isCrit = UnityEngine.Random.value < 0.15f;
                     float finalMultiplier = isCrit ? 1.5f : 1.0f;
                     int damage = CombatEngine.CalculateDamage(Stats, combatController.Stats, finalMultiplier);
                     CombatEngine.ProcessAttack(Stats, combatController.Stats, combatController.Health, finalMultiplier);
-                    
+
                     combatController.OnHit(damage);
                     DamagePopup.Spawn(player.transform.position, damage, isCrit ? damage.ToString() + " CRIT!" : null);
                     HitEffectSpawner.Spawn(player.transform.position + new Vector3(0, 0.25f, -1f), isCrit);
@@ -156,34 +207,31 @@ namespace Sapphire.Presentation.Combat
             var gridBuilder = FindObjectOfType<TilemapGridMapBuilder>();
             if (gridBuilder == null) return;
 
-            var collisionField = gridBuilder.GetType().GetField("collisionTilemap", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (collisionField == null) return;
-            var collisionMap = (UnityEngine.Tilemaps.Tilemap)collisionField.GetValue(gridBuilder);
-
-            if (collisionMap.HasTile(new Vector3Int(x, y, 0))) return; // Blocked
-
-            // Move
-            collisionMap.SetTile(new Vector3Int(GridX, GridY, 0), null);
-            
-            var blockerField = gridBuilder.GetType().GetField("blockerTile", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            UnityEngine.Tilemaps.Tile blockerTile = null;
-            if (blockerField != null) blockerTile = (UnityEngine.Tilemaps.Tile)blockerField.GetValue(gridBuilder);
-            
-            if (blockerTile == null) 
+            // Validate bounds, Ground coverage and collision before any mutation.
+            var nextCoord = new GridCoord(x, y);
+            if (!gridBuilder.Build().IsWalkable(nextCoord)) return;
+            var oldCoord = new GridCoord(GridX, GridY);
+            if (gridBuilder.GetCollisionTile(oldCoord) != occupancyTile) return;
+            var blockerTile = occupancyTile;
+            if (blockerTile == null)
             {
-                // fallback creating temp blocker if needed, but usually we just set the same tile it was
-                // wait, if we don't have blocker tile, we can't properly block the new cell.
-                // Let's just instantiate a dummy tile.
-                blockerTile = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
+                if (runtimeBlocker == null)
+                    runtimeBlocker = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
+                blockerTile = runtimeBlocker;
             }
-
-            collisionMap.SetTile(new Vector3Int(x, y, 0), blockerTile);
+            if (!gridBuilder.SetCollisionBlocked(nextCoord, true, blockerTile)) return;
+            if (occupancyTile != null && !gridBuilder.SetCollisionBlocked(oldCoord, false, occupancyTile))
+            {
+                gridBuilder.SetCollisionBlocked(nextCoord, false, blockerTile);
+                return;
+            }
+            occupancyTile = blockerTile;
 
             GridX = x;
             GridY = y;
-            
+
             WorldPoint world = GridWorldConversion.GridToWorld(new GridCoord(x, y));
-            StartCoroutine(SmoothMove(new Vector3(world.X, world.Y, 0f)));
+            StartCoroutine(SmoothMove(new Vector3(world.X, world.Y, 0f) + visualOffset));
         }
 
         private IEnumerator SmoothMove(Vector3 target)
@@ -203,16 +251,8 @@ namespace Sapphire.Presentation.Combat
         private void HandleDeath()
         {
             var gridBuilder = FindObjectOfType<TilemapGridMapBuilder>();
-            if (gridBuilder != null)
-            {
-                var field = gridBuilder.GetType().GetField("collisionTilemap",
-                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                if (field != null)
-                {
-                    var collisionMap = (UnityEngine.Tilemaps.Tilemap)field.GetValue(gridBuilder);
-                    collisionMap.SetTile(new Vector3Int(GridX, GridY, 0), null);
-                }
-            }
+            if (gridBuilder != null && occupancyTile != null)
+                gridBuilder.SetCollisionBlocked(new GridCoord(GridX, GridY), false, occupancyTile);
 
             StartCoroutine(DeathFade());
             ItemDrop.Spawn(transform.position);

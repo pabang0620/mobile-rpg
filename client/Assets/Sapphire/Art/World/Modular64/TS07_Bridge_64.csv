@@ -1,0 +1,13 @@
+id,semantic,layer,category,atlas_slot,atlas_x,atlas_y_bottom,width_px,height_px,footprint_w,footprint_h,pivot_x,pivot_y,asset
+B001,Horizontal,Bridge,BridgePart,0,0,448,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B001.asset
+B002,HorizontalLeftEnd,Bridge,BridgePart,1,64,448,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B002.asset
+B003,HorizontalRightEnd,Bridge,BridgePart,2,128,448,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B003.asset
+B004,Vertical,Bridge,BridgePart,3,192,448,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B004.asset
+B005,VerticalBottomEnd,Bridge,BridgePart,4,256,448,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B005.asset
+B006,VerticalTopEnd,Bridge,BridgePart,5,320,448,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B006.asset
+B007,RailTop,Bridge,BridgePart,6,384,448,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B007.asset
+B008,RailBottom,Bridge,BridgePart,7,448,448,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B008.asset
+B009,RailLeft,Bridge,BridgePart,8,0,384,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B009.asset
+B010,RailRight,Bridge,BridgePart,9,64,384,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B010.asset
+B011,Post,Bridge,BridgePart,10,128,384,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B011.asset
+B012,JunctionDeck,Bridge,BridgePart,11,192,384,64,64,1,1,0.5,0.5,Assets/Sapphire/Art/World/Modular64/Tiles/Bridge/B012.asset

@@ -158,6 +158,13 @@ namespace Sapphire.EditorTools
             AssetDatabase.SaveAssets();
         }
 
+        public static void RebuildSlimeKingdom()
+        {
+            BuildSlimeKingdomScene();
+            SlimeKingdomSceneVerification.VerifyAndCapture();
+            Debug.Log("SLIME_KINGDOM_REBUILD SUCCESS");
+        }
+
         private static void BuildSlimeKingdomScene()
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);

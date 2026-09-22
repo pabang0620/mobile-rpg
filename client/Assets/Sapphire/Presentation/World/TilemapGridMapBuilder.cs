@@ -5,9 +5,8 @@ using Sapphire.Domain.Grid;
 namespace Sapphire.Presentation.World
 {
     /// <summary>
-    /// Builds a fresh Domain GridMap from the scene's Tilemap layers every
-    /// time Build() is called (typically once per scene load). Never caches
-    /// across scene loads - always reads the tilemaps as they currently are.
+    /// Shares one live Domain GridMap among scene consumers during play.
+    /// Editor builds read fresh tilemaps; runtime cache belongs to this scene component.
     /// </summary>
     public class TilemapGridMapBuilder : MonoBehaviour
     {
@@ -17,6 +16,7 @@ namespace Sapphire.Presentation.World
         [SerializeField] private int height = 10;
         [SerializeField] private int originCellX;
         [SerializeField] private int originCellY;
+        private GridMap runtimeMap;
 
         /// <summary>
         /// Converts a Domain GridCoord (always 0-based) into the Tilemap cell
@@ -29,6 +29,7 @@ namespace Sapphire.Presentation.World
 
         public GridMap Build()
         {
+            if (UnityEngine.Application.isPlaying && runtimeMap != null) return runtimeMap;
             var map = new GridMap(width, height);
 
             for (int x = 0; x < width; x++)
@@ -45,7 +46,31 @@ namespace Sapphire.Presentation.World
                 }
             }
 
+            if (UnityEngine.Application.isPlaying) runtimeMap = map;
             return map;
+        }
+
+        public TileBase GetCollisionTile(GridCoord coord)
+        {
+            return collisionTilemap != null ? collisionTilemap.GetTile(ToCell(coord)) : null;
+        }
+
+        /// <summary>
+        /// Updates visual collision and the shared movement map together. Clearing
+        /// requires the expected occupant tile, so a replaced blocker is preserved.
+        /// Callers must own the reservation they clear (monster spawn cells are reserved).
+        /// </summary>
+        public bool SetCollisionBlocked(GridCoord coord, bool blocked, TileBase occupantTile)
+        {
+            var map = Build();
+            var cell = ToCell(coord);
+            if (!map.IsInBounds(coord) || groundTilemap == null || !groundTilemap.HasTile(cell) ||
+                collisionTilemap == null || occupantTile == null) return false;
+            var current = collisionTilemap.GetTile(cell);
+            if (blocked ? current != null || !map.IsWalkable(coord) : current != occupantTile) return false;
+            collisionTilemap.SetTile(cell, blocked ? occupantTile : null);
+            map.SetBlocked(coord, blocked);
+            return true;
         }
     }
 }

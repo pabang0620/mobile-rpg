@@ -1,0 +1,15 @@
+id,semantic,layer,category,atlas_slot,atlas_x,atlas_y_bottom,width_px,height_px,footprint_w,footprint_h,pivot_x,pivot_y,asset
+D101,TreeBroad,DecorationLarge,Vegetation,0,0,0,128,192,2,3,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D101.asset
+D102,TreePine,DecorationLarge,Vegetation,1,128,0,128,192,2,3,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D102.asset
+D103,TreeDead,DecorationLarge,Vegetation,2,256,0,128,192,2,3,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D103.asset
+D104,BushLarge,DecorationLarge,Vegetation,3,384,0,128,128,2,2,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D104.asset
+D105,BoulderLarge,DecorationLarge,Rock,4,512,0,128,128,2,2,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D105.asset
+D106,BoulderMossy,DecorationLarge,Rock,5,640,0,128,128,2,2,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D106.asset
+D107,RuinArch,DecorationLarge,Ruin,6,768,0,128,192,2,3,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D107.asset
+D108,RuinPillar,DecorationLarge,Ruin,7,896,0,128,192,2,3,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D108.asset
+D109,Shrine,DecorationLarge,Ruin,8,0,192,128,192,2,3,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D109.asset
+D110,Cart,DecorationLarge,Structure,9,128,192,192,128,3,2,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D110.asset
+D111,Well,DecorationLarge,Structure,10,320,192,128,128,2,2,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D111.asset
+D112,TreeTwin,DecorationLarge,Vegetation,11,448,192,192,192,3,3,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D112.asset
+D113,RuinWall,DecorationLarge,Ruin,12,640,192,192,128,3,2,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D113.asset
+D114,AncientTree,DecorationLarge,Vegetation,13,0,384,192,192,3,3,0.5,0.06,Assets/Sapphire/Art/World/Modular64/Tiles/DecorationsLarge/D114.asset

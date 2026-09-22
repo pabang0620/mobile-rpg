@@ -1,0 +1,13 @@
+id,semantic,layer,width_cells,segment,lane,atlas_slot,atlas_x,atlas_y_bottom,asset
+S001,NarrowTop,StairsSouth,1,Top,Full,96,0,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S001.asset
+S002,NarrowMiddle,StairsSouth,1,Middle,Full,97,64,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S002.asset
+S003,NarrowBottom,StairsSouth,1,Bottom,Full,98,128,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S003.asset
+S004,WideTopLeft,StairsSouth,3,Top,Left,99,192,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S004.asset
+S005,WideTopCenter,StairsSouth,3,Top,Center,100,256,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S005.asset
+S006,WideTopRight,StairsSouth,3,Top,Right,101,320,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S006.asset
+S007,WideMiddleLeft,StairsSouth,3,Middle,Left,102,384,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S007.asset
+S008,WideMiddleCenter,StairsSouth,3,Middle,Center,103,448,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S008.asset
+S009,WideMiddleRight,StairsSouth,3,Middle,Right,104,512,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S009.asset
+S010,WideBottomLeft,StairsSouth,3,Bottom,Left,105,576,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S010.asset
+S011,WideBottomCenter,StairsSouth,3,Bottom,Center,106,640,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S011.asset
+S012,WideBottomRight,StairsSouth,3,Bottom,Right,107,704,576,Assets/Sapphire/Art/World/Modular64/Tiles/Stairs/S012.asset
