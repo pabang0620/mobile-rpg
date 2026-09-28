@@ -39,7 +39,7 @@ namespace Sapphire.Presentation.Combat
             spawnX = x; spawnY = y;
             spawnMaxHp = maxHp; spawnAttack = atk; spawnDefense = def;
             spawnIsBoss = isBoss;
-            WorldPoint spawnWorld = GridWorldConversion.GridToWorld(new GridCoord(x, y));
+            WorldPoint spawnWorld = GridWorldConversion.GridToActorFeet(new GridCoord(x, y));
             visualOffset = transform.position - new Vector3(spawnWorld.X, spawnWorld.Y, 0f);
             if (UnityEngine.Application.isPlaying) InitializeRuntime();
         }
@@ -155,7 +155,7 @@ namespace Sapphire.Presentation.Combat
             }
             if (player == null) return;
 
-            var playerCoord = GridWorldConversion.WorldToGrid(new WorldPoint(player.transform.position.x, player.transform.position.y));
+            var playerCoord = GridWorldConversion.ActorFeetToGrid(new WorldPoint(player.transform.position.x, player.transform.position.y));
             int dx = playerCoord.X - GridX;
             int dy = playerCoord.Y - GridY;
             int dist = Mathf.Abs(dx) + Mathf.Abs(dy);
@@ -174,8 +174,12 @@ namespace Sapphire.Presentation.Combat
                     CombatEngine.ProcessAttack(Stats, combatController.Stats, combatController.Health, finalMultiplier);
 
                     combatController.OnHit(damage);
-                    DamagePopup.Spawn(player.transform.position, damage, isCrit ? damage.ToString() + " CRIT!" : null);
-                    HitEffectSpawner.Spawn(player.transform.position + new Vector3(0, 0.25f, -1f), isCrit);
+                    // player.transform.position is the player's FEET
+                    // (Domain.Grid.GridWorldConversion.GridToActorFeet), so
+                    // feedback anchors from the body center, not the ground.
+                    Vector3 playerBodyCenter = player.transform.position + Vector3.up * GridWorldConversion.ActorBodyCenterHeight;
+                    DamagePopup.Spawn(playerBodyCenter, damage, isCrit ? damage.ToString() + " CRIT!" : null);
+                    HitEffectSpawner.Spawn(playerBodyCenter + new Vector3(0, 0f, -1f), isCrit);
                     var shake = FindObjectOfType<CameraShake>();
                     shake?.Shake(0.08f, 0.15f);
 
@@ -230,7 +234,7 @@ namespace Sapphire.Presentation.Combat
             GridX = x;
             GridY = y;
 
-            WorldPoint world = GridWorldConversion.GridToWorld(new GridCoord(x, y));
+            WorldPoint world = GridWorldConversion.GridToActorFeet(new GridCoord(x, y));
             StartCoroutine(SmoothMove(new Vector3(world.X, world.Y, 0f) + visualOffset));
         }
 

@@ -57,24 +57,22 @@ namespace Sapphire.Presentation.Skills
                 return;
             }
 
-            Vector3 actorCenter = ActorCenter();
-
             switch (row)
             {
                 case 0:
-                    PlayDash(actorCenter, origin, destination, facing);
+                    PlayDash(origin, destination, facing);
                     break;
                 case 1:
-                    PlayWhirlwind(actorCenter);
+                    PlayWhirlwind(origin);
                     break;
                 case 2:
-                    PlayShieldBlock(actorCenter);
+                    PlayShieldBlock(origin);
                     break;
                 case 3:
-                    PlayWarCry(actorCenter);
+                    PlayWarCry(origin);
                     break;
                 default:
-                    PlayGroundSlam(actorCenter, origin, facing);
+                    PlayGroundSlam(origin, facing);
                     break;
             }
         }
@@ -88,113 +86,93 @@ namespace Sapphire.Presentation.Skills
         /// straight ahead, same left-edge-pivot elongation technique mage's
         /// LightningSpear row uses (SkillVfxPlayer.Play, row 4).
         /// </summary>
-        public void PlayBasicAttack(GridDirection facing)
+        public void PlayBasicAttack(GridCoord casterCell, GridDirection facing)
         {
-            Vector3 actorCenter = ActorCenter();
             GridCoord direction = facing.ToOffset();
             float rotation = Mathf.Atan2(direction.Y, direction.X) * Mathf.Rad2Deg;
 
-            GameObject slash = Create("WarriorVfx_BasicAttack", actorCenter, 1f, rotation);
+            GameObject slash = Create("WarriorVfx_BasicAttack", VfxAnchors.DirectionalStart(casterCell, facing), 1f, rotation, VfxGlowMaterials.Light);
             slash.transform.localScale = new Vector3(WarriorCombatConstants.BasicAttackRangeTiles, 1f, 1f);
             StartCoroutine(Animate(slash, WarriorSkillVfxLibrary.BasicAttackRow, 0.35f, false, Vector3.zero));
         }
 
-        // Player.TryBlink already moved the actor before this plays (same
-        // situation SkillVfxPlayer's row==1 teleport handles) - reconstruct
-        // the departure point from the already-updated actor center. Scale
+        // Directional streak anchored at the caster tile's own edge in the
+        // facing direction (VfxAnchors.DirectionalStart), matching the mage
+        // spear/ice-spike row's left-edge-pivot elongation technique. Scale
         // uses the ACTUAL tiles moved (ChebyshevDistance), not a hardcoded 3,
         // since TryBlink can stop short of the full dash range at an
         // obstacle.
-        private void PlayDash(Vector3 actorCenter, GridCoord origin, GridCoord destination, GridDirection facing)
+        private void PlayDash(GridCoord origin, GridCoord destination, GridDirection facing)
         {
-            Vector3 originCenter = actorCenter + Point(origin) - Point(destination);
             GridCoord direction = facing.ToOffset();
             float rotation = Mathf.Atan2(direction.Y, direction.X) * Mathf.Rad2Deg;
             int tiles = Mathf.Max(1, SkillRangeCalculator.ChebyshevDistance(origin, destination));
 
-            GameObject streak = Create("WarriorVfx_Dash", originCenter, 1f, rotation);
+            GameObject streak = Create("WarriorVfx_Dash", VfxAnchors.DirectionalStart(origin, facing), 1f, rotation);
             streak.transform.localScale = new Vector3(tiles, 1f, 1f);
             StartCoroutine(Animate(streak, WarriorSkillVfxLibrary.DashRow, 0.3f, false, Vector3.zero));
         }
 
-        // 3x3 (radius 1) area centered on the caster - uniform scale 3, per
-        // spec, since WhirlwindSlash is a direction-less area effect (unlike
-        // dash/basic-attack, no per-tile marker loop is needed anymore now
-        // that a real atlas animation exists).
-        private void PlayWhirlwind(Vector3 actorCenter)
+        // 3x3 (radius 1) ground-area effect centered on the caster's tile
+        // (VfxAnchors.TileCenter), matching SkillRangeIndicator's own
+        // markers - uniform scale 3, per spec, since WhirlwindSlash is a
+        // direction-less area effect (unlike dash/basic-attack, no per-tile
+        // marker loop is needed anymore now that a real atlas animation
+        // exists).
+        private void PlayWhirlwind(GridCoord casterCell)
         {
-            GameObject vfx = Create("WarriorVfx_Whirlwind", actorCenter, 3f, 0f);
+            GameObject vfx = Create("WarriorVfx_Whirlwind", VfxAnchors.TileCenter(casterCell), 3f, 0f);
             StartCoroutine(Animate(vfx, WarriorSkillVfxLibrary.WhirlwindRow, 0.4f, false, Vector3.zero));
         }
 
-        // Self-buff - scale 1.65 per mage's ManaShield reference (SkillVfxPlayer
-        // row 0), loop=true for the shield's whole 4s duration. Animate's
-        // "go == shieldObject" cleanup (shared with mage's pattern) resets
-        // DamageReductionPoints when the coroutine ends, so no separate pulse
-        // coroutine is needed anymore.
-        private void PlayShieldBlock(Vector3 actorCenter)
+        // Self-buff, anchored on the caster's body center (VfxAnchors.BodyCenter)
+        // rather than the ground - scale 1.65 per mage's ManaShield reference
+        // (SkillVfxPlayer row 0), loop=true for the shield's whole 4s
+        // duration. Animate's "go == shieldObject" cleanup (shared with
+        // mage's pattern) resets DamageReductionPoints when the coroutine
+        // ends, so no separate pulse coroutine is needed anymore.
+        private void PlayShieldBlock(GridCoord casterCell)
         {
             ClearShield();
             DamageReductionPoints = 40;
-            shieldObject = Create("WarriorVfx_ShieldBlock", actorCenter, 1.65f, 0f);
+            shieldObject = Create("WarriorVfx_ShieldBlock", VfxAnchors.BodyCenter(casterCell), 1.65f, 0f, VfxGlowMaterials.Light);
             shieldRoutine = StartCoroutine(Animate(shieldObject, WarriorSkillVfxLibrary.ShieldBlockRow, 4f, true, Vector3.zero));
         }
 
-        // Self-buff, expanding shockwave ring - keeps the exact same
-        // expand+fade tween this class used before real VFX art existed
-        // (only the sprite-per-frame assignment is new, see
-        // ExpandFadeAnimated), per spec "ExpandFade 애니메이션 기존 로직
-        // 유지하며 스프라이트만 교체".
-        private void PlayWarCry(Vector3 actorCenter)
+        // Ground-area, expanding shockwave ring centered on the caster's tile
+        // (VfxAnchors.TileCenter) - keeps the exact same expand+fade tween
+        // this class used before real VFX art existed (only the
+        // sprite-per-frame assignment is new, see ExpandFadeAnimated), per
+        // spec "ExpandFade 애니메이션 기존 로직 유지하며 스프라이트만 교체".
+        private void PlayWarCry(GridCoord casterCell)
         {
-            GameObject wave = Create("WarriorVfx_WarCry", actorCenter, 0.6f, 0f);
+            GameObject wave = Create("WarriorVfx_WarCry", VfxAnchors.TileCenter(casterCell), 0.6f, 0f);
             StartCoroutine(ExpandFadeAnimated(wave, WarriorSkillVfxLibrary.WarCryRow, 2.4f, 0.5f));
         }
 
         // Frontal 3-wide x 1-deep slam directly ahead of the caster, matching
         // SkillRangeCalculator.TilesInFrontCone(origin, facing, 1)'s
-        // footprint. WarriorGroundSlamPadded.png is imported with
-        // spritePixelsPerUnit = frame width (see WarriorSkillVfxImporter), so
-        // a frame's own unscaled size is already 1 local unit wide (canvas
-        // width -> 1 tile depth) x ~2.9 local units tall (canvas height -> 3
-        // tiles wide) - center pivot, so rotating local +X to face `facing`
-        // and positioning at the forward tile's center covers exactly that
+        // footprint - the ground-area anchor is the forward tile's own
+        // center (VfxAnchors.TileCenter), matching SkillRangeIndicator.
+        // WarriorGroundSlamPadded.png is imported with spritePixelsPerUnit =
+        // frame width (see WarriorSkillVfxImporter), so a frame's own
+        // unscaled size is already 1 local unit wide (canvas width -> 1 tile
+        // depth) x ~2.9 local units tall (canvas height -> 3 tiles wide) -
+        // center pivot, so rotating local +X to face `facing` and
+        // positioning at the forward tile's center covers exactly that
         // tile's own footprint (front-to-back) plus its left/right neighbors
         // at the same forward distance, with no further scale needed.
-        // Atan2-based facing rotation is new - the old primitive version drew
-        // one unrotated marker per tile instead.
-        private void PlayGroundSlam(Vector3 actorCenter, GridCoord origin, GridDirection facing)
+        private void PlayGroundSlam(GridCoord origin, GridDirection facing)
         {
             GridCoord direction = facing.ToOffset();
-            Vector3 position = actorCenter + Point(origin + direction) - Point(origin);
+            Vector3 position = VfxAnchors.TileCenter(origin + direction);
             float rotation = Mathf.Atan2(direction.Y, direction.X) * Mathf.Rad2Deg;
 
             GameObject slam = Create("WarriorVfx_GroundSlam", position, 1f, rotation);
             StartCoroutine(Animate(slam, WarriorSkillVfxLibrary.GroundSlamRow, 0.45f, false, Vector3.zero));
         }
 
-        private static Vector3 Point(GridCoord cell)
-        {
-            WorldPoint p = GridWorldConversion.GridToWorld(cell);
-            return new Vector3(p.X, p.Y, 0f);
-        }
-
-        // 2026-09-16: user reported every skill VFX reads as sitting slightly
-        // down-left of the character and asked for +4px right / +6px up.
-        // Camera is a fixed orthographic 9 vertical tiles over a 720px-tall
-        // window (docs/DECISIONS.md), so 1px = 9/720 = 0.0125 world units:
-        // 4px -> 0.05, 6px -> 0.075. Applied once here (not per-VFX-row)
-        // since every row anchors off this same ActorCenter().
-        private static readonly Vector3 VfxCenteringOffset = new Vector3(0.05f, 0.075f, 0f);
-
-        private Vector3 ActorCenter()
-        {
-            SpriteRenderer actor = GetComponent<SpriteRenderer>();
-            Vector3 center = actor != null ? actor.bounds.center : transform.position;
-            return center + VfxCenteringOffset;
-        }
-
-        private GameObject Create(string name, Vector3 position, float size, float rotation)
+        private GameObject Create(string name, Vector3 position, float size, float rotation, float glow = 0f)
         {
             var go = new GameObject(name, typeof(SpriteRenderer));
             activeEffects.Add(go);
@@ -203,6 +181,7 @@ namespace Sapphire.Presentation.Skills
             go.transform.localScale = new Vector3(size, size, 1f);
             var renderer = go.GetComponent<SpriteRenderer>();
             renderer.sortingOrder = 200;
+            VfxGlowMaterials.Apply(renderer, glow);
             return go;
         }
 

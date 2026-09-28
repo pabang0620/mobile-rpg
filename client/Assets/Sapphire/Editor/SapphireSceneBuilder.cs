@@ -245,7 +245,12 @@ namespace Sapphire.EditorTools
             Sprite recoveryRight = LoadNamedSprite(attackSheet, className + "_Right_Recovery");
 
             var playerGo = new GameObject("Player_" + className, typeof(SpriteRenderer), typeof(PlayerInputReader), typeof(GridMoveAnimator), typeof(DirectionalSpriteAnimator), typeof(SkillMotionPlayer), typeof(PlayerGridController), typeof(Sapphire.Presentation.Combat.PlayerCombatController));
-            playerGo.transform.position = CellCenter(spawnX, spawnY);
+            // Editor-preview position only - PlayerGridController.Initialize
+            // overwrites this at runtime with the same GridToActorFeet
+            // conversion, so this just keeps the pre-Play scene view
+            // consistent with the runtime foot line.
+            WorldPoint spawnFeet = GridWorldConversion.GridToActorFeet(new GridCoord(spawnX, spawnY));
+            playerGo.transform.position = new Vector3(spawnFeet.X, spawnFeet.Y, 0f);
             playerGo.GetComponent<SpriteRenderer>().sprite = idleDown;
             var spriteRenderer = playerGo.GetComponent<SpriteRenderer>();
             spriteRenderer.material = new Material(Shader.Find("Sprites/Default"));

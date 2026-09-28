@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Sapphire.Domain.Grid;
 using Sapphire.Presentation.World;
 
 namespace Sapphire.EditorTools
@@ -232,7 +233,15 @@ namespace Sapphire.EditorTools
             positions.Add(new Vector2Int(x, y));
             float scale = boss ? 1.5f : .82f;
             monster.transform.localScale = new Vector3(scale, scale, 1);
-            monster.transform.position += Vector3.up * (sprite.pivot.y / sprite.pixelsPerUnit * scale);
+            // sprite.pivot.y/PPU*scale keeps the slime's own bottom-pivoted
+            // sprite anchored to its contact point; the extra
+            // ActorFootOffsetY shifts that contact point down onto the same
+            // foot line the player now stands on (Domain.Grid.GridWorldConversion
+            // - actors no longer stand with their feet at the exact tile
+            // center, see GridToActorFeet), so slimes don't float half a
+            // tile above the player's own ground line.
+            monster.transform.position += Vector3.up * (sprite.pivot.y / sprite.pixelsPerUnit * scale)
+                + Vector3.up * GridWorldConversion.ActorFootOffsetY;
             monster.AddComponent<Sapphire.Presentation.Combat.MonsterController>().Initialize(x, y, boss ? 150 : 30, boss ? 15 : 5, boss ? 5 : 2, boss);
         }
 

@@ -146,7 +146,7 @@ namespace Sapphire.Presentation.Skills
                 }
 
                 skillVfx = ResolveSkillVfx();
-                (skillVfx as WarriorSkillVfxPlayer)?.PlayBasicAttack(player.Mover.Facing);
+                (skillVfx as WarriorSkillVfxPlayer)?.PlayBasicAttack(player.Mover.Position, player.Mover.Facing);
                 motionPlayer?.PlayAttack(player.Mover.Facing);
 
                 if (combat != null)

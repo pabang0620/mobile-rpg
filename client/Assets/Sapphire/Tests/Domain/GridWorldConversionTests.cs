@@ -63,5 +63,73 @@ namespace Sapphire.Domain.Tests
 
             Assert.AreEqual(0, grid.X);
         }
+
+        [Test]
+        public void GridToActorFeet_ReturnsCellCenterOffsetDownByFootOffset()
+        {
+            WorldPoint feet = GridWorldConversion.GridToActorFeet(new GridCoord(2, 5));
+            WorldPoint center = GridWorldConversion.GridToWorld(new GridCoord(2, 5));
+
+            Assert.AreEqual(center.X, feet.X);
+            Assert.AreEqual(center.Y + GridWorldConversion.ActorFootOffsetY, feet.Y);
+        }
+
+        [Test]
+        public void ActorFeetToGrid_RoundTripsWithGridToActorFeet()
+        {
+            var original = new GridCoord(3, 4);
+            WorldPoint feet = GridWorldConversion.GridToActorFeet(original);
+
+            GridCoord roundTripped = GridWorldConversion.ActorFeetToGrid(feet);
+
+            Assert.AreEqual(original, roundTripped);
+        }
+
+        [Test]
+        public void ActorFeetToGrid_NegativeCoordRoundTrip_ReturnsOriginalCoord()
+        {
+            var original = new GridCoord(-6, -9);
+            WorldPoint feet = GridWorldConversion.GridToActorFeet(original);
+
+            GridCoord roundTripped = GridWorldConversion.ActorFeetToGrid(feet);
+
+            Assert.AreEqual(original, roundTripped);
+        }
+
+        [Test]
+        public void ActorFeetToGrid_MultipleCoords_AllRoundTrip()
+        {
+            GridCoord[] coords =
+            {
+                new GridCoord(0, 0),
+                new GridCoord(1, 0),
+                new GridCoord(0, 1),
+                new GridCoord(-1, -1),
+                new GridCoord(10, -10),
+                new GridCoord(-15, 22),
+            };
+
+            foreach (GridCoord coord in coords)
+            {
+                WorldPoint feet = GridWorldConversion.GridToActorFeet(coord);
+                GridCoord roundTripped = GridWorldConversion.ActorFeetToGrid(feet);
+                Assert.AreEqual(coord, roundTripped);
+            }
+        }
+
+        [Test]
+        public void GridToActorFeet_FeetSitAboveTileBottomEdge()
+        {
+            // The tile's bottom edge is at center.Y - 0.5; feet should sit
+            // strictly above it (standard top-down RPG look), not flush with
+            // the edge and not up at the tile center.
+            var coord = new GridCoord(0, 0);
+            WorldPoint feet = GridWorldConversion.GridToActorFeet(coord);
+            WorldPoint center = GridWorldConversion.GridToWorld(coord);
+            float bottomEdge = center.Y - 0.5f * GridWorldConversion.CellSize;
+
+            Assert.IsTrue(feet.Y > bottomEdge);
+            Assert.IsTrue(feet.Y < center.Y);
+        }
     }
 }

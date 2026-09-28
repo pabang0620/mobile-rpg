@@ -28,66 +28,42 @@ namespace Sapphire.Presentation.Skills
         public void Play(int row, GridCoord origin, GridCoord destination, GridDirection facing)
         {
             if (row < 0 || row > 4) return;
-            Vector3 actorCenter = ActorCenter();
-            // Blink moves the player before VFX playback, so reconstruct its
-            // departure center from the already-updated renderer center.
-            Vector3 originCenter = row == 1
-                ? actorCenter + Point(origin) - Point(destination)
-                : actorCenter;
-            Vector3 destinationCenter = row == 1 ? actorCenter : actorCenter + Point(destination) - Point(origin);
+            // Anchored off the caster's own GridCoord (Domain.Grid.GridWorldConversion),
+            // the same source SkillRangeIndicator draws its tile markers from
+            // - not SpriteRenderer.bounds, which changes per animation frame.
+            // origin/destination are pre-/post-cast cells; for every row but
+            // teleport (row 1) no movement happened, so they are equal.
             if (row == 0)
             {
                 ClearShield(); ShieldPoints = 40;
-                Vector3 shieldOffset = Vector3.down * 0.3f + Vector3.right * 0.1f;
-                shieldObject = Create("ManaShield", originCenter + shieldOffset, 1.65f, 0);
+                shieldObject = Create("ManaShield", VfxAnchors.BodyCenter(origin), 1.65f, 0);
                 shieldObject.transform.SetParent(transform, true);
                 shieldRoutine = StartCoroutine(Animate(shieldObject, row, 4f, true, Vector3.zero));
                 return;
             }
             if (row == 1)
             {
-                StartCoroutine(Animate(Create("TeleportDeparture", originCenter, 1.4f, 0), 1, .55f, false, Vector3.zero));
-                StartCoroutine(Animate(Create("TeleportArrival", destinationCenter, 1.4f, 0), 1, .55f, false, Vector3.zero));
+                StartCoroutine(Animate(Create("TeleportDeparture", VfxAnchors.TileCenter(origin), 1.4f, 0), 1, .55f, false, Vector3.zero));
+                StartCoroutine(Animate(Create("TeleportArrival", VfxAnchors.TileCenter(destination), 1.4f, 0), 1, .55f, false, Vector3.zero));
                 return;
             }
             GridCoord direction = facing.ToOffset();
             float rotation = Mathf.Atan2(direction.Y, direction.X) * Mathf.Rad2Deg;
             if (row == 2)
             {
-                float pixelSize = library != null && library.Frames != null && library.Frames.Length > 16 && library.Frames[16] != null
-                    ? 1f / library.Frames[16].pixelsPerUnit
-                    : 1f / 198f;
-                Vector3 thunderOffset = Vector3.right * (0.2f + 0.1f * pixelSize);
-                StartCoroutine(Animate(Create("Thunder3x3", originCenter + thunderOffset, 3f, 0), 2, .8f, false, Vector3.zero));
+                StartCoroutine(Animate(Create("Thunder3x3", VfxAnchors.TileCenter(origin), 3f, 0), 2, .8f, false, Vector3.zero));
             }
             else if (row == 3)
-                StartCoroutine(Animate(Create("IceSpikeSingle", originCenter, 1.25f, rotation), 3, .65f, false, new Vector3(direction.X * 5f, direction.Y * 5f, 0)));
+                StartCoroutine(Animate(Create("IceSpikeSingle", VfxAnchors.DirectionalStart(origin, facing), 1.25f, rotation), 3, .65f, false, new Vector3(direction.X * 5f, direction.Y * 5f, 0)));
             else
             {
                 // A single connected atlas animation grows from the actor origin
                 // to the full four-tile tip. The spear-row sprites use a left-edge
                 // pivot, so this non-uniform scale never expands behind the caster.
-                GameObject spear = Create("LightningSpear4Tiles", originCenter, 1f, rotation);
+                GameObject spear = Create("LightningSpear4Tiles", VfxAnchors.DirectionalStart(origin, facing), 1f, rotation);
                 spear.transform.localScale = new Vector3(4f, 1f, 1f);
                 StartCoroutine(Animate(spear, 4, .7f, false, Vector3.zero));
             }
-        }
-        private static Vector3 Point(GridCoord cell)
-        { WorldPoint p = GridWorldConversion.GridToWorld(cell); return new Vector3(p.X, p.Y, 0); }
-        // 2026-09-16: user reported every skill VFX reads as sitting slightly
-        // down-left of the character and asked for +4px right / +6px up.
-        // Camera is a fixed orthographic 9 vertical tiles over a 720px-tall
-        // window (docs/DECISIONS.md), so 1px = 9/720 = 0.0125 world units:
-        // 4px -> 0.05, 6px -> 0.075. Applied once here (not per-VFX-row)
-        // since every row anchors off this same ActorCenter() (mirrors the
-        // identical fix in WarriorSkillVfxPlayer.ActorCenter()).
-        private static readonly Vector3 VfxCenteringOffset = new Vector3(0.05f, 0.075f, 0f);
-
-        private Vector3 ActorCenter()
-        {
-            SpriteRenderer actor = GetComponent<SpriteRenderer>();
-            Vector3 center = actor != null ? actor.bounds.center : transform.position;
-            return center + VfxCenteringOffset;
         }
         private GameObject Create(string name, Vector3 position, float size, float rotation)
         {
@@ -98,6 +74,7 @@ namespace Sapphire.Presentation.Skills
             go.transform.localScale = new Vector3(size, size, 1);
             var sr = go.GetComponent<SpriteRenderer>();
             sr.sortingOrder = 200;
+            VfxGlowMaterials.Apply(sr, VfxGlowMaterials.Energy);
             return go;
         }
         private IEnumerator Animate(GameObject go, int row, float duration, bool loop, Vector3 travel)

@@ -49,7 +49,7 @@ namespace Sapphire.Presentation.Movement
             map = gridMap;
             mover = new GridMover(spawnCoord);
 
-            WorldPoint spawnWorld = GridWorldConversion.GridToWorld(spawnCoord);
+            WorldPoint spawnWorld = GridWorldConversion.GridToActorFeet(spawnCoord);
             transform.position = new Vector3(spawnWorld.X, spawnWorld.Y, transform.position.z);
 
             spriteAnimator?.SetFacing(mover.Facing);
@@ -58,7 +58,7 @@ namespace Sapphire.Presentation.Movement
         public bool TryBlink(int rangeTiles)
         {
             if (mover == null || map == null || mover.TryBlink(rangeTiles, map) != MoveResult.Started) return false;
-            WorldPoint destination = GridWorldConversion.GridToWorld(mover.Position);
+            WorldPoint destination = GridWorldConversion.GridToActorFeet(mover.Position);
             transform.position = new Vector3(destination.X, destination.Y, transform.position.z);
             directionStack = new List<GridDirection>();
             spriteAnimator?.SetMoving(false);
@@ -111,8 +111,8 @@ namespace Sapphire.Presentation.Movement
             }
 
             GridCoord destination = previousPosition + direction.ToOffset();
-            WorldPoint from = GridWorldConversion.GridToWorld(previousPosition);
-            WorldPoint to = GridWorldConversion.GridToWorld(destination);
+            WorldPoint from = GridWorldConversion.GridToActorFeet(previousPosition);
+            WorldPoint to = GridWorldConversion.GridToActorFeet(destination);
 
             spriteAnimator?.SetMoving(true);
 

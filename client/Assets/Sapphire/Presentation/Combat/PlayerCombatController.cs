@@ -146,8 +146,12 @@ namespace Sapphire.Presentation.Combat
                         HitResult hit = CombatEngine.ResolveHit(Stats, monster.Stats, monster.Health, skillMultiplier, combatRandom);
 
                         monster.OnHit(hit.Damage, Stats);
-                        DamagePopup.Spawn(monster.transform.position, hit.Damage, hit.IsCrit ? hit.Damage.ToString() + " CRIT!" : null);
-                        HitEffectSpawner.Spawn(monster.transform.position + new Vector3(0, 0.25f, -1f), hit.IsCrit);
+                        // Anchor from the monster's body center, not its feet/ground
+                        // contact point, so sparks land on the body and the popup
+                        // rises from above the head (Domain.Grid.GridWorldConversion.ActorBodyCenterHeight).
+                        Vector3 monsterBodyCenter = monster.transform.position + Vector3.up * GridWorldConversion.ActorBodyCenterHeight;
+                        DamagePopup.Spawn(monsterBodyCenter, hit.Damage, hit.IsCrit ? hit.Damage.ToString() + " CRIT!" : null);
+                        HitEffectSpawner.Spawn(monsterBodyCenter + new Vector3(0, 0f, -1f), hit.IsCrit);
                         hitAny = true;
 
                         if (hit.Killed)
