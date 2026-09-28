@@ -21,28 +21,25 @@ namespace Sapphire.EditorTools.ModularTiles
         static string Verification=>Path.GetFullPath(Path.Combine(Application.dataPath,"../../verification"));
         static readonly int[] FrameStarts={16,64,112,160};
         static readonly int[] Dx={0,1,1,1,0,-1,-1,-1}, Dy={1,1,0,-1,-1,-1,0,1};
-        static readonly Color32[] WaterPalette={new Color32(18,70,94,255),new Color32(22,82,106,255),new Color32(27,94,119,255),new Color32(32,107,132,255),new Color32(41,121,144,255),new Color32(53,137,157,255),new Color32(70,153,169,255),new Color32(91,170,180,255)};
+        static Color32[] WaterPalette;
         sealed class Item { public string Id,Semantic,Layer; public int Mask,Slot,Variant,Frame; public Color32[] Pixels=new Color32[Cell*Cell]; public Tile Tile; }
 
         [MenuItem("Sapphire/Modular Tiles/Build Independent Water + Foam Test")]
         public static void Build()
         {
             CheckSceneCreationAllowed();
+            WaterPalette=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Water,8);
             Texture2D source=ReadSource(); List<Item> items;
             try { items=BuildItems(source); } finally { UnityEngine.Object.DestroyImmediate(source); }
             Directory.CreateDirectory(TileRoot); Directory.CreateDirectory(Verification);
             Validate(items); WriteAtlas(items); ImportAtlas(); SaveTiles(items); WriteManifest(items);
-            AssetDatabase.SaveAssets(); ReloadCheck(items); BuildScene(items); AssetDatabase.Refresh();
+            BuildBanks(); AssetDatabase.SaveAssets(); ReloadCheck(items); BuildScene(items); AssetDatabase.Refresh();
             Debug.Log("Modular64: W001-W012 and F001-F188 (47 shoreline masks x 4 frames at 0.2s) built. AnimatedTile is intentionally not required; CSV records frame timing.");
         }
 
         static Texture2D ReadSource()
         {
-            string path=Root+"/Sources/WaterMaster.png";
-            if(!File.Exists(path)) throw new FileNotFoundException("Provide WaterMaster.png material source.",path);
-            var t=new Texture2D(2,2,TextureFormat.RGBA32,false);
-            try { if(!t.LoadImage(File.ReadAllBytes(path))) throw new InvalidDataException("Cannot decode "+path); if(t.width<3||t.height<3) throw new InvalidDataException("WaterMaster.png must be at least 3x3."); if(t.GetPixels32().Any(p=>p.a==0)) throw new InvalidDataException("WaterMaster.png contains fully transparent pixels with unusable RGB."); return t; }
-            catch { UnityEngine.Object.DestroyImmediate(t); throw; }
+            return ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Water);
         }
 
         static List<Item> BuildItems(Texture2D source)
@@ -54,8 +51,10 @@ namespace Sapphire.EditorTools.ModularTiles
                 for(int y=0;y<Cell;y++) for(int x=0;x<Cell;x++)
                 {
                     // All variants share the exact perimeter; only the protected interior changes.
-                    if(x==0||x==63||y==0||y==63) item.Pixels[y*Cell+x]=WaterContact(x==0||x==63?y:x);
-                    else { int sx=PositiveMod(x+v*83,source.width),sy=PositiveMod(y+v*127,source.height); Color32 c=src[sy*source.width+sx]; int n=PositiveMod((c.r*3+c.g*5+c.b*2)/10+Hash(x/4,y/4,v),WaterPalette.Length); item.Pixels[y*Cell+x]=WaterPalette[n]; }
+                    Color common=SampleMaterial(src,source.width,x,y,0);
+                    float inside=Mathf.SmoothStep(0,1,Mathf.Min(x,63-x,y,63-y)/18f);
+                    Color c=Color.Lerp(common,SampleMaterial(src,source.width,x,y,v),inside*.65f); c.a=1;
+                    item.Pixels[y*Cell+x]=c;
                 }
                 result.Add(item);
             }
@@ -68,6 +67,71 @@ namespace Sapphire.EditorTools.ModularTiles
                 result.Add(item);
             }
             return result;
+        }
+
+        // Blend translated source patches, never mirror them. Coordinates 0 and 63
+        // meet at the identical sample while preserving the source's painted currents.
+        internal static Color SampleMaterial(Color32[] src,int width,int x,int y,int variant)
+        {
+            float u=x/63f,v=y/63f;
+            int ox=80+variant*19,oy=80+variant*23,px=x*2,py=y*2;
+            Func<int,int,Color> at=(a,b)=>src[PositiveMod(oy+b,width)*width+PositiveMod(ox+a,width)];
+            Color result=Color.Lerp(Color.Lerp(at(px,py),at(px-126,py),u),Color.Lerp(at(px,py-126),at(px-126,py-126),u),v);result.a=1;return result;
+        }
+
+        static void BuildBanks()
+        {
+            const string atlasPath=Root+"/TS08_River_Banks_64.png",folder=Root+"/Tiles/RiverBanks";
+            Directory.CreateDirectory(folder);
+            var source=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Cliff);
+            var pixels=source.GetPixels32(); var items=new List<Item>();
+            int[] masks=Enumerable.Range(0,256).Select(NormalizeMask).Distinct().OrderBy(m=>m).ToArray();
+            for(int n=0;n<masks.Length;n++)
+            {
+                int mask=masks[n];var item=new Item{Id="BK"+(n+1).ToString("D3"),Slot=n,Mask=mask};
+                for(int y=0;y<64;y++)for(int x=0;x<64;x++)
+                {
+                    // Water occupancy retains concave corner information. Draw
+                    // the stone rim inward from every missing water neighbour.
+                    int distance=64,depth=12;
+                    int[] distances={63-y,63-x,y,x};
+                    for(int side=0;side<4;side++)
+                    {
+                        if((mask&(1<<(side*2)))==0)distance=Math.Min(distance,distances[side]);
+                        if((mask&(1<<(side*2+1)))==0)distance=Math.Min(distance,Math.Max(distances[side],distances[(side+1)%4]));
+                    }
+                    if(distance>=depth)continue;
+                    Color c=SampleMaterial(pixels,source.width,x,y,0);
+                    float shade=distance<3?1.12f:distance>depth-4?.62f:.88f;
+                    c.r*=shade;c.g*=shade;c.b*=shade;c.a=1;item.Pixels[y*64+x]=c;
+                }
+                items.Add(item);
+            }
+            UnityEngine.Object.DestroyImmediate(source);
+            if(items.Count!=47||items.Any(i=>i.Pixels.Any(p=>p.a!=0&&p.a!=255)))throw new InvalidDataException("River bank mask/alpha contract failed.");
+            var bankLookup=items.ToDictionary(i=>i.Mask);
+            for(int bits=0;bits<4096;bits++)for(int axis=0;axis<2;axis++)
+            {
+                int w=axis==0?4:3,h=axis==0?3:4,bx=axis==0?2:1,by=axis==0?1:2;
+                Func<int,int,bool> has=(xx,yy)=>xx>=0&&xx<w&&yy>=0&&yy<h&&(bits&(1<<(yy*w+xx)))!=0;
+                if(!has(1,1)||!has(bx,by))continue;int ma=0,mb=0;
+                for(int d=0;d<8;d++){if(has(1+Dx[d],1+Dy[d]))ma|=1<<d;if(has(bx+Dx[d],by+Dy[d]))mb|=1<<d;}
+                CheckEdge(bankLookup[NormalizeMask(ma)],bankLookup[NormalizeMask(mb)],axis==0,"bank water-mask");
+            }
+            WritePng(atlasPath,Assemble(items),AtlasSize,AtlasSize);
+            AssetDatabase.ImportAsset(atlasPath,ImportAssetOptions.ForceSynchronousImport);
+            var importer=(TextureImporter)AssetImporter.GetAtPath(atlasPath);importer.textureType=TextureImporterType.Sprite;importer.spritePixelsPerUnit=64;importer.filterMode=FilterMode.Point;importer.mipmapEnabled=false;importer.textureCompression=TextureImporterCompression.Uncompressed;importer.isReadable=true;importer.maxTextureSize=1024;importer.SaveAndReimport();
+            var texture=AssetDatabase.LoadAssetAtPath<Texture2D>(atlasPath);var manifest=new StringBuilder("id,normalized_mask,asset\n");
+            foreach(var item in items)
+            {
+                string path=folder+"/"+item.Id+".asset";var tile=AssetDatabase.LoadAssetAtPath<Tile>(path);
+                if(tile==null){tile=ScriptableObject.CreateInstance<Tile>();AssetDatabase.CreateAsset(tile,path);}
+                var sprite=AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().FirstOrDefault();var made=Sprite.Create(texture,SlotRect(item.Slot),new Vector2(.5f,.5f),64,0,SpriteMeshType.FullRect);made.name=item.Id;
+                if(sprite==null){sprite=made;AssetDatabase.AddObjectToAsset(sprite,tile);}else{EditorUtility.CopySerialized(made,sprite);UnityEngine.Object.DestroyImmediate(made);}
+                tile.sprite=sprite;tile.colliderType=Tile.ColliderType.None;tile.color=Color.white;tile.transform=Matrix4x4.identity;EditorUtility.SetDirty(tile);EditorUtility.SetDirty(sprite);manifest.AppendLine(item.Id+","+item.Mask+","+path);
+            }
+            File.WriteAllText(Root+"/TS08_River_Banks_64.csv",manifest.ToString());
+            File.WriteAllText(Path.Combine(Verification,"modular-river-bank-validation.txt"),"PASS: 47 stable WATER-occupancy bank IDs, 64px source-derived stone rims, binary alpha and exhaustive legal water-center RGBA edge comparison. Banks occupy water-side pixels only; map skips bridge water cells.\n");
         }
 
         // Mask denotes land occupancy. Foam is a transparent water-side overlay around that geometry.

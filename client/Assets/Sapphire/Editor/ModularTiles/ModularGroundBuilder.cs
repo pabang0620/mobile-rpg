@@ -18,13 +18,16 @@ namespace Sapphire.EditorTools.ModularTiles
         public static void Build()
         {
             CheckSceneCreationAllowed();
+            GrassPalette=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Grass,12);
+            DirtPalette=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Dirt,12);
             Texture2D grass = null, dirt = null;
             var masks = Enumerable.Range(0, 256).Select(NormalizeMask).Distinct().OrderBy(x => x).ToArray();
             if (masks.Length != 47) throw new InvalidOperationException("Blob normalization must produce 47 masks.");
             var entries = new List<Entry>();
             try
             {
-                grass = ReadSource("GrassMaster"); dirt = ReadSource("DirtMaster");
+                grass=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Grass);
+                dirt=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Dirt);
                 for (int i = 0; i < 47; i++) entries.Add(MakeEntry("G" + (i + 1).ToString("D3"), masks[i], i, 0, false, grass));
                 for (int i = 0; i < 12; i++) entries.Add(MakeEntry("G" + (i + 48).ToString("D3"), 255, 48 + i, i + 1, false, grass));
                 for (int i = 0; i < 47; i++) entries.Add(MakeEntry("PA" + (i + 1).ToString("D3"), masks[i], 96 + i, 0, true, dirt));

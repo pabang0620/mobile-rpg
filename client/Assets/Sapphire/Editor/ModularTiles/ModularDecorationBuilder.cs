@@ -34,9 +34,9 @@ namespace Sapphire.EditorTools.ModularTiles
             CheckSceneCreationAllowed();
             RequireDiagnosticTile(Root+"/Tiles/G047.asset","Build TS01 first: actual G047 land tile is required for bridge contacts.");
             RequireDiagnosticTile(Root+"/Tiles/WaterFoam/W001.asset","Build TS03 first: actual W001 water tile is required beneath the bridge.");
-            Texture2D wood=ReadSource("WoodMaster.png",true,out woodSourceReport), deco=null;
+            Texture2D wood=ReadSource("EnvironmentObjectsV2.png",true,out woodSourceReport), deco=null;
             List<Item> small,large,bridge;
-            try { deco=ReadSource("DecorationSource.png",false,out decoSourceReport); DerivePalette(wood,deco); small=BuildSmall(); large=BuildLarge(); bridge=BuildBridge(); }
+            try { deco=ReadSource("EnvironmentObjectsV2.png",true,out decoSourceReport); DerivePalette(wood,deco); small=BuildSmall(); large=BuildLarge(); bridge=BuildBridge(); ApplyApprovedObjects(small,large,bridge); }
             finally { UnityEngine.Object.DestroyImmediate(wood); if(deco!=null)UnityEngine.Object.DestroyImmediate(deco); }
             Validate(small,large,bridge);
             Directory.CreateDirectory(SmallDir);Directory.CreateDirectory(LargeDir);Directory.CreateDirectory(BridgeDir);Directory.CreateDirectory(Verification);
@@ -46,7 +46,7 @@ namespace Sapphire.EditorTools.ModularTiles
             WriteManifest(SmallAtlas.Replace(".png",".csv"),small,SmallDir);WriteManifest(LargeAtlas.Replace(".png",".csv"),large,LargeDir);WriteManifest(BridgeAtlas.Replace(".png",".csv"),bridge,BridgeDir);
             AssetDatabase.SaveAssets();ReloadCheck(small,SmallAtlas,SmallDir);ReloadCheck(large,LargeAtlas,LargeDir);ReloadCheck(bridge,BridgeAtlas,BridgeDir);
             BuildScene(small,large,bridge);AssetDatabase.Refresh();
-            Debug.Log("Modular64: D001-D032, D101-D114 and B001-B012 built from material sources and procedural silhouettes.");
+            Debug.Log("Modular64: approved source components applied to vegetation, rocks, ruins and modular bridge deck; ancillary legacy decorations retained.");
         }
 
         static Texture2D ReadSource(string name,bool allowOpaqueFullFrame,out string report)
@@ -56,10 +56,8 @@ namespace Sapphire.EditorTools.ModularTiles
         }
         static void DerivePalette(Texture2D wood,Texture2D deco)
         {
-            Color32 w=AverageMaterial(wood), d=AverageMaterial(deco);
-            woodMid=Tone(w,.78f,255);woodDark=Tone(w,.43f,255);woodLight=Tone(w,1.18f,255);
-            leafMid=new Color32((byte)Mathf.Clamp(d.r*.65f,28,105),(byte)Mathf.Clamp(d.g*.92f,65,150),(byte)Mathf.Clamp(d.b*.55f,22,95),255);
-            leafDark=Tone(leafMid,.58f,255);leafLight=Tone(leafMid,1.32f,255);stoneMid=new Color32((byte)((d.r+w.r)/4+48),(byte)((d.g+w.g)/4+51),(byte)((d.b+w.b)/4+54),255);stoneDark=Tone(stoneMid,.58f,255);stoneLight=Tone(stoneMid,1.30f,255);accent=new Color32(224,174,67,255);
+            Color32[] wp=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Dirt,7),lp=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Grass,7),sp=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Cliff,7);
+            woodDark=wp[1];woodMid=wp[3];woodLight=wp[5];leafDark=lp[1];leafMid=lp[3];leafLight=lp[5];stoneDark=sp[1];stoneMid=sp[3];stoneLight=sp[5];accent=new Color32(224,174,67,255);
         }
         static Dictionary<int,int> EdgeBins(Texture2D t){Color32[] p=t.GetPixels32();var bins=new Dictionary<int,int>();Action<Color32> add=c=>{if(c.a<224)return;int key=(c.r/16)<<8|(c.g/16)<<4|c.b/16;bins[key]=bins.ContainsKey(key)?bins[key]+1:1;};for(int x=0;x<t.width;x++){add(p[x]);add(p[(t.height-1)*t.width+x]);}for(int y=0;y<t.height;y++){add(p[y*t.width]);add(p[y*t.width+t.width-1]);}return bins;}
         static Color32 BinCenter(int key)=>new Color32((byte)((((key>>8)&15)*16)+8),(byte)((((key>>4)&15)*16)+8),(byte)(((key&15)*16)+8),255);
@@ -92,7 +90,7 @@ namespace Sapphire.EditorTools.ModularTiles
         }
         static void DrawLarge(Item i,int n)
         {
-            int w=i.W,h=i.H,c=w/2;if(n<=2||n==11||n==13){int trunk=n==11?22:n==13?28:16;Rect(i,c-trunk/2,8,c+trunk/2,h*2/3,woodDark);Rect(i,c-trunk/2+4,12,c+trunk/2-3,h*2/3,woodMid);if(n!=2){int rx=n==11?w/2-8:w/2-14;Ellipse(i,c-rx,h/3,c+rx,h-10,leafDark);Ellipse(i,c-rx+8,h/2,c+rx-5,h-18,leafMid);Ellipse(i,c-rx/2,h*2/3,c+rx/2,h-8,leafLight);}else{Line(i,c,h*2/3,c-38,h-20,woodDark,8);Line(i,c,h*2/3,c+34,h-30,woodDark,7);}return;}
+            int w=i.W,h=i.H,c=w/2;if(n<=2||n==11||n==13){int trunk=n==11?22:n==13?28:16;Rect(i,c-trunk/2,8,c+trunk/2,h*2/3,woodDark);Rect(i,c-trunk/2+4,12,c+trunk/2-3,h*2/3,woodMid);if(n!=2){int rx=n==11?w/2-8:w/2-14;Ellipse(i,c-rx,h/3,c+rx,h-10,leafDark);Ellipse(i,c-rx+8,h/2,c+rx-5,h-18,leafMid);for(int b=0;b<11;b++){int bx=c-rx+12+(b*37)%Math.Max(12,rx*2-24),by=h/2+8+(b*23)%Math.Max(12,h/2-32);Ellipse(i,bx-10,by-8,bx+11,by+9,b%3==0?leafLight:leafMid);}Ellipse(i,c-rx/2,h*2/3,c+rx/2,h-8,leafLight);}else{Line(i,c,h*2/3,c-38,h-20,woodDark,8);Line(i,c,h*2/3,c+34,h-30,woodDark,7);}return;}
             if(n==3){Ellipse(i,7,8,w-7,h-12,leafDark);Ellipse(i,15,20,w-13,h-5,leafMid);return;}if(n==4||n==5){Ellipse(i,8,7,w-8,h-18,stoneDark);Ellipse(i,15,18,w-14,h-8,stoneMid);if(n==5)Ellipse(i,22,h/2,w-28,h-9,leafMid);return;}
             if(n==6||n==7||n==12){Rect(i,10,8,w-10,n==12?h-18:h-10,stoneDark);Rect(i,17,13,w-17,n==12?h-25:h-17,stoneMid);if(n==6)Ellipse(i,w/2-27,8,w/2+27,h-35,new Color32());if(n==7)Rect(i,w/2-8,h-45,w/2+8,h,new Color32());for(int y=24;y<h-20;y+=25)Line(i,15,y,w-16,y+3,stoneLight,2);return;}
             if(n==8){for(int x=18;x<w-18;x+=18)Line(i,x,9,w/2,h-24,woodDark,4);Rect(i,15,7,w-15,18,stoneMid);Dot(i,w/2,h-17,accent);return;}if(n==9){Rect(i,18,24,w-18,h-24,woodMid);Line(i,18,24,w-18,h-24,woodDark,4);Ellipse(i,25,7,57,39,stoneDark);Ellipse(i,w-57,7,w-25,39,stoneDark);return;}if(n==10){Ellipse(i,12,8,w-12,h-18,stoneDark);Ellipse(i,20,18,w-20,h-25,new Color32(29,49,55,255));Rect(i,9,h-25,w-9,h-15,woodMid);}
@@ -103,6 +101,48 @@ namespace Sapphire.EditorTools.ModularTiles
             string[] names={"Horizontal","HorizontalLeftEnd","HorizontalRightEnd","Vertical","VerticalBottomEnd","VerticalTopEnd","RailTop","RailBottom","RailLeft","RailRight","Post","JunctionDeck"};
             var list=new List<Item>();for(int n=0;n<names.Length;n++){Item i=New("B"+(n+1).ToString("D3"),names[n],"Bridge","BridgePart",n,Cell,Cell,new Vector2(.5f,.5f));DrawBridge(i,n);list.Add(i);}return list;
         }
+        static void ApplyApprovedObjects(List<Item> small,List<Item> large,List<Item> bridge)
+        {
+            // Fixed semantic crops from the approved transparent contact sheet.
+            large[0].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(100,150),large[0].W,large[0].H);
+            large[1].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(900,150),large[1].W,large[1].H);
+            large[2].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(300,150),large[2].W,large[2].H);
+            large[3].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(940,950),large[3].W,large[3].H);
+            large[4].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(735,950),large[4].W,large[4].H);
+            large[5].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(620,950),large[5].W,large[5].H);
+            large[6].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(1330,480),large[6].W,large[6].H);
+            large[7].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(930,780),large[7].W,large[7].H);
+            large[8].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(1330,480),large[8].W,large[8].H);
+            large[11].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(440,500),large[11].W,large[11].H);
+            large[12].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(110,780),large[12].W,large[12].H);
+            large[13].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(150,500),large[13].W,large[13].H);
+            Vector2Int[] natureAnchors={new Vector2Int(735,950),new Vector2Int(837,950),new Vector2Int(620,950),new Vector2Int(837,950),new Vector2Int(620,950),new Vector2Int(735,950),new Vector2Int(1400,950),new Vector2Int(1245,950),new Vector2Int(1045,950),new Vector2Int(1145,950),new Vector2Int(1245,950),new Vector2Int(940,950),new Vector2Int(1045,950),new Vector2Int(1400,950)};
+            for(int n=0;n<natureAnchors.Length;n++)small[n].Pixels=ApprovedEnvironmentV2.ObjectPixels(natureAnchors[n],Cell,Cell);
+            small[15].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(380,940),Cell,Cell); // stump
+            small[17].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(90,940),Cell,Cell); // log
+            small[23].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(1430,790),Cell,Cell); // chest/crate landmark
+            small[4].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(620,950),Cell,Cell); // mossy rock
+            small[14].Pixels=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(1400,950),Cell,Cell); // reeds
+
+            // Independently sample the repeatable deck and the two land contacts. A complete
+            // bridge must never be aspect-fitted into a repeating single-cell span.
+            var bridgeAnchor=new Vector2Int(690,470);
+            bridge[3].Pixels=ApprovedEnvironmentV2.ObjectStrip(bridgeAnchor,new RectInt(600,410,144,120),Cell,Cell);
+            bridge[4].Pixels=ApprovedEnvironmentV2.ObjectStrip(bridgeAnchor,new RectInt(600,550,144,122),Cell,Cell);
+            bridge[5].Pixels=ApprovedEnvironmentV2.ObjectStrip(bridgeAnchor,new RectInt(600,300,144,110),Cell,Cell);
+            bridge[0].Pixels=RotateClockwise(bridge[3].Pixels);bridge[1].Pixels=RotateClockwise(bridge[4].Pixels);bridge[2].Pixels=RotateClockwise(bridge[5].Pixels);
+            SealBridgeSeams(bridge);
+        }
+        static Color32[] RotateClockwise(Color32[] source){var result=new Color32[Cell*Cell];for(int y=0;y<Cell;y++)for(int x=0;x<Cell;x++)result[y*Cell+x]=source[(Cell-1-x)*Cell+y];return result;}
+        static void SealBridgeSeams(List<Item> b)
+        {
+            // Only the one-pixel modular contact is conditioned; all visible interior pixels remain source-authored.
+            for(int p=0;p<Cell;p++){
+                Color32 h=b[0].Pixels[p*Cell];b[0].Pixels[p*Cell+63]=h;b[1].Pixels[p*Cell+63]=h;b[2].Pixels[p*Cell]=h;
+                Color32 v=b[3].Pixels[p];b[3].Pixels[63*Cell+p]=v;b[4].Pixels[63*Cell+p]=v;b[5].Pixels[p]=v;
+                b[11].Pixels[p*Cell]=h;b[11].Pixels[p*Cell+63]=h;b[11].Pixels[p]=v;b[11].Pixels[63*Cell+p]=v;
+            }
+        }
         static void DrawBridge(Item i,int n)
         {
             if(n==11){DrawHorizontalDeck(i);DrawVerticalDeck(i);CanonicalHorizontalEdges(i,false,false);CanonicalVerticalEdges(i,false,false);return;}
@@ -110,8 +150,8 @@ namespace Sapphire.EditorTools.ModularTiles
             if(n<=5){DrawVerticalDeck(i);CanonicalVerticalEdges(i,n==4,n==5);return;}
             if(n==6||n==7){int y=n==6?50:10;Line(i,0,y,63,y,woodLight,4);for(int x=5;x<64;x+=18)Line(i,x,y,x,y+(n==6?-10:10),woodDark,4);return;}if(n==8||n==9){int x=n==8?10:50;Line(i,x,0,x,63,woodLight,4);for(int y=5;y<64;y+=18)Line(i,x,y,x+(n==8?10:-10),y,woodDark,4);return;}Ellipse(i,22,8,42,29,woodDark);Rect(i,26,16,38,54,woodMid);
         }
-        static void DrawHorizontalDeck(Item i){Rect(i,0,15,63,49,woodDark);for(int x=1;x<64;x+=10)Rect(i,x,18,Math.Min(63,x+7),46,woodMid);Line(i,0,15,63,15,woodLight,2);Line(i,0,49,63,49,woodLight,2);}
-        static void DrawVerticalDeck(Item i){Rect(i,15,0,49,63,woodDark);for(int y=1;y<64;y+=10)Rect(i,18,y,46,Math.Min(63,y+7),woodMid);Line(i,15,0,15,63,woodLight,2);Line(i,49,0,49,63,woodLight,2);}
+        static void DrawHorizontalDeck(Item i){Rect(i,0,15,63,49,woodDark);for(int x=1;x<64;x+=10){Rect(i,x,18,Math.Min(63,x+7),46,woodMid);Line(i,x+2,21,Math.Min(63,x+5),43,woodLight,1);}Line(i,0,15,63,15,woodLight,2);Line(i,0,49,63,49,woodLight,2);}
+        static void DrawVerticalDeck(Item i){Rect(i,15,0,49,63,woodDark);for(int y=1;y<64;y+=10){Rect(i,18,y,46,Math.Min(63,y+7),woodMid);Line(i,21,y+2,43,Math.Min(63,y+5),woodLight,1);}Line(i,15,0,15,63,woodLight,2);Line(i,49,0,49,63,woodLight,2);}
         static void CanonicalHorizontalEdges(Item i,bool openLeft,bool openRight){for(int y=0;y<Cell;y++){Color32 join=i.Pixels[y*Cell];i.Pixels[y*Cell+63]=join;if(openLeft)i.Pixels[y*Cell]=new Color32();if(openRight)i.Pixels[y*Cell+63]=new Color32();}}
         static void CanonicalVerticalEdges(Item i,bool openBottom,bool openTop){for(int x=0;x<Cell;x++){Color32 join=i.Pixels[x];i.Pixels[63*Cell+x]=join;if(openBottom)i.Pixels[x]=new Color32();if(openTop)i.Pixels[63*Cell+x]=new Color32();}}
 
@@ -129,7 +169,7 @@ namespace Sapphire.EditorTools.ModularTiles
             if(small.Where((x,n)=>x.Id!="D"+(n+1).ToString("D3")||x.Slot!=n).Any()||large.Where((x,n)=>x.Id!="D"+(101+n).ToString("D3")).Any()||bridge.Where((x,n)=>x.Id!="B"+(n+1).ToString("D3")||x.Slot!=n).Any())throw new InvalidOperationException("ID/slot contract changed.");
             foreach(Item i in ids.Select(id=>small.Concat(large).Concat(bridge).First(x=>x.Id==id))){if(i.W%Cell!=0||i.H%Cell!=0||i.Pixels.Length!=i.W*i.H)throw new InvalidOperationException("Non-64 footprint: "+i.Id);if(!i.Pixels.Any(p=>p.a==255)||i.Pixels.Any(p=>p.a!=0&&p.a!=255)||i.Pixels.Any(p=>p.a==0&&(p.r!=0||p.g!=0||p.b!=0)))throw new InvalidOperationException("Alpha/RGB contract: "+i.Id);}
             ValidatePacking(small,SmallSize);ValidatePacking(large,LargeSize);ValidatePacking(bridge,BridgeSize);ValidateBridge(bridge);
-            File.WriteAllText(Path.Combine(Verification,"modular-decoration-validation.txt"),"PASS: D001-D032 asserted category counts Rock=6, Nature=9, Wood=5, Built=6, Ambient=6; D101-D114 large footprints are 64px multiples.\nPASS: B001-B012 include horizontal/vertical deck, endcaps, rails, post and junction; legal deck seams match.\nPASS: all sprites use binary alpha with zero RGB outside silhouettes; unused atlas pixels are zero RGBA.\nPASS: reloaded assets reference the generated texture, exact rect/pivot and 64 PPU.\nSOURCE: "+woodSourceReport+"\nSOURCE: "+decoSourceReport+"\nNOTE: source images supply filtered palette/material cues; object silhouettes are deterministic procedural artwork, not claims of source-authored subjects.\n");
+            File.WriteAllText(Path.Combine(Verification,"modular-decoration-validation.txt"),"PASS: D001-D032 asserted category counts Rock=6, Nature=9, Wood=5, Built=6, Ambient=6; D101-D114 large footprints are 64px multiples.\nPASS: B001-B012 include horizontal/vertical deck, endcaps, rails, post and junction; legal deck seams match.\nPASS: all sprites use binary alpha with zero RGB outside silhouettes; unused atlas pixels are zero RGBA.\nPASS: reloaded assets reference the generated texture, exact rect/pivot and 64 PPU.\nSOURCE: "+woodSourceReport+"\nSOURCE: "+decoSourceReport+"\nNOTE: D001-D016, D018, D024, D101-D109 and D112-D114 use approved source alpha components; B001-B006 use separately sampled deck and endpoint strips. Ancillary decorations and auxiliary bridge pieces retain procedural silhouettes.\n");
         }
         static void ValidatePacking(List<Item> items,int size){var used=new bool[size*size];foreach(Item i in items){RectInt r=AtlasRect(i,size);if(r.x<0||r.y<0||r.xMax>size||r.yMax>size)throw new InvalidOperationException("Atlas overflow: "+i.Id);for(int y=r.y;y<r.yMax;y++)for(int x=r.x;x<r.xMax;x++){int q=y*size+x;if(used[q])throw new InvalidOperationException("Atlas overlap: "+i.Id);used[q]=true;}}Color32[] atlas=Assemble(items,size);for(int q=0;q<atlas.Length;q++)if(!used[q]&&!atlas[q].Equals(new Color32()))throw new InvalidOperationException("Reserved atlas area is not zero RGBA.");}
         static void ValidateBridge(List<Item> b){Action<Item,Item,bool> edge=(a,c,h)=>{for(int p=0;p<Cell;p++){int ia=h?p*Cell+63:63*Cell+p,ib=h?p*Cell:p;if(!a.Pixels[ia].Equals(c.Pixels[ib]))throw new InvalidOperationException("Illegal bridge deck seam: "+a.Id+"/"+c.Id);}};edge(b[0],b[0],true);edge(b[1],b[0],true);edge(b[0],b[2],true);edge(b[0],b[11],true);edge(b[11],b[0],true);edge(b[3],b[3],false);edge(b[4],b[3],false);edge(b[3],b[5],false);edge(b[3],b[11],false);edge(b[11],b[3],false);}

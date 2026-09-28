@@ -45,6 +45,7 @@ namespace Sapphire.EditorTools
             var grid = new GameObject("Grid", typeof(Grid));
             grid.GetComponent<Grid>().cellSize = Vector3.one;
             Tilemap water = Layer(grid, "Water", -30010), foam = Layer(grid, "Foam", -30009);
+            Tilemap banks = Layer(grid, "Stone River Banks", -30008);
             Tilemap ground = Layer(grid, "Ground", -30000), road = Layer(grid, "Path", -29990);
             Tilemap shadow = Layer(grid, "Shadow", -29980), elevation = Layer(grid, "Elevated Top", -29960);
             Tilemap cliff = Layer(grid, "Cliff", -29970), stairs = Layer(grid, "Stairs", -29950);
@@ -70,6 +71,13 @@ namespace Sapphire.EditorTools
             AddBridge(12, 13, 15, tiles, bridges, ground, collision, blocker);
             AddBridge(27, 14, 16, tiles, bridges, ground, collision, blocker);
             AddShorelineFoam(foam, land, tiles);
+            for(int x=0;x<Width;x++)for(int y=0;y<Height;y++)
+            {
+                if(land[x,y]||(x==12&&y>=13&&y<=15)||(x==27&&y>=14&&y<=16))continue;
+                int mask=0;for(int d=0;d<8;d++)if(!At(land,x+Dx[d],y+Dy[d]))mask|=1<<d;
+                mask=Normalize(mask);if(mask==255)continue;
+                banks.SetTile(new Vector3Int(x,y,0),tiles["BK"+(Array.IndexOf(Masks,mask)+1).ToString("D3")]);
+            }
             // Two-row southern cliff, with a single narrow south-facing staircase.
             for (int x = 28; x <= 36; x++)
             {
@@ -159,11 +167,17 @@ namespace Sapphire.EditorTools
                 int h = Hash(x, y);
                 bool riverNear = !At(land, x, y + 1) && y < Height - 1
                     || !At(land, x, y + 2) && y < Height - 2;
-                bool tree = h % 5 == 0 && !riverNear;
+                bool tree = ((y==Height-1&&x%2==0)||(y==0&&x%2==0)||((x==0||x==Width-1)&&y%3==0)) && !riverNear;
                 string id = tree ? (h % 2 == 0 ? "D101" : "D102")
                     : h % 3 == 0 ? "D005" : h % 2 == 0 ? "D012" : "D013";
                 Prop(root, tiles[id].sprite, "Border_" + x + "_" + y, x, y, collision, blocker, true);
             }
+            // Only dress existing blocked rims; the encounter and stair corridors
+            // retain their authored collision and approach cells.
+            Prop(root,tiles["D113"].sprite,"BossClearingNorthWall",17,29,collision,blocker,false,3);
+            Prop(root,tiles["D108"].sprite,"BossClearingNorthPillar",21,29,collision,blocker,false);
+            Prop(root,tiles["D113"].sprite,"PlateauNorthWall",30,27,collision,blocker,false,3);
+            Prop(root,tiles["D113"].sprite,"PlateauNorthWallEast",33,27,collision,blocker,false,3);
             // Trunks occupy one cell; the 2x3 canopy is visual and remains walkable underneath.
             int[,] trees = { { 2, 2 }, { 5, 3 }, { 9, 2 }, { 13, 3 }, { 25, 2 }, { 29, 3 }, { 34, 2 }, { 37, 4 },
                 { 3, 7 }, { 5, 10 }, { 9, 10 }, { 34, 8 }, { 37, 11 }, { 2, 18 }, { 4, 21 }, { 2, 25 },

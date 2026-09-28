@@ -22,8 +22,8 @@ namespace Sapphire.EditorTools.ModularTiles
         static string Verification=>Path.GetFullPath(Path.Combine(Application.dataPath,"../../verification"));
         static readonly int[] Dx={0,1,1,1,0,-1,-1,-1}, Dy={1,1,0,-1,-1,-1,0,1};
         static readonly string[] RunNames={"Straight","EndLeft","EndRight","Isolated"};
-        static readonly Color32[] Grass={new Color32(43,77,25,255),new Color32(57,96,30,255),new Color32(71,116,36,255),new Color32(86,136,43,255),new Color32(101,151,50,255),new Color32(114,162,60,255),new Color32(129,176,70,255),new Color32(144,188,82,255),new Color32(163,201,100,255),new Color32(122,137,62,255),new Color32(160,162,87,255),new Color32(191,189,118,255)};
-        static readonly Color32[] Rock={new Color32(48,58,70,255),new Color32(59,70,82,255),new Color32(70,82,94,255),new Color32(82,94,106,255),new Color32(95,107,118,255),new Color32(110,121,131,255),new Color32(125,135,144,255),new Color32(140,149,157,255)};
+        static Color32[] Grass,Rock;
+        static Color32[] TopPixels,CliffPixels;
 
         sealed class Item { public string Id,Semantic,Layer; public int Slot,Variant,Mask; public Color32[] Pixels=new Color32[Cell*Cell]; public Tile Tile; }
         sealed class Placement { public int X,Y,Level; public Item Top,Cliff,Shadow; }
@@ -32,7 +32,11 @@ namespace Sapphire.EditorTools.ModularTiles
         public static void Build()
         {
             CheckSceneCreationAllowed(); // interactive preflight before writes
+            Grass=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.StoneTop,12);
+            Rock=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Cliff,8);
             Texture2D source=ReadCliffSource(); List<Item> elevation;
+            var topSource=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.StoneTop);
+            TopPixels=topSource.GetPixels32();CliffPixels=source.GetPixels32();UnityEngine.Object.DestroyImmediate(topSource);
             try { elevation=BuildElevation(source); } finally { UnityEngine.Object.DestroyImmediate(source); }
             List<Item> shadows=BuildShadows(); Validate(elevation,shadows);
             Directory.CreateDirectory(ElevationTiles); Directory.CreateDirectory(ShadowTiles); Directory.CreateDirectory(Verification);
@@ -48,11 +52,7 @@ namespace Sapphire.EditorTools.ModularTiles
 
         static Texture2D ReadCliffSource()
         {
-            string file=Root+"/Sources/CliffMaster.png";
-            if(!File.Exists(file)) throw new FileNotFoundException("Provide opaque CliffMaster.png (the 1254px material source).",file);
-            var texture=new Texture2D(2,2,TextureFormat.RGBA32,false);
-            try { if(!texture.LoadImage(File.ReadAllBytes(file))) throw new InvalidDataException("Cannot decode "+file); if(texture.GetPixels32().Any(p=>p.a!=255)) throw new InvalidDataException("CliffMaster.png must be opaque."); return texture; }
-            catch { UnityEngine.Object.DestroyImmediate(texture); throw; }
+            return ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Cliff);
         }
 
         static List<Item> BuildElevation(Texture2D source)
@@ -70,8 +70,9 @@ namespace Sapphire.EditorTools.ModularTiles
             for(int y=0;y<Cell;y++) for(int x=0;x<Cell;x++)
             {
                 if(x==0||x==63||y==0||y==63) { item.Pixels[y*Cell+x]=TopBoundary(mask,x,y); continue; }
-                int rim=RimDistance(mask,x,y), n=PositiveMod(Hash(x/4,y/4,19),7);
-                item.Pixels[y*Cell+x]=rim<8?Rock[3+n%3]:Grass[2+PositiveMod(Hash(x,y,7),7)];
+                int rim=RimDistance(mask,x,y);
+                Color c=ModularWaterBuilder.SampleMaterial(rim<6?CliffPixels:TopPixels,512,x,y,0);c.a=1;
+                item.Pixels[y*Cell+x]=c;
             }
             return item;
         }
@@ -91,10 +92,10 @@ namespace Sapphire.EditorTools.ModularTiles
             {
                 if(y==63||y==0) { item.Pixels[y*Cell+x]=RimContact(x==63?0:x); continue; }
                 if(x==0||x==63) { item.Pixels[y*Cell+x]=CliffSideContact(y); continue; }
-                int sx=PositiveMod(137+x*48/63+variant*173,source.width), sy=PositiveMod(211+y*48/63+variant*197,source.height); Color32 sample=src[sy*source.width+sx];
-                int band=Mathf.Clamp(((sample.r*3+sample.g*5+sample.b*2)/10)*Rock.Length/256+((y/9+variant)%3)-1,0,Rock.Length-1);
+                float inner=Mathf.SmoothStep(0,1,Mathf.Min(x,63-x,y,63-y)/14f);
+                Color sample=Color.Lerp(ModularWaterBuilder.SampleMaterial(src,source.width,x,y,0),ModularWaterBuilder.SampleMaterial(src,source.width,x,y,variant),inner*.4f);
                 int cap=shape==1?Math.Max(0,13-x):shape==2?Math.Max(0,x-50):shape==3?Math.Max(0,11-Math.Min(x,63-x)):0;
-                if(cap>0&&y<48) band=Mathf.Clamp(band+2,0,Rock.Length-1); item.Pixels[y*Cell+x]=Rock[band];
+                float shade=cap>0&&y<48?.82f:1f;sample.r*=shade;sample.g*=shade;sample.b*=shade;sample.a=1;item.Pixels[y*Cell+x]=sample;
             }
             return item;
         }
@@ -115,9 +116,9 @@ namespace Sapphire.EditorTools.ModularTiles
 
         // A geometric corner belongs to two independently joinable edges. Both semantic
         // branches converge on one corner sample so every legal opposing edge remains exact.
-        static Color32 TopContact(int along)=>along==0?RimContact(0):Grass[4+PositiveMod(Hash(along,0,43),4)];
-        static Color32 RimContact(int along)=>Rock[3+PositiveMod(Hash(along,0,31),3)];
-        static Color32 CliffSideContact(int along)=>Rock[3+PositiveMod(Hash(along==63?0:along,0,53),3)];
+        static Color32 TopContact(int along)=>along==0?RimContact(0):(Color32)ModularWaterBuilder.SampleMaterial(TopPixels,512,along,0,0);
+        static Color32 RimContact(int along)=>(Color32)ModularWaterBuilder.SampleMaterial(CliffPixels,512,along==63?0:along,0,0);
+        static Color32 CliffSideContact(int along)=>(Color32)ModularWaterBuilder.SampleMaterial(CliffPixels,512,0,along==63?0:along,0);
 
         static List<Item> BuildShadows()
         {

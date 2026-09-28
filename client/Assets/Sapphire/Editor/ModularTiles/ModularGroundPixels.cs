@@ -15,12 +15,12 @@ namespace Sapphire.EditorTools.ModularTiles
         const int Size = 64, AtlasSize = 1024, MapSize = 30;
         static readonly int[] Dx = { 0, 1, 1, 1, 0, -1, -1, -1 };
         static readonly int[] Dy = { 1, 1, 0, -1, -1, -1, 0, 1 };
-        static readonly Color32[] GrassPalette = {
+        static Color32[] GrassPalette = {
             new Color32(43,77,25,255), new Color32(57,96,30,255), new Color32(71,116,36,255),
             new Color32(86,136,43,255), new Color32(101,151,50,255), new Color32(114,162,60,255),
             new Color32(129,176,70,255), new Color32(144,188,82,255), new Color32(163,201,100,255),
             new Color32(122,137,62,255), new Color32(160,162,87,255), new Color32(191,189,118,255) };
-        static readonly Color32[] DirtPalette = {
+        static Color32[] DirtPalette = {
             new Color32(105,73,34,255), new Color32(128,92,43,255), new Color32(151,111,53,255),
             new Color32(172,133,65,255), new Color32(190,151,78,255), new Color32(205,166,89,255),
             new Color32(218,178,103,255), new Color32(230,191,117,255), new Color32(241,205,134,255),

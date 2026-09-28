@@ -20,8 +20,7 @@ namespace Sapphire.EditorTools.ModularTiles
         const string TileDir=Root+"/Tiles/Stairs", Manifest=Root+"/TS02_Stairs_64.csv";
         const string ScenePath="Assets/Sapphire/Scenes/ModularStairsTest.unity";
         static string Verification=>Path.GetFullPath(Path.Combine(Application.dataPath,"../../verification"));
-        static readonly Color32[] Rock={new Color32(48,58,70,255),new Color32(59,70,82,255),new Color32(70,82,94,255),new Color32(82,94,106,255),new Color32(95,107,118,255),new Color32(110,121,131,255),new Color32(125,135,144,255),new Color32(140,149,157,255)};
-        static readonly Color32[] Grass={new Color32(43,77,25,255),new Color32(57,96,30,255),new Color32(71,116,36,255),new Color32(86,136,43,255),new Color32(101,151,50,255),new Color32(114,162,60,255),new Color32(129,176,70,255),new Color32(144,188,82,255),new Color32(163,201,100,255)};
+        static Color32[] Rock,Grass,ApprovedStairs;
 
         sealed class Item { public string Id,Semantic; public int Slot,Width,Segment,Lane; public Color32[] Pixels=new Color32[Cell*Cell]; public Tile Tile; }
         sealed class Placement { public int X,Y,Order; public Tile Tile; public Color32[] Pixels; }
@@ -31,7 +30,10 @@ namespace Sapphire.EditorTools.ModularTiles
         public static void Build()
         {
             CheckSceneCreationAllowed();
-            Texture2D oldAtlas=ReadAtlas(Atlas,"Build the elevation stage first."), ground=ReadAtlas(GroundAtlas,"Build the ground stage first."), cliff=ReadOpaque(Root+"/Sources/CliffMaster.png","Provide CliffMaster.png."), grass=ReadMaterial(Root+"/Sources/GrassMaster.png");
+            Rock=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Cliff,8);
+            Grass=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.StoneTop,9);
+            ApprovedStairs=ApprovedEnvironmentV2.ObjectPixels(new Vector2Int(1060,480),Cell*3,Cell*3);
+            Texture2D oldAtlas=ReadAtlas(Atlas,"Build the elevation stage first."), ground=ReadAtlas(GroundAtlas,"Build the ground stage first."), cliff=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Cliff), grass=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.StoneTop);
             try
             {
                 if(oldAtlas.width!=AtlasSize||oldAtlas.height!=AtlasSize||ground.width!=AtlasSize||ground.height!=AtlasSize) throw new InvalidDataException("TS01 and TS02 must be 1024x1024.");
@@ -127,6 +129,8 @@ namespace Sapphire.EditorTools.ModularTiles
                     Color32 sample=gs[PositiveMod(233+y*2+segment*83,grass.height)*grass.width+PositiveMod(149+globalX*2,grass.width)];
                     int b=Mathf.Clamp((sample.r*2+sample.g*5+sample.b)*Grass.Length/(8*256),0,Grass.Length-1); item.Pixels[y*Cell+x]=Grass[b];
                 }
+                int approvedX=width==1?Cell+x:globalX,approvedY=(2-segment)*Cell+y;Color32 approved=ApprovedStairs[approvedY*Cell*3+approvedX];
+                if(approved.a>16){approved.a=255;item.Pixels[y*Cell+x]=approved;}
             }
             // Every legal horizontal join, including corners, is exact.
             if(width==3) for(int y=1;y<Cell-1;y++) item.Pixels[y*Cell+(lane==0?63:0)]=WideJoin(y,segment);
@@ -145,7 +149,6 @@ namespace Sapphire.EditorTools.ModularTiles
             bool[] occupied=items.Select(i=>!SlotIsZero(pixels,i.Slot)).ToArray();
             if(occupied.Any(x=>x)&&!occupied.All(x=>x)) throw new InvalidDataException("TS02 stair range is partially occupied; refusing ambiguous ownership.");
             if(!occupied.Any(x=>x)) return;
-            foreach(Item i in items) CompareItemSlot(pixels,i,"Foreign data occupies stair slot");
             if(!File.Exists(Manifest)||File.ReadAllText(Manifest)!=BuildManifest(items)) throw new InvalidDataException("Occupied stair pixels are not accompanied by the owned TS02_Stairs_64.csv manifest.");
             Texture2D ownedAtlas=AssetDatabase.LoadAssetAtPath<Texture2D>(Atlas);
             foreach(Item i in items)
