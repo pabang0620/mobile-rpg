@@ -35,3 +35,12 @@ client/_claudelogs/
 
 # Python bytecode cache
 __pycache__/
+
+# Unity batch logs, test result dumps and ad-hoc screenshots (2026-09-28 cleanup)
+*.log
+client/build-logs/
+client/TestResults*.xml
+/screenshot.png
+/test_screen.png
+client/slime_kingdom.png
+client/village_hub.png

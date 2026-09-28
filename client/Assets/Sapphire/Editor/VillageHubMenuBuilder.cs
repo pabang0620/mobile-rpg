@@ -375,7 +375,7 @@ namespace Sapphire.EditorTools
 
             var controller = canvasGo.AddComponent<MainMenuPanel>();
             controller.Configure(overlayGo, openGo.GetComponent<Button>(), allButtons.ToArray(), allLabels.ToArray(), allAvailable.ToArray(), allIds.ToArray(), messagePanel, quitConfirmDialog);
-            backdropButton.onClick.AddListener(controller.Close);
+            controller.ConfigureBackdrop(backdropButton);
             overlayGo.SetActive(false);
         }
 

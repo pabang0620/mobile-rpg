@@ -128,7 +128,7 @@ namespace Sapphire.EditorTools
             Text errorText = CharacterFlowUiScaffold.BuildLabel(canvasGo, "ErrorText", new Vector2(0f, ErrorTextY), new Vector2(600f, 32f), string.Empty, fontSize: 20);
             errorText.color = new Color(1f, 0.5f, 0.5f);
 
-            BuildBackButton(canvasGo, secondaryButtonSprite);
+            Button backButton = BuildBackButton(canvasGo, secondaryButtonSprite);
 
             VerifyNoOverlap(mageCenterX, warriorCenterX);
 
@@ -141,6 +141,7 @@ namespace Sapphire.EditorTools
             VillageHubUiBuilder.AssignField(controller, "nameInput", nameInput);
             VillageHubUiBuilder.AssignField(controller, "errorText", errorText);
             VillageHubUiBuilder.AssignField(controller, "createButton", createButton);
+            VillageHubUiBuilder.AssignField(controller, "backButton", backButton);
 
             if (!EditorSceneManager.SaveScene(scene, ScenePath))
             {
@@ -188,7 +189,8 @@ namespace Sapphire.EditorTools
             image.sprite = buttonSprite;
             image.type = Image.Type.Sliced;
             Button button = buttonGo.GetComponent<Button>();
-            button.onClick.AddListener(() => SceneManager.LoadScene("CharacterSelect"));
+            // Click handler is registered in CharacterCreateController.Awake - a
+            // listener added here is not serialized and is lost when the scene is saved.
 
             var textGo = new GameObject("Text", typeof(Text));
             textGo.transform.SetParent(buttonGo.transform, false);

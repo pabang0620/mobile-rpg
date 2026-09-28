@@ -25,6 +25,7 @@ namespace Sapphire.Presentation.CharacterFlow
         [SerializeField] private InputField nameInput;
         [SerializeField] private Text errorText;
         [SerializeField] private Button createButton;
+        [SerializeField] private Button backButton;
 
         private CharacterClass selectedClass = CharacterClass.Mage;
         private CharacterRosterFileRepository repository;
@@ -46,6 +47,11 @@ namespace Sapphire.Presentation.CharacterFlow
             if (createButton != null)
             {
                 createButton.onClick.AddListener(HandleCreateClicked);
+            }
+
+            if (backButton != null)
+            {
+                backButton.onClick.AddListener(() => SceneManager.LoadScene("CharacterSelect"));
             }
 
             SetSelectedClass(CharacterClass.Mage);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sapphire.Domain.Combat;
 using Sapphire.Domain.Grid;
+using Sapphire.Domain.Skills;
 using UnityEngine.SceneManagement;
 
 namespace Sapphire.Presentation.Combat
@@ -13,6 +14,9 @@ namespace Sapphire.Presentation.Combat
         public HealthComponent Health { get; private set; }
         public ManaComponent Mana { get; private set; }
         public ExpComponent Exp { get; private set; }
+        public SkillCooldownTracker Cooldowns { get; private set; }
+
+        private readonly ICombatRandom combatRandom = new UnityCombatRandom();
 
         private float mpRegenTimer = 0f;
         private bool isDead = false;
@@ -23,6 +27,7 @@ namespace Sapphire.Presentation.Combat
             Health = new HealthComponent(Stats.MaxHp);
             Mana = new ManaComponent(Stats.MaxMp);
             Exp = new ExpComponent();
+            Cooldowns = new SkillCooldownTracker();
 
             Exp.OnLevelUp += HandleLevelUp;
             Health.OnDied += HandleDeath;
@@ -74,7 +79,8 @@ namespace Sapphire.Presentation.Combat
             // Full heal
             Health = new HealthComponent(Stats.MaxHp);
             Mana = new ManaComponent(Stats.MaxMp);
-            
+            Cooldowns = new SkillCooldownTracker();
+
             Health.OnDied += HandleDeath;
 
             // Level Up Visual Feedback
@@ -135,21 +141,18 @@ namespace Sapphire.Presentation.Combat
                     if (monster == null) continue;
                     if (monster.GridX == tile.X && monster.GridY == tile.Y)
                     {
-                        if (monster.Health.IsDead) continue; 
+                        if (monster.Health.IsDead) continue;
 
-                        bool isCrit = UnityEngine.Random.value < 0.25f;
-                        float finalMultiplier = isCrit ? skillMultiplier * 1.5f : skillMultiplier;
-                        int damage = CombatEngine.CalculateDamage(Stats, monster.Stats, finalMultiplier);
-                        CombatEngine.ProcessAttack(Stats, monster.Stats, monster.Health, finalMultiplier);
+                        HitResult hit = CombatEngine.ResolveHit(Stats, monster.Stats, monster.Health, skillMultiplier, combatRandom);
 
-                        monster.OnHit(damage, Stats);
-                        DamagePopup.Spawn(monster.transform.position, damage, isCrit ? damage.ToString() + " CRIT!" : null);
-                        HitEffectSpawner.Spawn(monster.transform.position + new Vector3(0, 0.25f, -1f), isCrit);
+                        monster.OnHit(hit.Damage, Stats);
+                        DamagePopup.Spawn(monster.transform.position, hit.Damage, hit.IsCrit ? hit.Damage.ToString() + " CRIT!" : null);
+                        HitEffectSpawner.Spawn(monster.transform.position + new Vector3(0, 0.25f, -1f), hit.IsCrit);
                         hitAny = true;
-                        
-                        if (monster.Health.IsDead)
+
+                        if (hit.Killed)
                         {
-                            Exp.AddExp(monster.IsBoss ? 100 : 30);
+                            Exp.AddExp(CombatRewards.ExpFor(monster.IsBoss));
                         }
                     }
                 }

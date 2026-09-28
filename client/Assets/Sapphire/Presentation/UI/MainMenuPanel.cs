@@ -54,6 +54,7 @@ namespace Sapphire.Presentation.UI
         [SerializeField] private string[] menuIds;
         [SerializeField] private SimpleMessagePanel messagePanel;
         [SerializeField] private ConfirmDialog quitConfirmDialog;
+        [SerializeField] private Button backdropButton;
 
         private const string CharacterSelectId = "character_select";
         private const string QuitId = "quit";
@@ -71,9 +72,16 @@ namespace Sapphire.Presentation.UI
             quitConfirmDialog = quitDialog;
         }
 
+        /// <summary>Full-screen backdrop behind the drawer; tapping it closes the menu (wired in Awake).</summary>
+        public void ConfigureBackdrop(Button backdrop)
+        {
+            backdropButton = backdrop;
+        }
+
         private void Awake()
         {
             if (openButton != null) openButton.onClick.AddListener(Toggle);
+            if (backdropButton != null) backdropButton.onClick.AddListener(Close);
             if (menuButtons != null)
             {
                 for (int i = 0; i < menuButtons.Length; i++)

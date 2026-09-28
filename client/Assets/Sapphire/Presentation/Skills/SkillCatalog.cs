@@ -16,19 +16,23 @@ namespace Sapphire.Presentation.Skills
     /// </summary>
     public static class SkillCatalog
     {
+        // Id string literals now live in Sapphire.Domain.Skills.SkillCombatCatalog
+        // (single source of truth, also used to key mana/cooldown rules) -
+        // these are aliases so every existing call site referencing
+        // SkillCatalog.XxxSkillId keeps compiling unchanged.
         // --- Mage ids (unchanged) ---
-        public const string ShieldSkillId = "skill.shield";
-        public const string BlinkSkillId = "skill.blink";
-        public const string ThunderSkillId = "skill.thunder_grid";
-        public const string IceSpikeSkillId = "skill.ice_spike";
-        public const string LightningSpearSkillId = "skill.lightning_spear";
+        public const string ShieldSkillId = SkillCombatCatalog.ShieldId;
+        public const string BlinkSkillId = SkillCombatCatalog.BlinkId;
+        public const string ThunderSkillId = SkillCombatCatalog.ThunderGridId;
+        public const string IceSpikeSkillId = SkillCombatCatalog.IceSpikeId;
+        public const string LightningSpearSkillId = SkillCombatCatalog.LightningSpearId;
 
         // --- Warrior ids (new) ---
-        public const string DashSkillId = "skill.dash";
-        public const string WhirlwindSkillId = "skill.whirlwind";
-        public const string ShieldBlockSkillId = "skill.shield_block";
-        public const string WarCrySkillId = "skill.war_cry";
-        public const string GroundSlamSkillId = "skill.ground_slam";
+        public const string DashSkillId = SkillCombatCatalog.DashId;
+        public const string WhirlwindSkillId = SkillCombatCatalog.WhirlwindId;
+        public const string ShieldBlockSkillId = SkillCombatCatalog.ShieldBlockId;
+        public const string WarCrySkillId = SkillCombatCatalog.WarCryId;
+        public const string GroundSlamSkillId = SkillCombatCatalog.GroundSlamId;
 
         private static readonly SkillDefinition[] MageSkills =
         {

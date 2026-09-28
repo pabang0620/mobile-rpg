@@ -131,16 +131,30 @@ namespace Sapphire.Presentation.Skills
         {
             if (player != null && player.Mover != null && !player.Mover.IsMoving)
             {
+                var combat = player.GetComponent<Sapphire.Presentation.Combat.PlayerCombatController>();
+                SkillCombatSpec spec = default(SkillCombatSpec);
+
+                if (combat != null)
+                {
+                    SkillCastResult check = SkillCastRules.Check(SkillCombatCatalog.BasicAttackId, combat.Mana, combat.Cooldowns, Time.time, out spec);
+                    if (check != SkillCastResult.Accepted)
+                    {
+                        // Basic attack is spammed by holding the key - swallow the
+                        // short cooldown silently instead of flashing a message.
+                        return;
+                    }
+                }
+
                 skillVfx = ResolveSkillVfx();
                 (skillVfx as WarriorSkillVfxPlayer)?.PlayBasicAttack(player.Mover.Facing);
                 motionPlayer?.PlayAttack(player.Mover.Facing);
-                
-                var combat = player.GetComponent<Sapphire.Presentation.Combat.PlayerCombatController>();
+
                 if (combat != null)
                 {
+                    SkillCastRules.TryCommit(SkillCombatCatalog.BasicAttackId, combat.Mana, combat.Cooldowns, Time.time, out spec);
                     GridCoord target = player.Mover.Position + player.Mover.Facing.ToOffset();
                     var tiles = new System.Collections.Generic.List<GridCoord> { target };
-                    combat.AttackArea(tiles, 1.0f, 0.15f);
+                    combat.AttackArea(tiles, spec.DamageMultiplier, spec.HitDelaySeconds);
                 }
             }
 
@@ -175,7 +189,19 @@ namespace Sapphire.Presentation.Skills
 
             bool isMovementSkill = skill.Id == SkillCatalog.BlinkSkillId || skill.Id == SkillCatalog.DashSkillId;
             var combat = player.GetComponent<Sapphire.Presentation.Combat.PlayerCombatController>();
-            
+
+            SkillCombatSpec spec = default(SkillCombatSpec);
+            if (combat != null)
+            {
+                SkillCastResult check = SkillCastRules.Check(skill.Id, combat.Mana, combat.Cooldowns, Time.time, out spec);
+                if (check != SkillCastResult.Accepted)
+                {
+                    castFeedback?.PlayCast(RejectionMessage(check, combat.Cooldowns, skill.Id));
+                    isCasting = false;
+                    yield break;
+                }
+            }
+
             System.Collections.Generic.IReadOnlyList<GridCoord> tiles = null;
             if (!isMovementSkill && skill.RangeTiles > 0)
             {
@@ -213,12 +239,12 @@ namespace Sapphire.Presentation.Skills
                 yield break;
             }
 
-            // Mana Check (Arbitrary 10 MP per skill for now)
-            if (combat != null && !isMovementSkill)
+            if (combat != null)
             {
-                if (!combat.Mana.TryConsume(10))
+                SkillCastResult commit = SkillCastRules.TryCommit(skill.Id, combat.Mana, combat.Cooldowns, Time.time, out spec);
+                if (commit != SkillCastResult.Accepted)
                 {
-                    castFeedback?.PlayCast("마나가 부족합니다!");
+                    castFeedback?.PlayCast(RejectionMessage(commit, combat.Cooldowns, skill.Id));
                     isCasting = false;
                     yield break;
                 }
@@ -228,13 +254,28 @@ namespace Sapphire.Presentation.Skills
             skillVfx.Play(index, origin, player.Mover.Position, facing);
             motionPlayer?.PlayAttack(facing);
 
-            if (combat != null && tiles != null)
+            if (combat != null && tiles != null && spec.DamageMultiplier > 0f)
             {
-                combat.AttackArea(tiles, 2.0f, 0.2f);
+                combat.AttackArea(tiles, spec.DamageMultiplier, spec.HitDelaySeconds);
             }
 
             castFeedback?.PlayCast(skill.DisplayName);
             isCasting = false;
+        }
+
+        /// <summary>Korean user-facing text for a rejected skill cast. Cooldown message includes the live remaining seconds.</summary>
+        private string RejectionMessage(SkillCastResult result, SkillCooldownTracker cooldowns, string skillId)
+        {
+            switch (result)
+            {
+                case SkillCastResult.RejectedOnCooldown:
+                    double remaining = cooldowns != null ? cooldowns.RemainingSeconds(skillId, Time.time) : 0.0;
+                    return string.Format("재사용 대기 중 ({0:0.0}초)", remaining);
+                case SkillCastResult.RejectedInsufficientMana:
+                    return "마나가 부족합니다!";
+                default:
+                    return "사용할 수 없습니다";
+            }
         }
 
         private ISkillVfxPlayer ResolveSkillVfx()
