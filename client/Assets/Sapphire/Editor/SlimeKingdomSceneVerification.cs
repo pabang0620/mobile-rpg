@@ -65,6 +65,9 @@ namespace Sapphire.EditorTools
                 preview.transform.position = new Vector3(SlimeKingdomTerrainBuilder.SpawnX + .5f, 4.5f, -10);
                 preview.orthographicSize = 4.5f;
                 Capture(preview, 1280, 720, "slime-kingdom-entrance.png");
+                preview.transform.position = new Vector3(17, 15, -10);
+                preview.orthographicSize = 4.5f;
+                Capture(preview, 1280, 720, "slime-kingdom-shoreline.png");
             }
             finally { UnityEngine.Object.DestroyImmediate(preview.gameObject); }
             // Discard capture-only changes and leave the serialized scene as the source of truth.

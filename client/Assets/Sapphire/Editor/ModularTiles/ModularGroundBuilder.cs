@@ -18,7 +18,7 @@ namespace Sapphire.EditorTools.ModularTiles
         public static void Build()
         {
             CheckSceneCreationAllowed();
-            GrassPalette=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Grass,12);
+            GrassPalette=ShoreMaterialsV3.Palette(ShoreMaterialsV3.Material.Grass,12);
             DirtPalette=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Dirt,12);
             Texture2D grass = null, dirt = null;
             var masks = Enumerable.Range(0, 256).Select(NormalizeMask).Distinct().OrderBy(x => x).ToArray();
@@ -26,7 +26,7 @@ namespace Sapphire.EditorTools.ModularTiles
             var entries = new List<Entry>();
             try
             {
-                grass=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Grass);
+                grass=ShoreMaterialsV3.Load(ShoreMaterialsV3.Material.Grass);
                 dirt=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Dirt);
                 for (int i = 0; i < 47; i++) entries.Add(MakeEntry("G" + (i + 1).ToString("D3"), masks[i], i, 0, false, grass));
                 for (int i = 0; i < 12; i++) entries.Add(MakeEntry("G" + (i + 48).ToString("D3"), 255, 48 + i, i + 1, false, grass));

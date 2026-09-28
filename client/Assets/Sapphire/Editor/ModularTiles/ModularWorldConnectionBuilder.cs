@@ -32,7 +32,7 @@ namespace Sapphire.EditorTools.ModularTiles
             var root=new GameObject("Modular64 Full Connection Diagnostic",typeof(Grid));
             SceneManager.MoveGameObjectToScene(root,scene);
             var maps=new Dictionary<string,Tilemap>();
-            string[] names={"Ground","Path","Water","Foam","Shadow","Elevation","Cliff","Stairs","Bridge","Decoration"};
+            string[] names={"Ground","Path","Water","Banks","Foam","Shadow","Elevation","Cliff","Stairs","Bridge","Decoration"};
             for(int n=0;n<names.Length;n++) maps[names[n]]=NewMap(names[n],root.transform,n);
 
             Tile[] grass=Enumerable.Range(47,13).Select(n=>Load("Tiles/G"+n.ToString("000")+".asset")).ToArray();
@@ -62,15 +62,21 @@ namespace Sapphire.EditorTools.ModularTiles
             // A vertical river with irregular banks, frame-zero foam, and a bridge over water only.
             Tile water=Load("Tiles/WaterFoam/W001.asset");
             for(int y=0;y<MapH;y++)for(int x=21;x<=26;x++)Put(maps,placements,"Water",water,x,y);
-            // Mask 64 faces west (left bank), mask 4 faces east (right bank).
-            for(int y=1;y<MapH-1;y++){Put(maps,placements,"Foam",Load("Tiles/WaterFoam/F014.asset"),21,y);Put(maps,placements,"Foam",Load("Tiles/WaterFoam/F003.asset"),26,y);}
+            // Water occupancy: west neighbours absent at left bank, east at right.
+            int[] masks=Enumerable.Range(0,256).Select(ModularWaterBuilder.NormalizeMask).Distinct().OrderBy(m=>m).ToArray();
+            for(int y=0;y<MapH;y++)for(int side=0;side<2;side++)
+            {
+                int ordinal=Array.IndexOf(masks,side==0?31:241)+1,x=side==0?21:26;
+                Put(maps,placements,"Banks",Load("Tiles/RiverBanks/BK"+ordinal.ToString("D3")+".asset"),x,y);
+                Put(maps,placements,"Foam",Load("Tiles/WaterFoam/F"+ordinal.ToString("D3")+".asset"),x,y);
+            }
             for(int x=21;x<=26;x++)Put(maps,placements,"Bridge",Load("Tiles/Bridge/"+(x==21?"B002":x==26?"B003":"B001")+".asset"),x,8);
 
             // Representative small decorations remain independently addressable.
             int[,] deco={{1,1},{4,1},{8,1},{12,1},{16,2},{18,5},{1,7},{18,11},{9,16},{19,16}};
             for(int n=0;n<deco.GetLength(0);n++)Put(maps,placements,"Decoration",Load("Tiles/DecorationsSmall/D"+(n+1).ToString("000")+".asset"),deco[n,0],deco[n,1]);
-            AddLarge(root.transform,Load("Tiles/DecorationsLarge/D101.asset"),18,13,9);
-            AddLarge(root.transform,Load("Tiles/DecorationsLarge/D108.asset"),26,13,9);
+            AddLarge(root.transform,Load("Tiles/DecorationsLarge/D101.asset"),18,13,10);
+            AddLarge(root.transform,Load("Tiles/DecorationsLarge/D108.asset"),26,13,10);
 
             Validate(maps,placements);
             var cameraGo=new GameObject("Diagnostic Camera",typeof(Camera));
@@ -111,7 +117,7 @@ namespace Sapphire.EditorTools.ModularTiles
 
         static void Validate(Dictionary<string,Tilemap> maps,List<Placement> p)
         {
-            for(int n=0;n<10;n++)if(maps.Values.ElementAt(n).GetComponent<TilemapRenderer>().sortingOrder!=n)throw new InvalidOperationException("Layer order mismatch at "+n);
+            for(int n=0;n<maps.Count;n++)if(maps.Values.ElementAt(n).GetComponent<TilemapRenderer>().sortingOrder!=n)throw new InvalidOperationException("Layer order mismatch at "+n);
             if(!p.Any(q=>q.Id=="P011")||!p.Any(q=>q.Id=="P016")||!p.Any(q=>q.Id=="S001")||!p.Any(q=>q.Id=="S012"))throw new InvalidOperationException("Path/stair coverage incomplete.");
             for(int x=21;x<=26;x++){Vector3Int c=new Vector3Int(x,8,0);if(!maps["Water"].HasTile(c)||!maps["Bridge"].HasTile(c))throw new InvalidOperationException("Bridge must occupy water cell "+c);}
             if(maps["Water"].HasTile(new Vector3Int(20,8,0))||maps["Water"].HasTile(new Vector3Int(27,8,0)))throw new InvalidOperationException("Bridge land contacts must remain dry.");

@@ -85,9 +85,9 @@ namespace Sapphire.EditorTools.ModularTiles
                 Color c = Color.Lerp(hi, lo, wy);
                 if (variant > 0)
                 {
-                    float dx = x - 31.5f, dy = y - 31.5f;
-                    float radius = 22 + 3 * Mathf.Sin((x + y + variant * 7) * .17f) + 2 * Mathf.Cos((x - y) * .21f);
-                    float amount = Mathf.Clamp01((radius - Mathf.Sqrt(dx * dx + dy * dy)) / 7);
+                    // A narrow smooth join leaves most of the cell available to a
+                    // different material patch; no circular island repeated per cell.
+                    float amount = Mathf.SmoothStep(0, 1, Mathf.Min(x, 63-x, y, 63-y) / 8f);
                     int vx = (variant * 73) % (source.width - period), vy = (variant * 97) % (source.height - period);
                     c = Color.Lerp(c, colors[(vy + sy) * source.width + vx + sx], amount);
                 }

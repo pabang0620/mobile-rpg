@@ -21,14 +21,12 @@ namespace Sapphire.EditorTools.ModularTiles
         static string Verification=>Path.GetFullPath(Path.Combine(Application.dataPath,"../../verification"));
         static readonly int[] FrameStarts={16,64,112,160};
         static readonly int[] Dx={0,1,1,1,0,-1,-1,-1}, Dy={1,1,0,-1,-1,-1,0,1};
-        static Color32[] WaterPalette;
         sealed class Item { public string Id,Semantic,Layer; public int Mask,Slot,Variant,Frame; public Color32[] Pixels=new Color32[Cell*Cell]; public Tile Tile; }
 
         [MenuItem("Sapphire/Modular Tiles/Build Independent Water + Foam Test")]
         public static void Build()
         {
             CheckSceneCreationAllowed();
-            WaterPalette=ApprovedEnvironmentV2.Palette(ApprovedEnvironmentV2.Material.Water,8);
             Texture2D source=ReadSource(); List<Item> items;
             try { items=BuildItems(source); } finally { UnityEngine.Object.DestroyImmediate(source); }
             Directory.CreateDirectory(TileRoot); Directory.CreateDirectory(Verification);
@@ -39,7 +37,7 @@ namespace Sapphire.EditorTools.ModularTiles
 
         static Texture2D ReadSource()
         {
-            return ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Water);
+            return ShoreMaterialsV3.Load(ShoreMaterialsV3.Material.Water);
         }
 
         static List<Item> BuildItems(Texture2D source)
@@ -52,8 +50,8 @@ namespace Sapphire.EditorTools.ModularTiles
                 {
                     // All variants share the exact perimeter; only the protected interior changes.
                     Color common=SampleMaterial(src,source.width,x,y,0);
-                    float inside=Mathf.SmoothStep(0,1,Mathf.Min(x,63-x,y,63-y)/18f);
-                    Color c=Color.Lerp(common,SampleMaterial(src,source.width,x,y,v),inside*.65f); c.a=1;
+                    float inside=Mathf.SmoothStep(0,1,Mathf.Min(x,63-x,y,63-y)/8f);
+                    Color c=Color.Lerp(common,SampleMaterial(src,source.width,x,y,v+1),inside); c.a=1;
                     item.Pixels[y*Cell+x]=c;
                 }
                 result.Add(item);
@@ -74,8 +72,9 @@ namespace Sapphire.EditorTools.ModularTiles
         internal static Color SampleMaterial(Color32[] src,int width,int x,int y,int variant)
         {
             float u=x/63f,v=y/63f;
-            int ox=80+variant*19,oy=80+variant*23,px=x*2,py=y*2;
-            Func<int,int,Color> at=(a,b)=>src[PositiveMod(oy+b,width)*width+PositiveMod(ox+a,width)];
+            int ox=80+variant*71,oy=80+variant*137,px=x*2,py=y*2;
+            int height=src.Length/width;
+            Func<int,int,Color> at=(a,b)=>src[PositiveMod(oy+b,height)*width+PositiveMod(ox+a,width)];
             Color result=Color.Lerp(Color.Lerp(at(px,py),at(px-126,py),u),Color.Lerp(at(px,py-126),at(px-126,py-126),u),v);result.a=1;return result;
         }
 
@@ -83,7 +82,7 @@ namespace Sapphire.EditorTools.ModularTiles
         {
             const string atlasPath=Root+"/TS08_River_Banks_64.png",folder=Root+"/Tiles/RiverBanks";
             Directory.CreateDirectory(folder);
-            var source=ApprovedEnvironmentV2.Load(ApprovedEnvironmentV2.Material.Cliff);
+            var source=ShoreMaterialsV3.Load(ShoreMaterialsV3.Material.Rock);
             var pixels=source.GetPixels32(); var items=new List<Item>();
             int[] masks=Enumerable.Range(0,256).Select(NormalizeMask).Distinct().OrderBy(m=>m).ToArray();
             for(int n=0;n<masks.Length;n++)
@@ -93,21 +92,14 @@ namespace Sapphire.EditorTools.ModularTiles
                 {
                     // Water occupancy retains concave corner information. Draw
                     // the stone rim inward from every missing water neighbour.
-                    int distance=64,depth=12;
-                    int[] distances={63-y,63-x,y,x};
-                    for(int side=0;side<4;side++)
-                    {
-                        if((mask&(1<<(side*2)))==0)distance=Math.Min(distance,distances[side]);
-                        if((mask&(1<<(side*2+1)))==0)distance=Math.Min(distance,Math.Max(distances[side],distances[(side+1)%4]));
-                    }
-                    if(distance>=depth)continue;
+                    int distance=BankDistance(mask,x,y);
+                    if(distance>=0)continue;
                     Color c=SampleMaterial(pixels,source.width,x,y,0);
-                    float shade=distance<3?1.12f:distance>depth-4?.62f:.88f;
+                    float shade=distance>=-4?.65f:1f;
                     c.r*=shade;c.g*=shade;c.b*=shade;c.a=1;item.Pixels[y*64+x]=c;
                 }
                 items.Add(item);
             }
-            UnityEngine.Object.DestroyImmediate(source);
             if(items.Count!=47||items.Any(i=>i.Pixels.Any(p=>p.a!=0&&p.a!=255)))throw new InvalidDataException("River bank mask/alpha contract failed.");
             var bankLookup=items.ToDictionary(i=>i.Mask);
             for(int bits=0;bits<4096;bits++)for(int axis=0;axis<2;axis++)
@@ -118,6 +110,32 @@ namespace Sapphire.EditorTools.ModularTiles
                 for(int d=0;d<8;d++){if(has(1+Dx[d],1+Dy[d]))ma|=1<<d;if(has(bx+Dx[d],by+Dy[d]))mb|=1<<d;}
                 CheckEdge(bankLookup[NormalizeMask(ma)],bankLookup[NormalizeMask(mb)],axis==0,"bank water-mask");
             }
+            // Full-cell soil backing is a separate authored material layer, not
+            // enlarged grass. Recessed grass silhouettes now reveal earth/stone.
+            var soil=new Item{Id="SB001",Slot=48,Mask=255};
+            for(int y=0;y<64;y++)for(int x=0;x<64;x++)
+            {
+                Color c=SampleMaterial(pixels,source.width,x,y,0);c.a=1;
+                soil.Pixels[y*64+x]=c;
+            }
+            CheckEdge(soil,soil,true,"soil H");CheckEdge(soil,soil,false,"soil V");
+            if(soil.Pixels.Any(p=>p.a!=255))throw new InvalidDataException("Land soil backing must be solid.");
+            foreach(var bank in items)
+            {
+                for(int y=0;y<Cell;y++)for(int x=0;x<Cell;x++)
+                {
+                    int d=BankDistance(bank.Mask,x,y);Color32 f=FoamPixel(bank.Mask,x,y,0);
+                    if(d<0&&(bank.Pixels[y*Cell+x].a!=255||f.a!=0))
+                        throw new InvalidDataException("Water/foam intrudes inside rock face: "+bank.Id);
+                    if(d>=0&&d<=2&&(bank.Pixels[y*Cell+x].a!=0||f.a==0))
+                        throw new InvalidDataException("Foam does not touch rock foot: "+bank.Id);
+                    bool landContact=(y==63&&(bank.Mask&1)==0)||(x==63&&(bank.Mask&4)==0)||
+                        (y==0&&(bank.Mask&16)==0)||(x==0&&(bank.Mask&64)==0);
+                    if(landContact&&bank.Pixels[y*Cell+x].a!=255)
+                        throw new InvalidDataException("Water gap at land/bank contact: "+bank.Id);
+                }
+            }
+            items.Add(soil);UnityEngine.Object.DestroyImmediate(source);
             WritePng(atlasPath,Assemble(items),AtlasSize,AtlasSize);
             AssetDatabase.ImportAsset(atlasPath,ImportAssetOptions.ForceSynchronousImport);
             var importer=(TextureImporter)AssetImporter.GetAtPath(atlasPath);importer.textureType=TextureImporterType.Sprite;importer.spritePixelsPerUnit=64;importer.filterMode=FilterMode.Point;importer.mipmapEnabled=false;importer.textureCompression=TextureImporterCompression.Uncompressed;importer.isReadable=true;importer.maxTextureSize=1024;importer.SaveAndReimport();
@@ -128,63 +146,41 @@ namespace Sapphire.EditorTools.ModularTiles
                 if(tile==null){tile=ScriptableObject.CreateInstance<Tile>();AssetDatabase.CreateAsset(tile,path);}
                 var sprite=AssetDatabase.LoadAllAssetsAtPath(path).OfType<Sprite>().FirstOrDefault();var made=Sprite.Create(texture,SlotRect(item.Slot),new Vector2(.5f,.5f),64,0,SpriteMeshType.FullRect);made.name=item.Id;
                 if(sprite==null){sprite=made;AssetDatabase.AddObjectToAsset(sprite,tile);}else{EditorUtility.CopySerialized(made,sprite);UnityEngine.Object.DestroyImmediate(made);}
-                tile.sprite=sprite;tile.colliderType=Tile.ColliderType.None;tile.color=Color.white;tile.transform=Matrix4x4.identity;EditorUtility.SetDirty(tile);EditorUtility.SetDirty(sprite);manifest.AppendLine(item.Id+","+item.Mask+","+path);
+                tile.name=item.Id;tile.sprite=sprite;tile.colliderType=Tile.ColliderType.None;tile.color=Color.white;tile.transform=Matrix4x4.identity;EditorUtility.SetDirty(tile);EditorUtility.SetDirty(sprite);manifest.AppendLine(item.Id+","+item.Mask+","+path);
             }
             File.WriteAllText(Root+"/TS08_River_Banks_64.csv",manifest.ToString());
-            File.WriteAllText(Path.Combine(Verification,"modular-river-bank-validation.txt"),"PASS: 47 stable WATER-occupancy bank IDs, 64px source-derived stone rims, binary alpha and exhaustive legal water-center RGBA edge comparison. Banks occupy water-side pixels only; map skips bridge water cells.\n");
+            File.WriteAllText(Path.Combine(Verification,"modular-river-bank-validation.txt"),"PASS: 47 stable WATER-occupancy stone banks, 22-30px face and matching foot foam; exhaustive legal water-center RGBA edges.\nPASS: SB001 fully opaque 64px land soil backing touches opaque bank perimeter; recessed grass cannot expose water between ground and rock.\n");
         }
 
-        // Mask denotes land occupancy. Foam is a transparent water-side overlay around that geometry.
+        // Same signed boundary for stone and foam. The shared pixel coordinates
+        // wrap exactly (63 becomes 0), including the irregular rock foot.
+        static int BankDistance(int mask,int x,int y)
+        {
+            int distance=128;
+            int[] distances={63-y,63-x,y,x};
+            for(int side=0;side<4;side++)
+            {
+                if((mask&(1<<(side*2)))==0)distance=Math.Min(distance,distances[side]);
+                if((mask&(1<<(side*2+1)))==0)distance=Math.Min(distance,Math.Max(distances[side],distances[(side+1)%4]));
+            }
+            int px=x==63?0:x,py=y==63?0:y;
+            int depth=26+Mathf.RoundToInt(2*Mathf.Sin(px*Mathf.PI*2/63f)+2*Mathf.Sin(py*Mathf.PI*4/63f));
+            return distance-depth;
+        }
+
+        // Mask denotes WATER occupancy, as in BK001-BK047.
         static Color32 FoamPixel(int mask,int x,int y,int frame)
         {
-            // DistanceToLand intentionally has no neighbouring tile's mask available.
-            // Never let its out-of-cell probes decide a serialized seam pixel: legal
-            // neighbours can have different masks and would otherwise disagree there.
-            // The visible foam begins one pixel inside the cell and remains contiguous
-            // over the opaque water below, while every legal shared RGBA edge is exact.
-            if(x==0||x==63||y==0||y==63) return new Color32();
-            int d=DistanceToLand(mask,x,y); if(d<0||d>8) return new Color32();
+            int d=BankDistance(mask,x,y); if(d<0||d>6) return new Color32();
             bool contact=d<=2; // invariant shoreline contact across all animation frames
-            // Edge phase cannot depend on this tile's mask: legal neighbours often have
-            // different masks but must serialize byte-identical RGBA at their shared edge.
-            int phase=(x==0||x==63)?Hash(y/3,0,frame*29):(y==0||y==63)?Hash(x/3,0,frame*29):Hash(x/3,y/3,frame*29+mask);
+            int phase=Hash((x==63?0:x)/3,(y==63?0:y)/3,frame*29);
             bool moving=d<=5&&PositiveMod(phase,7)<(d==3?5:3);
             if(!contact&&!moving) return new Color32();
             byte a=contact?(byte)(d==0?255:190):(byte)120;
             return new Color32(220,246,245,a);
         }
 
-        static int DistanceToLand(int mask,int x,int y)
-        {
-            if(LandVisible(mask,x,y)) return -1;
-            for(int r=1;r<=8;r++) for(int oy=-r;oy<=r;oy++) for(int ox=-r;ox<=r;ox++)
-                if(Math.Max(Math.Abs(ox),Math.Abs(oy))==r&&LandVisible(mask,x+ox,y+oy)) return r-1;
-            return 99;
-        }
-
-        static bool LandVisible(int mask,int x,int y)
-        {
-            // The current cell is water. The mask describes land in its eight
-            // neighbouring cells, so only probes that leave this 64px cell may
-            // encounter land. Treating the interior as land produced a square
-            // foam frame for every mask and exposed the tile grid.
-            bool north=y>=Cell,south=y<0,east=x>=Cell,west=x<0;
-            if(!north&&!south&&!east&&!west)return false;
-            // At an out-of-cell corner, either touching cardinal neighbour extends
-            // its bank through the probe. This keeps a straight bank continuous
-            // across tile rows instead of drawing a bracket around every cell.
-            if(north&&east)return (mask&((1<<0)|(1<<1)|(1<<2)))!=0;
-            if(south&&east)return (mask&((1<<2)|(1<<3)|(1<<4)))!=0;
-            if(south&&west)return (mask&((1<<4)|(1<<5)|(1<<6)))!=0;
-            if(north&&west)return (mask&((1<<6)|(1<<7)|(1<<0)))!=0;
-            if(north)return (mask&(1<<0))!=0;
-            if(east)return (mask&(1<<2))!=0;
-            if(south)return (mask&(1<<4))!=0;
-            return (mask&(1<<6))!=0;
-        }
-
         public static int NormalizeMask(int mask) { mask&=255; for(int d=1;d<8;d+=2) if((mask&(1<<(d-1)))==0||(mask&(1<<((d+1)%8)))==0) mask&=~(1<<d); return mask; }
-        static Color32 WaterContact(int p)=>WaterPalette[2+PositiveMod(Hash(p==63?0:p,0,71),3)];
         static int Hash(int x,int y,int salt){unchecked{int h=x*73856093^y*19349663^salt*83492791;return h^(h>>13);}}
         static int PositiveMod(int v,int m){int r=v%m;return r<0?r+m:r;}
 
@@ -215,7 +211,7 @@ namespace Sapphire.EditorTools.ModularTiles
                     CheckEdge(lookup[NormalizeMask(bottom)],lookup[NormalizeMask(top)],false,"foam V frame "+frame); comparisons+=Cell;
                 }
             }
-            for(int ordinal=0;ordinal<47;ordinal++) for(int y=0;y<Cell;y++) for(int x=0;x<Cell;x++) if(DistanceToLand(foam[ordinal].Mask,x,y)<=2)
+            for(int ordinal=0;ordinal<47;ordinal++) for(int y=0;y<Cell;y++) for(int x=0;x<Cell;x++) if(BankDistance(foam[ordinal].Mask,x,y)<=2)
             { byte a=foam[ordinal].Pixels[y*Cell+x].a; for(int f=1;f<4;f++) if(foam[f*47+ordinal].Pixels[y*Cell+x].a!=a) throw new InvalidOperationException("Animated foam moved its shoreline contact."); }
             Color32[] atlas=Assemble(items); var used=new HashSet<int>(items.Select(i=>i.Slot)); for(int s=0;s<256;s++) if(!used.Contains(s)){Rect r=SlotRect(s);for(int y=0;y<Cell;y++)for(int x=0;x<Cell;x++)if(!atlas[((int)r.y+y)*AtlasSize+(int)r.x+x].Equals(new Color32()))throw new InvalidOperationException("Reserved slot nonzero: "+s);}
             File.WriteAllText(Path.Combine(Verification,"modular-water-validation.txt"),$"PASS: 256 masks normalize to 47; W001-W012 perimeter-compatible.\nPASS: F001-F188 = 47 shoreline masks x 4 frames; frame duration 0.2 seconds.\nPASS: {comparisons} legal per-frame RGBA edge pixel comparisons.\nPASS: foam alpha limited to 0/120/190/255, transparent pixels zero RGB, shoreline contact invariant.\nPASS: all 56 reserved slots zero RGBA; reload checks Sprite texture/rect/64PPU.\nNOTE: four Tile assets per shape are provided instead of optional AnimatedTile; CSV frame/frame_seconds columns define playback.\n");
@@ -245,6 +241,7 @@ namespace Sapphire.EditorTools.ModularTiles
             return a;
         }
         static int MaskAt(bool[,] land,int x,int y){int m=0;for(int d=0;d<8;d++){int xx=x+Dx[d],yy=y+Dy[d];if(xx>=0&&yy>=0&&xx<MapSize&&yy<MapSize&&land[xx,yy])m|=1<<d;}return NormalizeMask(m);}
+        static int WaterMaskAt(bool[,] land,int x,int y){int m=0;for(int d=0;d<8;d++){int xx=x+Dx[d],yy=y+Dy[d];if(xx<0||yy<0||xx>=MapSize||yy>=MapSize||!land[xx,yy])m|=1<<d;}return NormalizeMask(m);}
         static void BuildScene(List<Item> items)
         {
             var water=items.Where(i=>i.Layer=="Water").ToArray(); var foam=items.Where(i=>i.Layer=="Foam").ToDictionary(i=>(i.Frame,i.Mask)); bool[,] land=IslandMap(); Scene previous=SceneManager.GetActiveScene();Scene scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,Application.isBatchMode?NewSceneMode.Single:NewSceneMode.Additive);SceneManager.SetActiveScene(scene);
@@ -252,8 +249,20 @@ namespace Sapphire.EditorTools.ModularTiles
             {
                 var masks=Enumerable.Range(0,256).Select(NormalizeMask).Distinct().OrderBy(x=>x).ToArray(); var ground=masks.Select((m,n)=>new{Mask=m,Tile=AssetDatabase.LoadAssetAtPath<Tile>(Root+"/Tiles/G"+(n+1).ToString("D3")+".asset")}).ToDictionary(x=>x.Mask,x=>x.Tile);
                 if(ground.Values.Any(t=>t==null)) throw new FileNotFoundException("Build TS01 first; ModularWaterTest displays its G001-G047 island geometry.");
-                var grid=new GameObject("Modular64 Water + Ground Islands + Foam Diagnostic (quadrants show frames 0-3)",typeof(Grid));SceneManager.MoveGameObjectToScene(grid,scene);Tilemap waterMap=NewMap("Opaque Water Variants",grid.transform,0);Tilemap groundMap=NewMap("TS01 Ground Islands",grid.transform,1);Tilemap[] frames=Enumerable.Range(0,4).Select(f=>NewMap("Foam Frame "+f+" (0.2 sec)",grid.transform,f+2)).ToArray();
-                for(int y=0;y<MapSize;y++)for(int x=0;x<MapSize;x++){waterMap.SetTile(new Vector3Int(x,y,0),water[PositiveMod(Hash(x,y,11),12)].Tile);if(land[x,y]){int mask=MaskAt(land,x,y),frame=(x<15?0:1)+(y>=15?2:0);groundMap.SetTile(new Vector3Int(x,y,0),ground[mask]);frames[frame].SetTile(new Vector3Int(x,y,0),foam[(frame,mask)].Tile);}}
+                var grid=new GameObject("Modular64 Water + Ground Islands + Foam Diagnostic (quadrants show frames 0-3)",typeof(Grid));SceneManager.MoveGameObjectToScene(grid,scene);Tilemap waterMap=NewMap("Opaque Water Variants",grid.transform,-2);Tilemap groundMap=NewMap("TS01 Ground Islands",grid.transform,0);Tilemap[] frames=Enumerable.Range(0,4).Select(f=>NewMap("Foam Frame "+f+" (0.2 sec)",grid.transform,f+2)).ToArray();
+                Tilemap soilMap=NewMap("Opaque Land Soil",grid.transform,-1),bankMap=NewMap("Stone Bank",grid.transform,0);
+                var soil=AssetDatabase.LoadAssetAtPath<Tile>(Root+"/Tiles/RiverBanks/SB001.asset");
+                for(int y=0;y<MapSize;y++)for(int x=0;x<MapSize;x++)
+                {
+                    var cell=new Vector3Int(x,y,0);waterMap.SetTile(cell,water[PositiveMod(Hash(x,y,11),12)].Tile);
+                    if(land[x,y]){soilMap.SetTile(cell,soil);groundMap.SetTile(cell,ground[MaskAt(land,x,y)]);}
+                    else
+                    {
+                        int mask=WaterMaskAt(land,x,y),frame=(x<15?0:1)+(y>=15?2:0);
+                        bankMap.SetTile(cell,AssetDatabase.LoadAssetAtPath<Tile>(Root+"/Tiles/RiverBanks/BK"+(Array.IndexOf(masks,mask)+1).ToString("D3")+".asset"));
+                        frames[frame].SetTile(cell,foam[(frame,mask)].Tile);
+                    }
+                }
                 var camGo=new GameObject("Diagnostic Camera",typeof(Camera));SceneManager.MoveGameObjectToScene(camGo,scene);camGo.transform.position=new Vector3(15,15,-10);Camera cam=camGo.GetComponent<Camera>();cam.orthographic=true;cam.orthographicSize=15.5f;cam.backgroundColor=new Color(.08f,.16f,.2f);cam.clearFlags=CameraClearFlags.SolidColor;
                 Directory.CreateDirectory("Assets/Sapphire/Scenes");if(!EditorSceneManager.SaveScene(scene,TargetScene))throw new IOException("Could not save "+TargetScene);WritePreview(items,land);
             }
@@ -265,7 +274,14 @@ namespace Sapphire.EditorTools.ModularTiles
             Item[] water=items.Where(i=>i.Layer=="Water").ToArray();var foam=items.Where(i=>i.Layer=="Foam").ToDictionary(i=>(i.Frame,i.Mask));var p=new Color32[MapSize*Cell*MapSize*Cell];
             int[] masks=Enumerable.Range(0,256).Select(NormalizeMask).Distinct().OrderBy(x=>x).ToArray();
             var ground=masks.Select((m,n)=>new{Mask=m,Pixels=ReadTilePixels(Root+"/Tiles/G"+(n+1).ToString("D3")+".asset")}).ToDictionary(x=>x.Mask,x=>x.Pixels);
-            for(int y=0;y<MapSize;y++)for(int x=0;x<MapSize;x++){Item w=water[PositiveMod(Hash(x,y,11),12)];Blit(p,w.Pixels,x,y);if(land[x,y]){int mask=MaskAt(land,x,y),f=(x<15?0:1)+(y>=15?2:0);Blit(p,ground[mask],x,y);Blit(p,foam[(f,mask)].Pixels,x,y);}}
+            var soil=ReadTilePixels(Root+"/Tiles/RiverBanks/SB001.asset");
+            var banks=masks.Select((m,n)=>new{Mask=m,Pixels=ReadTilePixels(Root+"/Tiles/RiverBanks/BK"+(n+1).ToString("D3")+".asset")}).ToDictionary(a=>a.Mask,a=>a.Pixels);
+            for(int y=0;y<MapSize;y++)for(int x=0;x<MapSize;x++)
+            {
+                Item w=water[PositiveMod(Hash(x,y,11),12)];Blit(p,w.Pixels,x,y);
+                if(land[x,y]){Blit(p,soil,x,y);Blit(p,ground[MaskAt(land,x,y)],x,y);}
+                else{int mask=WaterMaskAt(land,x,y),f=(x<15?0:1)+(y>=15?2:0);Blit(p,banks[mask],x,y);Blit(p,foam[(f,mask)].Pixels,x,y);}
+            }
             WritePng(Path.Combine(Verification,"modular-water-test.png"),p,MapSize*Cell,MapSize*Cell);
         }
         static Color32[] ReadTilePixels(string path)

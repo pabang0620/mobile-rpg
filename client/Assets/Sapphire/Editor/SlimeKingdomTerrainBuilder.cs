@@ -46,6 +46,7 @@ namespace Sapphire.EditorTools
             grid.GetComponent<Grid>().cellSize = Vector3.one;
             Tilemap water = Layer(grid, "Water", -30010), foam = Layer(grid, "Foam", -30009);
             Tilemap banks = Layer(grid, "Stone River Banks", -30008);
+            Tilemap soil = Layer(grid, "Shore Soil", -30007);
             Tilemap ground = Layer(grid, "Ground", -30000), road = Layer(grid, "Path", -29990);
             Tilemap shadow = Layer(grid, "Shadow", -29980), elevation = Layer(grid, "Elevated Top", -29960);
             Tilemap cliff = Layer(grid, "Cliff", -29970), stairs = Layer(grid, "Stairs", -29950);
@@ -56,9 +57,14 @@ namespace Sapphire.EditorTools
             for (int y = 0; y < Height; y++)
             {
                 var cell = new Vector3Int(x, y, 0);
-                // Water below the land masks makes transparent shoreline corners honest.
-                water.SetTile(cell, tiles["W" + (1 + Hash(x, y) % 8).ToString("D3")]);
-                if (land[x, y]) ground.SetTile(cell, Blob(tiles, "G", land, x, y));
+                water.SetTile(cell, tiles["W" + (1 + Hash(x, y) % 12).ToString("D3")]);
+                if (land[x, y])
+                {
+                    // Authored soil occupies the land cell beneath the grass fringe.
+                    // Its opaque perimeter touches the adjacent stone bank directly.
+                    soil.SetTile(cell, tiles["SB001"]);
+                    ground.SetTile(cell, Blob(tiles, "G", land, x, y));
+                }
                 if (path[x, y]) road.SetTile(cell, Blob(tiles, "PA", path, x, y));
                 if (high[x, y]) elevation.SetTile(cell, Blob(tiles, "ET", high, x, y));
                 if (!land[x, y] || x == 0 || y == 0 || x == Width - 1 || y == Height - 1)
@@ -142,12 +148,12 @@ namespace Sapphire.EditorTools
             for (int x = 0; x < Width; x++)
             for (int y = 0; y < Height; y++)
             {
-                // TS03 foam occupies water; its mask describes adjacent land.
+                // Foam and stone use the same water-occupancy geometry.
                 if (land[x, y]) continue;
                 int mask = 0;
-                for (int d = 0; d < 8; d++) if (At(land, x + Dx[d], y + Dy[d])) mask |= 1 << d;
+                for (int d = 0; d < 8; d++) if (!At(land, x + Dx[d], y + Dy[d])) mask |= 1 << d;
                 mask = Normalize(mask);
-                if (mask == 0) continue;
+                if (mask == 255) continue;
                 cells.Add(new Vector3Int(x, y, 0));
                 ordinals.Add(Array.IndexOf(Masks, mask));
             }
