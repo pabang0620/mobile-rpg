@@ -88,5 +88,19 @@ namespace Sapphire.Domain.Tests.Combat
             Assert.IsFalse(hit.IsCrit);
             Assert.AreEqual(10, hit.Damage);
         }
+
+        [Test]
+        public void ResolveHit_ExplicitMonsterCritChance_UsesThatChance()
+        {
+            var attacker = new CombatStats(100, 50, 20, 5);
+            var defender = new CombatStats(100, 50, 5, 10);
+            var rng = new FakeCombatRandom(0.2); // crit for player chance (0.25), not for monsters (0.15)
+
+            HitResult monsterHit = CombatEngine.ResolveHit(attacker, defender, new HealthComponent(100), 1.0f, rng, CombatEngine.MonsterCritChance);
+            HitResult playerHit = CombatEngine.ResolveHit(attacker, defender, new HealthComponent(100), 1.0f, rng);
+
+            Assert.IsFalse(monsterHit.IsCrit);
+            Assert.IsTrue(playerHit.IsCrit);
+        }
     }
 }

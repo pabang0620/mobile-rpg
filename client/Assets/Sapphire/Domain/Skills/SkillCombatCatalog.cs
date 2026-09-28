@@ -32,25 +32,29 @@ namespace Sapphire.Domain.Skills
 
         private static readonly Dictionary<string, SkillCombatSpec> Specs = new Dictionary<string, SkillCombatSpec>
         {
-            // id, manaCost, cooldownSeconds, damageMultiplier, hitDelaySeconds
-            { BasicAttackId, new SkillCombatSpec(BasicAttackId, 0, 0.45f, 1.0f, 0.15f) },
+            // id, manaCost, cooldownSeconds, damageMultiplier, hitDelaySeconds[, hitStaggerPerTileSeconds]
+            // Hit timings (2026-09-28) follow each VFX's brightest/impact frame:
+            // hitDelay ~= animDuration * impactFrame / 8 (8-frame sheets, see the
+            // Animate() durations in SkillVfxPlayer / WarriorSkillVfxPlayer).
+            // Projectiles stagger per tile at their on-screen travel speed.
+            { BasicAttackId, new SkillCombatSpec(BasicAttackId, 0, 0.45f, 1.0f, 0.12f) },
 
             // Mage: shield/blink are utility (0 damage); the 3 offensive
             // spells scale mana/cooldown with their damage multiplier.
             { ShieldId, new SkillCombatSpec(ShieldId, 15, 10f, 0f, 0f) },
             { BlinkId, new SkillCombatSpec(BlinkId, 8, 4f, 0f, 0f) },
-            { ThunderGridId, new SkillCombatSpec(ThunderGridId, 18, 5f, 2.0f, 0.2f) },
-            { IceSpikeId, new SkillCombatSpec(IceSpikeId, 12, 2.5f, 1.5f, 0.2f) },
-            { LightningSpearId, new SkillCombatSpec(LightningSpearId, 25, 6f, 3.0f, 0.2f) },
+            { ThunderGridId, new SkillCombatSpec(ThunderGridId, 18, 5f, 2.0f, 0.4f) },
+            { IceSpikeId, new SkillCombatSpec(IceSpikeId, 12, 2.5f, 1.5f, 0.05f, 0.16f) },
+            { LightningSpearId, new SkillCombatSpec(LightningSpearId, 25, 6f, 3.0f, 0.1f, 0.06f) },
 
             // Warrior: dash is pure movement (0 damage, unchanged from
             // before this refactor); shield_block/war_cry are defensive
             // buffs with long cooldowns; whirlwind/ground_slam are melee AoE.
             { DashId, new SkillCombatSpec(DashId, 10, 3f, 0f, 0f) },
-            { WhirlwindId, new SkillCombatSpec(WhirlwindId, 20, 5f, 2.2f, 0.2f) },
+            { WhirlwindId, new SkillCombatSpec(WhirlwindId, 20, 5f, 2.2f, 0.15f) },
             { ShieldBlockId, new SkillCombatSpec(ShieldBlockId, 15, 8f, 0f, 0f) },
             { WarCryId, new SkillCombatSpec(WarCryId, 20, 12f, 0f, 0f) },
-            { GroundSlamId, new SkillCombatSpec(GroundSlamId, 22, 6f, 2.5f, 0.2f) },
+            { GroundSlamId, new SkillCombatSpec(GroundSlamId, 22, 6f, 2.5f, 0.15f) },
         };
 
         public static bool TryGet(string id, out SkillCombatSpec spec)

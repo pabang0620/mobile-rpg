@@ -26,11 +26,12 @@ namespace Sapphire.Presentation.Skills
     /// component only owns input wiring, same split as the old
     /// SkillBarController had.
     ///
-    /// This slice has no MP/cooldown resource and no monsters to hit yet, so
-    /// both the basic attack and every skill only show the tile range
-    /// indicator (skills that have one) and the cosmetic cast feedback - no
-    /// damage calculation. docs/planning/01_PRODUCT.md describes a future
-    /// 3-hit basic-attack combo; that is out of scope for this slice.
+    /// Casts go through Domain SkillCastRules (per-skill mana / cooldown from
+    /// SkillCombatCatalog, explicit rejection codes) when the player has a
+    /// PlayerCombatController; damage is applied via AttackArea with the
+    /// skill's impact-frame hit delay. SkillCooldownOverlay shows each skill
+    /// button's cooldown and no-mana state. docs/planning/01_PRODUCT.md's
+    /// 3-hit basic-attack combo is still out of scope.
     /// </summary>
     public class RadialSkillMenu : MonoBehaviour
     {
@@ -82,6 +83,15 @@ namespace Sapphire.Presentation.Skills
 
                 int skillIndex = i;
                 skillButtons[i].onClick.AddListener(() => CastSkill(skillIndex));
+            }
+
+            // Cooldown sweep / remaining seconds / no-mana dim per skill button,
+            // built at runtime (see SkillCooldownOverlay).
+            var combat = player != null ? player.GetComponent<Sapphire.Presentation.Combat.PlayerCombatController>() : null;
+            SkillDefinition[] skills = Skills;
+            for (int i = 0; i < skillButtons.Length && i < skills.Length; i++)
+            {
+                SkillCooldownOverlay.Attach(skillButtons[i], skills[i].Id, combat);
             }
         }
 
@@ -258,7 +268,7 @@ namespace Sapphire.Presentation.Skills
 
             if (combat != null && tiles != null && spec.DamageMultiplier > 0f)
             {
-                combat.AttackArea(tiles, spec.DamageMultiplier, spec.HitDelaySeconds);
+                combat.AttackArea(tiles, spec.DamageMultiplier, spec.HitDelaySeconds, spec.HitStaggerPerTileSeconds);
             }
 
             castFeedback?.PlayCast(skill.DisplayName);

@@ -109,9 +109,17 @@ namespace Sapphire.Presentation.Combat
             SceneManager.LoadScene("VillageHub");
         }
 
-        public void AttackArea(IReadOnlyList<GridCoord> tiles, float skillMultiplier = 1.0f, float delay = 0f)
+        public void AttackArea(IReadOnlyList<GridCoord> tiles, float skillMultiplier = 1.0f, float delay = 0f, float staggerPerTile = 0f)
         {
             if (isDead) return;
+
+            // Travelling effects (projectiles) hit tile by tile in range order
+            // so damage lands when the VFX visibly reaches each tile.
+            if (staggerPerTile > 0f && tiles != null)
+            {
+                StartCoroutine(AttackAreaStaggered(tiles, skillMultiplier, delay, staggerPerTile));
+                return;
+            }
 
             if (delay > 0f)
             {
@@ -129,7 +137,23 @@ namespace Sapphire.Presentation.Combat
             if (!isDead) ExecuteAttack(tiles, skillMultiplier);
         }
 
-        private void ExecuteAttack(IReadOnlyList<GridCoord> tiles, float skillMultiplier)
+        // One coroutine per cast walks the tiles outward; a monster that steps
+        // into a later tile after being hit is not hit a second time.
+        private IEnumerator AttackAreaStaggered(IReadOnlyList<GridCoord> tiles, float skillMultiplier, float delay, float staggerPerTile)
+        {
+            var alreadyHit = new HashSet<MonsterController>();
+            var single = new List<GridCoord>(1) { default(GridCoord) };
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                float wait = i == 0 ? delay : staggerPerTile;
+                if (wait > 0f) yield return new WaitForSeconds(wait);
+                if (isDead) yield break;
+                single[0] = tiles[i];
+                ExecuteAttack(single, skillMultiplier, alreadyHit);
+            }
+        }
+
+        private void ExecuteAttack(IReadOnlyList<GridCoord> tiles, float skillMultiplier, HashSet<MonsterController> alreadyHit = null)
         {
             var monsters = FindObjectsOfType<MonsterController>();
             bool hitAny = false;
@@ -142,6 +166,7 @@ namespace Sapphire.Presentation.Combat
                     if (monster.GridX == tile.X && monster.GridY == tile.Y)
                     {
                         if (monster.Health.IsDead) continue;
+                        if (alreadyHit != null && !alreadyHit.Add(monster)) continue;
 
                         HitResult hit = CombatEngine.ResolveHit(Stats, monster.Stats, monster.Health, skillMultiplier, combatRandom);
 

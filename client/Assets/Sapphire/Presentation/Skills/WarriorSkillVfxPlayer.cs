@@ -136,6 +136,8 @@ namespace Sapphire.Presentation.Skills
             ClearShield();
             DamageReductionPoints = 40;
             shieldObject = Create("WarriorVfx_ShieldBlock", VfxAnchors.BodyCenter(casterCell), 1.65f, 0f, VfxGlowMaterials.Light);
+            // Follow the warrior while the 4s barrier lasts (same as mage ManaShield).
+            shieldObject.transform.SetParent(transform, true);
             shieldRoutine = StartCoroutine(Animate(shieldObject, WarriorSkillVfxLibrary.ShieldBlockRow, 4f, true, Vector3.zero));
         }
 

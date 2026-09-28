@@ -96,5 +96,15 @@ namespace Sapphire.Domain.Tests.Skills
             Assert.AreEqual(SkillCastResult.Accepted, second);
             Assert.AreEqual(50, mana.CurrentMp);
         }
+
+        [Test]
+        public void Catalog_ProjectilesStaggerPerTile_AreaSkillsHitAtOnce()
+        {
+            SkillCombatSpec ice, thunder;
+            Assert.IsTrue(SkillCombatCatalog.TryGet(SkillCombatCatalog.IceSpikeId, out ice));
+            Assert.IsTrue(SkillCombatCatalog.TryGet(SkillCombatCatalog.ThunderGridId, out thunder));
+            Assert.IsTrue(ice.HitStaggerPerTileSeconds > 0f);
+            Assert.AreEqual(0f, thunder.HitStaggerPerTileSeconds, 0.0001f);
+        }
     }
 }

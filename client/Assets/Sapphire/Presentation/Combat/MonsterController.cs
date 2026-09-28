@@ -15,6 +15,7 @@ namespace Sapphire.Presentation.Combat
         [SerializeField] private bool spawnIsBoss;
         [SerializeField] private Vector3 visualOffset;
         private bool runtimeInitialized;
+        private readonly ICombatRandom combatRandom = new UnityCombatRandom();
         private UnityEngine.Tilemaps.Tile runtimeBlocker;
         private UnityEngine.Tilemaps.TileBase occupancyTile;
         public CombatStats Stats { get; private set; }
@@ -168,10 +169,9 @@ namespace Sapphire.Presentation.Combat
                 var combatController = player.GetComponent<PlayerCombatController>();
                 if (combatController != null && combatController.Health != null && !combatController.Health.IsDead)
                 {
-                    bool isCrit = UnityEngine.Random.value < 0.15f;
-                    float finalMultiplier = isCrit ? 1.5f : 1.0f;
-                    int damage = CombatEngine.CalculateDamage(Stats, combatController.Stats, finalMultiplier);
-                    CombatEngine.ProcessAttack(Stats, combatController.Stats, combatController.Health, finalMultiplier);
+                    HitResult hit = CombatEngine.ResolveHit(Stats, combatController.Stats, combatController.Health, 1.0f, combatRandom, CombatEngine.MonsterCritChance);
+                    int damage = hit.Damage;
+                    bool isCrit = hit.IsCrit;
 
                     combatController.OnHit(damage);
                     // player.transform.position is the player's FEET
