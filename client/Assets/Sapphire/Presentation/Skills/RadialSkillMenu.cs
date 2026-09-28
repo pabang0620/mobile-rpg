@@ -152,8 +152,10 @@ namespace Sapphire.Presentation.Skills
                 if (combat != null)
                 {
                     SkillCastRules.TryCommit(SkillCombatCatalog.BasicAttackId, combat.Mana, combat.Cooldowns, Time.time, out spec);
-                    GridCoord target = player.Mover.Position + player.Mover.Facing.ToOffset();
-                    var tiles = new System.Collections.Generic.List<GridCoord> { target };
+                    // Warrior's slash visibly covers BasicAttackRangeTiles (2) tiles, so it
+                    // must also damage both; other classes hit the adjacent tile only.
+                    int reach = skillVfx is WarriorSkillVfxPlayer ? WarriorCombatConstants.BasicAttackRangeTiles : 1;
+                    var tiles = SkillRangeCalculator.TilesInLine(player.Mover.Position, player.Mover.Facing, reach);
                     combat.AttackArea(tiles, spec.DamageMultiplier, spec.HitDelaySeconds);
                 }
             }

@@ -54,7 +54,7 @@ namespace Sapphire.Presentation.Skills
                 StartCoroutine(Animate(Create("Thunder3x3", VfxAnchors.TileCenter(origin), 3f, 0), 2, .8f, false, Vector3.zero));
             }
             else if (row == 3)
-                StartCoroutine(Animate(Create("IceSpikeSingle", VfxAnchors.DirectionalStart(origin, facing), 1.25f, rotation), 3, .65f, false, new Vector3(direction.X * 5f, direction.Y * 5f, 0)));
+                StartCoroutine(Animate(Create("IceSpikeSingle", VfxAnchors.TileCenter(origin + direction), 1.25f, rotation), 3, .65f, false, new Vector3(direction.X * 4f, direction.Y * 4f, 0)));
             else
             {
                 // A single connected atlas animation grows from the actor origin

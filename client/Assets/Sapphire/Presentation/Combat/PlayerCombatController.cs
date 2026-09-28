@@ -149,7 +149,11 @@ namespace Sapphire.Presentation.Combat
                         // Anchor from the monster's body center, not its feet/ground
                         // contact point, so sparks land on the body and the popup
                         // rises from above the head (Domain.Grid.GridWorldConversion.ActorBodyCenterHeight).
-                        Vector3 monsterBodyCenter = monster.transform.position + Vector3.up * GridWorldConversion.ActorBodyCenterHeight;
+                        // Derived from the monster's grid cell, not its transform: slime
+                        // sprites are centre-pivoted, so transform.position is already
+                        // near the body centre and adding the height would overshoot.
+                        WorldPoint monsterFeet = GridWorldConversion.GridToActorFeet(new GridCoord(monster.GridX, monster.GridY));
+                        Vector3 monsterBodyCenter = new Vector3(monsterFeet.X, monsterFeet.Y + GridWorldConversion.ActorBodyCenterHeight, monster.transform.position.z);
                         DamagePopup.Spawn(monsterBodyCenter, hit.Damage, hit.IsCrit ? hit.Damage.ToString() + " CRIT!" : null);
                         HitEffectSpawner.Spawn(monsterBodyCenter + new Vector3(0, 0f, -1f), hit.IsCrit);
                         hitAny = true;

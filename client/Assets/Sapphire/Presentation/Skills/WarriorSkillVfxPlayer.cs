@@ -96,9 +96,9 @@ namespace Sapphire.Presentation.Skills
             StartCoroutine(Animate(slash, WarriorSkillVfxLibrary.BasicAttackRow, 0.35f, false, Vector3.zero));
         }
 
-        // Directional streak anchored at the caster tile's own edge in the
-        // facing direction (VfxAnchors.DirectionalStart), matching the mage
-        // spear/ice-spike row's left-edge-pivot elongation technique. Scale
+        // Directional streak anchored at the caster's start tile centre
+        // (VfxAnchors.TileCenter) so, with the left-edge pivot and scale =
+        // tiles moved, it ends exactly on the tile centre where the player lands. Scale
         // uses the ACTUAL tiles moved (ChebyshevDistance), not a hardcoded 3,
         // since TryBlink can stop short of the full dash range at an
         // obstacle.
@@ -108,7 +108,7 @@ namespace Sapphire.Presentation.Skills
             float rotation = Mathf.Atan2(direction.Y, direction.X) * Mathf.Rad2Deg;
             int tiles = Mathf.Max(1, SkillRangeCalculator.ChebyshevDistance(origin, destination));
 
-            GameObject streak = Create("WarriorVfx_Dash", VfxAnchors.DirectionalStart(origin, facing), 1f, rotation);
+            GameObject streak = Create("WarriorVfx_Dash", VfxAnchors.TileCenter(origin), 1f, rotation);
             streak.transform.localScale = new Vector3(tiles, 1f, 1f);
             StartCoroutine(Animate(streak, WarriorSkillVfxLibrary.DashRow, 0.3f, false, Vector3.zero));
         }
